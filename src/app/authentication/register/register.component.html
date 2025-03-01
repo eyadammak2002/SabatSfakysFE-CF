@@ -1,0 +1,89 @@
+<div class="card mx-auto" style="max-width: 800px; padding: 50px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19); border-radius: 15px;">
+  <div class="card-body">
+    <form *ngIf="!isSuccessful" (ngSubmit)="onSubmit()" class="mb-3 d-flex flex-column align-items-center">
+      
+      <div class="mb-3 w-75">
+        <label for="username" class="form-label">Nom</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-person"></i></span>
+          <input id="username" [(ngModel)]="form.username" name="username" type="text" class="form-control" placeholder="Nom" required />
+        </div>
+      </div>
+
+      <div class="mb-3 w-75">
+        <label for="email" class="form-label">Email</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+          <input id="email" [(ngModel)]="form.email" name="email" type="email" class="form-control" placeholder="Email" required />
+        </div>
+      </div>
+
+      <div class="mb-3 w-75">
+        <label for="adresse" class="form-label">Adresse</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-house"></i></span>
+          <input id="adresse" [(ngModel)]="form.adresse" name="adresse" type="text" class="form-control" placeholder="Adresse" required />
+        </div>
+      </div>
+      
+      <div class="mb-3 w-75">
+        <label for="password" class="form-label">Mot de passe</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-lock"></i></span>
+          <input id="password" [(ngModel)]="form.password" name="password" type="password" class="form-control" placeholder="Mot de passe" required />
+        </div>
+      </div>
+
+      <!-- ✅ Téléphone & Sexe sur la même ligne -->
+      <div class="row w-75 mx-auto">
+        <div class="col-6 mb-3 ">
+          <label for="telephone" class="form-label">Téléphone</label>
+          <div class="input-group w-100">
+            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+            <input id="telephone" [(ngModel)]="form.telephone" name="telephone" type="text" class="form-control" placeholder="Téléphone" required />
+          </div>
+        </div>
+
+        <div class="col-6 mb-3">
+          <label for="sexe" class="form-label">Sexe</label>
+          <div class="input-group w-100">
+            <span class="input-group-text"><i class="bi bi-gender-ambiguous"></i></span>
+            <select id="sexe" [(ngModel)]="form.sexe" name="sexe" class="form-select" required>
+              <option value="HOMME">Homme</option>
+              <option value="FEMME">Femme</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- ✅ Fin de la ligne -->
+
+      
+
+      <button type="submit" class="btn btn-primary w-75">S'inscrire</button>
+    </form>
+
+    <p class="text-center mt-3">
+      Vous avez déjà un compte ? <a href="/auth/client/login" class="text-primary">Connectez-vous ici</a>
+    </p>
+
+    <div class="mt-5 text-center">
+      <button class="btn btn-outline-danger w-75 mb-2" (click)="signInWithGoogle()">
+        <i class="bi bi-google"></i> S'inscrire avec Google
+      </button>
+      <button class="btn btn-outline-primary w-75 mb-2" (click)="signInWithFacebook()">
+        <i class="bi bi-facebook"></i> S'inscrire avec Facebook
+      </button>
+      <button class="btn btn-outline-dark w-75" (click)="signInWithGithub()">
+        <i class="bi bi-github"></i> S'inscrire avec GitHub
+      </button>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="isSuccessful" class="alert alert-success mt-3">
+      Inscription réussie ! Bienvenue 🎉
+    </div>
+  </div>
+</div>

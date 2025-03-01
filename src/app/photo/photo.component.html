@@ -1,0 +1,55 @@
+<div class="cardShadow">
+
+  <div class="d-flex justify-content-center">
+    <button 
+      style="background-color: #334a63; color: aliceblue;" 
+      type="button" 
+      (click)="redirectToCreatePhoto()" 
+      class="btn btn-light-primary centered-button" 
+      ngbTooltip="btn-light-primary">
+      <i class="feather icon-plus"></i> NEW IMAGE
+    </button>
+  </div>
+<br><br>
+<br><br>
+    <div class="col-xl-12">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+        <tr>
+    
+          <th>NAME</th>
+          <th>URL</th>
+          <th>IMAGE</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+       <tr *ngFor="let file of fileInfos | async" class="col-md-2 file-item mb-3">
+        
+          <td>{{ file.name }}</td>
+          <td>{{ file.url }}</td>
+          <td>
+            <img *ngIf="file.url.endsWith('.jpg') || file.url.endsWith('.png') || file.url.endsWith('.jpeg')|| file.url.endsWith('.heic')"
+            [src]="file.url"
+
+            alt="{{ file.url }}"
+            class="img-thumbnail"
+            style="max-width: 150px; height: 200px;" />
+          </td>
+          <td class="button-container">
+            <div class="d-flex flex-wrap gap-2">
+            <button (click)="openDeleteModal(file.name)" class="btn btn-danger btn-sm">
+                <i class="feather icon-trash"></i> 
+              </button>
+              </div>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+</div>  
+
+
+
+</div>

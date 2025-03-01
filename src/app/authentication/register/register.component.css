@@ -1,0 +1,13 @@
+.btnC{background-color: #63a50a;}
+.icon-links {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+
+    gap: 15px;
+}
+.icon-link {
+    font-size: 40px;
+    color: #4c2b17;
+    text-decoration: none;
+}

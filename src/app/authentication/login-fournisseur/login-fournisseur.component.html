@@ -1,0 +1,65 @@
+<div class="card mx-auto" style="max-width: 600px; padding: 50px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19); border-radius: 15px;">
+  <div class="card-body">
+    <form (ngSubmit)="onSubmit()" class="mb-3">
+      
+      <div class="mb-3">
+        <label for="username" class="form-label">Nom</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-envelope"></i>
+          </span>
+          <input 
+            id="username" 
+            [(ngModel)]="form.username" 
+            name="username" 
+            type="username" 
+            class="form-control" 
+            placeholder="Nom" 
+            required />
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Mot de passe</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-lock"></i>
+          </span>
+          <input 
+            id="password" 
+            [(ngModel)]="form.password" 
+            name="motDePasse" 
+            type="password" 
+            class="form-control" 
+            placeholder="Mot de passe" 
+            required />
+        </div>
+      </div>
+
+
+      <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+    </form>
+
+    <p class="text-center mt-3">
+      Vous n'avez pas de compte ? <a href="/auth/fournisseur/register" class="text-primary">Créez-en un ici</a>
+    </p>
+        <div class="mt-5 text-center">
+          <button class="btn btn-outline-danger w-100 mb-2" (click)="signInWithGoogle()">
+            <i class="bi bi-google"></i> Se connecter avec Google
+          </button>
+          <button class="btn btn-outline-primary w-100 mb-2" (click)="signInWithFacebook()">
+            <i class="bi bi-facebook"></i> Se connecter avec Facebook
+          </button>
+          <button class="btn btn-outline-dark w-100" (click)="signInWithGithub()">
+            <i class="bi bi-github"></i> Se connecter avec GitHub
+          </button>
+        </div>
+        
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+  </div>
+</div>
+
+
+   

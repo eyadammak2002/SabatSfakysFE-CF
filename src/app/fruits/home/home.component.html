@@ -1,0 +1,43 @@
+
+  <div class="row mt-2">
+    <div class="col col-md-4 offset-md-4">
+      <a [routerLink]="['../create' ]" mat-mini-fab color="primary"><mat-icon>add</mat-icon></a>
+    </div>
+  </div>
+  <table mat-table #table [dataSource]="allFruits">
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+      <mat-cell *matCellDef="let item"> {{item.id}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+      <mat-cell *matCellDef="let item"> {{item.name}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="price">
+      <mat-header-cell *matHeaderCellDef> Price </mat-header-cell>
+      <mat-cell *matCellDef="let item"> {{item.price}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="quantity">
+      <mat-header-cell *matHeaderCellDef> Quantity </mat-header-cell>
+      <mat-cell *matCellDef="let item"> {{item.quantity}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="category">
+      <mat-header-cell *matHeaderCellDef> Category </mat-header-cell>
+      <mat-cell *matCellDef="let item"> {{item.category.name}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+      <mat-cell *matCellDef="let item">
+        <a [routerLink]="['../edit', item.id ]" mat-raised-button color="primary">Edit</a>&nbsp;
+        <button (click)="delete(item)" mat-raised-button color="warn">
+          <mat-icon>delete</mat-icon>
+        </button>
+        </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </table>
+  
+  

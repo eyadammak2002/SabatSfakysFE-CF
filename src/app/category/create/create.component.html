@@ -1,0 +1,36 @@
+<div class="container">
+  <legend>Create Item</legend>
+  
+    <form  (ngSubmit)="save()">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput [(ngModel)]="categoryForm.name" id="name" name="name" >
+    </mat-form-field>
+    <br>
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <input matInput [(ngModel)]="categoryForm.description" id="description" name="description" >
+    </mat-form-field>
+ 
+    <div class="button-row" role="group">
+      <button type="submit" mat-raised-button color="primary" >Save</button>
+      <button type="button" mat-button color="accent" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+</div>
+  <!-- 
+<div class="container">
+    <legend>Create Item</legend>
+    <form>
+      <div class="mb-3">
+        <label for="txtName" class="form-label">Name</label>
+        <input type="text" name="name" [(ngModel)] = "categoryForm.name" class="form-control" id="txtName" />
+      </div>
+      <div class="mb-3">
+        <label for="txtDescription" class="form-label">Description</label>
+        <input type="text" name="description" [(ngModel)] = "categoryForm.description" class="form-control" id="txtDescription" />
+      </div>
+      
+      <button type="button" (click)="create()" class="btn btn-primary">Create</button>
+    </form>
+  </div>--> 

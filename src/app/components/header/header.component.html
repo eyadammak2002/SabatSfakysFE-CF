@@ -1,0 +1,78 @@
+<header class="header">
+    <div class="header-container ">
+        <div class="logo col-3">
+            <img src="assets/logo.png" alt="SabatSfakys Logo" class="logo-img">
+        </div>
+
+        <div class="search-bar col-6">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Rechercher...">
+        </div>
+
+        <div class="icon-links col-2">
+            <a routerLink="/favoris" class="icon-link"><i class="far fa-heart"></i></a>
+            <a routerLink="/panier" class="icon-link"><i class="fas fa-shopping-cart"></i></a>
+            <div class="dropdown">
+                <a routerLink="/profil" class="icon-link profile-icon"><i class="fas fa-user"></i></a>
+                <div class="dropdown-menu">
+                    <a routerLink="/auth/client/login">Client</a>
+                    <a routerLink="/auth/fournisseur/login">Boutique</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav-links">
+        <div ngbDropdown class="dropdown">
+            <a routerLink="/chaussures" ngbDropdownToggle>Chaussures</a>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a routerLink="/chaussures/femme" ngbDropdownItem>Femme</a>
+                <a routerLink="/chaussures/homme" ngbDropdownItem>Homme</a>
+                <a routerLink="/chaussures/enfant" ngbDropdownItem>Enfant</a>
+            </div>
+        </div>
+        <div ngbDropdown class="dropdown">
+            <a routerLink="/sacs" ngbDropdownToggle>Sacs</a>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a routerLink="/sacs/femme" ngbDropdownItem>Femme</a>
+                <a routerLink="/sacs/homme" ngbDropdownItem>Homme</a>
+                <a routerLink="/sacs/enfant" ngbDropdownItem>Enfant</a>
+            </div>
+        </div>
+        <div ngbDropdown class="dropdown">
+            <a routerLink="/autre" ngbDropdownToggle>Autre</a>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a routerLink="/autre/femme" ngbDropdownItem>Femme</a>
+                <a routerLink="/autre/homme" ngbDropdownItem>Homme</a>
+                <a routerLink="/autre/enfant" ngbDropdownItem>Enfant</a>
+            </div>
+        </div>
+        <div ngbDropdown class="dropdown">
+            <a routerLink="/homme" ngbDropdownToggle>Homme</a>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a routerLink="/homme/chaussures" ngbDropdownItem>Chaussures</a>
+                <a routerLink="/homme/sacs" ngbDropdownItem>Sacs</a>
+                <a routerLink="/homme/autre" ngbDropdownItem>Autre</a>
+            </div>
+        </div>
+        <div ngbDropdown class="dropdown">
+            <a routerLink="/femme" ngbDropdownToggle>Femme</a>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a routerLink="/femme/chaussures" ngbDropdownItem>Chaussures</a>
+                <a routerLink="/femme/sacs" ngbDropdownItem>Sacs</a>
+                <a routerLink="/femme/autre" ngbDropdownItem>Autre</a>
+            </div>
+        </div>
+        <div ngbDropdown class="dropdown">
+            <a routerLink="/enfant" ngbDropdownToggle>Enfant</a>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a routerLink="/enfant/chaussures" ngbDropdownItem>Chaussures</a>
+                <a routerLink="/enfant/sacs" ngbDropdownItem>Sacs</a>
+                <a routerLink="/enfant/autre" ngbDropdownItem>Autre</a>
+            </div>
+        </div>
+        <a routerLink="/personnaliser">Personnaliser</a>
+        <a href class="nav-link" (click)="logout()" style="font-size: medium;"> <i class="feather icon-log-out" style="padding-right:15px; padding-left: 20px;font-size: medium;color:  #ebebeb;"></i><span style="color:  #ebebeb;">LogOut</span></a>
+    </nav>
+    
+</header>

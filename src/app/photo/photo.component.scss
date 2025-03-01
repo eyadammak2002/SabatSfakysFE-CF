@@ -1,0 +1,20 @@
+.table-hover tbody tr:hover {
+    background-color:#334a63;
+    color:rgb(235, 244, 244); // Optional: Change text color on hover (you can adjust this as needed)
+  }
+
+
+th{
+    background-color: #334a63; 
+    color:azure;
+
+  }
+  .cardShadow{
+    box-shadow: 0 8px 16px rgba(8, 6, 44, 0.741); /* Increased shadow for a more prominent effect */
+    border-radius: 10px;
+  }
+
+  img{
+    width: 250px;
+    height: 400px;
+  }

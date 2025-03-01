@@ -1,0 +1,7 @@
+<app-header *ngIf="!isLoginPage"></app-header> <!-- ✅ Toujours affiché -->
+
+<main class="main-content">
+  <router-outlet></router-outlet> <!-- ✅ Zone dynamique où s'affichent les pages -->
+</main>
+
+<app-footer *ngIf="!isLoginPage"></app-footer> <!-- ✅ Toujours affiché -->

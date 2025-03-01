@@ -1,0 +1,127 @@
+<div class="card mx-auto" style="max-width: 800px; padding: 50px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19); border-radius: 15px;">
+  <div class="card-body">
+    <h3 class="text-center mb-4">Inscription</h3>
+    <form *ngIf="!isSuccessful" (ngSubmit)="onSubmit()" class="mb-3 d-flex flex-column align-items-center">
+      <!-- Nom d'utilisateur -->
+      <div class="mb-3 w-75">
+        <label for="username" class="form-label">Nom</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-person"></i>
+          </span>
+          <input id="username" [(ngModel)]="form.username" name="username" type="text" class="form-control" placeholder="Nom" required />
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3 w-75">
+        <label for="email" class="form-label">Email</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-envelope"></i>
+          </span>
+          <input id="email" [(ngModel)]="form.email" name="email" type="email" class="form-control" placeholder="Email" required />
+        </div>
+      </div>
+
+      <!-- Adresse -->
+      <div class="mb-3 w-75">
+        <label for="adresse" class="form-label">Adresse</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-geo-alt"></i>
+          </span>
+          <input id="adresse" [(ngModel)]="form.adresse" name="adresse" type="text" class="form-control" placeholder="Adresse" required />
+        </div>
+      </div>
+
+      <!-- Numéro Identification Entreprise -->
+      <div class="mb-3 w-75">
+        <label for="numCin" class="form-label">Numéro Identification Entreprise</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-building"></i>
+          </span>
+          <input id="numCin" [(ngModel)]="form.numeroIdentificationEntreprise" name="numCin" type="text" class="form-control" placeholder="Numéro Identification Entreprise" required />
+        </div>
+      </div>
+
+      <!-- Téléphone -->
+      <div class="mb-3 w-75">
+        <label for="telephone" class="form-label">Téléphone</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-telephone"></i>
+          </span>
+          <input id="telephone" [(ngModel)]="form.telephone" name="telephone" type="text" class="form-control" placeholder="Téléphone" required />
+        </div>
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="mb-3 w-75">
+        <label for="password" class="form-label">Mot de passe</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-lock"></i>
+          </span>
+          <input id="password" [(ngModel)]="form.password" name="password" type="password" class="form-control" placeholder="Mot de passe" required />
+        </div>
+      </div>
+
+      <!-- Matériaux utilisés -->
+      <div class="mb-3 w-75">
+        <label for="materiaux" class="form-label">Matériaux utilisés</label>
+        <select id="materiaux" class="form-select" [(ngModel)]="form.materiauxUtilises" name="materiauxUtilises" required>
+          <option *ngFor="let materiau of materiauxOptions" [value]="materiau">{{ materiau }}</option>
+        </select>
+      </div>
+
+      <!-- Méthodes de production -->
+      <div class="mb-3 w-75">
+        <label for="methodes" class="form-label">Méthodes de production</label>
+        <select id="methodes" class="form-select" [(ngModel)]="form.methodesProduction" name="methodesProduction" required>
+          <option *ngFor="let methode of methodesProductionOptions" [value]="methode">{{ methode }}</option>
+        </select>
+      </div>
+
+      <!-- Programme de recyclage -->
+      <div class="mb-3 w-75">
+        <label for="recyclage" class="form-label">Programme de recyclage</label>
+        <select id="recyclage" class="form-select" [(ngModel)]="form.programmeRecyclage" name="programmeRecyclage" required>
+          <option *ngFor="let recyclage of programmeRecyclageOptions" [value]="recyclage">{{ recyclage }}</option>
+        </select>
+      </div>
+
+      <!-- Transport et logistique verte -->
+      <div class="mb-3 w-75">
+        <label for="transport" class="form-label">Transport & Logistique Verte</label>
+        <select id="transport" class="form-select" [(ngModel)]="form.transportLogistiqueVerte" name="transportLogistiqueVerte" required>
+          <option *ngFor="let transport of transportLogistiqueOptions" [value]="transport">{{ transport }}</option>
+        </select>
+      </div>
+
+      <!-- Initiatives sociales -->
+      <div class="mb-3 w-75">
+        <label for="initiatives" class="form-label">Initiatives Sociales</label>
+        <select id="initiatives" class="form-select" [(ngModel)]="form.initiativesSociales" name="initiativesSociales" required>
+          <option *ngFor="let initiative of initiativesSocialesOptions" [value]="initiative">{{ initiative }}</option>
+        </select>
+      </div>
+
+      <!-- Score Écologique -->
+      <div class="mb-3 w-75">
+        <label for="scoreEcologique" class="form-label">Score Écologique</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-bar-chart"></i>
+          </span>
+          <input id="scoreEcologique" [(ngModel)]="form.scoreEcologique" name="scoreEcologique" type="number" class="form-control" min="0" step="0.1" placeholder="Entrez le score écologique" required />
+        </div>
+      </div>
+
+      <div class="col-3">        
+        <button type="submit" class="btn btn-primary w-100">S'inscrire</button>
+    </div>
+    </form>
+  </div>
+</div>
