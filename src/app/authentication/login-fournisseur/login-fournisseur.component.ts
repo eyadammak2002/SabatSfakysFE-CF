@@ -39,7 +39,7 @@ export class LoginFournisseurComponent {
         this.tokenStorage.saveToken(data.accessToken);
         this.tokenStorage.saveUser(data);
         this.isLoggedIn = true;
-        this.router.navigate(['/accueil']);
+        this.router.navigate(['/fournisseur']);
       },
       err => {
         console.error('Erreur de connexion', err);
@@ -48,6 +48,10 @@ export class LoginFournisseurComponent {
     );
   }
 
+  goBack(): void {
+    this.router.navigate(['/accueil']);
+  }
+  
   signInWithGoogle() {
     console.log("Connexion avec Google");
   }

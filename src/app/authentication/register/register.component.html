@@ -1,8 +1,21 @@
-<div class="card mx-auto" style="max-width: 800px; padding: 50px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19); border-radius: 15px;">
-  <div class="card-body">
-    <form *ngIf="!isSuccessful" (ngSubmit)="onSubmit()" class="mb-3 d-flex flex-column align-items-center">
+<div class="regis-container" style=" background: url('assets/logo.png') no-repeat center center/cover;">
+  <div class="card mx-auto">
+    <div class="card-body position-relative">
+    
+    <!-- ✅ Bouton Retour en haut à gauche -->
+    <button class="btn btn-outline-secondary position-absolute" style="top: 10px; left: 10px;" (click)="goBack()">
+      <i class="bi bi-arrow-left"></i> Retour
+    </button>
+
+    <!-- ✅ Titre avec icône de client centré -->
+    <div class="text-center mt-4">
+      <i class="bi bi-person-circle" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
+      <h3>Inscription</h3>
+    </div>
+    <form *ngIf="!isSuccessful" (ngSubmit)="onSubmit()" class="mb-3 ">
       
-      <div class="mb-3 w-75">
+      <!-- Nom d'utilisateur -->
+      <div class="mb-3 ">
         <label for="username" class="form-label">Nom</label>
         <div class="input-group">
           <span class="input-group-text"><i class="bi bi-person"></i></span>
@@ -10,7 +23,8 @@
         </div>
       </div>
 
-      <div class="mb-3 w-75">
+      <!-- Email -->
+      <div class="mb-3">
         <label for="email" class="form-label">Email</label>
         <div class="input-group">
           <span class="input-group-text"><i class="bi bi-envelope"></i></span>
@@ -18,27 +32,20 @@
         </div>
       </div>
 
-      <div class="mb-3 w-75">
+      <!-- Adresse -->
+      <div class="mb-3 ">
         <label for="adresse" class="form-label">Adresse</label>
         <div class="input-group">
-          <span class="input-group-text"><i class="bi bi-house"></i></span>
+          <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
           <input id="adresse" [(ngModel)]="form.adresse" name="adresse" type="text" class="form-control" placeholder="Adresse" required />
         </div>
       </div>
-      
-      <div class="mb-3 w-75">
-        <label for="password" class="form-label">Mot de passe</label>
-        <div class="input-group">
-          <span class="input-group-text"><i class="bi bi-lock"></i></span>
-          <input id="password" [(ngModel)]="form.password" name="password" type="password" class="form-control" placeholder="Mot de passe" required />
-        </div>
-      </div>
 
-      <!-- ✅ Téléphone & Sexe sur la même ligne -->
-      <div class="row w-75 mx-auto">
-        <div class="col-6 mb-3 ">
+      <!-- Téléphone & Sexe sur la même ligne -->
+      <div class="row">
+        <div class="col-6 mb-3">
           <label for="telephone" class="form-label">Téléphone</label>
-          <div class="input-group w-100">
+          <div class="input-group">
             <span class="input-group-text"><i class="bi bi-telephone"></i></span>
             <input id="telephone" [(ngModel)]="form.telephone" name="telephone" type="text" class="form-control" placeholder="Téléphone" required />
           </div>
@@ -46,7 +53,7 @@
 
         <div class="col-6 mb-3">
           <label for="sexe" class="form-label">Sexe</label>
-          <div class="input-group w-100">
+          <div class="input-group">
             <span class="input-group-text"><i class="bi bi-gender-ambiguous"></i></span>
             <select id="sexe" [(ngModel)]="form.sexe" name="sexe" class="form-select" required>
               <option value="HOMME">Homme</option>
@@ -55,13 +62,21 @@
           </div>
         </div>
       </div>
-      <!-- ✅ Fin de la ligne -->
 
-      
+      <!-- Mot de passe -->
+      <div class="mb-3 ">
+        <label for="password" class="form-label">Mot de passe</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-lock"></i></span>
+          <input id="password" [(ngModel)]="form.password" name="password" type="password" class="form-control" placeholder="Mot de passe" required />
+        </div>
+      </div>
 
+      <!-- ✅ Bouton d'inscription -->
       <button type="submit" class="btn btn-primary w-75">S'inscrire</button>
     </form>
 
+    <!-- ✅ Lien pour se connecter -->
     <p class="text-center mt-3">
       Vous avez déjà un compte ? <a href="/auth/client/login" class="text-primary">Connectez-vous ici</a>
     </p>
@@ -87,3 +102,6 @@
     </div>
   </div>
 </div>
+</div>
+
+

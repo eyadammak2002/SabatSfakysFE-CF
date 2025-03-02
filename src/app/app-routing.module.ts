@@ -12,6 +12,7 @@ import { RegisterComponent } from './authentication/register/register.component'
 import { AuthenticationComponent } from './authentication/authentification.component';
 import { PhotoComponent } from './photo/photo.component';
 import { CreatePhotoComponent } from './photo/create-photo/create-photo.component';
+import { FournisseurDashboardComponent } from './fournisseur-dashboard/fournisseur-dashboard.component';
 
 const routes: Routes = [
   { path: '', component: BannerComponent },
@@ -31,7 +32,14 @@ const routes: Routes = [
       { path: 'fournisseur/register', component: RegisterFournisseurComponent }
     ]
   },
-  { path: '**', redirectTo: '', pathMatch: 'full' }
+  { path: '**', redirectTo: '', pathMatch: 'full' },
+
+  { path: 'fournisseur', component: FournisseurDashboardComponent, children: [
+    { path: 'produits', component: ProduitsComponent },
+    //{ path: 'commandes', component: CommandesComponent },
+   // { path: 'profil', component: ProfilComponent },
+    //{ path: 'statistiques', component: StatistiquesComponent },
+  ]}
 ];
 
 @NgModule({

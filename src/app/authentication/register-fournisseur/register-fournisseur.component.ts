@@ -107,11 +107,11 @@ export class RegisterFournisseurComponent implements OnInit {
   }
 
   reloadPage(): void {
-    this.router.navigate(['/accueil']);
+    this.router.navigate(['/auth/fournisseur/login']);
   }
 
   goBack(): void {
-    this.router.navigate(['/auth/login/client']);
+    this.router.navigate(['/accueil']);
   }
 
   signInWithGoogle() {

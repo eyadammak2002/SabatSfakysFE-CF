@@ -48,6 +48,10 @@ export class LoginComponent {
     );
   }
 
+  goBack(): void {
+    this.router.navigate(['/accueil']);
+  }
+  
   signInWithGoogle() {
     console.log("Connexion avec Google");
   }

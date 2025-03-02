@@ -11,3 +11,25 @@
     color: #4c2b17;
     text-decoration: none;
 }
+
+.regis-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+      align-items: flex-start; /* Modifié de center à flex-start */
+    padding: 70px 20px; /* Ajoute du padding pour l'espace en haut */
+  }
+  
+  .card {
+    max-width: 600px;
+    padding: 50px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+
+  }
+  
+  .position-relative {
+    position: relative;
+  }

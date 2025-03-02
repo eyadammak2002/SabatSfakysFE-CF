@@ -23,12 +23,14 @@ import { LoginComponent } from './authentication/login/login.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { RouterModule } from '@angular/router';
+import { FournisseurDashboardComponent } from './fournisseur-dashboard/fournisseur-dashboard.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    FooterComponent 
+    FooterComponent,
+    FournisseurDashboardComponent 
   ],
   imports: [
     BrowserModule,

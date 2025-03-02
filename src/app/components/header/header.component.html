@@ -1,5 +1,5 @@
 <header class="header">
-    <div class="header-container ">
+    <div class="header-container">
         <div class="logo col-3">
             <img src="assets/logo.png" alt="SabatSfakys Logo" class="logo-img">
         </div>
@@ -14,7 +14,7 @@
             <a routerLink="/panier" class="icon-link"><i class="fas fa-shopping-cart"></i></a>
             <div class="dropdown">
                 <a routerLink="/profil" class="icon-link profile-icon"><i class="fas fa-user"></i></a>
-                <div class="dropdown-menu">
+                <div class="dropdown-menu" *ngIf="!isLoggedIn">
                     <a routerLink="/auth/client/login">Client</a>
                     <a routerLink="/auth/fournisseur/login">Boutique</a>
                 </div>
@@ -71,8 +71,20 @@
                 <a routerLink="/enfant/autre" ngbDropdownItem>Autre</a>
             </div>
         </div>
-        <a routerLink="/personnaliser">Personnaliser</a>
-        <a href class="nav-link" (click)="logout()" style="font-size: medium;"> <i class="feather icon-log-out" style="padding-right:15px; padding-left: 20px;font-size: medium;color:  #ebebeb;"></i><span style="color:  #ebebeb;">LogOut</span></a>
+
+        <div class="dropdown">
+            <a routerLink="/personnaliser">Personnaliser</a>
+        </div>
+        <!-- Affichage uniquement pour les fournisseurs -->
+        <a *ngIf="showFournisseurDashboard" routerLink="/fournisseur" class="nav-link">
+            <i class="fas fa-store"></i> Espace Fournisseur
+        </a>
+        <div class="dropdown">
+            <!-- LogOut uniquement si l'utilisateur est connecté -->
+            <a href class="nav-link" *ngIf="isLoggedIn" (click)="logout()" style="font-size: medium;   ">
+                <i class="feather icon-log-out" style="padding-right:15px; padding-left: 20px;font-size: medium;color:  #ebebeb;"></i>
+                <span style="font-size: 18px;color: #4c2b17;font-weight: bold;">LogOut</span>
+            </a>
+        </div>
     </nav>
-    
 </header>
