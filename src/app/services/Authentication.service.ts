@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Photo } from '../photo/Photo';
+import { TokenRequest } from '../authentication/TokenRequest';
 
 const AUTH_API = 'http://localhost:8080/api/auth/';
 
@@ -12,8 +13,14 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthenticationService {
   constructor(private http: HttpClient) { }
+
+  loginWithGoogle(tokenRequest:TokenRequest): Observable<any> {
+    console.log(tokenRequest,"token service");
+    return this.http.post(AUTH_API + 'google', 
+      tokenRequest, httpOptions);
+  }
 
   login(username: string, password: string): Observable<any> {
     return this.http.post(AUTH_API + 'signin', {
@@ -29,7 +36,8 @@ export class AuthService {
       password,
       adresse,
       telephone,
-      sexe
+      sexe,
+ 
     }, httpOptions);
   }
   registerFournisseur(username: string, email: string, password: string,adresse:string,logo:Photo,telephone:string,numeroIdentificationEntreprise:string ,materiauxUtilises:string,methodesProduction:string,programmeRecyclage:string,transportLogistiqueVerte:string,initiativesSociales:string,scoreEcologique:number): Observable<any> {
@@ -48,7 +56,8 @@ export class AuthService {
       initiativesSociales,
       scoreEcologique,
       statut: "EN_ATTENTE" , // ✅ Ajout du statut
-      role: "ROLE_FOURNISSEUR" 
+      role: "ROLE_FOURNISSEUR",
+   
     }, httpOptions);
   }
 }

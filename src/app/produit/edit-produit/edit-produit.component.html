@@ -1,0 +1,93 @@
+<div class="row">
+    <div class="col-md">
+      <h5 class="mt-5">Édition du Produit</h5>
+      <hr />
+      <form #userForm="ngForm" (ngSubmit)="update()" novalidate>
+
+          <div class="form-group">
+              <label>Référence</label>
+              <input type="text" class="form-control" [(ngModel)]="produitForm.ref" name="ref" required />
+            </div>
+  
+            <div class="form-group">
+              <label>Nom</label>
+              <input type="text" class="form-control" [(ngModel)]="produitForm.name" name="name" required />
+            </div>
+    
+            <div class="form-group">
+              <label>Description</label>
+              <textarea class="form-control" [(ngModel)]="produitForm.description" name="description" required></textarea>
+            </div>
+    
+            <div class="form-group">
+              <label>Quantité</label>
+              <input type="number" class="form-control" [(ngModel)]="produitForm.qte" name="qte" required />
+            </div>
+    
+            <div class="form-group">
+              <label>Prix Fournisseur</label>
+              <input type="number" class="form-control" [(ngModel)]="produitForm.prixFournisseur" name="prixFournisseur" required />
+            </div>
+  
+            <div class="form-group">
+              <label>Prix Vente</label>
+              <input type="number" class="form-control" [(ngModel)]="produitForm.prixVente" name="prixVente" required />
+            </div>
+          
+            <div class="form-group">
+              <label>Couleur</label>
+              <select class="form-control" [(ngModel)]="produitForm.couleur" name="couleur" required>
+                  <option value="NOIR">noir</option>
+                  <option value="MARRON">marron</option>
+                </select>
+            </div>
+          
+            <div class="form-group">
+              <label>Genre</label>
+              <select class="form-control" [(ngModel)]="produitForm.genre" name="genre" required>
+                <option value="HOMME">Homme</option>
+                <option value="FEMME">Femme</option>
+              </select>
+            </div>
+          
+            <div class="form-group">
+              <label>Tissu</label>
+              <select class="form-control" [(ngModel)]="produitForm.tissu" name="tissu" required>
+                  <option value="CUIR">cuire</option>
+                  <option value="DAIN">dain</option>
+                </select>
+            </div>
+  
+            <div class="form-group">
+              <label>Statut</label>
+              <select [(ngModel)]="produitForm.statut" class="form-control" name="statut">
+                <option value="EN_ATTENTE">En attente</option>
+                <option value="ACCEPTE">Accepté</option>
+                <option value="REFUSE">Refusé</option>
+              </select>
+            </div>
+
+            <!-- Gestion des photos 
+      <div class="form-group">
+          <label>Photos</label>
+          <div class="photo-select">
+            <div *ngFor="let option of allPhoto" class="photo-option">
+              <input type="checkbox" [id]="'photo' + option.id" [value]="option.id" name="photos"
+                     (change)="togglePhotoSelection(option)" [checked]="isPhotoSelected(option)" />
+              <label [for]="'photo' + option.id">
+                <img [src]="'http://localhost:8080/uploads/' + option.name" alt="{{ option.name }}" class="article-photo" />
+              </label>
+            </div>
+          </div>
+        </div>-->
+
+            
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <button type="button" (click)="redirectToProduits()" class="btn btn-light-primary centered-button">
+              <i class="feather icon-arrow-left"></i> Retour
+            </button>
+
+      </form>
+    </div>
+  </div>
+

@@ -13,6 +13,12 @@ import { AuthenticationComponent } from './authentication/authentification.compo
 import { PhotoComponent } from './photo/photo.component';
 import { CreatePhotoComponent } from './photo/create-photo/create-photo.component';
 import { FournisseurDashboardComponent } from './fournisseur-dashboard/fournisseur-dashboard.component';
+import { ArticleComponent } from './article/article.component';
+import { CreateArticleComponent } from './article/create-article/create-article.component';
+import { EditArticleComponent } from './article/edit-article/edit-article.component';
+import { CreateProduitComponent } from './produit/create-produit/create-produit.component';
+import { EditProduitComponent } from './produit/edit-produit/edit-produit.component';
+import { ProduitComponent } from './produit/produit.component';
 
 const routes: Routes = [
   { path: '', component: BannerComponent },
@@ -32,14 +38,16 @@ const routes: Routes = [
       { path: 'fournisseur/register', component: RegisterFournisseurComponent }
     ]
   },
-  { path: '**', redirectTo: '', pathMatch: 'full' },
 
-  { path: 'fournisseur', component: FournisseurDashboardComponent, children: [
-    { path: 'produits', component: ProduitsComponent },
-    //{ path: 'commandes', component: CommandesComponent },
-   // { path: 'profil', component: ProfilComponent },
-    //{ path: 'statistiques', component: StatistiquesComponent },
-  ]}
+
+  { path: 'article', component: ArticleComponent },
+  { path: 'createArticle', component: CreateArticleComponent },
+  { path: 'editArticle/:id', component: EditArticleComponent },
+
+  { path: 'produit', component: ProduitComponent },
+  { path: 'createProduit', component: CreateProduitComponent },
+  { path: 'editProduit/:id', component: EditProduitComponent },
+
 ];
 
 @NgModule({

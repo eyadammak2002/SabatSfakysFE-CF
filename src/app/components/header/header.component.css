@@ -4,7 +4,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 170px;
+    min-height: 170px;
     background: rgba(99, 165, 10, 0.5); /* Vert avec transparence */
     backdrop-filter: blur(10px);
     padding: 15px 20px;
@@ -13,7 +13,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-
 }
 
 /* Conteneur du haut */
@@ -23,15 +22,13 @@
     justify-content: space-between;
     align-items: center;
     max-width: 1200px;
+    padding-bottom: 40px; /* Assure que les liens ne soient pas chevauchés */
 }
 
 /* Logo */
 .logo {
     display: flex;
     align-items: center;
-    font-size: 24px;
-    font-weight: bold;
-    color: white;
 }
 .logo-img {
     height: 150px;
@@ -51,9 +48,7 @@
     display: flex;
     align-items: center;
     background-color: white;
-    justify-content: center; /* Centre le contenu de la barre de recherche */
-
-
+    justify-content: center;
 }
 .search-bar input {
     border: none;
@@ -61,8 +56,7 @@
     flex: 1;
     font-size: 16px;
     padding: 5px;
-    text-align: center; /* Centre le texte saisi */
-
+    text-align: center;
 }
 .search-bar i {
     margin-right: 10px;
@@ -75,7 +69,6 @@
     display: flex;
     align-items: center;
     padding: 10px;
-
     gap: 15px;
 }
 .icon-link {
@@ -83,22 +76,19 @@
     color: #4c2b17;
     text-decoration: none;
 }
-.signup-btn {
-    background: white;
-    color: #4c2b17;
-    padding: 8px 15px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: bold;
-}
 
+/* Navigation en bas du header */
 .nav-links {
     display: flex;
     justify-content: center;
     gap: 20px;
     width: 100%;
+    padding: 10px 0;
     position: absolute;
-    bottom: 10px;  /* Place les liens en bas du header */
+    bottom: 0; /* Place les liens en bas */
+    left: 0;
+    background: transparent; /* Maintient la transparence */
+   /* backdrop-filter: blur(10px);*/
 }
 
 .nav-links a {
@@ -109,9 +99,7 @@
     padding: 5px 10px;
 }
 
-
-
-
+/* Dropdown */
 .dropdown {
     position: relative;
     display: inline-block;
@@ -139,7 +127,278 @@
     background-color: #f1f1f1;
 }
 
-.affichageIcon {
-    display: none !important;
+/* Responsive */
+@media (max-width: 768px) {
+    .header {
+        height: auto;
+        flex-direction: column;
+    }
+
+    .nav-links {
+        position: relative;
+        bottom: unset;
+        padding-top: 10px;
+    }
+}
+
+
+.profile-icon {
+    display: none;  /* Masquer l'icône par défaut */
   }
   
+  .affichageIcon {
+    display: block;  /* Afficher l'icône lorsque l'utilisateur est connecté */
+  }
+  
+
+
+
+  
+
+  /* Header principal */
+.header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 170px;
+    background: rgba(99, 165, 10, 0.5); /* Vert avec transparence */
+    backdrop-filter: blur(10px);
+    padding: 15px 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Conteneur du haut */
+.header-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    padding-bottom: 40px; /* Assure que les liens ne soient pas chevauchés */
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+}
+.logo-img {
+    height: 150px;
+    margin-right: 150px;
+}
+
+/* Barre de recherche */
+.search-bar {
+    flex: 1;
+    max-width: 500px;
+    max-height: 40px;
+    padding: 10px 15px;
+    border: 2px solid #4c2b17;
+    border-radius: 25px;
+    font-size: 18px;
+    color: #4c2b17;
+    display: flex;
+    align-items: center;
+    background-color: white;
+    justify-content: center;
+}
+.search-bar input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 16px;
+    padding: 5px;
+    text-align: center;
+}
+.search-bar i {
+    margin-right: 10px;
+    color: #4c2b17;
+    font-size: 20px;
+}
+
+/* Icônes à droite */
+.icon-links {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    gap: 15px;
+}
+.icon-link {
+    font-size: 25px;
+    color: #4c2b17;
+    text-decoration: none;
+}
+
+/* Navigation en bas du header */
+.nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    padding: 10px 0;
+    position: absolute;
+    bottom: 0; /* Place les liens en bas */
+    left: 0;
+    background: transparent; /* Maintient la transparence */
+   /* backdrop-filter: blur(10px);*/
+}
+
+.nav-links a {
+    font-size: 18px;
+    color: #4c2b17;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 5px 10px;
+}
+
+/* Dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: white;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    min-width: 150px;
+    border-radius: 5px;
+    overflow: hidden;
+    padding: 5px 0;
+}
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+.dropdown-menu a {
+    color: #4c2b17;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+}
+.dropdown-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header {
+        height: auto;
+        flex-direction: column;
+    }
+
+    .nav-links {
+        position: relative;
+        bottom: unset;
+        padding-top: 10px;
+    }
+}
+
+
+.profile-icon {
+    display: none;  /* Masquer l'icône par défaut */
+  }
+  
+  .affichageIcon {
+    display: block;  /* Afficher l'icône lorsque l'utilisateur est connecté */
+  }
+  
+
+
+
+/* ✅ Style pour la Section Profil */
+.profile-section {
+    display: flex;
+    align-items: center;
+    background: rgba(99, 165, 10, 0.5); /* ✅ Couleur verte */
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+}
+
+.profile-icon-container {
+    margin-right: 15px;
+}
+
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name {
+    font-size: 15px;
+    font-weight: bold;
+    color: #3c2313;
+}
+
+.profile-email {
+    font-size: 14px;
+    color: #f3f3f3;
+}
+
+/* ✅ Style pour le menu dropdown */
+.dropdown-menu {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 12px;
+}
+
+.dropdown-menu a {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #4c2b17;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.dropdown-menu a:hover {
+    background: rgba(99, 165, 10, 0.2);
+    border-radius: 5px;
+}
+
+/* ✅ Style pour les icônes du menu */
+.menu-icon {
+    font-size: 18px;
+    margin-right: 12px;
+    color: rgba(99, 165, 10, 0.8); /* ✅ Couleur verte */
+}
+
+/* ✅ Style pour l'icône de l'espace fournisseur */
+.store-icon {
+    font-size: 22px;
+    margin-right: 12px;
+    color: rgba(99, 165, 10, 0.8); /* ✅ Couleur verte */
+}
+
+/* ✅ Style pour la section Profil dans le menu */
+.dropdown-profile {
+    padding: 12px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    background: rgba(99, 165, 10, 0.2);
+}
+
+/* ✅ Style pour le bouton Déconnexion */
+.logout-link {
+    font-size: 16px;
+    font-weight: bold;
+    color: #c0392b;
+    padding: 12px;
+    display: block;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.logout-link:hover {
+    background: rgba(99, 165, 10, 0.2);
+    border-radius: 5px;
+}

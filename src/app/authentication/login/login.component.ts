@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthenticationService } from 'src/app/services/Authentication.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
@@ -22,7 +22,7 @@ export class LoginComponent {
   errorMessage = '';
 
   constructor(
-    private authService: AuthService,
+    private authService: AuthenticationService,
     private tokenStorage: TokenStorageService,
     private router: Router
   ) {}

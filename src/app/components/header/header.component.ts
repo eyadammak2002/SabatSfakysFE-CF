@@ -10,13 +10,17 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
 
   export class HeaderComponent implements OnInit {
     showFournisseurDashboard = false;
+    showClientDashboard = false;
+    isLoggedIn: boolean = false;  // Par défaut, l'utilisateur n'est pas connecté
 
-    isLoggedIn = false;
+
     role: string = '';
     username?: string;
-    showAdminBoard = false;
-    showModeratorBoard = false;
-  
+    email?: string; 
+    fournisseurLogo: string = '';
+    numeroIdentificationEntreprise?: string; 
+
+
     constructor(private tokenStorageService: TokenStorageService, private router: Router,
       private renderer: Renderer2, private el: ElementRef
     ) {}
@@ -30,12 +34,20 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
     
         // ✅ Stocker directement le rôle comme une chaîne
         this.role = user.role || '';
+        this.username = user.username;
+        this.email = user.email || 'Non spécifié';
+        this.numeroIdentificationEntreprise = user.numeroIdentificationEntreprise || '';
+        
     
         console.log('Role:', this.role); // Vérifier que le rôle est bien récupéré
         console.log('Username:', user.username);
     
         // ✅ Vérifier si l'utilisateur est un fournisseur
         this.showFournisseurDashboard = this.role === 'ROLE_FOURNISSEUR';
+        // ✅ Vérifier si l'utilisateur est un fournisseur
+        this.showClientDashboard = this.role === 'ROLE_CLIENT';
+
+      
       }
     
       this.updateProfileIcon();
@@ -43,21 +55,54 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
     
 
     updateProfileIcon() {
+      console.log("isLoggedIn:", this.isLoggedIn);  // Vérifie la valeur de isLoggedIn dans la console
+    
       const profileIcon = this.el.nativeElement.querySelector('.profile-icon');
-      
-      // Ajouter ou supprimer la classe 'affichageIcon' en fonction de l'état de connexion
+      if (!profileIcon) {
+        console.log("Profil icon not found");  // Vérifie que l'élément existe dans le DOM
+        return;
+      }
+    
       if (this.isLoggedIn) {
-        this.renderer.addClass(profileIcon, 'affichageIcon');  // Afficher l'icône
-      } else {
+         // Afficher l'icône
+          console.log("Hiding profile icon");
         this.renderer.removeClass(profileIcon, 'affichageIcon');  // Cacher l'icône
+      } else {
+        console.log("Displaying profile icon");
+        this.renderer.addClass(profileIcon, 'affichageIcon'); 
+       
       }
     }
+    
+    
+    redirectToCreateArticle() {
+      this.router.navigate(['createArticle']);
+    }
   
+    redirectToArticle(): void {
+      this.router.navigate(['/article']); // Redirige vers la page de création d'article
+    }
+
+    redirectToCreateProduit() {
+      this.router.navigate(['createProduit']);
+    }
   
+    redirectToProduit(): void {
+      this.router.navigate(['/produit']); // Redirige vers la page de création d'article
+    }
+
     logout(): void {
       this.tokenStorageService.signOut();
       this.isLoggedIn = false;
-      this.router.navigate(['/auth/login']); // Redirige proprement après déconnexion
+      // Rediriger l'utilisateur vers la page d'accueil
+      this.router.navigate(['/accueil']).then(() => {
+        // Rafraîchir la page après la redirection
+        window.location.reload();
+      });    }
+
+         // Méthode pour encoder le nom du fichier
+    encodePhotoName(name: string): string {
+      return decodeURIComponent(name);
     }
   }
   

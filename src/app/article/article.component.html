@@ -1,0 +1,98 @@
+<div class="cardShadow">
+  
+  <!-- ✅ Bouton pour ajouter un nouvel article -->
+  <div class="button-container">
+    <button type="button" (click)="redirectToCreateArticle()" class="custom-button">
+      <i class="bi bi-plus-circle"></i> NOUVEL ARTICLE
+    </button>
+  </div>
+
+  <br>
+
+  <!-- ✅ Tableau amélioré avec un cadre -->
+  <div class="table-wrapper">
+    <div class="table-container">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Référence</th>
+            <th>Nom</th>
+            <th>description</th>
+            <th>Quantité</th>
+            <th>Prix Fournisseur</th>
+            <th>Prix Vente</th>
+            <th>Genre</th>
+            <th>Tissu</th>
+            <th>Couleur</th>
+            <th>Catégorie</th>
+            <th>Photos</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let article of allArticle">
+            <td class="bold-text">{{ article.id }}</td>
+            <td class="bold-text">{{ article.ref }}</td>
+            <td class="bold-text">{{ article.name }}</td>
+            <td class="bold-text">{{ article.description }}</td>
+            <td class="bold-text">{{ article.qte }}</td>
+            <td class="price-text bold-text">{{ article.prixFournisseur }} dt</td>
+            <td class="price-text bold-text">{{ article.prixVente }} dt</td>
+            <td class="bold-text">{{ article.genre }}</td>
+            <td>{{ article.tissu }}</td>
+            <td>{{ article.couleur }}</td>
+            
+            <!-- ✅ Affichage de la catégorie -->
+            <td>
+              <span class="category-badge" *ngIf="article.category">{{ article.category.name }}</span>
+              <span class="no-data" *ngIf="!article.category">Aucune</span>
+            </td>
+
+            <!-- ✅ Affichage des photos -->
+            <td>
+              <div class="photo-container">
+                <img *ngFor="let photo of article.photos" 
+                     [src]="photo.url" 
+                     [alt]="photo.name" 
+                     class="photo-thumbnail">
+              </div>
+              <div *ngIf="!article.photos || article.photos.length === 0">
+                <span class="no-data">Aucune photo</span>
+              </div>
+            </td>
+            <td>
+              <span 
+                [ngClass]="{
+                  'badge bg-warn': article.statut === 'EN_ATTENTE',
+                  'badge bg-succ': article.statut === 'ACCEPTE',
+                  'badge bg-dang': article.statut === 'REFUSE'
+                }">
+                {{ article.statut }}
+              </span>
+            </td>
+            <!-- ✅ Boutons d'actions -->
+            <td>
+              <div class="button-group">
+                <button (click)="navigateToEditArticle(article.id)" class="btn edit">
+                  Edit
+                </button>
+                
+                <!-- ✅ Vérification : Bouton Supprimer -->
+                <button (click)="delete(article)"  class="btn danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+                
+              </div>
+            </td>
+            <!-- ✅ Vérification : Bouton Modifier -->
+
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

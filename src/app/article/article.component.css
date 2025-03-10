@@ -1,0 +1,165 @@
+/* ✅ Conteneur principal avec ombre */
+.cardShadow {
+  padding: 20px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease-in-out;
+}
+
+.cardShadow:hover {
+  transform: scale(1.02);
+}
+
+/* ✅ Style du bouton d'ajout */
+.button-container {
+  text-align: center;
+}
+
+.custom-button {
+  background-color: rgba(99, 165, 10, 0.5);
+  color: aliceblue;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.custom-button:hover {
+  background-color: rgba(99, 165, 10, 0.5);
+}
+
+/* ✅ Cadre autour du tableau */
+.table-wrapper {
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+}
+
+/* ✅ Tableaux stylisés */
+.table-container {
+  overflow-x: auto;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.custom-table th {
+  background: rgba(99, 165, 10, 0.5);
+  color: #4c2b17;
+  padding: 12px;
+  text-align: left;
+  font-size: 16px;
+}
+
+.custom-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.custom-table tr:hover {
+  background: #f2f2f2;
+}
+
+/* ✅ Textes stylisés */
+.bold-text {
+  font-weight: bold;
+}
+
+.price-text {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.no-data {
+  color: #999;
+  font-style: italic;
+}
+
+/* ✅ Catégories */
+.category-badge {
+  background: #b7b6b6;
+  color: #4c2b17;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: bolder;
+}
+
+
+/* ✅ Photos */
+.photo-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.photo-thumbnail {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* ✅ Boutons d'actions */
+.button-group {
+  display: flex;
+  gap: 4px;
+}
+
+
+
+
+.edit{
+background-color: rgba(0, 17, 255, 0.694);
+color: #ffffff;
+}
+
+.edit:hover {
+  background-color: rgba(1, 16, 234, 0.328);
+  color: #ffffff;
+  }
+.danger{
+  background: #e52a15c2;
+  color: #ffffff;
+}
+.danger:hover {
+  background: #e52a157f;
+  color: #ffffff;
+}
+
+.bg-warn{
+  background: #eac82198;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: bolder;
+  color: #000000;
+}
+
+.bg-succ{
+  background: #1b803698;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: bolder;
+  color: #000000;
+}
+
+.bg-dang{
+  background: #e52a157f;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: bolder;
+  color: #000000;
+
+}

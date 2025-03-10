@@ -21,7 +21,7 @@ export const authInterceptor:HttpInterceptorFn =
     });*/
 
     
-    const authUrlPattern = /\/auth|\/client|\/fournisseur|\/register|\/login/i;
+    const authUrlPattern = /\/auth|\/register|\/article|\/login|\/oauth2|\/authorization|\/google/i;
     if (authUrlPattern.test(req.url)) {
       // If the URL matches authentication routes, proceed without modifying the request
       return next(req)

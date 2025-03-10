@@ -1,0 +1,64 @@
+<div class="cardShadow">
+      <div class="d-flex justify-content-center">
+        <button 
+          style="background-color: #334a63; color: aliceblue;" 
+          type="button" 
+          (click)="redirectToCreateProduit()" 
+          class="btn btn-light-primary centered-button">
+          <i class="feather icon-plus"></i> NOUVEAU PRODUIT
+        </button>
+      </div>
+  
+      <br><br>
+  
+      <div class="col-xl-12">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Référence</th>
+                <th>Nom</th>
+                <th>Quantité</th>
+                <th>Prix Fournisseur</th>
+                <th>Prix Vente</th>
+                <th>Genre</th>
+                <th>Tissu</th>
+                <th>Couleur</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let produit of allProduit">
+                <td>{{ produit.id }}</td>
+                <td>{{ produit.ref }}</td>
+                <td>{{ produit.name }}</td>
+                <td>{{ produit.qte }}</td>
+                <td>{{ produit.prixFournisseur }} dt</td>
+                <td>{{ produit.prixVente }} dt</td>
+                <td>{{ produit.genre }}</td>
+                <td>{{ produit.tissu }}</td>
+                <td>{{ produit.couleur }}</td>
+                <td>
+                  <span 
+                  [ngClass]="{
+                    'badge bg-warning': normalizeStatut(produit.statut) === 'EN_ATTENTE',
+                    'badge bg-success': normalizeStatut(produit.statut) === 'ACCEPTE',
+                    'badge bg-danger': normalizeStatut(produit.statut) === 'REFUSE'
+                  }">
+                  {{ normalizeStatut(produit.statut) }}
+                </span>
+              </td>
+                <td>
+                  <button (click)="navigateToEditProduit(produit.id)" class="btn btn-light-primary">Edit</button>
+                  <button (click)="delete(produit)" class="btn btn-light-danger"><i class="feather icon-trash"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>  
+
+  </div>
+  

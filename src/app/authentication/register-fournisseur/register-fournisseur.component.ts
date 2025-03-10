@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Photo } from 'src/app/photo/Photo';
 import { PhotoService } from 'src/app/photo/photo.service';
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthenticationService} from 'src/app/services/Authentication.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
@@ -45,7 +45,7 @@ export class RegisterFournisseurComponent implements OnInit {
   errorMessage = '';
   
   constructor(
-    private authService: AuthService, 
+    private authService: AuthenticationService, 
     private tokenStorage: TokenStorageService,
     private router: Router,
     private photoService: PhotoService
@@ -78,6 +78,7 @@ export class RegisterFournisseurComponent implements OnInit {
       transportLogistiqueVerte:this.form.transportLogistiqueVerte,
       initiativesSociales:this.form.initiativesSociales,
       scoreEcologique:this.form.scoreEcologique,
+
       
     };
 
@@ -124,8 +125,5 @@ export class RegisterFournisseurComponent implements OnInit {
     // Implémentation future
   }
 
-  signInWithGithub() {
-    console.log("Connexion avec GitHub");
-    // Implémentation future
-  }
+
 }

@@ -6,5 +6,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./fournisseur-dashboard.component.css']
 })
 export class FournisseurDashboardComponent {
-
+  constructor() {
+    console.log("✅ FournisseurDashboardComponent chargé !");
+  }
 }
+

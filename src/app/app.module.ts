@@ -24,13 +24,25 @@ import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { RouterModule } from '@angular/router';
 import { FournisseurDashboardComponent } from './fournisseur-dashboard/fournisseur-dashboard.component';
+import { ArticleComponent } from './article/article.component';
+import { EditArticleComponent } from './article/edit-article/edit-article.component';
+import { CreateArticleComponent } from './article/create-article/create-article.component';
+import { GoogleLoginProvider, GoogleSigninButtonModule, SocialAuthServiceConfig, SocialLoginModule } from '@abacritt/angularx-social-login';
+import { ProduitComponent } from './produit/produit.component';
+import { CreateProduitComponent } from './produit/create-produit/create-produit.component';
+import { EditProduitComponent } from './produit/edit-produit/edit-produit.component';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    FournisseurDashboardComponent 
+    FournisseurDashboardComponent,
+ 
+   
+    
+   
   ],
   imports: [
     BrowserModule,
@@ -50,9 +62,47 @@ import { FournisseurDashboardComponent } from './fournisseur-dashboard/fournisse
     ReactiveFormsModule,
     AuthenticationComponent,  // ✅ Importé ici, pas déclaré !
     LoginComponent ,
-    RouterModule,           // ✅ Importé ici aussi
+    RouterModule,  
+    ArticleComponent,
+    CreateArticleComponent,
+    EditArticleComponent ,
+    ProduitComponent,
+    CreateProduitComponent,
+    EditProduitComponent,
+    SocialLoginModule,
+    GoogleSigninButtonModule, // Assure-toi que ce module est importé si tu veux utiliser ce bouton
+    // ✅ Importé ici aussi
+    MatFormFieldModule,
+    BrowserAnimationsModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        lang: 'en',
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              '724978497148-q5485f8js8eiuqr374e11dsv7dqn6c67.apps.googleusercontent.com'
+            )
+          }/*,
+          {
+            id: FacebookLoginProvider.PROVIDER_ID,
+            provider: new FacebookLoginProvider('clientId')
+          }*/
+        ],
+        onError: (err) => {
+          console.error(err);
+        }
+      } as SocialAuthServiceConfig,
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
