@@ -22,6 +22,19 @@ export class AuthenticationService {
       tokenRequest, httpOptions);
   }
 
+  /*loginWithGoogle(tokenRequest: { token: string }): Observable<any> {
+    console.log("Envoi du token Google au backend :", tokenRequest);
+
+    return this.http.post<any>(AUTH_API + 'google', tokenRequest, httpOptions).pipe(
+      tap(response => {
+        console.log("Réponse du backend après authentification Google :", response);
+
+        if (response.accessToken) {
+          localStorage.setItem('token', response.accessToken); // 🔥 Stocke le bon JWT
+        }
+      })
+    );
+  }*/
   login(username: string, password: string): Observable<any> {
     return this.http.post(AUTH_API + 'signin', {
       username,

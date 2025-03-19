@@ -1,0 +1,129 @@
+<div class="container">
+    <h2 class="text-center">🛍️ Articles Disponibles</h2>
+    <hr>
+
+    <div class="row">
+        <div *ngFor="let article of allArticles" class="col-lg-2 col-md-3 col-sm-4 col-6">
+            <div class="card mb-3 shadow">
+                
+                <!-- ✅ Galerie d'images Bootstrap (sans autoplay) -->
+                <div class="carousel slide" [attr.id]="'carousel' + article.id" data-bs-interval="false">
+                    
+                    <div class="carousel-inner">
+                        <div *ngFor="let photo of article.photos; let first = first" 
+                             class="carousel-item" 
+                             [class.active]="first">
+                             <img [src]="photo.url" class="d-block w-100"
+                             alt="{{ article.name }}" 
+                             style="max-height: 30vh;width: 100%; object-fit: cover; background-color: #f8f9fa;">
+                             </div>
+                    </div>
+
+                    <!-- ✅ Mini-cercles indicateurs en dessous -->
+                    <div class="carousel-indicators position-relative mt-2">
+                        <button *ngFor="let photo of article.photos; let i = index" 
+                                type="button" 
+                                [attr.data-bs-target]="'#carousel' + article.id"
+                                [attr.data-bs-slide-to]="i"
+                                [class.active]="i === 0"
+                                aria-current="true"
+                                class="bg-dark rounded-circle"
+                                style="width: 7px; height: 7px; margin: 5px; border: none; opacity: 0.8;">
+                        </button>
+                    </div>
+
+                    <!-- ✅ Boutons de navigation -->
+                    <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+                <div class="card-body text-center ">
+                    <h4 class="card-title" style="font-weight: bold;">{{ article.name }}</h4>
+                    <p class="text-muted small" >{{ article.description | slice:0:50 }}...</p>
+                    <p  style="border-bottom: 2px solid black;"></p>
+
+                    <!-- ✅ Ligne avec Prix et Icône -->
+                    <div class="d-flex justify-content-between align-items-center">
+                       
+                        <strong style="color: red;">prix  {{ article.prixVente }}  DT</strong>
+                        <button class="btn" (click)="ouvrirModal(article)">
+                            <i class="fas fa-shopping-cart"></i>
+                          </button>
+                          
+                    </div> 
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ✅ Fenêtre modale pour choisir couleur et pointure -->
+<div *ngIf="selectedArticle" class="modal d-block" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Ajouter au Panier</h5>
+              <button type="button" class="close" (click)="selectedArticle = null">×</button>
+          </div>
+          <div class="modal-body text-center">
+
+              <!-- ✅ Carousel Bootstrap pour afficher les images -->
+              <div id="carouselArticle" class="carousel slide" data-bs-ride="carousel">
+                  <div class="carousel-inner">
+                      <div *ngFor="let photo of selectedArticle.photos; let i = index" 
+                           class="carousel-item" 
+                           [class.active]="i === 0">
+                          <img [src]="photo.url" class="d-block w-100 rounded" alt="Image article"
+                               style="max-height: 300px; object-fit: cover;">
+                      </div>
+                  </div>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#carouselArticle" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#carouselArticle" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  </button>
+              </div>
+
+              <p><strong>{{ selectedArticle.name }}</strong></p>
+
+           <!-- ✅ Sélection des couleurs (affichage en cercles) -->
+            <label class="d-block fw-bold">Couleur :</label>
+            <div class="d-flex justify-content-center gap-2">
+                <div *ngFor="let couleur of selectedArticle.couleurs" 
+                    class="color-circle"
+                    [style.backgroundColor]="couleur"
+                    [class.selected]="selectedCouleur === couleur"
+                    (click)="selectCouleur(couleur)">
+                </div>
+            </div>
+
+
+
+              <!-- ✅ Sélection des pointures -->
+              <label class="d-block fw-bold mt-3">Pointure :</label>
+              <div class="d-flex justify-content-center gap-2">
+                  <button *ngFor="let pointure of selectedArticle.pointures"
+                          class="btn btn-outline-secondary px-3"
+                          [class.active]="selectedPointure === pointure"
+                          (click)="selectedPointure = pointure">
+                      {{ pointure }}
+                  </button>
+              </div>
+          </div>
+
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="selectedArticle = null">Annuler</button>
+              <button type="button" class="btn btn-primary" 
+                      [disabled]="!selectedCouleur || !selectedPointure"
+                      (click)="confirmerAjoutAuPanier()">Ajouter</button>
+          </div>
+      </div>
+  </div>
+</div>

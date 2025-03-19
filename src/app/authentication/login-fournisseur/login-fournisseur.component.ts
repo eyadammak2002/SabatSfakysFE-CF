@@ -32,21 +32,28 @@ export class LoginFournisseurComponent {
       this.errorMessage = "Veuillez remplir tous les champs.";
       return;
     }
-
+  
     this.authService.login(this.form.username, this.form.password).subscribe(
       data => {
         console.log('Connexion réussie', data);
         this.tokenStorage.saveToken(data.accessToken);
         this.tokenStorage.saveUser(data);
         this.isLoggedIn = true;
+        localStorage.setItem("token", data.accessToken);
         this.router.navigate(['/accueil']);
       },
       err => {
         console.error('Erreur de connexion', err);
-        this.errorMessage = "Nom d'utilisateur ou mot de passe incorrect";
+  
+        if (err.status === 403 && err.error.message) {
+          this.errorMessage = err.error.message; // Affiche le message du backend
+        } else {
+          this.errorMessage = "Nom d'utilisateur ou mot de passe incorrect.";
+        }
       }
     );
   }
+  
 
   goBack(): void {
     this.router.navigate(['/accueil']);

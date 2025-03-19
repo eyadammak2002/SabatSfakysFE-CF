@@ -54,15 +54,25 @@
               <input type="number" class="form-control" [(ngModel)]="articleForm.prixVente" name="prixVente" required />
             </div>
           </div>
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="font-weight-bold">Couleurs</label>
+          <div class="d-flex flex-wrap">
+            <label *ngFor="let couleur of couleursDisponibles" class="m-1">
+              <input type="checkbox" [value]="couleur" (change)="toggleCouleur(couleur)">
+              {{ couleur }}
+            </label>
+          </div>
+        </div>
   
-          <div class="col-md-6">
-            <div class="form-group mb-4">
-              <label class="font-weight-bold">Couleur</label>
-              <select class="form-control" [(ngModel)]="articleForm.couleur" name="couleur" required>
-                <option value="NOIR">Noir</option>
-                <option value="MARRON">Marron</option>
-              </select>
-            </div>
+        <div class="form-group mb-4">
+          <label class="font-weight-bold">Pointures</label>
+          <div class="d-flex flex-wrap">
+            <label *ngFor="let pointure of pointuresDisponibles" class="m-1">
+              <input type="checkbox" [value]="pointure" (change)="togglePointure(pointure)">
+              {{ pointure }}
+            </label>
           </div>
         </div>
   

@@ -1,0 +1,16 @@
+<div class="commande-details">
+    <h2>Détails de la commande</h2>
+  
+    <p><strong>Adresse de Livraison:</strong> {{ panier.adresseLivraison }}</p>
+    <p><strong>Total de la commande:</strong> {{ panier.total }} €</p>
+  
+    <h3>Articles Commandés:</h3>
+    <ul>
+      <li *ngFor="let ligne of panier.lignesPanier">
+        {{ ligne.article.name }} - {{ ligne.quantite }} x {{ ligne.prixUnitaire }} €
+      </li>
+    </ul>
+  
+    <button (click)="validerCommande()">Valider la commande</button>
+  </div>
+  

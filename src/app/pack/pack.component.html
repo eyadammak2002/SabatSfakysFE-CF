@@ -1,8 +1,39 @@
-<div>
-    <h2>Liste des packs</h2>
-    <ul>
-      <li *ngFor="let pack of packs">
-        {{ pack.title }}
-      </li>
-    </ul>
-  </div>
+<div class="container mt-4">
+    <div class="d-flex justify-content-center mb-3">
+      <button class="btn btn-primary" (click)="redirectToCreatePack()">
+        <i class="fas fa-plus"></i> Créer un Pack
+      </button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom du Pack</th>
+            <th>Articles</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pack of allPacks">
+            <td>{{ pack.id }}</td>
+            <td>{{ pack.name }}</td>
+            <td>
+              <span *ngFor="let article of pack.articles" class="badge bg-info me-1">
+                {{ article.name }}
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-warning me-2" (click)="navigateToEditPack(pack.id!)">
+                <i class="fas fa-edit"></i> Modifier
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="delete(pack)">
+                <i class="fas fa-trash"></i> Supprimer
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+</div>

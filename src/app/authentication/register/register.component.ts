@@ -58,29 +58,45 @@ export class RegisterComponent implements OnInit {
   }
   
 
- /* signinGoogle():void{
+signinGoogle():void{
     this.tokenRequest.token=this.accessToken;
     console.log(this.tokenRequest);
     this.authService.loginWithGoogle(this.tokenRequest).subscribe(
       data => {
+        // ✅ Save user details
+        const user = {
+          id: data.id,
+          username: data.username,
+          email: data.email,
+          role: data.role,
+        };
+  
+        // ✅ Save token & user details in storage
+        this.tokenStorage.saveToken(data.accessToken);
+        this.tokenStorage.saveUser(user);
+  
+        // ✅ Update `isLoggedIn` status
+        this.isLoggedIn = !!this.tokenStorage.getToken();
+        console.log("✅ isLoggedIn after Google Login:", this.isLoggedIn);
+        
         console.log(data);
         this.router.navigate(['/accueil']);
       })
-  }*/
-      signinGoogle(): void {
+  }
+      /*  signinGoogle(): void {
         this.tokenRequest.token = this.accessToken;
-        console.log("🔄 Envoi du token Google à l'API...", this.tokenRequest);
+        console.log("🔄 Sending Google token to API...", this.tokenRequest);
       
         this.authService.loginWithGoogle(this.tokenRequest).subscribe(
           data => {
-            console.log("Réponse de l'API après connexion Google:", data);
+            console.log("✅ API Response:", data);
       
             if (!data || !data.accessToken) {
-              console.error("❌ L'API ne retourne pas un `accessToken` valide !");
+              console.error("❌ API did not return a valid `accessToken`!");
               return;
             }
       
-            //Corrige l'accès aux données utilisateur
+            // ✅ Save user details
             const user = {
               id: data.id,
               username: data.username,
@@ -88,22 +104,30 @@ export class RegisterComponent implements OnInit {
               role: data.role,
             };
       
-            //Sauvegarde le token & utilisateur
+            // ✅ Save token & user details in storage
             this.tokenStorage.saveToken(data.accessToken);
             this.tokenStorage.saveUser(user);
       
-            // Mise à jour de `isLoggedIn`
+            // ✅ Update `isLoggedIn` status
             this.isLoggedIn = !!this.tokenStorage.getToken();
-            console.log("isLoggedIn après Google Login:", this.isLoggedIn);
+            console.log("✅ isLoggedIn after Google Login:", this.isLoggedIn);
       
-            // Redirection vers la page d'accueil
+            // ✅ Redirect to homepage
             this.router.navigate(['/accueil']);
           },
           err => {
-            console.error("❌ Erreur lors de la connexion Google:", err);
+            console.error("❌ Google Login Error:", err);
+      
+            // ✅ Handle user not found scenario
+            if (err.status === 404) {
+              alert("⚠️ No account found with this email. Please register first.");
+            } else {
+              alert("❌ An error occurred during Google login.");
+            }
           }
         );
-      }
+      }*/
+      
       
       
 

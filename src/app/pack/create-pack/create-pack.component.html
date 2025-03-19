@@ -1,0 +1,41 @@
+<div class="container mt-4">
+    <form #packForm="ngForm" (ngSubmit)="savePack()">
+      
+       
+          
+          <div class="form-group row">
+            <label for="NameCategory" class="col-sm-3 col-form-label">NOM</label>
+            <div class="col-sm-9">
+              <input type="text" #name="ngModel" [class.is-invalid]="name.invalid && name.touched"  class="form-control" id="NameCategory" [(ngModel)]="packForm.name" name="name" required />
+              <small [class.d-none]="name.valid||name.untouched" class="text-danger">Veuillez entrer min 3 caractéres</small>
+    
+            </div>
+          </div>
+
+      <!-- Sélection des Articles -->
+      <div class="form-group">
+        <label><i class="fas fa-list"></i> Sélectionner les Articles</label>
+        <div class="article-select">
+          <div *ngFor="let article of allArticles" class="form-check">
+            <input type="checkbox" [id]="'article' + article.id" [value]="article.id" 
+                   name="articles" (change)="toggleArticleSelection(article)" class="form-check-input">
+            <label [for]="'article' + article.id" class="form-check-label">
+              {{ article.name }}
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Boutons -->
+      <div class="d-flex justify-content-between mt-4">
+        <button type="button" class="btn btn-secondary" (click)="redirectToPacks()">
+          <i class="fas fa-arrow-left"></i> Retour
+        </button>
+        <button type="submit" class="btn btn-success">
+          <i class="fas fa-save"></i> Enregistrer
+        </button>
+      </div>
+
+    </form>
+ 
+</div>

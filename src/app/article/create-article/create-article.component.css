@@ -21,6 +21,7 @@
 }
 
 .form-control, select {
+  
     border-radius: 5px;
     font-size: 14px;
     padding: 8px;

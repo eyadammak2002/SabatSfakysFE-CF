@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { BannerComponent } from './components/banner/banner.component';
 import { CategoriesComponent } from './components/categories/categories.component';
-import { ProduitsComponent } from './components/produits/produits.component';
 import { AboutComponent } from './components/about/about.component';
 import { LoginFournisseurComponent } from './authentication/login-fournisseur/login-fournisseur.component';
 import { LoginComponent } from './authentication/login/login.component';
@@ -12,19 +11,20 @@ import { RegisterComponent } from './authentication/register/register.component'
 import { AuthenticationComponent } from './authentication/authentification.component';
 import { PhotoComponent } from './photo/photo.component';
 import { CreatePhotoComponent } from './photo/create-photo/create-photo.component';
-import { FournisseurDashboardComponent } from './fournisseur-dashboard/fournisseur-dashboard.component';
 import { ArticleComponent } from './article/article.component';
 import { CreateArticleComponent } from './article/create-article/create-article.component';
 import { EditArticleComponent } from './article/edit-article/edit-article.component';
-import { CreateProduitComponent } from './produit/create-produit/create-produit.component';
-import { EditProduitComponent } from './produit/edit-produit/edit-produit.component';
-import { ProduitComponent } from './produit/produit.component';
+import { CreatePackComponent } from './pack/create-pack/create-pack.component';
+import { EditPackComponent } from './pack/edit-pack/edit-pack.component';
+import { PackComponent } from './pack/pack.component';
+import { PanierComponent } from './panier/panier.component';
+import { ListArticleComponent } from './article/list-article/list-article.component';
+import { CommandeComponent } from './commande/commande.component';
 
 const routes: Routes = [
-  { path: '', component: BannerComponent },
-  { path: 'accueil', component: BannerComponent },
+  { path: '', component: ListArticleComponent },
+  { path: 'banner', component: BannerComponent },
   { path: 'categories', component: CategoriesComponent },
-  { path: 'produits', component: ProduitsComponent },
   { path: 'about', component: AboutComponent },
   { path: 'photo', component: PhotoComponent },
   { path: 'createPhoto', component: CreatePhotoComponent },
@@ -41,12 +41,16 @@ const routes: Routes = [
 
 
   { path: 'article', component: ArticleComponent },
+  { path: 'accueil', component: ListArticleComponent },
   { path: 'createArticle', component: CreateArticleComponent },
   { path: 'editArticle/:id', component: EditArticleComponent },
 
-  { path: 'produit', component: ProduitComponent },
-  { path: 'createProduit', component: CreateProduitComponent },
-  { path: 'editProduit/:id', component: EditProduitComponent },
+  { path: 'pack', component: PackComponent },
+  { path: 'createPack', component: CreatePackComponent },
+  { path: 'editPack/:id', component: EditPackComponent },
+
+  { path: 'panier', component: PanierComponent },
+  { path: 'commande', component: CommandeComponent },
 
 ];
 

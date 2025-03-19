@@ -39,6 +39,7 @@ export class LoginComponent {
         this.tokenStorage.saveToken(data.accessToken);
         this.tokenStorage.saveUser(data);
         this.isLoggedIn = true;
+        localStorage.setItem("token",data.accessToken);
         this.router.navigate(['/accueil']);
       },
       err => {

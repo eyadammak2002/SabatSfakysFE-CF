@@ -137,18 +137,12 @@
 
       <!-- ✅ Lien pour se connecter -->
       <p class="text-center mt-3">
-        Vous avez déjà un compte ? <a href="/auth/client/login" class="text-primary">Connectez-vous ici</a>
+        Vous avez déjà un compte ? <a href="/auth/fournisseur/login" class="text-primary">Connectez-vous ici</a>
       </p>
 
-      <div class="mt-5 text-center">
-        <button class="btn btn-outline-danger w-75 mb-2" (click)="signInWithGoogle()">
-          <i class="bi bi-google"></i> S'inscrire avec Google
-        </button>
-        <button class="btn btn-outline-primary w-75 mb-2" (click)="signInWithFacebook()">
-          <i class="bi bi-facebook"></i> S'inscrire avec Facebook
-        </button>
-       
-      </div>
+     
+
+      
 
       <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
         {{ errorMessage }}

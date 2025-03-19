@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FruitsModule } from './fruits/fruits.module';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { CategoryModule } from './category/category.module';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -15,7 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTableModule } from '@angular/material/table';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // ✅ Standalone Components doivent être importés, pas déclarés
 import { AuthenticationComponent } from './authentication/authentification.component';
@@ -32,6 +32,12 @@ import { ProduitComponent } from './produit/produit.component';
 import { CreateProduitComponent } from './produit/create-produit/create-produit.component';
 import { EditProduitComponent } from './produit/edit-produit/edit-produit.component';
 import { MatInputModule } from '@angular/material/input';
+import { EditPackComponent } from './pack/edit-pack/edit-pack.component';
+import { CreatePackComponent } from './pack/create-pack/create-pack.component';
+import { authInterceptor } from './auth.interceptor';
+import { PanierComponent } from './panier/panier.component';
+import { ListArticleComponent } from './article/list-article/list-article.component';
+import { CommandeComponent } from './commande/commande.component';
 
 @NgModule({
   declarations: [
@@ -39,12 +45,18 @@ import { MatInputModule } from '@angular/material/input';
     HeaderComponent,
     FooterComponent,
     FournisseurDashboardComponent,
+    PanierComponent,
+    ListArticleComponent,
+    CommandeComponent,
+
+  
  
    
     
    
   ],
   imports: [
+    FormsModule,
     BrowserModule,
     AppRoutingModule,
     FruitsModule,
@@ -77,7 +89,10 @@ import { MatInputModule } from '@angular/material/input';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    EditPackComponent,
+    CreatePackComponent,
+    
   ],
   providers: [
     {
@@ -101,7 +116,9 @@ import { MatInputModule } from '@angular/material/input';
           console.error(err);
         }
       } as SocialAuthServiceConfig,
-    }
+    },
+    provideHttpClient((withInterceptors([authInterceptor]))) ,
+
   ],
   bootstrap: [AppComponent]
 })

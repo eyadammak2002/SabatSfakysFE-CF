@@ -83,12 +83,12 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
       this.router.navigate(['/article']); // Redirige vers la page de création d'article
     }
 
-    redirectToCreateProduit() {
-      this.router.navigate(['createProduit']);
+    redirectToCreatePack() {
+      this.router.navigate(['/createPack']);
     }
   
-    redirectToProduit(): void {
-      this.router.navigate(['/produit']); // Redirige vers la page de création d'article
+    redirectToPack(): void {
+      this.router.navigate(['/pack']); // Redirige vers la page de création d'article
     }
 
     logout(): void {
@@ -98,7 +98,8 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
       this.router.navigate(['/accueil']).then(() => {
         // Rafraîchir la page après la redirection
         window.location.reload();
-      });    }
+      });    
+    }
 
          // Méthode pour encoder le nom du fichier
     encodePhotoName(name: string): string {

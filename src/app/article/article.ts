@@ -1,4 +1,5 @@
 import { Category } from "../category/category";
+import { Fournisseur } from "../pack/Fournisseur";
 import { Photo } from "../photo/Photo";
 
 
@@ -10,10 +11,12 @@ export interface Article {
   qte: number;
   prixFournisseur: number;
   prixVente: number;
-  couleur: string;
+  couleurs: string[];  // ✅ Liste des couleurs sélectionnées
+  pointures: string[]; 
   genre: string;
   tissu: string;
   statut: 'EN_ATTENTE' | 'ACCEPTE' | 'REFUSE';
-  category: Category;
+  category: Category | null;
   photos: Photo[]; 
+  fournisseur: Fournisseur; 
 }

@@ -38,11 +38,11 @@
         <span class="text-bold">Espace Fournisseur</span>
     </a>
 
-    <div ngbDropdownMenu class="dropdown-menu">
+    <div ngbDropdownMenu class="dropdown-menu custom-dropdown-menu">
         <a (click)="redirectToCreateArticle()" ngbDropdownItem><i class="fas fa-plus-circle menu-icon"></i> Déposer Article</a>
-        <a (click)="redirectToArticle()" ngbDropdownItem><i class="fas fa-box menu-icon"></i> Articles</a>
-        <a (click)="redirectToCreateProduit()" ngbDropdownItem><i class="fas fa-plus-square menu-icon"></i> Déposer Produit</a>
-        <a (click)="redirectToProduit()" ngbDropdownItem><i class="fas fa-cubes menu-icon"></i> Produits</a>
+        <a (click)="redirectToArticle()" ngbDropdownItem><i class="fas fa-box menu-icon"></i> tous les Articles</a>       
+        <a (click)="redirectToCreatePack()" ngbDropdownItem>Déposer Pack</a>
+        <a (click)="redirectToPack()" ngbDropdownItem>tous les Packs</a>   
         <a routerLink="/fournisseur/commandes" ngbDropdownItem><i class="fas fa-shopping-cart menu-icon"></i> Commandes</a>
         <a routerLink="/fournisseur/notifications" ngbDropdownItem><i class="fas fa-bell menu-icon"></i> Notifications</a>
         
@@ -64,11 +64,7 @@
     </div>
 </div>
 
-
-    
-
-
-    <div ngbDropdown class="dropdown">
+<div ngbDropdown class="dropdown">
         <a *ngIf="showClientDashboard" routerLink="/fournisseur" ngbDropdownToggle class="nav-link">
             <i class="fas fa-store" style="padding-right:15px; padding-left: 20px;font-size: medium;color:  #ebebeb;"></i>
             <span style="font-size: 18px;color: #4c2b17;font-weight: bold;">Espace Client</span>
@@ -90,10 +86,9 @@
                 <span style="font-size: 18px; color: #4c2b17; font-weight: bold;">LogOut</span>
             </a>
         </div>
-        
-    </div>
+        </div>
 
-    </div>
+ </div>
 
     <!-- Menu de navigation (Catégories) -->
     <nav class="nav-links">
