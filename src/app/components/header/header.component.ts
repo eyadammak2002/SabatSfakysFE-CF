@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
+import { NotificationService } from 'src/app/services/notification.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
@@ -21,11 +22,19 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
     numeroIdentificationEntreprise?: string; 
 
 
-    constructor(private tokenStorageService: TokenStorageService, private router: Router,
-      private renderer: Renderer2, private el: ElementRef
-    ) {}
+    constructor(
+      private tokenStorageService: TokenStorageService,
+      private router: Router,
+      public notificationService:NotificationService,
+      private renderer: Renderer2,
+      private el: ElementRef
+    ) {
+      console.log("notification service du header constructeur",notificationService.notification);
+    }
   
     ngOnInit(): void {
+      console.log("notification service du header ngOninit",this.notificationService.notification);
+
       this.isLoggedIn = !!this.tokenStorageService.getToken();
     
       if (this.isLoggedIn) {

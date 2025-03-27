@@ -8,6 +8,7 @@ import { Article } from 'src/app/article/article';
 import { ArticleService } from 'src/app/article/article.service';
 import { Category } from 'src/app/category/category';
 import { CategoryService } from 'src/app/category/category.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-edit-article',
@@ -33,17 +34,22 @@ export class EditArticleComponent {
     ref: '',
     name: '',
     description: '',
-    qte: 0,
+    stocks: [
+      {
+        id: 0,
+        couleur: { id: 0, nom: '' },
+        pointure: { id: 0, taille:0 },
+        quantite: 0
+      }
+    ],
     prixFournisseur: 0,
     prixVente: 0,
-    couleurs: [],
-    pointures: [],
     genre: 'FEMME',
     tissu: 'CUIR',
     statut: 'EN_ATTENTE',
     category: { id: 0, name: '', description: '' },
     photos: [],
-    fournisseur: {  // Initialisation de fournisseur avec les propriétés de l'interface
+    fournisseur: {
       id: 0,
       nom: '',
       email: '',
@@ -51,9 +57,10 @@ export class EditArticleComponent {
       telephone: '',
       motDePasse: '',
       statut: 'EN_ATTENTE',
-      logo: { id: 0,name:'', url: '' }  // Remplacez par un objet Photo valide si nécessaire
+      logo: { id: 0, name: '', url: '' } // Correctement défini selon `Photo`
     }
   };
+  
 
   constructor(
     private articleService: ArticleService,
@@ -61,6 +68,7 @@ export class EditArticleComponent {
     private router: Router,
     private route: ActivatedRoute,
     private categoryService: CategoryService,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -71,6 +79,13 @@ export class EditArticleComponent {
 
   
     
+  }
+
+  getArticle(){
+    this.articleService.notifierArticle("l\'article à été modifier").subscribe(()=>{
+      console.log("Notification envoyer")
+      console.log(this.notificationService.notification)
+    });
   }
 
   loadArticle(): void {
@@ -109,17 +124,6 @@ export class EditArticleComponent {
     });
   }
 
-  toggleSelection(value: string, type: 'color' | 'size'): void {
-    if (type === 'color') {
-      this.articleForm.couleurs = this.articleForm.couleurs.includes(value) ?
-        this.articleForm.couleurs.filter(c => c !== value) :
-        [...this.articleForm.couleurs, value];
-    } else {
-      this.articleForm.pointures = this.articleForm.pointures.includes(value) ?
-        this.articleForm.pointures.filter(p => p !== value) :
-        [...this.articleForm.pointures, value];
-    }
-  }
 
   // Fonction pour gérer la sélection des photos
   togglePhotoSelection(photo: Photo): void {

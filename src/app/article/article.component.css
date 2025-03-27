@@ -163,3 +163,21 @@ color: #ffffff;
   color: #000000;
 
 }
+
+
+.stock-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 5px;
+}
+
+.stock-table th, .stock-table td {
+  border: 1px solid #ddd;
+  padding: 5px;
+  text-align: center;
+}
+
+.stock-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}

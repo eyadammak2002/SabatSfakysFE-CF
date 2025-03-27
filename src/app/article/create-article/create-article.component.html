@@ -1,139 +1,135 @@
 <div class="container mt-4">
-    <div class="card p-4 shadow-lg">
-      <!-- Icône en haut -->
-      <div class="text-center mb-3">
-        <i class="fas fa-shoe-prints fa-3x " style="color:#3c2313;"></i> <!-- Icône chaussure -->
-        
-        <h5 class=" mt-2" style="color: #3c2313;font-size: larger;">Créer un Article</h5>
-      </div>
-      <hr />
-  
-      <form #userForm="ngForm" (ngSubmit)="save()" novalidate>
-  
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group mb-4">
-              <label class="font-weight-bold">Référence</label>
-              <input type="text" class="form-control" [(ngModel)]="articleForm.ref" name="ref" required />
-            </div>
-          </div>
-  
-          <div class="col-md-6">
-            <div class="form-group mb-4">
-              <label class="font-weight-bold">Nom</label>
-              <input type="text" class="form-control" [(ngModel)]="articleForm.name" name="name" required />
-            </div>
-          </div>
-        </div>
-  
-        <div class="form-group mb-4">
-          <label class="font-weight-bold">Description</label>
-          <textarea class="form-control" [(ngModel)]="articleForm.description" name="description" required></textarea>
-        </div>
-  
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group mb-4">
-              <label class="font-weight-bold">Quantité</label>
-              <input type="number" class="form-control" [(ngModel)]="articleForm.qte" name="qte" required />
-            </div>
-          </div>
-  
-          <div class="col-md-6">
-            <div class="form-group mb-4">
-              <label class="font-weight-bold">Prix Fournisseur</label>
-              <input type="number" class="form-control" [(ngModel)]="articleForm.prixFournisseur" name="prixFournisseur" required />
-            </div>
-          </div>
-        </div>
-  
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group mb-4">
-              <label class="font-weight-bold">Prix Vente</label>
-              <input type="number" class="form-control" [(ngModel)]="articleForm.prixVente" name="prixVente" required />
-            </div>
+  <div class="card p-4 shadow-lg">
+    <!-- Icône en haut -->
+    <div class="text-center mb-3">
+      <i class="fas fa-shoe-prints fa-3x" style="color:#3c2313;"></i> <!-- Icône chaussure -->
+      <h5 class="mt-2" style="color: #3c2313; font-size: larger;">Créer un Article</h5>
+    </div>
+    <hr />
+
+    <form #userForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group mb-4">
+            <label class="font-weight-bold">Référence</label>
+            <input type="text" class="form-control" [(ngModel)]="articleForm.ref" name="ref" required />
+            <div *ngIf="userForm.submitted && !articleForm.ref" class="text-danger">Référence est requise.</div>
           </div>
         </div>
 
+        <div class="col-md-6">
+          <div class="form-group mb-4">
+            <label class="font-weight-bold">Nom</label>
+            <input type="text" class="form-control" [(ngModel)]="articleForm.name" name="name" required />
+            <div *ngIf="userForm.submitted && !articleForm.name" class="text-danger">Nom est requis.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group mb-4">
+        <label class="font-weight-bold">Description</label>
+        <textarea class="form-control" [(ngModel)]="articleForm.description" name="description" required></textarea>
+        <div *ngIf="userForm.submitted && !articleForm.description" class="text-danger">Description est requise.</div>
+      </div>
+
+
+
+      <div>
+        <label for="couleur">Couleur</label>
+        <select id="couleur" [(ngModel)]="selectedCouleur" name="couleur">
+          <option *ngFor="let couleur of couleursDisponibles" [ngValue]="couleur">{{ couleur.nom }}</option>
+        </select>
+      </div>
+      
+      <div>
+        <label for="pointure">Pointure</label>
+        <select id="pointure" [(ngModel)]="selectedPointure" name="pointure">
+          <option *ngFor="let pointure of pointuresDisponibles" [ngValue]="pointure">{{ pointure.taille }}</option>
+        </select>
+      </div>
+      
+
+      <div class="form-group">
+        <label for="quantite">Quantité</label>
+        <input type="number" id="quantite" class="form-control" [(ngModel)]="quantite" name="quantite" required />
+      </div>
+
+      <button type="button" class="btn btn-secondary" (click)="generateStocks()">Ajouter Stock</button>
+
+      <div *ngFor="let stock of articleStocks">
+        <p>Stock ajouté - Couleur: {{ stock.couleur.nom }} - Pointure: {{ stock.pointure.taille }} - Quantité: {{ stock.quantite }}</p>
+      </div>
+
+      <div class="col-md-6">
         <div class="form-group mb-4">
-          <label class="font-weight-bold">Couleurs</label>
-          <div class="d-flex flex-wrap">
-            <label *ngFor="let couleur of couleursDisponibles" class="m-1">
-              <input type="checkbox" [value]="couleur" (change)="toggleCouleur(couleur)">
-              {{ couleur }}
+          <label class="font-weight-bold">Prix Fournisseur</label>
+          <input type="number" class="form-control" [(ngModel)]="articleForm.prixFournisseur" name="prixFournisseur" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group mb-4">
+            <label class="font-weight-bold">Prix Vente</label>
+            <input type="number" class="form-control" [(ngModel)]="articleForm.prixVente" name="prixVente" required />
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group mb-4">
+            <label class="font-weight-bold">Genre</label>
+            <select class="form-control" [(ngModel)]="articleForm.genre" name="genre" required>
+              <option value="HOMME">Homme</option>
+              <option value="FEMME">Femme</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group mb-4">
+            <label class="font-weight-bold">Tissu</label>
+            <select class="form-control" [(ngModel)]="articleForm.tissu" name="tissu" required>
+              <option value="CUIR">Cuir</option>
+              <option value="DAIN">Dain</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="category">Catégorie</label>
+        <select class="form-control" id="category" [(ngModel)]="articleForm.category" name="category" required>
+          <option *ngFor="let cat of allCategory" [ngValue]="cat">{{ cat.name }}</option>
+        </select>
+      </div>
+
+      <!-- Sélection des photos -->
+      <div class="form-group">
+        <label>Photos</label>
+        <div class="photo-select">
+          <div *ngFor="let option of allPhoto" class="photo-option">
+            <input type="checkbox" [id]="'photo' + option.id" [value]="option.id" name="photos"
+                   (change)="togglePhotoSelection(option)" />
+            <label [for]="'photo' + option.id">
+              <img [src]="'http://localhost:8080/uploads/' + option.name" alt="{{ option.name }}" class="article-photo" />
             </label>
           </div>
         </div>
-  
-        <div class="form-group mb-4">
-          <label class="font-weight-bold">Pointures</label>
-          <div class="d-flex flex-wrap">
-            <label *ngFor="let pointure of pointuresDisponibles" class="m-1">
-              <input type="checkbox" [value]="pointure" (change)="togglePointure(pointure)">
-              {{ pointure }}
-            </label>
-          </div>
-        </div>
-  
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group mb-4">
-              <label class="font-weight-bold">Genre</label>
-              <select class="form-control" [(ngModel)]="articleForm.genre" name="genre" required>
-                <option value="HOMME">Homme</option>
-                <option value="FEMME">Femme</option>
-              </select>
-            </div>
-          </div>
-  
-          <div class="col-md-6">
-            <div class="form-group mb-4">
-              <label class="font-weight-bold">Tissu</label>
-              <select class="form-control" [(ngModel)]="articleForm.tissu" name="tissu" required>
-                <option value="CUIR">Cuir</option>
-                <option value="DAIN">Dain</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="category">Catégorie</label>
-          <select class="form-control" id="category" [(ngModel)]="articleForm.category" name="category" required>
-            <option *ngFor="let cat of allCategory" [ngValue]="cat">{{ cat.name }}</option>
-          </select>
-        </div>
-        
-        
-         <!-- Sélection des photos -->
-         <div class="form-group">
-          <label>Photos</label>
-          <div class="photo-select">
-            <div *ngFor="let option of allPhoto" class="photo-option">
-              <input type="checkbox" [id]="'photo' + option.id" [value]="option.id" name="photos"
-                     (change)="togglePhotoSelection(option)" />
-              <label [for]="'photo' + option.id">
-                <img [src]="'http://localhost:8080/uploads/' + option.name" alt="{{ option.name }}" class="article-photo" />
-              </label>
-            </div>
-          </div>
-        </div>
-   
-          
-          
-  
-        <!-- Boutons -->
-        <div class="d-flex justify-content-between mt-4">
-          <button type="button" (click)="redirectToArticles()" class="btn btn-secondary">
-            <i class="feather icon-arrow-left"></i> Retour
-          </button>
-          <button type="submit" class="btn btn-primary">
-            <i class="feather icon-save"></i> Créer
-          </button>
-        </div>
-  
-      </form>
-    </div>
+      </div>
+
+      <!-- Boutons -->
+      <div class="d-flex justify-content-between mt-4">
+        <button type="button" (click)="redirectToArticles()" class="btn btn-secondary">
+          <i class="feather icon-arrow-left"></i> Retour
+        </button>
+        <button type="submit" class="btn btn-primary">
+          <i class="feather icon-save"></i> Créer
+        </button>
+      </div>
+
+    </form>
   </div>
-  
+</div>

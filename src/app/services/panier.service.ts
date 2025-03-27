@@ -35,13 +35,19 @@ export class PanierService {
   }
 
 
-    // Créer un panier
+  // Créer un panier
   creerPanier(userId: number, panier: any): Observable<any> {
     panier.statut = "EN_COURS"; 
     return this.http.post<any>(`http://localhost:8080/panier/${userId}`, panier);
   }
 
- 
+  // Exemple d'une méthode dans le service pour réduire le stock
+  updateStock(articleId: number, quantite: number): Observable<any> {
+    // Ici, il faudrait appeler l'API qui met à jour le stock de l'article dans la base de données
+    return this.http.patch(`http://localhost:8080/article/update-stock/${articleId}`, { quantite });
+  }
+
+
 
   //  Obtenir l'ID du client connecté
   private getClientId(): number | null {
@@ -53,14 +59,40 @@ export class PanierService {
   public chargerPanierDepuisLocalStorage(): void {
     const clientId = this.getClientId();
     if (!clientId) {
-      console.warn("⚠️ Aucun client connecté !");
-      return;
+        console.warn("⚠️ Aucun client connecté !");
+        return;
     }
-
+  
+    // Charger les données du localStorage
     const savedPanier = localStorage.getItem(`${this.storageKeyPrefix}${clientId}`);
-    this.panier = savedPanier ? JSON.parse(savedPanier) : { clientId, lignesPanier: [], total: 0, statut: 'EN_COURS', adresseLivraison: '' };
+    this.panier = savedPanier ? JSON.parse(savedPanier) : null;
+  
+    // Vérifier si le panier est null ou non valide, et le réinitialiser si nécessaire
+    if (!this.panier) {
+        console.warn("⚠️ Panier introuvable, création d'un nouveau panier !");
+        this.panier = {
+            clientId, 
+            lignesPanier: [], 
+            total: 0, 
+            statut: 'EN_COURS', 
+            adresseLivraison: '' 
+        };
+    } else {
+        // Vérifier et corriger les valeurs manquantes
+        if (!this.panier.adresseLivraison || this.panier.adresseLivraison.trim() === '') {
+            console.warn("⚠️ Adresse de livraison absente, réinitialisation !");
+            this.panier.adresseLivraison = ''; 
+        }
+  
+        if (!this.panier.statut) {
+            console.warn("⚠️ Statut absent, réinitialisation !");
+            this.panier.statut = 'EN_COURS';
+        }
+    }
   }
+  
 
+  
   // Sauvegarder le panier
   public sauvegarderPanierDansLocalStorage(): void {
     const clientId = this.getClientId();
@@ -71,6 +103,11 @@ export class PanierService {
 
     localStorage.setItem(`${this.storageKeyPrefix}${clientId}`, JSON.stringify(this.panier));
   }
+
+  public getStorageKeyPrefix(): string {
+    return this.storageKeyPrefix;
+  }
+  
 
   //Récupérer le panier
   getPanier(): Panier {

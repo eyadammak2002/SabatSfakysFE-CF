@@ -31,7 +31,14 @@ export class PanierComponent implements OnInit {
 
   ngOnInit(): void {
     this.chargerPanierClient();
+  
+    // Vérifier si l'adresse de livraison est renseignée
+    if (this.panier.adresseLivraison && this.panier.adresseLivraison.trim() !== '') {
+      // Si l'adresse de livraison n'est pas vide, rediriger vers la page de commande
+     // this.router.navigate(['/commande']);
+    }
   }
+  
 
   
 
@@ -73,45 +80,61 @@ export class PanierComponent implements OnInit {
   }
 
 
- // Valider le panier
-// Valider le panier
-createPanier(): void {
-  if (this.panier.lignesPanier.length === 0) {
-    alert('Ajoutez au moins un article au panier !');
-    return;
-  }
-
-  if (!this.adresseLivraison || this.adresseLivraison.trim() === '') {
-    alert('Veuillez entrer une adresse de livraison.');
-    return;
-  }
-
-  // Créer une instance de panier avec l'adresse de livraison
-  const panierAvecAdresse = { 
-    ...this.panier,
-    adresseLivraison: this.adresseLivraison  // Utiliser l'adresse de livraison entrée par l'utilisateur
-  };
-
-  console.log("🛒 Envoi du panier avec adresse au backend", panierAvecAdresse);
-
-  // Récupérer l'ID de l'utilisateur (par exemple, depuis le service d'authentification ou le localStorage)
-  const userId = this.tokenStorage.getUser().id; // Assurez-vous que la méthode getUser() renvoie l'utilisateur connecté
-
-  // Appeler la méthode creerPanier pour créer le panier avec l'adresse
-  this.panierService.creerPanier(userId, panierAvecAdresse).subscribe({
-    next: (data) => {
-      console.log("✅ Panier créé avec adresse de livraison :", data);
-      alert("Panier créé avec succès avec l'adresse de livraison !");
-      this.panierService.sauvegarderPanierDansLocalStorage();
-      this.router.navigate(['/commande']); // Redirection après création
-
-    },
-    error: (err) => {
-      console.error("❌ Erreur lors de la création du panier:", err);
-      alert("Une erreur est survenue lors de la création du panier.");
+  createPanier(): void {
+    if (this.panier.lignesPanier.length === 0) {
+      alert('Ajoutez au moins un article au panier !');
+      return;
     }
-  });
-}
+  
+    if (!this.adresseLivraison || this.adresseLivraison.trim() === '') {
+      alert('Veuillez entrer une adresse de livraison.');
+      return;
+    }
+    // Mettre à jour l'adresse de livraison dans le panier en mémoire
+    this.panier.adresseLivraison = this.adresseLivraison;
+
+    // Assurer que le statut est "EN_COURS"
+    this.panier.statut = 'EN_COURS';
+
+    // Appel à la méthode pour sauvegarder le panier mis à jour dans localStorage
+    this.panierService.sauvegarderPanierDansLocalStorage();
+
+    // Créer une instance de panier avec l'adresse de livraison
+    const panierAvecAdresse = { 
+      ...this.panier,
+      adresseLivraison: this.adresseLivraison,  // Utiliser l'adresse de livraison entrée par l'utilisateur
+      statut: "EN_COURS"  // Assurer que le statut est EN_COURS
+    };
+  
+    console.log("🛒 Envoi du panier avec adresse au backend", panierAvecAdresse);
+  
+    // Récupérer l'ID de l'utilisateur
+    const userId = this.tokenStorage.getUser().id;
+  
+    // Appeler la méthode creerPanier pour créer le panier avec l'adresse
+    this.panierService.creerPanier(userId, panierAvecAdresse).subscribe({
+      next: (data) => {
+        console.log("✅ Panier créé avec adresse de livraison :", data);
+        alert("Panier créé avec succès avec l'adresse de livraison !");
+        
+        // Mettre à jour le panier dans localStorage avec les nouvelles informations
+        this.panierService.sauvegarderPanierDansLocalStorage();
+  
+ 
+  
+        // Redirection vers la page de commande après un délai
+     
+          console.log("Redirection vers commande...");
+          this.router.navigate(['/commande']);
+
+      },
+      error: (err) => {
+        console.error("❌ Erreur lors de la création du panier:", err);
+        alert("Une erreur est survenue lors de la création du panier.");
+      }
+    });
+  }
+  
 
 
 

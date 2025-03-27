@@ -34,12 +34,7 @@
           </div>
 
           <div class="row">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label>Quantité</label>
-                <input type="number" class="form-control" [(ngModel)]="articleForm.qte" name="qte" required />
-              </div>
-            </div>
+            
 
             <div class="col-md-4">
               <div class="form-group">
@@ -56,38 +51,7 @@
             </div>
           </div>
 
-          <!-- ✅ Sélection de plusieurs couleurs -->
-          <div class="form-group">
-            <label>Couleurs Disponibles</label>
-            <div class="d-flex flex-wrap gap-2">
-              <div *ngFor="let couleur of availableColors">
-                <input type="checkbox" [id]="'couleur-' + couleur" [value]="couleur" 
-                       (change)="toggleSelection(couleur, 'color')" />
-                <label [for]="'couleur-' + couleur" class="badge bg-secondary">{{ couleur }}</label>
-              </div>
-            </div>
-            <p class="mt-2"><strong>Couleurs Sélectionnées :</strong> {{ articleForm.couleurs.join(', ') || 'Aucune' }}</p>
-          </div>
-
-          <!-- ✅ Sélection de plusieurs tailles -->
-          <div class="form-group">
-            <label>Pointures Disponibles</label>
-            <div class="d-flex flex-wrap gap-2">
-              <div *ngFor="let size of availableSizes">
-                <input type="checkbox" [id]="'size-' + size" [value]="size" 
-                       (change)="toggleSelection(size, 'size')" />
-                <label [for]="'size-' + size" class="badge bg-primary">{{ size }}</label>
-              </div>
-            </div>
-            <p class="mt-2"><strong>Tailles Sélectionnées :</strong> {{ articleForm.pointures.join(', ') || 'Aucune' }}</p>
-          </div>
-
-          <div class="form-group">
-            <label for="category">Catégorie</label>
-            <select class="form-control" id="category" [(ngModel)]="articleForm.category" name="category" required>
-              <option *ngFor="let cat of allCategory" [ngValue]="cat">{{ cat.name }}</option>
-            </select>
-          </div>
+         
 
           <!-- Photo Selection -->
        <!-- Photo Selection -->
@@ -108,7 +72,7 @@
 
           <!-- Action Buttons -->
           <div class="text-center mt-4">
-            <button type="submit" class="btn btn-success">Enregistrer</button>
+            <button type="submit" class="btn btn-success" (click)="getArticle()">Enregistrer</button>
           </div>
 
         </form>

@@ -93,29 +93,7 @@
 
               <p><strong>{{ selectedArticle.name }}</strong></p>
 
-           <!-- ✅ Sélection des couleurs (affichage en cercles) -->
-            <label class="d-block fw-bold">Couleur :</label>
-            <div class="d-flex justify-content-center gap-2">
-                <div *ngFor="let couleur of selectedArticle.couleurs" 
-                    class="color-circle"
-                    [style.backgroundColor]="couleur"
-                    [class.selected]="selectedCouleur === couleur"
-                    (click)="selectCouleur(couleur)">
-                </div>
-            </div>
-
-
-
-              <!-- ✅ Sélection des pointures -->
-              <label class="d-block fw-bold mt-3">Pointure :</label>
-              <div class="d-flex justify-content-center gap-2">
-                  <button *ngFor="let pointure of selectedArticle.pointures"
-                          class="btn btn-outline-secondary px-3"
-                          [class.active]="selectedPointure === pointure"
-                          (click)="selectedPointure = pointure">
-                      {{ pointure }}
-                  </button>
-              </div>
+           
           </div>
 
           <div class="modal-footer">
