@@ -16,13 +16,11 @@
             <th>Référence</th>
             <th>Nom</th>
             <th>Description</th>
-            <th>Quantité</th>
             <th>Prix Fournisseur</th>
             <th>Prix Vente</th>
             <th>Genre</th>
             <th>Tissu</th>
-            <th>Couleurs</th>
-            <th>Pointures</th>
+            <th>Stock</th>
             <th>Catégorie</th>
             <th>Photos</th>
             <th>Statut</th>
@@ -35,18 +33,29 @@
             <td class="bold-text">{{ article.ref }}</td>
             <td class="bold-text">{{ article.name }}</td>
             <td class="bold-text">{{ article.description }}</td>
-            <td class="bold-text">{{ article.qte }}</td>
             <td class="price-text bold-text">{{ article.prixFournisseur }} dt</td>
             <td class="price-text bold-text">{{ article.prixVente }} dt</td>
             <td class="bold-text">{{ article.genre }}</td>
             <td>{{ article.tissu }}</td>
-            
-            <!-- ✅ Liste des couleurs -->
-            <td>{{ formatList(article.couleurs) }}</td>
-            
-            <!-- ✅ Liste des pointures -->
-            <td>{{ formatList(article.pointures) }}</td>
+        
+            <td>
+              <div *ngIf="article.stocks && article.stocks.length > 0; else noStock">
+                <table class="stock-table">
+                  <tbody>
+                    <tr *ngFor="let stock of article.stocks">
+                      <td>{{ stock.couleur.nom }}</td>
+                      <td>{{ stock.pointure.taille }}</td>
+                      <td>{{ stock.quantite }}(pièce)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <ng-template #noStock>
+                <span class="no-data">Aucun stock</span>
+              </ng-template>
+            </td>
 
+            
             <td>
               <span class="category-badge" *ngIf="article.category">{{ article.category.name }}</span>
               <span class="no-data" *ngIf="!article.category">Aucune</span>

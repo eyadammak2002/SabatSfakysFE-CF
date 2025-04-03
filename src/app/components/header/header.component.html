@@ -12,9 +12,13 @@
         </div>
 
         <!-- Icônes de navigation (Favoris, Panier, Profil) -->
-        <div class="icon-links">
-            <a routerLink="/favoris" class="icon-link"><i class="far fa-heart"></i></a>
+        <div class="icon-links" >
+            <div *ngFor="let notif of notificationService.notification">
+                <a routerLink="/favoris" class="icon-link"><i class="far fa-heart"></i></a>
+            </div>
+            
             <a routerLink="/panier" class="icon-link"><i class="fas fa-shopping-cart"></i></a>
+
             <div class="dropdown">
             <!-- Icône de profil affichée seulement lorsque l'utilisateur est connecté -->
             <a routerLink="/profil" class="icon-link profile-icon updateProfileIcon">

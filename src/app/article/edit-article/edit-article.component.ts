@@ -1,49 +1,47 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Photo } from 'src/app/photo/Photo';
+import { PhotoService } from 'src/app/photo/photo.service';
+import { Article, Couleur, Pointure, Stock } from '../article';
+import { ArticleService } from '../article.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PhotoService } from 'src/app/photo/photo.service';
-import { Photo } from 'src/app/photo/Photo';
-import { Article } from 'src/app/article/article';
-import { ArticleService } from 'src/app/article/article.service';
 import { Category } from 'src/app/category/category';
 import { CategoryService } from 'src/app/category/category.service';
+import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
   selector: 'app-edit-article',
   standalone: true,
-  imports: [
-    FormsModule,
-    CommonModule,
-  ],
+  imports: [FormsModule, CommonModule],
   templateUrl: './edit-article.component.html',
   styleUrls: ['./edit-article.component.css']
 })
-export class EditArticleComponent {
-  allPhoto: Photo[] = [];
+export class EditArticleComponent implements OnInit {
   selectedPhotos: Photo[] = [];
   allCategory: Category[] = [];
+  allPhoto: Photo[] = [];
+  couleursDisponibles: Couleur[] = [];
+  pointuresDisponibles: Pointure[] = [];
+  selectedCouleur: Couleur | null = null;
+  selectedPointure: Pointure | null = null;
+  quantite: number = 0;
 
-  availableColors: string[] = ['NOIR', 'MARRON', 'BLANC', 'ROUGE', 'BLEU'];
-  availableSizes: string[] = ['36', '37', '38', '39', '40', '41', '42', '43'];
-
-  // Remplacer fournisseurId par fournisseurEmail
+  articleStocks: Stock[] = [];
   articleForm: Article = {
     id: 0,
     ref: '',
     name: '',
     description: '',
-    qte: 0,
+    stocks: [],
     prixFournisseur: 0,
     prixVente: 0,
-    couleurs: [],
-    pointures: [],
     genre: 'FEMME',
     tissu: 'CUIR',
     statut: 'EN_ATTENTE',
     category: { id: 0, name: '', description: '' },
     photos: [],
-    fournisseur: {  // Initialisation de fournisseur avec les propriétés de l'interface
+    fournisseur: {
       id: 0,
       nom: '',
       email: '',
@@ -51,77 +49,97 @@ export class EditArticleComponent {
       telephone: '',
       motDePasse: '',
       statut: 'EN_ATTENTE',
-      logo: { id: 0,name:'', url: '' }  // Remplacez par un objet Photo valide si nécessaire
+      logo: { id: 0, name: '', url: '' }
     }
   };
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private articleService: ArticleService,
-    private photoService: PhotoService,
-    private router: Router,
-    private route: ActivatedRoute,
     private categoryService: CategoryService,
+    private router: Router,
+    private photoService: PhotoService,
+    private tokenStorageService: TokenStorageService,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.getCouleurs();
+    this.getPointures();
     this.getPhotos();
-    this.loadArticle();
     this.getCategory();
-
-
-  
-    
+    this.loadArticle();
   }
 
   loadArticle(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));  // Récupère l'ID de l'article depuis l'URL
-    if (!id) return;
-    
-    // Appel à votre service pour récupérer l'article
-    this.articleService.getById(id).subscribe({
-      next: (article) => {
-        this.articleForm = { ...article };  // Copiez les données de l'article dans le formulaire
-        // Si fournisseurEmail est manquant, affectez-le ici
-        if (!this.articleForm.fournisseur.email) {
-          this.articleForm.fournisseur.email = article.fournisseur.email; // Assurez-vous que fournisseurEmail est défini
-        }
-      },
-      error: (err) => console.error('Erreur lors du chargement de l\'article:', err)
-    });
+    const articleId = this.activatedRoute.snapshot.paramMap.get('id');
+    if (articleId) {
+      this.articleService.getById(parseInt(articleId)).subscribe({
+        next: (data) => {
+          this.articleForm = data;
+          this.articleStocks = data.stocks || [];
+          this.selectedPhotos = [...data.photos];
+          this.selectedCouleur = this.articleForm.stocks.length > 0 ? this.articleForm.stocks[0].couleur : null;
+          this.selectedPointure = this.articleForm.stocks.length > 0 ? this.articleForm.stocks[0].pointure : null;
+        },
+        error: (err) => console.error('❌ Erreur lors du chargement de l\'article', err)
+      });
+    }
   }
 
   getPhotos(): void {
-    this.photoService.get().subscribe(data => {
-      this.allPhoto = data;
-      // Mettre à jour les photos sélectionnées après le chargement
-      this.selectedPhotos = this.articleForm.photos || [];
+    this.photoService.get().subscribe({
+      next: (data) => (this.allPhoto = data),
+      error: (err) => console.error(err)
     });
   }
 
+  getCategory(): void {
+    this.categoryService.get().subscribe({
+      next: (data) => (this.allCategory = data),
+      error: (err) => console.error(err)
+    });
+  }
+
+  getCouleurs(): void {
+    this.articleService.getCouleurs().subscribe({
+      next: (data) => {
+        this.couleursDisponibles = data;
+        console.log('✅ Couleurs récupérées:', this.couleursDisponibles);
+      },
+      error: (err) => console.error('❌ Erreur lors de la récupération des couleurs', err)
+    });
+  }
+
+  getPointures(): void {
+    this.articleService.getPointures().subscribe({
+      next: (data) => {
+        this.pointuresDisponibles = data;
+        console.log('✅ Pointures récupérées:', this.pointuresDisponibles);
+      },
+      error: (err) => console.error('❌ Erreur lors de la récupération des pointures', err)
+    });
+  }
+
+  generateStocks(): void {
+    if (this.selectedCouleur && this.selectedPointure && this.quantite > 0) {
+      const stock: Stock = {
+        id: 0, 
+        couleur: this.selectedCouleur,
+        pointure: this.selectedPointure,
+        quantite: this.quantite
+      };
+      console.log('📌 Stock généré:', stock);
+      this.articleStocks.push(stock);
+      console.log('📦 Liste des stocks après ajout:', this.articleStocks);
+    } else {
+      console.error('❌ Veuillez sélectionner une couleur, une pointure et une quantité.');
+    }
+  }
   isPhotoSelected(photo: Photo): boolean {
     return this.articleForm.photos.some(p => p.id === photo.id);
   }
 
-  getCategory(): void {
-    this.categoryService.get().subscribe(data => {
-      this.allCategory = data;
-      this.articleForm.category = this.allCategory.find(cat => cat.id === this.articleForm.category?.id) || null;
-    });
-  }
-
-  toggleSelection(value: string, type: 'color' | 'size'): void {
-    if (type === 'color') {
-      this.articleForm.couleurs = this.articleForm.couleurs.includes(value) ?
-        this.articleForm.couleurs.filter(c => c !== value) :
-        [...this.articleForm.couleurs, value];
-    } else {
-      this.articleForm.pointures = this.articleForm.pointures.includes(value) ?
-        this.articleForm.pointures.filter(p => p !== value) :
-        [...this.articleForm.pointures, value];
-    }
-  }
-
-  // Fonction pour gérer la sélection des photos
   togglePhotoSelection(photo: Photo): void {
     const index = this.selectedPhotos.findIndex(p => p.id === photo.id);
     if (index > -1) {
@@ -130,31 +148,26 @@ export class EditArticleComponent {
       this.selectedPhotos.push(photo);
     }
     this.articleForm.photos = [...this.selectedPhotos];
+    this.cdr.markForCheck();
+    console.log('Selected Photos:', this.articleForm.photos);
   }
 
   update(): void {
-    console.log('Article à mettre à jour:', this.articleForm);
-    console.log('fournisseurEmail avant la mise à jour: ', this.articleForm.fournisseur.email );
-  
-    // Vérifier que fournisseurEmail est présent
-    if (!this.articleForm.fournisseur.email ) {
-      console.error('Erreur: fournisseurEmail est requis pour la mise à jour');
-      return;
-    }
-  
-    // Appel de la méthode update avec fournisseurEmail
-    this.articleService.update(this.articleForm.id, this.articleForm, this.articleForm.fournisseur.email )
-      .subscribe({
+    if (this.articleForm.ref && this.articleForm.name && this.articleForm.prixFournisseur && this.articleForm.photos.length > 0 && this.articleStocks.length > 0) {
+      this.articleForm.stocks = [...this.articleStocks];
+      const emailFournisseur = this.articleForm.fournisseur.email;
+      
+      this.articleService.update(this.articleForm.id,this.articleForm, emailFournisseur).subscribe({
         next: (data) => {
           console.log('Article mis à jour avec succès', data);
           this.router.navigate(['/article']);
         },
-        error: (err) => {
-          console.error('Erreur lors de la mise à jour de l\'article:', err);
-        }
+        error: (err) => console.error('Erreur lors de la mise à jour de l\'article', err)
       });
+    } else {
+      console.error('Veuillez remplir tous les champs obligatoires');
+    }
   }
-  
 
   redirectToArticles(): void {
     this.router.navigate(['/article']);

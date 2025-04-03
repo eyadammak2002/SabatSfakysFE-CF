@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Article } from './article';
+import { Article, Couleur, Pointure } from './article';
 import { catchError, Observable, throwError } from 'rxjs';
 
 @Injectable({
@@ -11,6 +11,9 @@ export class ArticleService {
 
   constructor(private http: HttpClient) {}
 
+  notifierArticle(message:string){
+    return this.http.post('http://127.0.0.1:8080/api/notification/article',message);
+  }
   // Récupérer tous les articles
   get(): Observable<Article[]> {
     return this.http.get<Article[]>(this.apiUrl);
@@ -36,9 +39,10 @@ export class ArticleService {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     }).pipe(
       catchError(error => {
-        console.error('Erreur détaillée lors de la mise à jour de l\'article:', error);
-        return throwError(() => new Error('Erreur lors de la mise à jour de l\'article'));
+        console.error('Erreur lors de la mise à jour:', error.message, error);
+        return throwError(() => new Error(error.message || 'Erreur inconnue'));
       })
+      
     );
   }
 
@@ -46,4 +50,14 @@ export class ArticleService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+    // Récupérer toutes les couleurs
+    getCouleurs(): Observable<Couleur[]> {
+      return this.http.get<Couleur[]>(`${this.apiUrl}/couleurs`);
+    }
+  
+    // Récupérer toutes les pointures
+    getPointures(): Observable<Pointure[]> {
+      return this.http.get<Pointure[]>(`${this.apiUrl}/pointures`);
+    }
 }

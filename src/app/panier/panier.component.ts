@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Article } from '../article/article';
-import { Panier, PanierService } from '../services/panier.service';
-import { ArticleService } from '../article/article.service';
+import { LignePanier, Panier, PanierService } from '../services/panier.service';
 import { TokenStorageService } from '../services/token-storage.service';
+import { StockService } from './stock.service';
 
 
 declare var bootstrap: any;
@@ -16,7 +15,7 @@ declare var bootstrap: any;
 })
 export class PanierComponent implements OnInit {
   
-  mapArticle: Map<number,number>=new Map();
+  stockDisponible: Map<string, number> = new Map();
   panier: any;
   clientId: number = 0;
   adresseLivraison: string = ''; 
@@ -25,36 +24,67 @@ export class PanierComponent implements OnInit {
   constructor(
     private panierService: PanierService,
     private router: Router,
-    private tokenStorage: TokenStorageService
-    
+    private tokenStorage: TokenStorageService,
+    private stockService: StockService
   ) {}
 
   ngOnInit(): void {
     this.chargerPanierClient();
+  
+    // Vérifier si l'adresse de livraison est renseignée
+    if (this.panier.adresseLivraison && this.panier.adresseLivraison.trim() !== '') {
+      // Si l'adresse de livraison n'est pas vide, rediriger vers la page de commande
+     // this.router.navigate(['/commande']);
+    }
   }
+  
 
   
+
 
   // Charger le panier du client connecté
   chargerPanierClient(): void {
     this.panier = this.panierService.getPanier();
-    
-    for(var i=0;i<=this.panier.lignesPanier.length-1;i ++){
-      console.log("id",this.panier.lignesPanier[i].article.id);
-      this.mapArticle.set(this.panier.lignesPanier[i].article.id,this.panier.lignesPanier[i].article.qte)
-
-    }
-    console.log(this.mapArticle);
-    //const articleId=this.panier.LignePanier.article.id
-    console.log("charger Panier Client from, storage",this.panier);
     this.clientId = this.panier.clientId;
+  
+    this.panier.lignesPanier.forEach((ligne: LignePanier) => {
+      const key = `${ligne.article.id}-${ligne.couleur.id}-${ligne.pointure.id}`;
+    
+      this.stockService.getStockQuantity(ligne.article.id, ligne.couleur.id, ligne.pointure.id)
+        .subscribe(qte => {
+          this.stockDisponible.set(key, qte);
+        }, error => {
+          console.error(`Erreur lors de la récupération du stock pour ${key}`, error);
+        });
+    });
+    
+    console.log("Stock disponible chargé :", this.stockDisponible);
   }
+
 
   // Modifier la quantité d’un article
-  modifierQuantite(index: number, changement: number,articleId :number): void {
-    this.panierService.modifierQuantite(index, changement,articleId,this.mapArticle);
-    
+// Modifier la quantité d’un article
+modifierQuantite(index: number, changement: number, ligne: LignePanier): void {
+  const couleurId = ligne.couleur.id;
+  const pointureId = ligne.pointure.id;
+
+  if (!couleurId || !pointureId) {
+    console.error('couleurId ou pointureId est invalide');
+    return;
   }
+
+  const key = `${ligne.article.id}-${couleurId}-${pointureId}`;
+  const stockMax = this.stockDisponible.get(key) ?? 0; 
+
+  if (changement > 0 && ligne.quantite >= stockMax) {
+    alert("❌ Quantité maximale atteinte !");
+    return;
+  }
+
+  // Mettre à jour la quantité
+  this.panierService.modifierQuantite(index, changement, ligne.article.id, couleurId, pointureId);
+}
+
 
   // Supprimer un article du panier
   supprimerLigne(index: number): void {
@@ -73,45 +103,61 @@ export class PanierComponent implements OnInit {
   }
 
 
- // Valider le panier
-// Valider le panier
-createPanier(): void {
-  if (this.panier.lignesPanier.length === 0) {
-    alert('Ajoutez au moins un article au panier !');
-    return;
-  }
-
-  if (!this.adresseLivraison || this.adresseLivraison.trim() === '') {
-    alert('Veuillez entrer une adresse de livraison.');
-    return;
-  }
-
-  // Créer une instance de panier avec l'adresse de livraison
-  const panierAvecAdresse = { 
-    ...this.panier,
-    adresseLivraison: this.adresseLivraison  // Utiliser l'adresse de livraison entrée par l'utilisateur
-  };
-
-  console.log("🛒 Envoi du panier avec adresse au backend", panierAvecAdresse);
-
-  // Récupérer l'ID de l'utilisateur (par exemple, depuis le service d'authentification ou le localStorage)
-  const userId = this.tokenStorage.getUser().id; // Assurez-vous que la méthode getUser() renvoie l'utilisateur connecté
-
-  // Appeler la méthode creerPanier pour créer le panier avec l'adresse
-  this.panierService.creerPanier(userId, panierAvecAdresse).subscribe({
-    next: (data) => {
-      console.log("✅ Panier créé avec adresse de livraison :", data);
-      alert("Panier créé avec succès avec l'adresse de livraison !");
-      this.panierService.sauvegarderPanierDansLocalStorage();
-      this.router.navigate(['/commande']); // Redirection après création
-
-    },
-    error: (err) => {
-      console.error("❌ Erreur lors de la création du panier:", err);
-      alert("Une erreur est survenue lors de la création du panier.");
+  createPanier(): void {
+    if (this.panier.lignesPanier.length === 0) {
+      alert('Ajoutez au moins un article au panier !');
+      return;
     }
-  });
-}
+  
+    if (!this.adresseLivraison || this.adresseLivraison.trim() === '') {
+      alert('Veuillez entrer une adresse de livraison.');
+      return;
+    }
+    // Mettre à jour l'adresse de livraison dans le panier en mémoire
+    this.panier.adresseLivraison = this.adresseLivraison;
+
+    // Assurer que le statut est "EN_COURS"
+    this.panier.statut = 'EN_COURS';
+
+    // Appel à la méthode pour sauvegarder le panier mis à jour dans localStorage
+    this.panierService.sauvegarderPanierDansLocalStorage();
+
+    // Créer une instance de panier avec l'adresse de livraison
+    const panierAvecAdresse = { 
+      ...this.panier,
+      adresseLivraison: this.adresseLivraison,  // Utiliser l'adresse de livraison entrée par l'utilisateur
+      statut: "EN_COURS"  // Assurer que le statut est EN_COURS
+    };
+  
+    console.log("🛒 Envoi du panier avec adresse au backend", panierAvecAdresse);
+  
+    // Récupérer l'ID de l'utilisateur
+    const userId = this.tokenStorage.getUser().id;
+  
+    // Appeler la méthode creerPanier pour créer le panier avec l'adresse
+    this.panierService.creerPanier(userId, panierAvecAdresse).subscribe({
+      next: (data) => {
+        console.log("✅ Panier créé avec adresse de livraison :", data);
+        alert("Panier créé avec succès avec l'adresse de livraison !");
+        
+        // Mettre à jour le panier dans localStorage avec les nouvelles informations
+        this.panierService.sauvegarderPanierDansLocalStorage();
+  
+ 
+  
+        // Redirection vers la page de commande après un délai
+     
+          console.log("Redirection vers commande...");
+          this.router.navigate(['/commande']);
+
+      },
+      error: (err) => {
+        console.error("❌ Erreur lors de la création du panier:", err);
+        alert("Une erreur est survenue lors de la création du panier.");
+      }
+    });
+  }
+  
 
 
 

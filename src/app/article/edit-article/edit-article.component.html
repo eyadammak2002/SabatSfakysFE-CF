@@ -33,14 +33,32 @@
             <textarea class="form-control" [(ngModel)]="articleForm.description" name="description" required></textarea>
           </div>
 
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label>Quantité</label>
-                <input type="number" class="form-control" [(ngModel)]="articleForm.qte" name="qte" required />
-              </div>
-            </div>
+          <div>
+            <label for="couleur">Couleur</label>
+            <select id="couleur" [(ngModel)]="selectedCouleur" name="couleur">
+              <option *ngFor="let couleur of couleursDisponibles" [ngValue]="couleur">{{ couleur.nom }}</option>
+            </select>
+          </div>
+          
+          <div>
+            <label for="pointure">Pointure</label>
+            <select id="pointure" [(ngModel)]="selectedPointure" name="pointure">
+              <option *ngFor="let pointure of pointuresDisponibles" [ngValue]="pointure">{{ pointure.taille }}</option>
+            </select>
+          </div>
 
+          <div class="form-group">
+            <label for="quantite">Quantité</label>
+            <input type="number" id="quantite" class="form-control" [(ngModel)]="quantite" name="quantite" required />
+          </div>
+
+          <button type="button" class="btn btn-secondary" (click)="generateStocks()">Ajouter Stock</button>
+
+          <div *ngFor="let stock of articleStocks">
+            <p>Stock ajouté - Couleur: {{ stock.couleur.nom }} - Pointure: {{ stock.pointure.taille }} - Quantité: {{ stock.quantite }}</p>
+          </div>
+
+          <div class="row">
             <div class="col-md-4">
               <div class="form-group">
                 <label>Prix Fournisseur</label>
@@ -56,57 +74,22 @@
             </div>
           </div>
 
-          <!-- ✅ Sélection de plusieurs couleurs -->
+          <!-- Sélection des photos -->
           <div class="form-group">
-            <label>Couleurs Disponibles</label>
-            <div class="d-flex flex-wrap gap-2">
-              <div *ngFor="let couleur of availableColors">
-                <input type="checkbox" [id]="'couleur-' + couleur" [value]="couleur" 
-                       (change)="toggleSelection(couleur, 'color')" />
-                <label [for]="'couleur-' + couleur" class="badge bg-secondary">{{ couleur }}</label>
-              </div>
-            </div>
-            <p class="mt-2"><strong>Couleurs Sélectionnées :</strong> {{ articleForm.couleurs.join(', ') || 'Aucune' }}</p>
-          </div>
-
-          <!-- ✅ Sélection de plusieurs tailles -->
-          <div class="form-group">
-            <label>Pointures Disponibles</label>
-            <div class="d-flex flex-wrap gap-2">
-              <div *ngFor="let size of availableSizes">
-                <input type="checkbox" [id]="'size-' + size" [value]="size" 
-                       (change)="toggleSelection(size, 'size')" />
-                <label [for]="'size-' + size" class="badge bg-primary">{{ size }}</label>
-              </div>
-            </div>
-            <p class="mt-2"><strong>Tailles Sélectionnées :</strong> {{ articleForm.pointures.join(', ') || 'Aucune' }}</p>
-          </div>
-
-          <div class="form-group">
-            <label for="category">Catégorie</label>
-            <select class="form-control" id="category" [(ngModel)]="articleForm.category" name="category" required>
-              <option *ngFor="let cat of allCategory" [ngValue]="cat">{{ cat.name }}</option>
-            </select>
-          </div>
-
-          <!-- Photo Selection -->
-       <!-- Photo Selection -->
-        <div class="form-group">
-          <label>Photos</label>
-          <div class="photo-select">
-            <div *ngFor="let option of allPhoto" class="photo-option">
-              <input type="checkbox" [id]="'photo' + option.id" [value]="option.id" name="photos"
+            <label>Photos</label>
+            <div class="photo-select">
+              <div *ngFor="let option of allPhoto" class="photo-option">
+                <input type="checkbox" [id]="'photo' + option.id" [value]="option.id" name="photos"
                     (change)="togglePhotoSelection(option)"
                     [checked]="isPhotoSelected(option)" />
-              <label [for]="'photo' + option.id">
-                <img [src]="'http://localhost:8080/uploads/' + option.name" class="article-photo" />
-              </label>
+                <label [for]="'photo' + option.id">
+                  <img [src]="'http://localhost:8080/uploads/' + option.name" class="article-photo" />
+                </label>
+              </div>
             </div>
           </div>
-        </div>
 
-
-          <!-- Action Buttons -->
+          <!-- Boutons d'action -->
           <div class="text-center mt-4">
             <button type="submit" class="btn btn-success">Enregistrer</button>
           </div>
