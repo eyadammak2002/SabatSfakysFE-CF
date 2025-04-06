@@ -7,6 +7,7 @@ import { StockService } from '../panier/stock.service';
 
 
 export interface LignePanier {
+  id:number;
   article: Article;
   quantite: number;
   prixUnitaire: number;
@@ -31,6 +32,8 @@ export interface Panier {
 export class PanierService {
   private apiUrl = 'http://localhost:8080/article'; 
   private apiUrl2 = 'http://localhost:8080/panier'; 
+  private apiUrl3 = 'http://localhost:8080/lignePanier'; 
+
   private panier: Panier | null = null;
   private storageKeyPrefix = 'panier_';
 
@@ -139,8 +142,9 @@ export class PanierService {
       ligneExistante.total = ligneExistante.quantite * ligneExistante.prixUnitaire;
     } else {
       this.panier.lignesPanier.push({
+        id:1,
         article,
-        quantite: 1,
+        quantite:1,
         prixUnitaire: article.prixVente,
         total: article.prixVente,
         couleur,
@@ -220,4 +224,15 @@ export class PanierService {
     this.panier.lignesPanier = [];
     this.sauvegarderPanierDansLocalStorage();
   }
+
+    // 🔹 Récupérer les commandes validées d'un utilisateur
+  getCommandesByUser(userId: number): Observable<Panier[]> {
+    return this.http.get<Panier[]>(`${this.apiUrl2}/commandes/user/${userId}`);
+  }
+
+  getArticleFromLignePanier(lignePanierId: number): Observable<Article> {
+    return this.http.get<Article>(`${this.apiUrl3}/${lignePanierId}/article`);
+  }
+
+  
 }

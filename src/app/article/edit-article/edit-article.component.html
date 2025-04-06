@@ -54,9 +54,14 @@
 
           <button type="button" class="btn btn-secondary" (click)="generateStocks()">Ajouter Stock</button>
 
-          <div *ngFor="let stock of articleStocks">
-            <p>Stock ajouté - Couleur: {{ stock.couleur.nom }} - Pointure: {{ stock.pointure.taille }} - Quantité: {{ stock.quantite }}</p>
+          <div *ngFor="let stock of articleStocks; let i = index">
+            <p>
+              Stock ajouté - Couleur: {{ stock.couleur.nom }} - Pointure: {{ stock.pointure.taille }} - Quantité: {{ stock.quantite }}
+              <button type="button" class="btn btn-warning" (click)="editStockQuantity(i)">Modifier Quantité</button>
+              <button type="button" class="btn btn-danger" (click)="deleteStock(i)">Supprimer</button>
+            </p>
           </div>
+          
 
           <div class="row">
             <div class="col-md-4">

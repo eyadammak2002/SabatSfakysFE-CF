@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Article, Couleur, Pointure } from './article';
 import { catchError, Observable, throwError } from 'rxjs';
 
@@ -8,7 +8,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 })
 export class ArticleService {
   private apiUrl = 'http://127.0.0.1:8080/article';  // L'URL de ton back-end
-
+  private apiUrl1 = 'http://127.0.0.1:8080/article/statut/'; 
   constructor(private http: HttpClient) {}
 
   notifierArticle(message:string){
@@ -17,6 +17,10 @@ export class ArticleService {
   // Récupérer tous les articles
   get(): Observable<Article[]> {
     return this.http.get<Article[]>(this.apiUrl);
+  }
+
+  getArticlesByStatut(statut: string): Observable<Article[]> {
+    return this.http.get<Article[]>(`${this.apiUrl1}${statut}`);
   }
 
   // Récupérer un article par son ID
@@ -60,4 +64,8 @@ export class ArticleService {
     getPointures(): Observable<Pointure[]> {
       return this.http.get<Pointure[]>(`${this.apiUrl}/pointures`);
     }
+
+  // Service Angular
+ 
+  
 }

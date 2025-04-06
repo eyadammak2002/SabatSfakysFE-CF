@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { LignePanier, Panier, PanierService } from '../services/panier.service';
 import { TokenStorageService } from '../services/token-storage.service';
 import { StockService } from './stock.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 
 declare var bootstrap: any;
@@ -10,6 +12,8 @@ declare var bootstrap: any;
 
 @Component({
   selector: 'app-panier',
+  standalone: true,
+  imports: [FormsModule, CommonModule, CommonModule],
   templateUrl: './panier.component.html',
   styleUrls: ['./panier.component.css']
 })
@@ -83,9 +87,15 @@ modifierQuantite(index: number, changement: number, ligne: LignePanier): void {
 
   // Mettre à jour la quantité
   this.panierService.modifierQuantite(index, changement, ligne.article.id, couleurId, pointureId);
+  this.panierService.sauvegarderPanierDansLocalStorage();
+  this.updateTotal();
 }
 
-
+updateTotal(): void {
+  this.panier.total = this.panier.lignesPanier.reduce((total: number, ligne: LignePanier) => {
+    return total + (ligne.quantite * ligne.article.prixVente);
+  }, 0);
+}
   // Supprimer un article du panier
   supprimerLigne(index: number): void {
     this.panierService.supprimerDuPanier(index);
@@ -96,7 +106,7 @@ modifierQuantite(index: number, changement: number, ligne: LignePanier): void {
     this.panierService.viderPanier();
 
     const panier = this.panierService.getPanier();
-    if (panier && panier.statut === 'EN_COURS') {
+    if (panier && panier.statut === 'VALIDER') {
       // Rediriger vers la page de détail de la commande
       this.router.navigate(['/commande']);
     }
@@ -116,8 +126,8 @@ modifierQuantite(index: number, changement: number, ligne: LignePanier): void {
     // Mettre à jour l'adresse de livraison dans le panier en mémoire
     this.panier.adresseLivraison = this.adresseLivraison;
 
-    // Assurer que le statut est "EN_COURS"
-    this.panier.statut = 'EN_COURS';
+    // Assurer que le statut est "VALIDER"
+    this.panier.statut = 'VALIDER';
 
     // Appel à la méthode pour sauvegarder le panier mis à jour dans localStorage
     this.panierService.sauvegarderPanierDansLocalStorage();
@@ -126,7 +136,7 @@ modifierQuantite(index: number, changement: number, ligne: LignePanier): void {
     const panierAvecAdresse = { 
       ...this.panier,
       adresseLivraison: this.adresseLivraison,  // Utiliser l'adresse de livraison entrée par l'utilisateur
-      statut: "EN_COURS"  // Assurer que le statut est EN_COURS
+      statut: "VALIDER"  // Assurer que le statut est VALIDER
     };
   
     console.log("🛒 Envoi du panier avec adresse au backend", panierAvecAdresse);

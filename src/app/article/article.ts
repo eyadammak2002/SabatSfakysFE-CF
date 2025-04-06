@@ -8,6 +8,7 @@ export interface Stock {
   couleur: Couleur;
   pointure: Pointure;
   quantite: number;
+  
 }
 
 export interface Couleur {

@@ -1,0 +1,37 @@
+<h2>Mes commandes validées</h2>
+
+<div *ngIf="commandes.length > 0; else noCommande">
+  <div *ngFor="let commande of commandes" class="card my-3">
+    <div class="card-header">
+      <strong>Commande #{{ commande.id }}</strong>
+    </div>
+    <div class="card-body">
+      <p><strong>Adresse de livraison :</strong> {{ commande.adresseLivraison }}</p>
+      <p><strong>Total :</strong> {{ commande.total }} TND</p>
+
+      <h5>Lignes du panier :</h5>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Article</th>
+            <th>Quantité</th>
+            <th>Prix Unitaire</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ligne of commande.lignesPanier">
+            <td>{{ ligne.article.name }}</td>
+            <td>{{ ligne.quantite }}</td>
+            <td>{{ ligne.prixUnitaire }} TND</td>
+            <td>{{ ligne.total }} TND</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<ng-template #noCommande>
+  <p>Aucune commande validée pour l’instant.</p>
+</ng-template>

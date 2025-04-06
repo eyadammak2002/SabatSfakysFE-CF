@@ -38,6 +38,7 @@ import { authInterceptor } from './auth.interceptor';
 import { PanierComponent } from './panier/panier.component';
 import { ListArticleComponent } from './article/list-article/list-article.component';
 import { CommandeComponent } from './commande/commande.component';
+import { ListCommandeComponent } from './commande/list-commande/list-commande.component';
 
 @NgModule({
   declarations: [
@@ -45,14 +46,9 @@ import { CommandeComponent } from './commande/commande.component';
     HeaderComponent,
     FooterComponent,
     FournisseurDashboardComponent,
-    PanierComponent,
     ListArticleComponent,
-    CommandeComponent,
-
-  
+    ListCommandeComponent,
  
-   
-    
    
   ],
   imports: [
@@ -72,7 +68,7 @@ import { CommandeComponent } from './commande/commande.component';
     MatTableModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    AuthenticationComponent,  // ✅ Importé ici, pas déclaré !
+    AuthenticationComponent, 
     LoginComponent ,
     RouterModule,  
     ArticleComponent,
@@ -82,8 +78,7 @@ import { CommandeComponent } from './commande/commande.component';
     CreateProduitComponent,
     EditProduitComponent,
     SocialLoginModule,
-    GoogleSigninButtonModule, // Assure-toi que ce module est importé si tu veux utiliser ce bouton
-    // ✅ Importé ici aussi
+    GoogleSigninButtonModule,
     MatFormFieldModule,
     BrowserAnimationsModule,
     MatInputModule,
@@ -92,6 +87,8 @@ import { CommandeComponent } from './commande/commande.component';
     MatIconModule,
     EditPackComponent,
     CreatePackComponent,
+    PanierComponent,
+    CommandeComponent,
     
   ],
   providers: [

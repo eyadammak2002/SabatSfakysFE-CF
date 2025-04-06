@@ -99,6 +99,10 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
     redirectToPack(): void {
       this.router.navigate(['/pack']); // Redirige vers la page de création d'article
     }
+    redirectToListCommande(): void {
+      this.router.navigate(['/listCommande']); // Redirige vers la page de création d'article
+    }
+
 
     logout(): void {
       this.tokenStorageService.signOut();

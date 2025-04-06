@@ -21,7 +21,8 @@ export class ListArticleComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fetchArticles();
+    //this.fetchArticles();
+    this.getArticlesWithStatut('ACCEPTE');
   }
 
   selectCouleur(couleur: Couleur) {
@@ -63,7 +64,7 @@ export class ListArticleComponent implements OnInit {
   }
   
   // ✅ Charger les articles depuis l'API
-  fetchArticles(): void {
+  /*fetchArticles(): void {
     this.articleService.get().subscribe({
       next: (data) => {
         this.allArticles = data.map(article => ({
@@ -74,8 +75,19 @@ export class ListArticleComponent implements OnInit {
       },
       error: (err) => console.error("❌ Erreur lors du chargement des articles :", err)
     });
+  }*/
+
+   // Fonction pour récupérer les articles avec statut "ACCEPTE"
+   getArticlesWithStatut(statut: string): void {
+    this.articleService.getArticlesByStatut(statut).subscribe({
+      next: (data) => {
+        this.allArticles = data;
+      },
+      error: (err) => {
+        console.error('Error fetching articles', err);
+      }
+    });
   }
-  
 
   confirmerAjoutAuPanier(): void {
     if (!this.selectedArticle) {

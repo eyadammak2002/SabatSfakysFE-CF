@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Category } from 'src/app/category/category';
 import { CategoryService } from 'src/app/category/category.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { StockService } from 'src/app/panier/stock.service';
 
 @Component({
   selector: 'app-edit-article',
@@ -56,6 +57,7 @@ export class EditArticleComponent implements OnInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private articleService: ArticleService,
+    private stockService: StockService,
     private categoryService: CategoryService,
     private router: Router,
     private photoService: PhotoService,
@@ -172,4 +174,56 @@ export class EditArticleComponent implements OnInit {
   redirectToArticles(): void {
     this.router.navigate(['/article']);
   }
+
+
+ 
+  
+  deleteStock(index: number): void {
+    const stockId = this.articleStocks[index].id;
+  
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce stock ?')) {
+      this.stockService.deleteStock(stockId).subscribe({
+        next: (response) => {
+          console.log('Stock supprimé du serveur:', response);
+          this.articleStocks.splice(index, 1); // Supprimer du tableau après succès
+        },
+        error: (error) => {
+          console.error('Erreur lors de la suppression du stock:', error);
+        }
+      });
+    }
+  }
+  
+  updateStockQuantity(index: number, newQuantity: number): void {
+    if (newQuantity > 0 && this.articleStocks[index]) {
+      this.articleStocks[index].quantite = newQuantity;
+      
+      const stockId = this.articleStocks[index].id;
+  
+      console.log('Updating stock with params:', {
+        stockId,
+        newQuantity
+      });
+  
+      this.stockService.updateStock(stockId, newQuantity)
+        .subscribe({
+          next: (response) => console.log('Stock update response:', response),
+          error: (error) => console.error('Stock update error:', error)
+        });
+    } else {
+      console.error('Stock non trouvé ou quantité invalide.');
+    }
+  }
+  
+  
+  editStockQuantity(index: number): void {
+    const newQuantity = prompt('Entrez la nouvelle quantité', this.articleStocks[index].quantite.toString());
+    if (newQuantity !== null && !isNaN(+newQuantity) && +newQuantity > 0) {
+      this.updateStockQuantity(index, +newQuantity);
+    } else {
+      alert('Quantité invalide');
+    }
+  }
+  
+  
 }

@@ -20,6 +20,7 @@ import { PackComponent } from './pack/pack.component';
 import { PanierComponent } from './panier/panier.component';
 import { ListArticleComponent } from './article/list-article/list-article.component';
 import { CommandeComponent } from './commande/commande.component';
+import { ListCommandeComponent } from './commande/list-commande/list-commande.component';
 
 const routes: Routes = [
   { path: '', component: ListArticleComponent },
@@ -51,6 +52,7 @@ const routes: Routes = [
 
   { path: 'panier', component: PanierComponent },
   { path: 'commande', component: CommandeComponent },
+  { path: 'listCommande', component: ListCommandeComponent },
 
 ];
 

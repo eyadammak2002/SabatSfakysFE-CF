@@ -10,12 +10,16 @@
       {{ ligne.article.name }} - {{ ligne.quantite }} x {{ ligne.prixUnitaire }} €
     </li>
   </ul>
-  <button *ngIf="panier.statut !== 'COMMANDEE'&&this.payer == false" (click)="payement()">Payement En Ligne</button>
 
-  <!-- Le bouton ne sera visible que si le statut de la commande n'est pas 'COMMANDEE' -->
-  <button *ngIf="this.payer == true" (click)="validerCommande()">Valider la commande</button>
+  <!-- Bouton pour lancer le paiement PayPal -->
+  <button *ngIf="panier.statut !== 'COMMANDEE' && !payer" (click)="payement()">Payer en ligne</button>
 
-  <div id="paypal-button-container">
+  <!-- Bouton pour valider la commande après le paiement -->
+  <button *ngIf="payer" (click)="validerCommande()">Valider la commande</button>
 
+  <!-- Conteneur du bouton PayPal, rendu dynamiquement -->
+  <div *ngIf="payer">
+    <ngx-paypal [config]="payPalConfig"></ngx-paypal>
   </div>
+
 </div>
