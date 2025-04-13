@@ -35,12 +35,21 @@ export class AuthenticationService {
       })
     );
   }*/
-  login(username: string, password: string): Observable<any> {
-    return this.http.post(AUTH_API + 'signin', {
-      username,
-      password
-    }, httpOptions);
-  }
+    loginTestClient(username: string, password: string, userType: string ): Observable<any> {
+      return this.http.post(AUTH_API + 'signin/FR', {
+        username,
+        password,
+        userType  // Cette information sera envoyée au backend
+      }, httpOptions);
+    }
+
+    login(username: string, password: string): Observable<any> {
+      return this.http.post(AUTH_API + 'signin', {
+        username,
+        password,
+      }, httpOptions);
+    }
+
 
   register(username: string, email: string, password: string,adresse:string,telephone:string,sexe:string): Observable<any> {
     return this.http.post(AUTH_API + 'signup', {

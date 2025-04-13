@@ -44,10 +44,8 @@
 
     <div ngbDropdownMenu class="dropdown-menu custom-dropdown-menu">
         <a (click)="redirectToCreateArticle()" ngbDropdownItem><i class="fas fa-plus-circle menu-icon"></i> Déposer Article</a>
-        <a (click)="redirectToArticle()" ngbDropdownItem><i class="fas fa-box menu-icon"></i> tous les Articles</a>       
-        <a (click)="redirectToCreatePack()" ngbDropdownItem>Déposer Pack</a>
+        <a (click)="redirectToCreatePack()" ngbDropdownItem><i class="fas fa-plus-circle menu-icon"></i>Créer Pack</a>
         <a (click)="redirectToPack()" ngbDropdownItem>tous les Packs</a>   
-        <a (click)="redirectToListCommande()" ngbDropdownItem><i class="fas fa-shopping-cart menu-icon"></i> Commandes</a>
         <a routerLink="/fournisseur/notifications" ngbDropdownItem><i class="fas fa-bell menu-icon"></i> Notifications</a>
         
         <!-- ✅ Profil en bas du menu -->
@@ -78,7 +76,8 @@
             <a ngbDropdownItem>Panier</a>
             <a ngbDropdownItem>Favoris</a>
             <a (click)="redirectToArticle()" ngbDropdownItem>Articles</a>
-            <a routerLink="/fournisseur/commandes" ngbDropdownItem>Commandes</a>
+            <a (click)="redirectToCommande()" ngbDropdownItem>Ma Commande</a>
+            <a (click)="redirectToListCommande()" ngbDropdownItem><i class="fas fa-shopping-cart menu-icon"></i> Commandes</a>
             <a routerLink="/fournisseur/notifications" ngbDropdownItem>Notifications</a>
             <div class="me-3">
                 <span class="text-bold d-block" >{{ username }}</span>
@@ -95,7 +94,7 @@
  </div>
 
     <!-- Menu de navigation (Catégories) -->
-    <nav class="nav-links">
+    <nav *ngIf="!showFournisseurDashboard" class="nav-links">
         <div ngbDropdown class="dropdown">
             <a routerLink="/chaussures" ngbDropdownToggle>Chaussures</a>
             <div ngbDropdownMenu class="dropdown-menu">
@@ -148,6 +147,20 @@
 
         <div class="dropdown">
             <a routerLink="/personnaliser">Personnaliser</a>
+        </div>
+      
+        
+    </nav>
+
+
+      <!-- Menu de navigation (Catégories) -->
+      <nav *ngIf="showFournisseurDashboard" class="nav-links">
+       
+
+        <div class="dropdown">
+            <a (click)="redirectToArticle()" ngbDropdownItem><i class="fas fa-box menu-icon"></i> tous les Articles</a>       
+            <a (click)="redirectToListCommandeParFR()" ngbDropdownItem><i class="fas fa-shopping-cart menu-icon"></i> tous les Commandes</a>
+
         </div>
       
         

@@ -62,7 +62,7 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
       this.updateProfileIcon();
     }
     
-
+ 
     updateProfileIcon() {
       console.log("isLoggedIn:", this.isLoggedIn);  // Vérifie la valeur de isLoggedIn dans la console
     
@@ -102,7 +102,12 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
     redirectToListCommande(): void {
       this.router.navigate(['/listCommande']); // Redirige vers la page de création d'article
     }
-
+    redirectToCommande(): void {
+      this.router.navigate(['/commande']); // Redirige vers la page de création d'article
+    }
+    redirectToListCommandeParFR(): void {
+      this.router.navigate(['/listCommande']); // Redirige vers la page de création d'article
+    }
 
     logout(): void {
       this.tokenStorageService.signOut();

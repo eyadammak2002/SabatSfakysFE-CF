@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
 export class LoginFournisseurComponent {
   form: any = {
     username: null,
-    password: null,
+    password: null
   };
 
   isLoggedIn = false;
@@ -32,33 +32,34 @@ export class LoginFournisseurComponent {
       this.errorMessage = "Veuillez remplir tous les champs.";
       return;
     }
-  
-    this.authService.login(this.form.username, this.form.password).subscribe(
+
+    this.authService.loginTestClient(this.form.username, this.form.password, 'fournisseur').subscribe(
       data => {
         console.log('Connexion réussie', data);
         this.tokenStorage.saveToken(data.accessToken);
         this.tokenStorage.saveUser(data);
         this.isLoggedIn = true;
         localStorage.setItem("token", data.accessToken);
-        this.router.navigate(['/accueil']);
+        
+    
+        this.router.navigate(['/article']);
+            
+
       },
       err => {
         console.error('Erreur de connexion', err);
-  
         if (err.status === 403 && err.error.message) {
           this.errorMessage = err.error.message; // Affiche le message du backend
         } else {
-          this.errorMessage = "Nom d'utilisateur ou mot de passe incorrect.";
-        }
-      }
+          this.errorMessage = "Nom d'utilisateur ou mot de passe incorrect";
+        } }
     );
   }
-  
 
   goBack(): void {
     this.router.navigate(['/accueil']);
   }
-  
+    
   signInWithGoogle() {
     console.log("Connexion avec Google");
   }

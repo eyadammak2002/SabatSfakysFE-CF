@@ -1,25 +1,39 @@
 <div class="commande-details">
   <h2>Détails de la commande</h2>
+  <p><strong>Ajouté le:</strong> {{ panier.dateCommande | date:'dd/MM/yyyy HH:mm' }}</p>
 
   <p><strong>Adresse de Livraison:</strong> {{ panier.adresseLivraison }}</p>
   <p><strong>Total de la commande:</strong> {{ panier.total }} €</p>
 
   <h3>Articles Commandés:</h3>
-  <ul>
-    <li *ngFor="let ligne of panier.lignesPanier">
-      {{ ligne.article.name }} - {{ ligne.quantite }} x {{ ligne.prixUnitaire }} €
-    </li>
-  </ul>
 
-  <!-- Bouton pour lancer le paiement PayPal -->
+  <div class="articles-container">
+    <div class="article-card" *ngFor="let ligne of panier.lignesPanier">
+      <img 
+        [src]="'http://localhost:8080/uploads/' + ligne.article.photos[0]?.name" 
+        alt="{{ ligne.article.name }}" 
+        class="article-photo"
+      />
+
+      <div class="article-info">
+        <h4>{{ ligne.article.name }}</h4>
+        <p><strong>Réf:</strong> {{ ligne.article.ref }}</p>
+        <p><strong>Description:</strong> {{ ligne.article.description }}</p>
+        <p><strong>Quantité:</strong> {{ ligne.quantite }}</p>
+        <p><strong>Pointure:</strong> {{ ligne.pointure?.taille }}</p>
+        <p><strong>Couleur:</strong> {{ ligne.couleur?.nom }}</p>
+        <p><strong>Prix unitaire:</strong> {{ ligne.prixUnitaire }} €</p>
+        <p><strong>Total:</strong> {{ ligne.total }} €</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PayPal -->
   <button *ngIf="panier.statut !== 'COMMANDEE' && !payer" (click)="payement()">Payer en ligne</button>
-
-  <!-- Bouton pour valider la commande après le paiement -->
   <button *ngIf="payer" (click)="validerCommande()">Valider la commande</button>
+  <button *ngIf="panier.statut === 'COMMANDEE' && !payer" (click)="annulerCommande()">Annuler la commande</button>
 
-  <!-- Conteneur du bouton PayPal, rendu dynamiquement -->
   <div *ngIf="payer">
     <ngx-paypal [config]="payPalConfig"></ngx-paypal>
   </div>
-
 </div>

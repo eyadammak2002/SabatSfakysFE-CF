@@ -21,6 +21,7 @@ import { PanierComponent } from './panier/panier.component';
 import { ListArticleComponent } from './article/list-article/list-article.component';
 import { CommandeComponent } from './commande/commande.component';
 import { ListCommandeComponent } from './commande/list-commande/list-commande.component';
+import { FileUploadComponent } from './file-upload/file-upload.component';
 
 const routes: Routes = [
   { path: '', component: ListArticleComponent },
@@ -29,7 +30,7 @@ const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'photo', component: PhotoComponent },
   { path: 'createPhoto', component: CreatePhotoComponent },
-  
+
   {
     path: 'auth', component: AuthenticationComponent, children: [
       { path: '', redirectTo: 'client/login', pathMatch: 'full' },

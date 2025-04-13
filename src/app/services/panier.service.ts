@@ -23,6 +23,8 @@ export interface Panier {
   total: number;
   statut: string; // Ajout du statut
   adresseLivraison: string; // Ajout de l'adresse de livraison
+  dateCommande?:Date;
+
 }
 
 //  API URL
@@ -33,7 +35,7 @@ export class PanierService {
   private apiUrl = 'http://localhost:8080/article'; 
   private apiUrl2 = 'http://localhost:8080/panier'; 
   private apiUrl3 = 'http://localhost:8080/lignePanier'; 
-
+  
   private panier: Panier | null = null;
   private storageKeyPrefix = 'panier_';
 
@@ -234,5 +236,7 @@ export class PanierService {
     return this.http.get<Article>(`${this.apiUrl3}/${lignePanierId}/article`);
   }
 
-  
+  annulerPanier(id: number): Observable<any> {
+    return this.http.put(`${this.apiUrl2}/paniers/${id}/annuler`, {});
+  }
 }

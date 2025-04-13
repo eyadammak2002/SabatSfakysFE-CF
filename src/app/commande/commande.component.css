@@ -1,0 +1,121 @@
+.commande-details {
+    max-width: 800px;  /* Ajuste la largeur maximale de la section */
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+  
+    h2, h3 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 1rem;
+    }
+  
+    p {
+      font-size: 16px;
+      margin: 0.5rem 0;
+    }
+  
+    strong {
+      color: #2c3e50;
+    }
+  
+    ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-bottom: 1.5rem;
+  
+      li {
+        margin-bottom: 0.5rem;
+        font-size: 15px;
+      }
+    }
+  
+    button {
+      display: inline-block;
+      margin: 1rem 0.5rem 0 0;
+      padding: 10px 20px;
+      font-size: 15px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+  
+      &:first-of-type {
+        background-color: #0070ba;
+        color: white;
+  
+        &:hover {
+          background-color: #005c9d;
+        }
+      }
+  
+      &:last-of-type {
+        background-color: #28a745;
+        color: white;
+  
+        &:hover {
+          background-color: #218838;
+        }
+      }
+    }
+  
+    ngx-paypal {
+      margin-top: 1rem;
+    }
+  }
+  
+  .articles-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  .article-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    width: 100%;  /* Carte pleine largeur */
+    max-width: 600px;  /* Limiter la largeur à 600px */
+    display: flex;
+    flex-direction: row;
+    transition: transform 0.3s;
+  
+    &:hover {
+      transform: translateY(-5px);
+    }
+  
+    .article-photo {
+      width: 150px;  /* Largeur fixe pour l'image */
+      height: 150px; /* Hauteur de l'image */
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 1rem;
+    }
+  
+    .article-info {
+      padding: 1rem;
+      flex: 1;  /* Prend le reste de l'espace disponible */
+    
+      h4 {
+        margin-top: 0;
+        font-size: 1.4rem;  /* Taille du titre augmentée */
+        color: #2c3e50;
+      }
+  
+      p {
+        margin: 0.3rem 0;
+        font-size: 14px;
+      }
+  
+      p strong {
+        font-weight: bold;
+      }
+    }
+  }
+  

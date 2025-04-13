@@ -1,96 +1,161 @@
-/* ✅ Main Container */
+/* CSS pour la page d'édition - cohérent avec la création */
 .container {
-  max-width: 750px;
+  max-width: 800px;
   margin: auto;
 }
 
-/* ✅ Styling for the Card */
 .card {
   border-radius: 10px;
-  padding: 20px;
+  padding: 15px;
   background: #ffffff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid #ddd;
 }
 
-.card h4 {
-  font-size: 22px;
+.card h5 {
+  font-size: 20px;
   font-weight: bold;
-  color: #3c2313;
 }
 
-/* ✅ Form Fields */
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
-.form-control,
-select {
-  border-radius: 6px;
+.form-control, select {
+  border-radius: 5px;
   font-size: 14px;
-  padding: 10px;
+  padding: 8px;
 }
 
-/* ✅ Icons inside Labels */
-.form-group label i {
-  margin-right: 8px;
-  color: #3c2313;
-}
-
-/* ✅ Styling for Photo Selection */
-.photo-select {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.photo-option {
-  position: relative;
-  cursor: pointer;
-}
-
-.article-photo {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 6px;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  border: 2px solid transparent;
-}
-
-.article-photo:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.photo-option input:checked + label .article-photo {
-  border: 2px solid #3c2313;
-  transform: scale(1.1);
-}
-
-/* ✅ Buttons */
 .btn {
-  padding: 10px 20px;
+  padding: 8px 15px;
   font-size: 14px;
-  border-radius: 6px;
+  border-radius: 5px;
 }
 
-.btn-success {
+.btn-primary {
   background-color: #3c2313;
   border: none;
 }
 
-.btn-success:hover {
+.btn-primary:hover {
   background-color: #2b180f;
 }
 
 .btn-secondary {
-  background-color: transparent;
-color: #2b180f;
+  background-color: #bbb;
   border: none;
 }
 
 .btn-secondary:hover {
   background-color: #999;
+}
+
+/* Conteneur principal pour la galerie de photos */
+.photo-gallery-container {
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.05);
+  margin-top: 25px;
+  border-left: 4px solid #63a50a;
+}
+
+/* Titre de la section */
+.photo-gallery-title {
+  color: #3c2313;
+  font-weight: 600;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #63a50a;
+  padding-bottom: 8px;
+  display: inline-block;
+}
+
+/* Description */
+.photo-gallery-description {
+  color: #6c757d;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* Style pour les cartes de photos */
+.photo-card {
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 100%;
+}
+
+/* Style pour les images */
+.photo-img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.photo-card:hover .photo-img {
+  transform: scale(1.05);
+}
+
+.photo-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Style pour les bordures des cartes sélectionnées */
+.photo-card.border-success {
+  border-color: #63a50a;
+  box-shadow: 0 4px 10px rgba(99, 165, 10, 0.2);
+}
+
+/* Style pour les boutons */
+.select-btn {
+  background-color: #63a50a !important;
+  color: white !important;
+}
+
+.select-btn:hover {
+  background-color: #548e08 !important;
+  transform: translateY(-2px);
+}
+
+.remove-btn {
+  background-color: white !important;
+  color: #dc3545 !important;
+  border: 1px solid #dc3545 !important;
+}
+
+.remove-btn:hover {
+  background-color: #fff9f9 !important;
+  color: #c82333 !important;
+  transform: translateY(-2px);
+}
+
+.delete-btn:hover {
+  background-color: #c82333 !important;
+  transform: translateY(-2px);
+}
+
+.photo-btn-small {
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* Style pour les alertes de stock */
+.alert {
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.alert:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.85rem;
 }

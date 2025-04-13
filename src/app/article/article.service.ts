@@ -9,6 +9,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 export class ArticleService {
   private apiUrl = 'http://127.0.0.1:8080/article';  // L'URL de ton back-end
   private apiUrl1 = 'http://127.0.0.1:8080/article/statut/'; 
+  private apiUrl2 = 'http://127.0.0.1:8080/photos/name'; 
   constructor(private http: HttpClient) {}
 
   notifierArticle(message:string){
@@ -18,7 +19,9 @@ export class ArticleService {
   get(): Observable<Article[]> {
     return this.http.get<Article[]>(this.apiUrl);
   }
-
+  getArticlesAujourdhui(): Observable<Article[]> {
+    return this.http.get<Article[]>(`${this.apiUrl}/aujourdhui`);
+  }
   getArticlesByStatut(statut: string): Observable<Article[]> {
     return this.http.get<Article[]>(`${this.apiUrl1}${statut}`);
   }
@@ -66,6 +69,18 @@ export class ArticleService {
     }
 
   // Service Angular
- 
+  // Méthode pour récupérer une photo par son nom
+  getPhotoByName(name: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl2}/${name}`);
+  }
   
+
+   // Supprimer une photo par son ID
+   deletePhoto(id: number): Observable<any> {
+    // Vérification que l'ID n'est pas undefined ou null
+    if (id === undefined || id === null) {
+      throw new Error('L\'ID de la photo est undefined ou null');
+    }
+    return this.http.delete<any>(`${this.apiUrl}/photos/${id}`);
+  }
 }

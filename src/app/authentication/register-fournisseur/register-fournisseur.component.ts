@@ -15,14 +15,13 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
   styleUrls: ['./register-fournisseur.component.css']
 })
 export class RegisterFournisseurComponent implements OnInit {
-
   allPhoto: Photo[] = [];
   materiauxOptions = ['Cuir', 'Coton bio', 'Textile recyclé'];
   methodesProductionOptions = ['Énergie renouvelable', 'Production locale', 'Sans déchet'];
   programmeRecyclageOptions = ['Acceptation de retours usagés', 'Recyclage sur place'];
   transportLogistiqueOptions = ['Transport neutre en carbone', 'Livraison verte'];
   initiativesSocialesOptions = ['Collaboration avec artisans locaux', 'Insertion professionnelle'];
-  
+
   form: any = {
     username: null,
     email: null,

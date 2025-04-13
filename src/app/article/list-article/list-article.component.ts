@@ -88,7 +88,16 @@ export class ListArticleComponent implements OnInit {
       }
     });
   }
-
+  getArticlesAjoutesAujourdhui(): void {
+    this.articleService.getArticlesAujourdhui().subscribe({
+      next: (data) => {
+        this.allArticles = data;
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des articles :', err);
+      }
+    });
+  }
   confirmerAjoutAuPanier(): void {
     if (!this.selectedArticle) {
       alert("Aucun article sélectionné !");

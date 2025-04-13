@@ -33,7 +33,7 @@ export class LoginComponent {
       return;
     }
 
-    this.authService.login(this.form.username, this.form.password).subscribe(
+    this.authService.login(this.form.username, this.form.password,).subscribe(
       data => {
         console.log('Connexion réussie', data);
         this.tokenStorage.saveToken(data.accessToken);

@@ -10,6 +10,9 @@ import { Category } from 'src/app/category/category';
 import { CategoryService } from 'src/app/category/category.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { StockService } from 'src/app/panier/stock.service';
+import { FileUploadService } from 'src/app/services/file-upload.service';
+import { forkJoin } from 'rxjs';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-edit-article',
@@ -28,7 +31,23 @@ export class EditArticleComponent implements OnInit {
   selectedPointure: Pointure | null = null;
   quantite: number = 0;
 
+
+  // Upload properties
+  selectedFiles?: FileList;
+  currentFiles: File[] = [];
+  progressInfos: { value: number, fileName: string }[] = [];
+  uploadMessage: string = '';
+  uploadSuccess: boolean = false;
+  uploadError: boolean = false;
+  newlyUploadedPhotos: Photo[] = [];
+// Dans votre composant
+photosToHide: number[] = []; // IDs des photos à masquer
+photosNotHide: number[] = []; // IDs des photos à masquer
+
+articleID:number=0;
+
   articleStocks: Stock[] = [];
+
   articleForm: Article = {
     id: 0,
     ref: '',
@@ -62,40 +81,172 @@ export class EditArticleComponent implements OnInit {
     private router: Router,
     private photoService: PhotoService,
     private tokenStorageService: TokenStorageService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private uploadService: FileUploadService
+    
   ) {}
 
   ngOnInit(): void {
     this.getCouleurs();
     this.getPointures();
-    this.getPhotos();
     this.getCategory();
-    this.loadArticle();
+    
+    // Charger l'article d'abord, puis charger les photos liées à cet article
+    this.loadArticle();  // Cela charge l'article et ses informations, y compris les photos liées.
+    
+    // Assurer que l'article est chargé avant de récupérer les photos liées
+    this.loadArticle().then(() => {
+      this.getPhotosArticle();  // Une fois l'article chargé, récupérer les photos liées.
+      this.getPhotos();         // Ensuite, récupérer toutes les photos.
+    });
   }
+  
+  loadArticle(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const articleId = this.activatedRoute.snapshot.paramMap.get('id');
+      if (articleId) {
+        const id = parseInt(articleId);
+        this.articleID = id;
+        this.articleService.getById(id).subscribe({
+          next: (data) => {
+            this.articleForm = data;
+            this.articleStocks = data.stocks || [];
+            this.selectedPhotos = [...data.photos];
+            this.selectedCouleur = this.articleForm.stocks.length > 0 ? this.articleForm.stocks[0].couleur : null;
+            this.selectedPointure = this.articleForm.stocks.length > 0 ? this.articleForm.stocks[0].pointure : null;
+  
+            // Charger les photos liées
+            this.getPhotosArticle();
+            resolve();  // Résoudre la Promise une fois l'article chargé
+          },
+          error: (err) => {
+            console.error('❌ Erreur lors du chargement de l\'article', err);
+            reject(err);  // Rejeter la Promise en cas d'erreur
+          }
+        });
+      } else {
+        reject(new Error('ID de l\'article manquant'));
+      }
+    });
+  }
+  
+ 
+  // Méthode pour récupérer les photos de l'article avec l'ID de l'article
+  getPhotosArticle(): void {
+    if (this.articleID) {
+      this.articleService.getById(this.articleID).subscribe({
+        next: (article) => {
+          this.selectedPhotos = article.photos || [];
+          this.articleForm.photos = [...this.selectedPhotos]; // Mise à jour des photos de l'article
 
-  loadArticle(): void {
-    const articleId = this.activatedRoute.snapshot.paramMap.get('id');
-    if (articleId) {
-      this.articleService.getById(parseInt(articleId)).subscribe({
-        next: (data) => {
-          this.articleForm = data;
-          this.articleStocks = data.stocks || [];
-          this.selectedPhotos = [...data.photos];
-          this.selectedCouleur = this.articleForm.stocks.length > 0 ? this.articleForm.stocks[0].couleur : null;
-          this.selectedPointure = this.articleForm.stocks.length > 0 ? this.articleForm.stocks[0].pointure : null;
+          // Extraire les IDs des photos liées pour les masquer dans la liste
+          this.photosNotHide = this.selectedPhotos.map(photo => photo.id);
+          console.log('Photos liées à l’article :', this.selectedPhotos);
+          console.log('IDs des photos à masquer :', this.photosNotHide);
         },
-        error: (err) => console.error('❌ Erreur lors du chargement de l\'article', err)
+        error: (err) => {
+          console.error("Erreur lors de la récupération des photos de l'article:", err);
+        }
       });
     }
   }
 
+
   getPhotos(): void {
     this.photoService.get().subscribe({
-      next: (data) => (this.allPhoto = data),
-      error: (err) => console.error(err)
+      next: (data) => {
+        this.allPhoto = data;
+        console.log('Photos récupérées:', this.allPhoto);
+  
+        // Si aucune photo n'a été nouvellement uploadée, récupérer tous les IDs des photos
+        if (this.newlyUploadedPhotos.length === 0) {
+          // Exclure les photos déjà liées à l'article (photos dans photosNotHide) de la liste des photos à masquer
+          this.photosToHide = this.allPhoto
+            .filter(photo => !this.photosNotHide.includes(photo.id))  // Filtrage basé sur l'ID
+            .map(photo => photo.id);  // Extraire uniquement les IDs des photos
+          console.log('Tous les IDs des photos à masquer (excluant celles déjà liées à l\'article) :', this.photosToHide);
+        } else {
+          // Mettre à jour la liste des photos sélectionnées après avoir uploadé des photos
+          this.articleForm.photos = [...this.selectedPhotos];
+          console.log('Photos sélectionnées après upload:', this.selectedPhotos);
+        }
+  
+        console.log('IDs des photos à masquer:', this.photosToHide);
+            // Forcer la détection des changements après modification des données
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération des photos:', err);
+      }
     });
   }
+  
 
+  // File upload methods
+  selectFiles(event: any): void {
+    this.selectedFiles = event.target.files;
+    this.currentFiles = Array.from(this.selectedFiles || []);
+    this.progressInfos = this.currentFiles.map(file => ({ value: 0, fileName: file.name }));
+    this.uploadMessage = '';
+    this.uploadSuccess = false;
+    this.uploadError = false;
+  }
+
+  uploadPhotos(): void {
+    this.uploadMessage = '';
+    this.uploadSuccess = false;
+    this.uploadError = false;
+    this.newlyUploadedPhotos = [];
+    
+    if (this.selectedFiles && this.selectedFiles.length > 0) {
+      const uploadObservables = Array.from(this.selectedFiles).map((file, index) => {
+        return this.uploadFile(file, index);
+      });
+
+      // Utiliser forkJoin pour attendre que tous les fichiers soient téléchargés
+      forkJoin(uploadObservables).subscribe({
+        next: (responses) => {
+          this.uploadSuccess = true;
+          this.uploadMessage = 'Toutes les photos ont été téléchargées avec succès.';
+          // Rafraîchir la liste des photos pour inclure les nouvelles
+          this.getPhotos();
+          this.selectedFiles = undefined;
+          this.currentFiles = [];
+        },
+        error: (err) => {
+          this.uploadError = true;
+          this.uploadMessage = 'Une erreur est survenue lors du téléchargement de certaines photos.';
+        }
+      });
+    }
+  }
+// Modifiez la méthode uploadFile pour traiter correctement la réponse
+uploadFile(file: File, index: number): any {
+  return new Promise((resolve, reject) => {
+    this.uploadService.upload(file).subscribe({
+      next: (event: any) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          this.progressInfos[index].value = Math.round(100 * event.loaded / event.total);
+        } else if (event instanceof HttpResponse) {
+          // Stocker uniquement les données essentielles pour identifier la photo plus tard
+          const newPhoto: Photo = event.body;
+          this.newlyUploadedPhotos.push({...newPhoto}); // Utiliser une copie pour éviter les références partagées
+          
+          // Ne pas ajouter directement à selectedPhotos ici
+          // Au lieu de cela, attendons getPhotos() pour le faire avec les données complètes
+          
+          console.log('Photo uploadée:', newPhoto);
+          resolve(event.body);
+        }
+      },
+      error: (err: any) => {
+        this.progressInfos[index].value = 0;
+        this.uploadError = true;
+        reject(err);
+      }
+    });
+  });
+}
   getCategory(): void {
     this.categoryService.get().subscribe({
       next: (data) => (this.allCategory = data),
@@ -138,9 +289,16 @@ export class EditArticleComponent implements OnInit {
       console.error('❌ Veuillez sélectionner une couleur, une pointure et une quantité.');
     }
   }
-  isPhotoSelected(photo: Photo): boolean {
+ /* isPhotoSelected(photo: Photo): boolean {
     return this.articleForm.photos.some(p => p.id === photo.id);
+  }*/
+  // Helper method to check if a photo is selected (used in template)
+  isPhotoSelected(photoId: number): boolean {
+    return this.selectedPhotos.some(p => p.id === photoId);
   }
+
+  
+  
 
   togglePhotoSelection(photo: Photo): void {
     const index = this.selectedPhotos.findIndex(p => p.id === photo.id);
@@ -226,4 +384,54 @@ export class EditArticleComponent implements OnInit {
   }
   
   
+  // Méthode deletePhoto corrigée pour la page d'édition
+deletePhoto(photo: any): void {
+  // Vérifier d'abord que l'objet photo est valide et contient un ID
+  console.log('Tentative de suppression de la photo:', photo);
+  
+  if (!photo) {
+    console.error('Photo invalide');
+    return;
+  }
+  
+  // Inspecter l'objet pour trouver l'ID (que ce soit photo.id ou une autre propriété)
+  console.log('Propriétés de l\'objet photo:', Object.keys(photo));
+  
+  // Déterminer l'ID de la photo (utiliser _id ou id selon votre modèle de données)
+  const photoId = photo._id || photo.id;
+  
+  if (!photoId) {
+    console.error('ID de photo manquant');
+    return;
+  }
+
+  // Afficher une confirmation avant suppression
+  if (confirm(`Êtes-vous sûr de vouloir supprimer cette photo: ${photo.name}?`)) {
+    console.log('Suppression de la photo avec ID:', photoId);
+    
+    // Appel au service pour supprimer la photo
+    this.photoService.deletePhoto(photoId).subscribe(
+      () => {
+        console.log('Photo supprimée avec succès:', photoId);
+        
+        // Masquer la photo supprimée dans l'interface utilisateur
+        this.photosToHide.push(photoId);
+        
+        // Si la photo était sélectionnée, la retirer de la sélection
+        if (this.isPhotoSelected(photoId)) {
+          this.selectedPhotos = this.selectedPhotos.filter(p => {
+            const selectedId = p.id;
+            return selectedId !== photoId;
+          });
+        }
+        
+        // Afficher un message de succès
+      },
+      error => {
+        console.error('Erreur lors de la suppression de la photo:', error);
+      }
+    );
+  }
+}
+
 }
