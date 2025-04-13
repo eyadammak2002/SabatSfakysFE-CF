@@ -56,7 +56,7 @@ export class PanierService {
       
       // Rediriger vers la page de login
       this.router.navigate(['/login'], { 
-        queryParams: { returnUrl: '/commande' } 
+        queryParams: { returnUrl: '/panier' } 
       });
       
       return throwError(() => new Error('Non connecté'));
@@ -90,11 +90,14 @@ export class PanierService {
             lignesPanier: [],
             total: 0,
             statut: 'EN_COURS',
-            adresseLivraison: ''
+            adresseLivraison: guestPanier.adresseLivraison || ''
           };
         } else {
-          // Mettre à jour l'ID client
+          // Mettre à jour l'ID client et conserver l'adresse de livraison s'il y en a une
           this.panier.clientId = clientId;
+          if (guestPanier.adresseLivraison && guestPanier.adresseLivraison.trim() !== '') {
+            this.panier.adresseLivraison = guestPanier.adresseLivraison;
+          }
         }
         
         // Ajouter les lignes du panier invité au panier client
@@ -106,12 +109,17 @@ export class PanierService {
           );
           
           if (ligneExistante) {
+            // Conserver la quantité la plus élevée entre les deux paniers
             ligneExistante.quantite += ligne.quantite;
             ligneExistante.total = ligneExistante.quantite * ligneExistante.prixUnitaire;
           } else {
+            // Ajouter la ligne telle quelle, avec sa quantité originale
             this.panier!.lignesPanier.push({...ligne});
           }
         });
+        
+        // Recalculer le total du panier
+        this.calculerTotal();
         
         // Sauvegarder le panier fusionné
         this.sauvegarderPanierDansLocalStorage();
@@ -119,6 +127,14 @@ export class PanierService {
         // Supprimer le panier invité
         localStorage.removeItem(this.guestCartKey);
       }
+    }
+  }
+
+  // Calculer le total du panier
+  private calculerTotal(): void {
+    if (this.panier) {
+      this.panier.total = this.panier.lignesPanier.reduce((sum, ligne) => 
+        sum + (ligne.quantite * ligne.prixUnitaire), 0);
     }
   }
 
@@ -173,9 +189,8 @@ export class PanierService {
     
     if (!this.panier) return;
     
-    // Calcul automatique du total du panier
-    this.panier.total = this.panier.lignesPanier.reduce((sum, ligne) => 
-      sum + (ligne.quantite * ligne.prixUnitaire), 0);
+    // Calculer automatiquement le total du panier
+    this.calculerTotal();
     
     if (clientId) {
       // Sauvegarder dans le panier utilisateur
@@ -209,20 +224,26 @@ export class PanierService {
     );
   
     if (ligneExistante) {
+      // Si l'article existe déjà, augmenter la quantité de 1
       ligneExistante.quantite += 1;
       ligneExistante.total = ligneExistante.quantite * ligneExistante.prixUnitaire;
     } else {
+      // Sinon, ajouter une nouvelle ligne avec quantité initiale à 1
       this.panier.lignesPanier.push({
         id: 1,
         article,
-        quantite: 1,
+        quantite: 1, // Initialisation à 1
         prixUnitaire: article.prixVente,
-        total: article.prixVente,
+        total: article.prixVente, // total = quantité (1) * prixUnitaire
         couleur,
         pointure
       });
     }
   
+    // Mettre à jour le total du panier
+    this.calculerTotal();
+    
+    // Sauvegarder le panier
     this.sauvegarderPanierDansLocalStorage();
   }
 
@@ -234,12 +255,12 @@ export class PanierService {
   modifierQuantite(index: number, changement: number, articleId: number, couleurId: number, pointureId: number): void {
     // Utilisation de "!" pour garantir que panier et lignesPanier ne sont pas null ou undefined
     const ligne = this.panier!.lignesPanier[index];
-    console.log("couleurId", couleurId);
-    console.log("pointureId", pointureId);
+    
     if (!couleurId || !pointureId) {
       console.error('couleurId ou pointureId est invalide');
       return; // Quittez la méthode si les identifiants sont invalides
     }
+    
     // Appel à l'API pour récupérer la quantité disponible pour cette combinaison
     this.stockService.getStockQuantity(articleId, couleurId, pointureId).subscribe(qte => {
       console.log("Quantité actuelle dans le panier :", ligne.quantite);
@@ -260,12 +281,16 @@ export class PanierService {
             // Mise à jour du total de la ligne en fonction de la nouvelle quantité
             ligne.total = ligne.quantite * ligne.prixUnitaire;
           }
+          
+          // Recalculer le total du panier
+          this.calculerTotal();
+          
+          // Sauvegarder le panier
+          this.sauvegarderPanierDansLocalStorage();
         } else if (changement > 0) {
           alert("❌ Quantité maximale atteinte !");
         }
       }
-      
-      this.sauvegarderPanierDansLocalStorage();
     }, error => {
       console.error("Erreur lors de la récupération de la quantité du stock", error);
     });
@@ -276,6 +301,11 @@ export class PanierService {
     if (!this.panier) return;
 
     this.panier.lignesPanier.splice(index, 1);
+    
+    // Recalculer le total
+    this.calculerTotal();
+    
+    // Sauvegarder le panier
     this.sauvegarderPanierDansLocalStorage();
   }
 
@@ -292,6 +322,7 @@ export class PanierService {
     if (!this.panier) return;
 
     this.panier.lignesPanier = [];
+    this.panier.total = 0;
     this.sauvegarderPanierDansLocalStorage();
   }
 
@@ -312,8 +343,8 @@ export class PanierService {
   verifierConnexionAvantCommande(): boolean {
     if (!this.getClientId()) {
       this.sauvegarderPanierInvite();
-      this.router.navigate(['/login'], { 
-        queryParams: { returnUrl: '/commande' } 
+      this.router.navigate(['/auth/client/login'], { 
+        queryParams: { returnUrl: '/panier' } 
       });
       return false;
     }

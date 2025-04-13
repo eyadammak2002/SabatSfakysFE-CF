@@ -6,6 +6,7 @@ import { StockService } from './stock.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+//solution pour error de polyfills car j'ai pas
 declare var bootstrap: any;
 
 @Component({
