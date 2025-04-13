@@ -39,6 +39,8 @@ import { PanierComponent } from './panier/panier.component';
 import { ListArticleComponent } from './article/list-article/list-article.component';
 import { CommandeComponent } from './commande/commande.component';
 import { ListCommandeComponent } from './commande/list-commande/list-commande.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -48,7 +50,7 @@ import { ListCommandeComponent } from './commande/list-commande/list-commande.co
     FournisseurDashboardComponent,
     ListArticleComponent,
     ListCommandeComponent,
- 
+    ConfirmDialogComponent,
    
   ],
   imports: [
@@ -89,7 +91,11 @@ import { ListCommandeComponent } from './commande/list-commande/list-commande.co
     CreatePackComponent,
     PanierComponent,
     CommandeComponent,
-    
+    MatDialogModule,
+    MatButtonModule,
+  ],
+  exports: [
+    ConfirmDialogComponent
   ],
   providers: [
     {

@@ -4,11 +4,14 @@ import { Router } from '@angular/router';
 import { NgxPayPalModule, IPayPalConfig, ICreateOrderRequest } from 'ngx-paypal';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ConfirmDialogComponent } from '../components/confirm-dialog.component';
 
 @Component({
   selector: 'app-commande',
   standalone: true,
-  imports: [NgxPayPalModule,CommonModule,FormsModule],
+  imports: [NgxPayPalModule,CommonModule,FormsModule,    MatSnackBarModule],
   templateUrl: './commande.component.html',
   styleUrls: ['./commande.component.css']
 })
@@ -19,7 +22,8 @@ export class CommandeComponent implements OnInit, AfterViewInit {
   panierIdCommander: number | null = null;
 
   
-  constructor(private panierService: PanierService, private router: Router) {}
+  constructor(private panierService: PanierService, private router: Router,  private snackBar: MatSnackBar,
+    private dialog: MatDialog) {}
 // Modification de ngOnInit pour récupérer l'ID sauvegardé
 ngOnInit(): void {
   this.panier = this.panierService.getPanier();
@@ -140,48 +144,72 @@ validerCommande(): void {
 
   this.panier.statut = 'COMMANDEE'; 
 }
-// Modification de la méthode annulerCommande()
+
+
 annulerCommande(): void {
-  // Vérifier si l'ID du panier est valide (pas null)
+  // Vérifier si l'ID du panier est valide
   if (this.panier.id === null) {
     // Si l'ID est null, essayer d'utiliser l'ID sauvegardé
     if (this.panierIdCommander !== null) {
       this.panier.id = this.panierIdCommander;
       console.log("Utilisation de l'ID sauvegardé:", this.panierIdCommander);
     } else {
-      alert("Impossible d'annuler: ID du panier non disponible.");
+      this.snackBar.open("Impossible d'annuler: ID du panier non disponible.", "Fermer", {
+        duration: 5000,
+        panelClass: ['error-snackbar']
+      });
       console.log("Aucun ID de panier disponible");
       return;
     }
   }
 
-  if (confirm('Êtes-vous sûr de vouloir annuler cette commande ?')) {
-    this.panierService.annulerPanier(this.panier.id).subscribe(
-      (response) => {
-        // Traiter la réponse après annulation
-        this.panier.statut = 'ANNULEE';  // Mettre à jour le statut du panier
-        
-        // Mettre à jour le localStorage
-        this.panierService.sauvegarderPanierDansLocalStorage();
-        
-        // Supprimer l'ID sauvegardé puisque la commande est annulée
-        localStorage.removeItem('panierIdCommander');
-        
-        alert('Commande annulée avec succès');
-      },
-      (error) => {
-        // Gérer les erreurs, par exemple si l'annulation échoue
-        console.error('Erreur lors de l\'annulation de la commande', error);
-        
-        // Vérifier si l'erreur contient un message spécifique pour le cas "déjà livré"
-        if (error.error && error.error.message && error.error.message.includes('déjà livré')) {
-          alert('Impossible d\'annuler cette commande car elle est déjà livrée.');
-        } else {
-          alert('Une erreur est survenue lors de l\'annulation de la commande');
+  // Utiliser MatDialog pour confirmation
+  const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    width: '350px',
+    data: { 
+      title: 'Confirmation',
+      message: 'Êtes-vous sûr de vouloir annuler cette commande ?'
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.panierService.annulerPanier(this.panier.id!).subscribe(
+        (response) => {
+          // Traiter la réponse après annulation
+          this.panier.statut = 'ANNULEE';
+          
+          // Mettre à jour le localStorage
+          this.panierService.sauvegarderPanierDansLocalStorage();
+          
+          // Supprimer l'ID sauvegardé puisque la commande est annulée
+          localStorage.removeItem('panierIdCommander');
+          
+          this.snackBar.open('Commande annulée avec succès', 'Fermer', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+        },
+        (error) => {
+          // Gérer les erreurs
+          console.error('Erreur lors de l\'annulation de la commande', error);
+          
+          // Message d'erreur approprié
+          if (error.error?.message?.includes('déjà livré')) {
+            this.snackBar.open('Impossible d\'annuler cette commande car elle est déjà livrée.', 'Fermer', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
+            });
+          } else {
+            this.snackBar.open('Une erreur est survenue lors de l\'annulation de la commande', 'Fermer', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
+            });
+          }
         }
-      }
-    );
-  }
+      );
+    }
+  });
 }
   
 }

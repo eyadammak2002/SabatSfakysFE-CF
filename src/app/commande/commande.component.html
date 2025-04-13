@@ -29,9 +29,9 @@
   </div>
 
   <!-- PayPal -->
-  <button *ngIf="panier.statut !== 'COMMANDEE' && !payer" (click)="payement()">Payer en ligne</button>
+  <button *ngIf="(panier.statut !== 'COMMANDEE' && panier.statut !== 'LIVRER' )&& !payer" (click)="payement()">Payer en ligne</button>
   <button *ngIf="payer" (click)="validerCommande()">Valider la commande</button>
-  <button *ngIf="panier.statut === 'COMMANDEE' && !payer" (click)="annulerCommande()">Annuler la commande</button>
+  <button *ngIf="panier.statut === 'COMMANDEE' ||panier.statut === 'LIVRER' && !payer" (click)="annulerCommande()">Annuler la commande</button>
 
   <div *ngIf="payer">
     <ngx-paypal [config]="payPalConfig"></ngx-paypal>
