@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Article, Couleur, Pointure } from '../article';
 import { ArticleService } from '../article.service';
 import { PanierService } from 'src/app/services/panier.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-article',
@@ -17,7 +18,8 @@ export class ListArticleComponent implements OnInit {
 
   constructor(
     private articleService: ArticleService,
-    private panierService: PanierService // ✅ Service pour ajouter au panier
+    private panierService: PanierService ,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -118,5 +120,12 @@ export class ListArticleComponent implements OnInit {
     alert(`${this.selectedArticle.name} ajouté au panier !`);
     
     this.selectedArticle = null; // Fermer le modal
+  }
+
+
+  // Nouvelle méthode pour naviguer vers la page de détails
+  voirDetailsArticle(article: Article): void {
+    console.log(article.id);
+    this.router.navigate(['/detailArticle', article.id]);
   }
 }

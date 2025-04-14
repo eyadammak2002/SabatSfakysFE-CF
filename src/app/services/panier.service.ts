@@ -55,7 +55,7 @@ export class PanierService {
       this.sauvegarderPanierInvite();
       
       // Rediriger vers la page de login
-      this.router.navigate(['/login'], { 
+      this.router.navigate(['/auth/client/login'], { 
         queryParams: { returnUrl: '/panier' } 
       });
       
@@ -358,4 +358,6 @@ export class PanierService {
       this.sauvegarderPanierDansLocalStorage();
     }
   }
+
+
 }

@@ -22,6 +22,7 @@ import { ListArticleComponent } from './article/list-article/list-article.compon
 import { CommandeComponent } from './commande/commande.component';
 import { ListCommandeComponent } from './commande/list-commande/list-commande.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
+import { ArticleDetailComponent } from './article/article-detail/article-detail.component';
 
 const routes: Routes = [
   { path: '', component: ListArticleComponent },
@@ -46,7 +47,9 @@ const routes: Routes = [
   { path: 'accueil', component: ListArticleComponent },
   { path: 'createArticle', component: CreateArticleComponent },
   { path: 'editArticle/:id', component: EditArticleComponent },
+  { path: 'detailArticle/:id', component: ArticleDetailComponent },
 
+  
   { path: 'pack', component: PackComponent },
   { path: 'createPack', component: CreatePackComponent },
   { path: 'editPack/:id', component: EditPackComponent },

@@ -17,23 +17,24 @@
             <a routerLink="/panier" class="icon-link"><i class="fas fa-shopping-cart"></i></a>
             
             <!-- Icône de notifications avec dropdown -->
-            <div class="notification-icon" ngbDropdown>
-                <a class="icon-link" ngbDropdownToggle>
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-badge" *ngIf="notifications.length > 0">{{ notifications.length }}</span>
-                </a>
-                <div ngbDropdownMenu class="dropdown-menu notification-dropdown">
-                    <div *ngIf="notifications.length === 0" class="no-notifications">
-                        Aucune notification
-                    </div>
-                    <div *ngFor="let notif of notifications" class="notification-item">
-                        {{ notif }}
-                    </div>
-                    <div *ngIf="notifications.length > 0" class="clear-all">
-                        <a href="javascript:void(0);" (click)="clearNotifications()">Effacer tout</a>
-                    </div>
-                </div>
-            </div>
+        <!-- Dans votre header.component.html -->
+<div class="notification-icon">
+    <a class="icon-link" (click)="toggleNotifications($event)">
+      <i class="fas fa-bell"></i>
+      <span class="notification-badge" *ngIf="notifications.length > 0">{{ notifications.length }}</span>
+    </a>
+    <div class="dropdown-menu notification-dropdown" [ngClass]="{'show': isNotificationDropdownOpen}">
+      <div *ngIf="notifications.length === 0" class="no-notifications">
+        Aucune notification
+      </div>
+      <div *ngFor="let notif of notifications" class="notification-item">
+        {{ notif }}
+      </div>
+      <div *ngIf="notifications.length > 0" class="clear-all">
+        <a href="javascript:void(0);" (click)="clearNotifications()">Effacer tout</a>
+      </div>
+    </div>
+  </div>
             
             <!-- Bouton de test pour notification (à supprimer en production) -->
             <button *ngIf="isLoggedIn" (click)="sendTestNotification()" class="btn btn-sm btn-primary test-btn">

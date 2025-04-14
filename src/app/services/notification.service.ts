@@ -2,19 +2,35 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Client } from '@stomp/stompjs';
 import * as SockJS from 'sockjs-client';
+import { HttpClient } from '@angular/common/http';
 
 declare var global: any;
+
+export interface NotificationEntity {
+  idNotification: number | null;
+  createdAt: string | null; // Peut être null pour les invités
+  message: string;
+  readable: number;
+  userId: number;
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class NotificationService implements OnDestroy {
+
+  private apiUrl = 'http://localhost:8080/api/notification/notification';
+
   private stompClient: Client | null = null;
   private notificationsSubject = new BehaviorSubject<string[]>([]);
   notifications$: Observable<string[]> = this.notificationsSubject.asObservable();
   private notifications: string[] = [];
   private connected = false;
 
-  constructor() {
+  constructor(private http:HttpClient) {
     if (typeof global === 'undefined') {
       (window as any).global = window;
     }
@@ -101,4 +117,10 @@ export class NotificationService implements OnDestroy {
       console.log('WebSocket disconnected');
     }
   }
+
+
+  getAllNotifications(id:any): Observable<Notification[]> {
+      return this.http.get<Notification[]>(`${this.apiUrl}/${id}`);
+    }
+  
 }
