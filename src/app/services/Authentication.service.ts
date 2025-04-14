@@ -34,7 +34,7 @@ export class AuthenticationService {
     private panierService: PanierService,
     private router: Router,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   loginWithGoogle(tokenRequest: TokenRequest): Observable<any> {
     console.log(tokenRequest, "token service");
