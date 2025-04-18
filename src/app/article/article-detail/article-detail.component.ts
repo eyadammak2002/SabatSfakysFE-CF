@@ -10,6 +10,7 @@ import { FileUploadService } from 'src/app/services/file-upload.service';
 import { Article, Couleur, Pointure } from '../article';
 import { ArticleService } from '../article.service';
 import { Photo } from 'src/app/photo/Photo';
+import { PhotoService } from 'src/app/photo/photo.service';
 import { AuthenticationService } from 'src/app/services/Authentication.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 declare var bootstrap: any;
@@ -46,10 +47,12 @@ export class ArticleDetailComponent implements OnInit {
   newlyUploadedPhotos: Photo[] = [];
   isUploading: boolean = false;
   
+  // Nouvelles propriétés pour gérer l'affichage des photos
+  allPhoto: Photo[] = [];
+  photosToHide: number[] = [];
+  
   // Pour l'authentification
   currentClientId: number | null = null;
-  
-  // Pour l'affichage des images
   currentImageIndex: number = 0;
 
   constructor(
@@ -60,10 +63,11 @@ export class ArticleDetailComponent implements OnInit {
     private avisService: AvisService,
     private authService: AuthenticationService,
     private uploadService: FileUploadService,
+    private photoService: PhotoService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,  
     private tokenStorage: TokenStorageService
-  ) {
+  ){
     // Initialisation du formulaire d'avis
     this.avisForm = this.fb.group({
       note: ['', Validators.required],
@@ -74,6 +78,10 @@ export class ArticleDetailComponent implements OnInit {
   ngOnInit(): void {
     // Récupérer l'ID du client si l'utilisateur est connecté
     this.currentClientId = this.getCurrentClientId();
+    console.log("currentClientId", this.currentClientId);
+    
+    // Charger toutes les photos disponibles
+    this.getPhotos();
     
     // Récupérer l'id depuis l'URL
     this.route.paramMap.subscribe(params => {
@@ -98,7 +106,38 @@ export class ArticleDetailComponent implements OnInit {
   // Récupérer l'ID du client connecté si disponible
   getCurrentClientId(): number | null {
     const user = this.tokenStorage.getUser();
+    console.log("user", user);
+    console.log("user id", user.id);
     return user?.id || null;
+  }
+  
+  // Méthode pour vérifier si une photo est sélectionnée
+  isPhotoSelected(photoId: number): boolean {
+    return this.newlyUploadedPhotos.some(p => p.id === photoId);
+  }
+  
+  // Récupérer toutes les photos depuis la base de données
+  getPhotos(): void {
+    this.photoService.get().subscribe({
+      next: (data) => {
+        this.allPhoto = data;
+        console.log('Photos récupérées:', this.allPhoto);
+
+        // Si aucune photo n'a été nouvellement uploadée, initialiser photosToHide
+        if (this.newlyUploadedPhotos.length === 0) {
+          this.photosToHide = this.allPhoto.map(photo => photo.id);
+          console.log('Tous les IDs des photos à masquer:', this.photosToHide);
+        } else {
+          // Mettre à jour les photos dans l'avis avec les informations complètes
+          // On pourrait filtrer les photos complètes ici si nécessaire
+          console.log('Photos sélectionnées après upload:', this.newlyUploadedPhotos);
+          console.log('IDs des photos à masquer:', this.photosToHide);
+        }
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération des photos:', err);
+      }
+    });
   }
  
   loadArticleDetails(id: number): void {
@@ -124,6 +163,13 @@ export class ArticleDetailComponent implements OnInit {
         this.avis = data;
         this.isLoadingAvis = false;
         console.log("💬 Avis chargés:", this.avis);
+        
+        // Charger les informations utilisateur pour chaque avis si nécessaire
+        this.avis.forEach(avis => {
+          if (!avis.user || !avis.user.username) {
+            this.loadUserForAvis(avis.id);
+          }
+        });
       },
       error: (err) => {
         console.error("❌ Erreur lors du chargement des avis:", err);
@@ -218,9 +264,11 @@ export class ArticleDetailComponent implements OnInit {
           this.uploadMessage = 'Toutes les photos ont été téléchargées avec succès.';
           this.selectedFiles = undefined;
           this.currentFiles = [];
+          
+          // Récupérer les photos depuis la base de données comme dans CreateArticleComponent
+          this.getPhotos();
+          
           this.isUploading = false;
-          console.log('Photos téléchargées pour l\'avis:', this.newlyUploadedPhotos);
-          this.cdr.detectChanges();
         },
         error: (err) => {
           this.uploadError = true;
@@ -241,8 +289,10 @@ export class ArticleDetailComponent implements OnInit {
           if (event.type === HttpEventType.UploadProgress) {
             this.progressInfos[index].value = Math.round(100 * event.loaded / event.total);
           } else if (event instanceof HttpResponse) {
+            // Stocker uniquement les données essentielles pour identifier la photo plus tard
             const newPhoto: Photo = event.body;
-            this.newlyUploadedPhotos.push({...newPhoto});
+            this.newlyUploadedPhotos.push({...newPhoto}); // Utiliser une copie pour éviter les références partagées
+            
             console.log('Photo uploadée:', newPhoto);
             resolve(event.body);
           }
@@ -280,21 +330,27 @@ export class ArticleDetailComponent implements OnInit {
   
   soumettreAvis(): void {
     // Récupérer à nouveau l'ID du client au cas où
-    const currentClientId = this.getCurrentClientId();
+    const currentUserId = this.getCurrentClientId();
+    console.log("currentUserId", currentUserId);
     
-    if (this.avisForm.invalid || !this.articleId || !currentClientId) {
+    if (this.avisForm.invalid || !this.articleId || !currentUserId) {
       return;
     }
     
-    // Créer l'objet avis
+    // Vérifier et logger les photos avant soumission
+    console.log("Photos disponibles pour l'avis:", this.newlyUploadedPhotos);
+    
+    // Créer l'objet avis avec des copies des photos pour éviter les problèmes de référence
     const avisData = {
       description: this.avisForm.value.description,
       note: this.avisForm.value.note,
-      photos: this.newlyUploadedPhotos.length > 0 ? this.newlyUploadedPhotos : []
+      photos: [...this.newlyUploadedPhotos]
     };
     
+    console.log("Données d'avis à soumettre:", avisData);
+    
     // Soumettre l'avis
-    this.avisService.createAvis(avisData, currentClientId, this.articleId).subscribe({
+    this.avisService.createAvis(avisData, currentUserId, this.articleId).subscribe({
       next: (response) => {
         console.log('Avis créé avec succès:', response);
         
@@ -337,9 +393,42 @@ export class ArticleDetailComponent implements OnInit {
     }
   }
   
+  togglePhotoSelection(photo: Photo): void {
+    const index = this.newlyUploadedPhotos.findIndex(p => p.id === photo.id);
+    if (index > -1) {
+      // Si la photo est déjà sélectionnée, la retirer
+      this.newlyUploadedPhotos.splice(index, 1);
+    } else {
+      // Sinon, l'ajouter à la sélection
+      this.newlyUploadedPhotos.push(photo);
+    }
+    this.cdr.detectChanges(); // Forcer la mise à jour de l'affichage
+    console.log('Photos sélectionnées pour l\'avis:', this.newlyUploadedPhotos);
+  }
+  
   // Supprimer une photo uploadée
   supprimerPhotoUploadee(index: number): void {
     this.newlyUploadedPhotos.splice(index, 1);
     this.cdr.detectChanges();
   }
+
+  // Dans ArticleDetailComponent
+
+// Ajouter une méthode pour récupérer les infos utilisateur pour un avis spécifique
+loadUserForAvis(avisId: number): void {
+  this.avisService.getUserFromAvis(avisId).subscribe({
+    next: (userData) => {
+      // Trouver l'avis dans le tableau et mettre à jour les informations utilisateur
+      const avisIndex = this.avis.findIndex(a => a.id === avisId);
+      if (avisIndex !== -1) {
+        this.avis[avisIndex].user = userData;
+        this.cdr.detectChanges();
+      }
+      console.log(`Informations utilisateur chargées pour l'avis ${avisId}:`, userData);
+    },
+    error: (err) => {
+      console.error(`Erreur lors du chargement des informations utilisateur pour l'avis ${avisId}:`, err);
+    }
+  });
+}
 }

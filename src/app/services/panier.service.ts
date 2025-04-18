@@ -360,4 +360,14 @@ export class PanierService {
   }
 
 
+  getLastPanierIdByUser(userId: number): Observable<number | null> {
+    return this.http.get<number | null>(`${this.apiUrl}/lastId/${userId}`);
+  }
+  
+
+  payerPanier(panierId: number): Observable<Panier> {
+    return this.http.post<Panier>(`${this.apiUrl2}/${panierId}/payer`, {});
+  }
+
+
 }

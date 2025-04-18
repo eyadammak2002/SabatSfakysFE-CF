@@ -60,15 +60,5 @@ export class LoginFournisseurComponent {
     this.router.navigate(['/accueil']);
   }
     
-  signInWithGoogle() {
-    console.log("Connexion avec Google");
-  }
 
-  signInWithFacebook() {
-    console.log("Connexion avec Facebook");
-  }
-
-  signInWithGithub() {
-    console.log("Connexion avec GitHub");
-  }
 }

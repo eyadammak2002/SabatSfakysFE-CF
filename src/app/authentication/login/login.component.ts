@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/Authentication.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { PanierService } from 'src/app/services/panier.service';
@@ -9,7 +9,7 @@ import { PanierService } from 'src/app/services/panier.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,RouterModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -55,6 +55,12 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  getQueryParams() {
+    return {
+      returnUrl: this.route.snapshot.queryParams['returnUrl']
+    };
+  }
+
   onSubmit(): void {
     if (!this.form.username || !this.form.password) {
       this.errorMessage = "Veuillez remplir tous les champs.";
@@ -94,11 +100,5 @@ export class LoginComponent implements OnInit {
     console.log("Connexion avec Google");
   }
 
-  signInWithFacebook() {
-    console.log("Connexion avec Facebook");
-  }
 
-  signInWithGithub() {
-    console.log("Connexion avec GitHub");
-  }
 }

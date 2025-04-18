@@ -45,9 +45,33 @@ export class AvisService {
   }
 
   // Créer un nouvel avis
-  createAvis(avis: Avis, clientId: number, articleId: number): Observable<Avis> {
-    return this.http.post<Avis>(`${this.apiUrl}?clientId=${clientId}&articleId=${articleId}`, avis);
+ // Créer un nouvel avis
+/*createAvis(avis: Avis, userId: number, articleId: number): Observable<Avis> {
+  return this.http.post<Avis>(`${this.apiUrl}?userId=${userId}&articleId=${articleId}`, avis);
+}
+*/
+
+  createAvis(avis: any, userId: number, articleId: number): Observable<Avis> {
+    // Créer un nouvel objet pour éviter d'envoyer des propriétés inutiles
+    const avisData = {
+      description: avis.description,
+      note: avis.note,
+      // Envoyer uniquement les photos nécessaires avec leur ID
+      photos: avis.photos.map((photo: Photo) => ({
+        id: photo.id,
+        name: photo.name
+      }))
+    };
+
+    // Envoi de la requête avec les paramètres userId et articleId
+    return this.http.post<Avis>(`${this.apiUrl}?userId=${userId}&articleId=${articleId}`, avisData);
   }
+
+  // Récupérer l'utilisateur d'un avis
+  getUserFromAvis(avisId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${avisId}/user`);
+  }
+
 
   // Modifier un avis existant
   updateAvis(id: number, avis: Avis): Observable<Avis> {

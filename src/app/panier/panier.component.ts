@@ -33,6 +33,12 @@ export class PanierComponent implements OnInit {
   ngOnInit(): void {
     this.chargerPanierClient();
   
+     // Récupérer l'adresse de livraison stockée dans localStorage
+    const adresseSauvegardee = localStorage.getItem('adresseLivraison');
+    if (adresseSauvegardee) {
+      this.adresseLivraison = adresseSauvegardee;
+    }
+
     // Vérifier si l'adresse de livraison est renseignée
     if (this.panier.adresseLivraison && this.panier.adresseLivraison.trim() !== '') {
       // Si l'adresse de livraison n'est pas vide, rediriger vers la page de commande
@@ -133,6 +139,8 @@ export class PanierComponent implements OnInit {
       this.panier.statut = 'VALIDER';
       this.panierService.sauvegarderPanierDansLocalStorage();
       
+      localStorage.setItem('adresseLivraison', this.adresseLivraison);
+
       // Rediriger vers la page de login avec URL de retour
       this.router.navigate(['/auth/client/login'], { 
         queryParams: { returnUrl: '/panier' } 
@@ -163,10 +171,18 @@ export class PanierComponent implements OnInit {
       next: (data) => {
         console.log("✅ Panier créé avec adresse de livraison :", data);
         alert("Panier créé avec succès avec l'adresse de livraison !");
-        
+        console.log('Panier créé avec ID:', data.id);
+        localStorage.setItem('panierIdCMD', data.id);
+        console.log('🆔 ID du panier sauvegardé dans localStorage :', localStorage.getItem('panierIdCMD'));
+
+
         // Mettre à jour le panier dans localStorage
         this.panierService.sauvegarderPanierDansLocalStorage();
-  
+        console.log('Panier créé aprés sauvgarde:', this.panierService);
+          // Nettoyer le localStorage (AJOUTEZ CETTE LIGNE)
+        localStorage.removeItem('adresseLivraison');
+
+
         // Redirection vers la page de commande
         console.log("Redirection vers commande...");
         this.router.navigate(['/commande']);

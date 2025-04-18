@@ -13,7 +13,7 @@ declare var global: any;
 export class HeaderComponent implements OnInit {
   showFournisseurDashboard = false;
   showClientDashboard = false;
-  isLoggedIn: boolean = false;  // Par défaut, l'utilisateur n'est pas connecté
+  isLoggedIn: boolean = false;
   notifications: string[] = [];
   private notificationSubscription: Subscription = new Subscription();
   private checkConnectionInterval: any;
@@ -23,8 +23,9 @@ export class HeaderComponent implements OnInit {
   fournisseurLogo: string = '';
   numeroIdentificationEntreprise?: string; 
   isNotificationDropdownOpen = false;
-  allNotifications:NotificationEntity[]=[];
-
+  allNotifications: NotificationEntity[] = [];
+  unreadNotifications: NotificationEntity[] = [];
+  readNotifications: NotificationEntity[] = [];
 
   constructor(
     private tokenStorageService: TokenStorageService,
@@ -35,33 +36,18 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
-    this.getAllNotifications();
+    this.loadNotifications();
+    
     // S'abonner aux notifications avec gestion des erreurs
     this.notificationSubscription = this.notificationService.notifications$.subscribe(
       (notifications) => {
-        this.getAllNotifications();
+        this.loadNotifications();
         console.log('Notification update received in header component:', notifications);
-        //this.notifications = notifications;
-        
-        // Déboguer le contenu des notifications
-        if (notifications.length > 0) {
-          console.log('First notification content:', notifications[0]);
-          console.log('Notifications type:', typeof notifications[0]);
-        }
       },
       (error) => {
         console.error('Error in notification subscription:', error);
       }
     );
-
-    if (this.notifications.length === 0) {
-      console.log('Creating test notifications for debugging...');
-      this.notifications = [
-        'Notification de test 1: ' + new Date().toLocaleTimeString(),
-        'Notification de test 2: ' + new Date().toLocaleTimeString()
-      ];
-    }
     
     // Vérifier périodiquement l'état de la connexion WebSocket
     this.checkConnectionInterval = setInterval(() => {
@@ -77,52 +63,63 @@ export class HeaderComponent implements OnInit {
   
     if (this.isLoggedIn) {
       const user = this.tokenStorageService.getUser();
-      console.log('User Data:', user); // Vérifier les données de l'utilisateur
+      console.log('User Data:', user);
   
-      // ✅ Stocker directement le rôle comme une chaîne
       this.role = user.role || '';
       this.username = user.username;
       this.email = user.email || 'Non spécifié';
       this.numeroIdentificationEntreprise = user.numeroIdentificationEntreprise || '';
       
-      console.log('Role:', this.role); // Vérifier que le rôle est bien récupéré
+      console.log('Role:', this.role);
       console.log('Username:', user.username);
   
-      // ✅ Vérifier si l'utilisateur est un fournisseur
       this.showFournisseurDashboard = this.role === 'ROLE_FOURNISSEUR';
-      // ✅ Vérifier si l'utilisateur est un client
       this.showClientDashboard = this.role === 'ROLE_CLIENT';
     }
   
     this.updateProfileIcon();
   }
 
-   getAllNotifications() {
-    const user =this.tokenStorageService.getUser();
+  // Méthode pour charger toutes les notifications et les séparer en lues/non lues
+  loadNotifications() {
+    const user = this.tokenStorageService.getUser();
+    if (!user || !user.id) return;
 
-      this.notificationService.getAllNotifications(user.id).subscribe((data: any) => {
-        this.allNotifications = data;
-        for (let i=0;i<this.allNotifications.length;i++){
-         this.notifications.push(this.allNotifications[i].message+this.allNotifications[i].createdAt);
-         console.log("this.allNotifications",this.allNotifications[i].message);
-        }
-        console.log(" allNotifications:", this.allNotifications);
-      });
-    }
+    // Charger les notifications non lues
+    this.notificationService.getUnreadNotificationsByUser(user.id).subscribe((data: any) => {
+      this.unreadNotifications = data;
+      console.log("Unread notifications:", this.unreadNotifications);
+    });
+
+    // Charger les notifications lues
+    this.notificationService.getReadNotificationsByUser(user.id).subscribe((data: any) => {
+      this.readNotifications = data;
+      console.log("Read notifications:", this.readNotifications);
+    });
+
+    // Charger toutes les notifications (pour compatibilité avec le code existant)
+    this.notificationService.getAllNotifications(user.id).subscribe((data: any) => {
+      this.allNotifications = data;
+      this.notifications = []; // Réinitialiser la liste
+      for (let i = 0; i < this.allNotifications.length; i++) {
+        this.notifications.push(this.allNotifications[i].message + ' ' + this.allNotifications[i].createdAt);
+      }
+      console.log("All notifications:", this.allNotifications);
+    });
+  }
   
   updateProfileIcon() {
-    console.log("isLoggedIn:", this.isLoggedIn);  // Vérifie la valeur de isLoggedIn dans la console
+    console.log("isLoggedIn:", this.isLoggedIn);
   
     const profileIcon = this.el.nativeElement.querySelector('.profile-icon');
     if (!profileIcon) {
-      console.log("Profil icon not found");  // Vérifie que l'élément existe dans le DOM
+      console.log("Profil icon not found");
       return;
     }
   
     if (this.isLoggedIn) {
-      // Afficher l'icône
       console.log("Hiding profile icon");
-      this.renderer.removeClass(profileIcon, 'affichageIcon');  // Cacher l'icône
+      this.renderer.removeClass(profileIcon, 'affichageIcon');
     } else {
       console.log("Displaying profile icon");
       this.renderer.addClass(profileIcon, 'affichageIcon'); 
@@ -154,67 +151,27 @@ export class HeaderComponent implements OnInit {
     }
   }
   
-  redirectToCreateArticle() {
-    this.router.navigate(['createArticle']);
-  }
+  // Méthode pour marquer toutes les notifications comme lues
+  markAllAsRead(): void {
+    const user = this.tokenStorageService.getUser();
+    if (!user || !user.id) return;
 
-  redirectToArticle(): void {
-    this.router.navigate(['/article']); // Redirige vers la page de création d'article
+    this.notificationService.markAllAsRead().subscribe(() => {
+      console.log('All notifications marked as read');
+      this.loadNotifications(); // Recharger les notifications pour mettre à jour l'UI
+    });
   }
-
-  redirectToCreatePack() {
-    this.router.navigate(['/createPack']);
-  }
-
-  redirectToPack(): void {
-    this.router.navigate(['/pack']); // Redirige vers la page de création d'article
-  }
-  
-  redirectToListCommande(): void {
-    this.router.navigate(['/listCommande']); // Redirige vers la page de création d'article
-  }
-  
-  redirectToCommande(): void {
-    this.router.navigate(['/commande']); // Redirige vers la page de création d'article
-  }
-  
-  redirectToListCommandeParFR(): void {
-    this.router.navigate(['/listCommande']); // Redirige vers la page de création d'article
-  }
-
-  logout(): void {
-    this.tokenStorageService.signOut();
-    this.isLoggedIn = false;
-    // Rediriger l'utilisateur vers la page d'accueil
-    this.router.navigate(['/accueil']).then(() => {
-      // Rafraîchir la page après la redirection
-      window.location.reload();
-    });    
-  }
-
-  // Méthode pour encoder le nom du fichier
-  encodePhotoName(name: string): string {
-    return decodeURIComponent(name);
-  }
-
-  // Méthode pour vérifier manuellement le dropdown
-  checkNotificationDropdown(): void {
-    const dropdown = document.querySelector('.notification-dropdown');
-    if (dropdown) {
-      console.log('Dropdown exists in DOM');
-      console.log('Dropdown visibility:', window.getComputedStyle(dropdown).display);
-      console.log('Dropdown content:', dropdown.innerHTML);
-    } else {
-      console.log('Dropdown does not exist in DOM');
-    }
-  }
-  
 
   toggleNotifications(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
     this.isNotificationDropdownOpen = !this.isNotificationDropdownOpen;
     console.log('Dropdown is now:', this.isNotificationDropdownOpen ? 'open' : 'closed');
+    
+    // Si le dropdown est ouvert, marquer toutes les notifications comme lues
+    if (this.isNotificationDropdownOpen && this.unreadNotifications.length > 0) {
+      this.markAllAsRead();
+    }
   }
 
   @HostListener('document:click', ['$event'])
@@ -223,5 +180,27 @@ export class HeaderComponent implements OnInit {
     if (notificationIcon && !notificationIcon.contains(event.target as Node)) {
       this.isNotificationDropdownOpen = false;
     }
+  }
+
+  // Méthodes de redirection existantes
+  redirectToCreateArticle() { this.router.navigate(['createArticle']); }
+  redirectToArticle(): void { this.router.navigate(['/article']); }
+  redirectToCreatePack() { this.router.navigate(['/createPack']); }
+  redirectToPack(): void { this.router.navigate(['/pack']); }
+  redirectToListCommande(): void { this.router.navigate(['/listCommande']); }
+  redirectToCommande(): void { this.router.navigate(['/commande']); }
+  redirectToListCommandeParFR(): void { this.router.navigate(['/listCommande']); }
+
+  logout(): void {
+    this.tokenStorageService.signOut();
+    this.isLoggedIn = false;
+    this.router.navigate(['/accueil']).then(() => {
+      window.location.reload();
+    });    
+  }
+
+  // Méthode pour encoder le nom du fichier
+  encodePhotoName(name: string): string {
+    return decodeURIComponent(name);
   }
 }

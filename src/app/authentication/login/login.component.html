@@ -52,7 +52,7 @@
       </form>
 
       <p class="text-center mt-3">
-        Vous n'avez pas de compte ? <a href="/auth/client/register" class="text-primary">Créez-en un ici</a>
+        Vous n'avez pas de compte ? <a [routerLink]="['/auth/client/register']" [queryParams]="getQueryParams()" class="text-primary">Créez-en un ici</a>
       </p>
 
       <div class="mt-5 text-center">

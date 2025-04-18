@@ -42,6 +42,7 @@ import { ListCommandeComponent } from './commande/list-commande/list-commande.co
 import { ConfirmDialogComponent } from './components/confirm-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ArticleDetailComponent } from './article/article-detail/article-detail.component';
+import { ErrorDialogComponent } from './components/error-dialog.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { ArticleDetailComponent } from './article/article-detail/article-detail.
     ListCommandeComponent,
     ConfirmDialogComponent,
     ArticleDetailComponent,
-   
+    ErrorDialogComponent,
+
   ],
   imports: [
     FormsModule,

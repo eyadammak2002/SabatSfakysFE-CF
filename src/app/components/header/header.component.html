@@ -16,30 +16,7 @@
             <a routerLink="/favoris" class="icon-link"><i class="far fa-heart"></i></a>
             <a routerLink="/panier" class="icon-link"><i class="fas fa-shopping-cart"></i></a>
             
-            <!-- Icône de notifications avec dropdown -->
-        <!-- Dans votre header.component.html -->
-<div class="notification-icon">
-    <a class="icon-link" (click)="toggleNotifications($event)">
-      <i class="fas fa-bell"></i>
-      <span class="notification-badge" *ngIf="notifications.length > 0">{{ notifications.length }}</span>
-    </a>
-    <div class="dropdown-menu notification-dropdown" [ngClass]="{'show': isNotificationDropdownOpen}">
-      <div *ngIf="notifications.length === 0" class="no-notifications">
-        Aucune notification
-      </div>
-      <div *ngFor="let notif of notifications" class="notification-item">
-        {{ notif }}
-      </div>
-      <div *ngIf="notifications.length > 0" class="clear-all">
-        <a href="javascript:void(0);" (click)="clearNotifications()">Effacer tout</a>
-      </div>
-    </div>
-  </div>
-            
-            <!-- Bouton de test pour notification (à supprimer en production) -->
-            <button *ngIf="isLoggedIn" (click)="sendTestNotification()" class="btn btn-sm btn-primary test-btn">
-                Test notif
-            </button>
+    
 
             <div class="dropdown">
                 <!-- Icône de profil affichée seulement lorsque l'utilisateur est connecté -->
@@ -103,6 +80,56 @@
                 </a>
             </div>
         </div>
+
+<!-- Icône de notification avec compteur de notifications non lues -->
+<div class="notification-icon" (click)="toggleNotifications($event)">
+    <i class="fas fa-bell"></i>
+    <span class="notification-badge" *ngIf="unreadNotifications.length > 0">
+      {{ unreadNotifications.length }}
+    </span>
+  </div>
+  
+  <!-- Dropdown des notifications -->
+  <div class="notification-dropdown" [class.show]="isNotificationDropdownOpen">
+    <div class="notification-header">
+      <h3>Notifications</h3>
+      <button class="clear-btn" (click)="clearNotifications()" *ngIf="unreadNotifications.length > 0 || readNotifications.length > 0">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+    
+    <!-- Section des notifications non lues -->
+    <div class="notification-section" *ngIf="unreadNotifications.length > 0">
+      <h4 class="section-title">Nouvelles ({{ unreadNotifications.length }})</h4>
+      <div class="notification-list">
+        <div class="notification-item unread" *ngFor="let notification of unreadNotifications">
+          <div class="notification-content">
+            <div class="notification-message">{{ notification.message }}</div>
+            <div class="notification-time">{{ notification.createdAt | date:'short' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Section des notifications lues -->
+    <div class="notification-section" *ngIf="readNotifications.length > 0">
+      <h4 class="section-title">Lues ({{ readNotifications.length }})</h4>
+      <div class="notification-list">
+        <div class="notification-item read" *ngFor="let notification of readNotifications">
+          <div class="notification-content">
+            <div class="notification-message">{{ notification.message }}</div>
+            <div class="notification-time">{{ notification.createdAt | date:'short' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Message s'il n'y a pas de notifications -->
+    <div class="no-notifications" *ngIf="unreadNotifications.length === 0 && readNotifications.length === 0">
+      <p>Vous n'avez pas de notifications</p>
+    </div>
+  </div>
+      
     </div>
 
     <!-- Menu de navigation (Catégories) -->

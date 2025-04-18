@@ -23,6 +23,7 @@ export interface NotificationEntity {
 export class NotificationService implements OnDestroy {
 
   private apiUrl = 'http://localhost:8080/api/notification/notification';
+  private apiUrl1 = 'http://localhost:8080/api/notification';
 
   private stompClient: Client | null = null;
   private notificationsSubject = new BehaviorSubject<string[]>([]);
@@ -99,10 +100,14 @@ export class NotificationService implements OnDestroy {
     return this.notifications;
   }
 
-  // Méthode pour effacer toutes les notifications
+  /*Méthode pour effacer toutes les notifications
   clearNotifications(): void {
     this.notifications = [];
     this.notificationsSubject.next([]);
+  }*/
+
+  clearNotifications(): Observable<any> {
+    return this.http.delete(`${this.apiUrl1}/clearAll`);
   }
   
   // Méthode pour vérifier l'état de la connexion
@@ -123,4 +128,20 @@ export class NotificationService implements OnDestroy {
       return this.http.get<Notification[]>(`${this.apiUrl}/${id}`);
     }
   
+
+      // 🔹 Non lues d’un user spécifique
+  getUnreadNotificationsByUser(userId: number): Observable<Notification[]> {
+    return this.http.get<Notification[]>(`${this.apiUrl1}/unread/user/${userId}`);
+  }
+
+  // 🔹 Lues d’un user spécifique
+  getReadNotificationsByUser(userId: number): Observable<Notification[]> {
+    return this.http.get<Notification[]>(`${this.apiUrl1}/read/user/${userId}`);
+  }
+
+    // Marquer toutes les notifications comme lues
+    markAllAsRead(): Observable<any> {
+      return this.http.put(`${this.apiUrl1}/markAllRead`, {});
+    }
+
 }

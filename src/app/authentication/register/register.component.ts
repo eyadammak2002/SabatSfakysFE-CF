@@ -2,7 +2,7 @@ import { GoogleLoginProvider, GoogleSigninButtonModule, SocialAuthService } from
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService} from 'src/app/services/Authentication.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { TokenRequest } from '../TokenRequest';
@@ -39,10 +39,19 @@ export class RegisterComponent implements OnInit {
     private authService: AuthenticationService, 
     private tokenStorage: TokenStorageService,
     private router: Router,
+    private route: ActivatedRoute,
 
   ) {}
 
   ngOnInit(): void {
+
+    this.route.queryParams.subscribe(params => {
+      console.log("Query Params in Register:", params);
+      const returnUrl = params['returnUrl'];
+      if (returnUrl) {
+        localStorage.setItem('returnUrl', returnUrl);
+      }
+    });
     // Automatically listen for login changes
     this.authServiceGoogle.authState.subscribe(user => {
       this.user = user;
@@ -52,7 +61,7 @@ export class RegisterComponent implements OnInit {
         console.log("Access Token:", this.accessToken);
         setTimeout(()=>{
           this.signinGoogle();
-        },3000)
+        },2000)
       }
     });
   }
@@ -80,7 +89,20 @@ signinGoogle():void{
         console.log("✅ isLoggedIn after Google Login:", this.isLoggedIn);
         
         console.log(data);
-        this.router.navigate(['/accueil']);
+
+
+        //this.router.navigate(['/accueil']);
+
+          // Récupérer returnUrl depuis localStorage ou utiliser la valeur par défaut
+      const savedReturnUrl = localStorage.getItem('returnUrl');
+      const returnUrl = savedReturnUrl || '/accueil';
+      
+      // Nettoyer localStorage
+      if (savedReturnUrl) {
+        localStorage.removeItem('returnUrl');
+      }
+      
+      this.router.navigate([returnUrl]);
       })
   }
       /*  signinGoogle(): void {
@@ -173,7 +195,18 @@ signinGoogle():void{
   }
 
   reloadPage(): void {
-    this.router.navigate(['/auth/client/login']);
+    this.route.queryParams.subscribe(params => {
+      const returnUrl = params['returnUrl'];
+      if (returnUrl) {
+        // Si un returnUrl est spécifié, rediriger vers cette URL après login
+        this.router.navigate(['/auth/client/login'], { 
+          queryParams: { returnUrl: returnUrl } 
+        });
+      } else {
+        // Sinon, rediriger vers login normalement
+        this.router.navigate(['/auth/client/login']);
+      }
+    });
   }
 
   goBack(): void {
@@ -202,10 +235,6 @@ signinGoogle():void{
     }
 }
 
-  signInWithFacebook() {
-    console.log("Connexion avec Facebook");
-    // Implémentation future
-  }
-
+ 
 
 }

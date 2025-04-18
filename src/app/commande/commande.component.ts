@@ -19,27 +19,31 @@ export class CommandeComponent implements OnInit, AfterViewInit {
   panier: Panier = { id: null, clientId: 0, lignesPanier: [], total: 0, statut: '', adresseLivraison: '' };  
   payer: boolean = false;
   public payPalConfig?: IPayPalConfig;
-  panierIdCommander: number | null = null;
+  panierIdCMD: number | null = null;
 
   
   constructor(private panierService: PanierService, private router: Router,  private snackBar: MatSnackBar,
     private dialog: MatDialog) {}
 // Modification de ngOnInit pour récupérer l'ID sauvegardé
+// Dans commande.component.ts, méthode ngOnInit()
 ngOnInit(): void {
   this.panier = this.panierService.getPanier();
   
-  // Récupérer l'ID du panier depuis localStorage si disponible
-  const savedPanierId = localStorage.getItem('panierIdCommander');
+  // Récupérer l'ID du panier depuis localStorage
+  const savedPanierId = localStorage.getItem('panierIdCMD');
+  console.log("ID du panier récupéré:", savedPanierId);
+  
   if (savedPanierId) {
-    this.panierIdCommander = JSON.parse(savedPanierId);
+    this.panierIdCMD = parseInt(savedPanierId, 10); // Conversion en nombre
+    console.log("ID du panier à utiliser pour la commande:", this.panierIdCMD);
     
     // Si le panier actuel n'a pas d'ID mais qu'on a un ID sauvegardé, l'utiliser
     if (this.panier.id === null) {
-      this.panier.id = this.panierIdCommander;
+      this.panier.id = this.panierIdCMD;
     }
   }
   
-  this.initPayPalConfig();  
+  this.initPayPalConfig();
 }
   ngAfterViewInit(): void {}
 
@@ -113,46 +117,76 @@ private initPayPalConfig(): void {
   payement() {
     this.payer = true;
   }
-
-// Modification de la méthode validerCommande()
-validerCommande(): void {
-  if (this.panier.lignesPanier.length === 0) {
-    alert('Votre panier est vide !');
-    return;
-  }
-
-  this.panierService.validerPanier(this.panier).subscribe({
-    next: (panierValide) => {
-      this.panier = panierValide;
-      this.panierIdCommander = this.panier.id;
-      
-      // Sauvegarder l'ID du panier dans localStorage avant le rechargement
-      localStorage.setItem('panierIdCommander', JSON.stringify(this.panierIdCommander));
-      
-      alert('Commande validée avec succès !');
-      this.panierService.sauvegarderPanierDansLocalStorage();
-      console.log("panier commander", this.panier);
-      
-      setTimeout(() => {
-        window.location.reload();
-      }, 300);
-    },
-    error: () => {
-      alert("Erreur lors de la validation du panier !");
+  // Méthode qui appelle le service pour payer le panier sur le backend
+  payerPanier(): void {
+    if (!this.panier.id) {
+      console.error('Aucun ID de panier disponible pour le paiement.');
+      this.snackBar.open('Aucun panier à payer', 'Fermer', { duration: 3000 });
+      return;
     }
-  });
-
-  this.panier.statut = 'COMMANDEE'; 
-}
+    
+    // Appel au service avec l'ID du panier
+    this.panierService.payerPanier(this.panier.id).subscribe({
+      next: (panierPaye) => {
+        console.log('Panier payé:', panierPaye);
+        this.snackBar.open('Panier payé avec succès', 'Fermer', { duration: 3000 });
+        // Vous pouvez mettre à jour votre panier local ici si besoin
+        this.panier = panierPaye;
+      },
+      error: (err) => {
+        console.error('Erreur lors du paiement du panier', err);
+        this.snackBar.open('Erreur pendant le paiement', 'Fermer', { duration: 5000 });
+      }
+    });
+  }
+  
+  validerCommande(): void {
+    if (this.panier.lignesPanier.length === 0) {
+      alert('Votre panier est vide !');
+      return;
+    }
+  
+    // Assurez-vous que l'ID du panier est correct avant validation
+    if (this.panierIdCMD && (!this.panier.id || this.panier.id !== this.panierIdCMD)) {
+      console.log("Mise à jour de l'ID du panier avant validation:", this.panierIdCMD);
+      this.panier.id = this.panierIdCMD;
+    }
+    
+    console.log("Validation du panier avec ID:", this.panier.id);
+    
+    this.panierService.validerPanier(this.panier).subscribe({
+      next: (panierValide) => {
+        this.panier = panierValide;
+        this.panierIdCMD = this.panier.id;
+        
+        // Sauvegarder l'ID du panier dans localStorage avant le rechargement
+        localStorage.setItem('panierIdCMD', JSON.stringify(this.panierIdCMD));
+        
+        alert('Commande validée avec succès !');
+        this.panierService.sauvegarderPanierDansLocalStorage();
+        console.log("Panier validé:", this.panier);
+        
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
+      },
+      error: (err) => {
+        console.error("Erreur lors de la validation:", err);
+        alert("Erreur lors de la validation du panier !");
+      }
+    });
+  
+    this.panier.statut = 'COMMANDEE'; 
+  }
 
 
 annulerCommande(): void {
   // Vérifier si l'ID du panier est valide
   if (this.panier.id === null) {
     // Si l'ID est null, essayer d'utiliser l'ID sauvegardé
-    if (this.panierIdCommander !== null) {
-      this.panier.id = this.panierIdCommander;
-      console.log("Utilisation de l'ID sauvegardé:", this.panierIdCommander);
+    if (this.panierIdCMD !== null) {
+      this.panier.id = this.panierIdCMD;
+      console.log("Utilisation de l'ID sauvegardé:", this.panierIdCMD);
     } else {
       this.snackBar.open("Impossible d'annuler: ID du panier non disponible.", "Fermer", {
         duration: 5000,
@@ -183,7 +217,7 @@ annulerCommande(): void {
           this.panierService.sauvegarderPanierDansLocalStorage();
           
           // Supprimer l'ID sauvegardé puisque la commande est annulée
-          localStorage.removeItem('panierIdCommander');
+          localStorage.removeItem('panierIdCMD');
           
           this.snackBar.open('Commande annulée avec succès', 'Fermer', {
             duration: 3000,
