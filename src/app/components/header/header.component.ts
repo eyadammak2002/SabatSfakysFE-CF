@@ -2,6 +2,7 @@ import { Component, ElementRef, HostListener, OnInit, Renderer2 } from '@angular
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NotificationEntity, NotificationService } from 'src/app/services/notification.service';
+import { PanierService } from 'src/app/services/panier.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 declare var global: any;
 @Component({
@@ -18,6 +19,7 @@ export class HeaderComponent implements OnInit {
   private notificationSubscription: Subscription = new Subscription();
   private checkConnectionInterval: any;
   role: string = '';
+  role2: string = '';
   username?: string;
   email?: string; 
   fournisseurLogo: string = '';
@@ -30,6 +32,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private tokenStorageService: TokenStorageService,
     private router: Router,
+    public panierService:PanierService,
     public notificationService: NotificationService,
     private renderer: Renderer2,
     private el: ElementRef
@@ -66,20 +69,47 @@ export class HeaderComponent implements OnInit {
       console.log('User Data:', user);
   
       this.role = user.role || '';
+      this.role2 = user.role2 || '';
       this.username = user.username;
       this.email = user.email || 'Non spécifié';
       this.numeroIdentificationEntreprise = user.numeroIdentificationEntreprise || '';
+      this.checkUserRole();
       
       console.log('Role:', this.role);
+      console.log('Role2:', this.role2);
       console.log('Username:', user.username);
   
       this.showFournisseurDashboard = this.role === 'ROLE_FOURNISSEUR';
       this.showClientDashboard = this.role === 'ROLE_CLIENT';
+      //this.showClientDashboard = this.role2 === 'ROLE_CLIENT';
+      
     }
   
     this.updateProfileIcon();
   }
 
+
+  // Ajoutez cette méthode dans HeaderComponent
+checkUserRole(): void {
+  if (this.isLoggedIn) {
+    const user = this.tokenStorageService.getUser();
+    
+    // Vérifier si c'est un fournisseur connecté via login client
+    if (user.roles && user.roles.includes('ROLE_FOURNISSEUR') && this.router.url.includes('/client')) {
+      console.log('Fournisseur connecté en tant que client');
+      // Forcer l'affichage de l'espace client
+      this.showClientDashboard = true;
+      this.showFournisseurDashboard = false;
+      this.role = 'ROLE_CLIENT';
+      this.role2 = 'ROLE_FOURNISSEUR';
+      
+      // Mise à jour dans le stockage
+      user.role = 'ROLE_CLIENT';
+      user.role2 = 'ROLE_FOURNISSEUR';
+      this.tokenStorageService.saveUser(user);
+    }
+  }
+}
   // Méthode pour charger toutes les notifications et les séparer en lues/non lues
   loadNotifications() {
     const user = this.tokenStorageService.getUser();
@@ -190,8 +220,24 @@ export class HeaderComponent implements OnInit {
   redirectToListCommande(): void { this.router.navigate(['/listCommande']); }
   redirectToCommande(): void { this.router.navigate(['/commande']); }
   redirectToListCommandeParFR(): void { this.router.navigate(['/listCommande']); }
+  redirectToProfile(): void {
+    if (this.email) {
+      this.router.navigate(['/profile'], { queryParams: { email: this.email } });
+    } else {
+      console.error('Email non disponible pour la redirection vers le profil.');
+      // Eventuellement afficher un message à l'utilisateur
+    }
+  }
 
-  logout(): void {
+  redirectToProfileFR(): void {
+    if (this.email) {
+      this.router.navigate(['/profileFR'], { queryParams: { email: this.email } });
+    } else {
+      console.error('Email non disponible pour la redirection vers le profil.');
+      // Eventuellement afficher un message à l'utilisateur
+    }
+  }
+    logout(): void {
     this.tokenStorageService.signOut();
     this.isLoggedIn = false;
     this.router.navigate(['/accueil']).then(() => {
@@ -203,4 +249,80 @@ export class HeaderComponent implements OnInit {
   encodePhotoName(name: string): string {
     return decodeURIComponent(name);
   }
+
+  /*etCommandeById(){
+    this.panierService.getPanierById(id).subscribe({
+      next: (panier) => {
+        console.log('✅ Panier reçu :', panier);
+        this.panier = panier;
+      },
+      error: (err) => {
+        console.error('❌ Erreur lors de la récupération du panier :', err);
+      }
+    });
+  }*/
+
+   
+  
+    redirectToClient() { 
+      // Update the display flags
+      this.showClientDashboard = true;
+      this.showFournisseurDashboard = false;
+      
+      // Get current user
+      const user = this.tokenStorageService.getUser();
+      
+      if (user) {
+        // Save original role to role2 if needed for switching back
+        user.role2 = user.role;  // Save original role
+        user.role = 'ROLE_CLIENT'; 
+        
+        // Update user in storage
+        this.tokenStorageService.saveUser(user);
+        
+        // Update local variables
+        this.role = 'ROLE_CLIENT';
+        this.role2 = 'ROLE_FOURNISSEUR';  // Keep track of original role
+      }
+      
+      // Redirect to client home page
+      this.router.navigate(['/accueil']);
+    }
+
+
+    redirectToFR() { 
+      // Update display flags
+      this.showClientDashboard = false;
+      this.showFournisseurDashboard = true;
+      
+      // Get current user
+      const user = this.tokenStorageService.getUser();
+      
+      // Restore original supplier role
+      if (user) {
+        // If role2 exists, use it (it should be ROLE_FOURNISSEUR)
+        if (user.role2) {
+          user.role = user.role2;
+        } else {
+          user.role = 'ROLE_FOURNISSEUR';
+        }
+        
+        // Update user in storage
+        this.tokenStorageService.saveUser(user);
+        
+        // Update local variables
+        this.role = 'ROLE_FOURNISSEUR';
+      }
+      
+      // Redirect to supplier articles page
+      this.router.navigate(['/article']);
+    }
+
+
+/*  redirectToFR()
+  { this.showClientDashboard=false;
+    this.showFournisseurDashboard=true;
+    this.router.navigate(['/article']);
+  }*/
+
 }

@@ -38,6 +38,9 @@
             </a>
 
             <div ngbDropdownMenu class="dropdown-menu custom-dropdown-menu">
+                <a (click)="redirectToClient()" ngbDropdownItem>Navigate to Espace Client</a>
+
+                <a (click)="redirectToProfileFR()" ngbDropdownItem>Profile</a>
                 <a (click)="redirectToCreateArticle()" ngbDropdownItem><i class="fas fa-plus-circle menu-icon"></i> Déposer Article</a>
                 <a (click)="redirectToCreatePack()" ngbDropdownItem><i class="fas fa-plus-circle menu-icon"></i>Créer Pack</a>
                 <a (click)="redirectToPack()" ngbDropdownItem>tous les Packs</a>   
@@ -63,8 +66,12 @@
             </a>
 
             <div ngbDropdownMenu class="dropdown-menu">
+                <a *ngIf="role === 'ROLE_CLIENT' && role2 === 'ROLE_FOURNISSEUR'" (click)="redirectToFR()" ngbDropdownItem>
+                    <i class="fas fa-store menu-icon"></i> Revenir à l'Espace Fournisseur
+                </a>
                 <a ngbDropdownItem>Panier</a>
                 <a ngbDropdownItem>Favoris</a>
+                <a (click)="redirectToProfile()" ngbDropdownItem>Profile</a>
                 <a (click)="redirectToArticle()" ngbDropdownItem>Articles</a>
                 <a (click)="redirectToCommande()" ngbDropdownItem>Ma Commande</a>
                 <a (click)="redirectToListCommande()" ngbDropdownItem><i class="fas fa-shopping-cart menu-icon"></i> Commandes</a>
@@ -99,10 +106,10 @@
     </div>
     
     <!-- Section des notifications non lues -->
-    <div class="notification-section" *ngIf="unreadNotifications.length > 0">
+    <div class="notification-section" *ngIf="unreadNotifications.length > 0" >
       <h4 class="section-title">Nouvelles ({{ unreadNotifications.length }})</h4>
       <div class="notification-list">
-        <div class="notification-item unread" *ngFor="let notification of unreadNotifications">
+        <div class="notification-item unread" *ngFor="let notification of unreadNotifications" onclick="getCommandeById">
           <div class="notification-content">
             <div class="notification-message">{{ notification.message }}</div>
             <div class="notification-time">{{ notification.createdAt | date:'short' }}</div>
