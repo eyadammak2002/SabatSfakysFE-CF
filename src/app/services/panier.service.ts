@@ -369,5 +369,7 @@ export class PanierService {
     return this.http.post<Panier>(`${this.apiUrl2}/${panierId}/payer`, {});
   }
 
-
+  getPanierById(id: number): Observable<Panier> {
+    return this.http.get<Panier>(`${this.apiUrl2}/${id}`);
+  }
 }

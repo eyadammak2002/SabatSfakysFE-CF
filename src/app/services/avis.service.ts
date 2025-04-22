@@ -31,6 +31,8 @@ export interface Client {
 export class AvisService {
 
   private apiUrl = 'http://localhost:8080/api/avis';
+  private apiUrl1 = 'http://localhost:8080/panier';
+
 
   constructor(private http: HttpClient) {}
 
@@ -85,5 +87,11 @@ export class AvisService {
 
   getAvisByArticleId(articleId: number): Observable<Avis[]> {
     return this.http.get<Avis[]>(`${this.apiUrl}/article/${articleId}`);
+  }
+
+
+   // Vérifier si un utilisateur a déjà acheté un article spécifique
+   verifierAchatArticle(userId: number, articleId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl1}/verification/${userId}/${articleId}`);
   }
 }

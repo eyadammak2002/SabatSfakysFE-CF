@@ -14,7 +14,8 @@ interface AuthResponse {
   id?: number;
   username?: string;
   email?: string;
-  roles?: string[];
+  role: string;
+  role2: string;
   // autres propriétés que votre API pourrait renvoyer
 }
 
@@ -63,48 +64,56 @@ export class AuthenticationService {
     );
   }
 
-  loginTestClient(username: string, password: string, userType: string): Observable<any> {
-    return this.http.post<AuthResponse>(AUTH_API + 'signin/FR', {
-      username,
-      password,
-      userType
-    }, httpOptions).pipe(
-      tap(data => {
-        if (data.accessToken) {
-          // Mettre à jour le clientId et fusionner le panier invité
-          if (data.id) {
-            this.panierService.mettreAJourClientId(data.id);
-            this.panierService.fusionnerPanierInvite();
-          }
+  // Renommer cette méthode pour le login fournisseur
+loginFournisseur(username: string, password: string): Observable<any> {
+  return this.http.post<AuthResponse>(AUTH_API + 'signinFR', {
+    username,
+    password
+  }, httpOptions).pipe(
+    tap(data => {
+      if (data.accessToken) {
+        // Mettre à jour le clientId et fusionner le panier invité si nécessaire
+        if (data.id) {
+          this.panierService.mettreAJourClientId(data.id);
+          this.panierService.fusionnerPanierInvite();
         }
-      })
-    );
-  }
+      }
+    })
+  );
+}
 
-  login(username: string, password: string): Observable<any> {
-    return this.http.post<AuthResponse>(AUTH_API + 'signin', {
-      username,
-      password,
-    }, httpOptions).pipe(
-      tap(data => {
-        if (data.accessToken) {
-          // Mettre à jour le clientId et fusionner le panier invité
-          if (data.id) {
-            this.panierService.mettreAJourClientId(data.id);
-            this.panierService.fusionnerPanierInvite();
-          }
-          
-          // Vérifier s'il y a une URL de retour
-          this.route.queryParams.subscribe(params => {
-            const returnUrl = params['returnUrl'];
-            if (returnUrl) {
-              this.router.navigateByUrl(returnUrl);
-            }
-          });
+loginClient(username: string, password: string): Observable<any> {
+  return this.http.post<AuthResponse>(AUTH_API + 'signinCLIENT', {
+    username,
+    password
+  }, httpOptions).pipe(
+    tap(data => {
+      if (data.accessToken) {
+        // Mettre à jour le clientId et fusionner le panier invité
+        if (data.id) {
+          this.panierService.mettreAJourClientId(data.id);
+          this.panierService.fusionnerPanierInvite();
         }
-      })
-    );
-  }
+        
+        // Vérifier s'il y a une URL de retour
+        this.route.queryParams.subscribe(params => {
+          const returnUrl = params['returnUrl'];
+          if (returnUrl) {
+            this.router.navigateByUrl(returnUrl);
+          }
+        });
+      }
+
+      // Vérifions si c'est un fournisseur qui se connecte en tant que client
+      if (data.role && data.role.includes('ROLE_FOURNISSEUR')) {
+        // On conserve le rôle fournisseur dans role2
+        data.role2 = 'ROLE_FOURNISSEUR';
+        // On définit le rôle actif comme client
+        data.role = 'ROLE_CLIENT';
+      }
+    })
+  );
+}
 
   register(username: string, email: string, password: string, adresse: string, telephone: string, sexe: string): Observable<any> {
     return this.http.post(AUTH_API + 'signup', {
