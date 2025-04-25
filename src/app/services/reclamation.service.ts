@@ -6,7 +6,7 @@ import { Photo } from '../photo/Photo';
 import { Article } from '../article/article';
 import { Genre } from '../produit/Genre';
 
-export interface Avis {
+export interface Reclamation {
   id?: number;
   description: string;
   dateAjout?: string;
@@ -28,26 +28,24 @@ export interface Client {
 @Injectable({
   providedIn: 'root'
 })
-export class AvisService {
-  private apiUrl = 'http://localhost:8080/api/avis';
-  private apiUrl1 = 'http://localhost:8080/panier';
+export class ReclamationService {
+  private apiUrl = 'http://localhost:8080/api/reclamation';
   private apiUrl2 = 'http://localhost:8080/client';
 
   constructor(private http: HttpClient) {}
 
-  // Récupérer tous les avis
-  getAllAvis(): Observable<Avis[]> {
-    return this.http.get<Avis[]>(this.apiUrl);
+  // Récupérer tous les reclamation
+  getAllReclamation(): Observable<Reclamation[]> {
+    return this.http.get<Reclamation[]>(this.apiUrl);
   }
 
-  // Récupérer un avis par ID
-  getAvisById(id: number): Observable<Avis> {
-    return this.http.get<Avis>(`${this.apiUrl}/${id}`);
+  // Récupérer un reclamation par ID
+  getReclamationById(id: number): Observable<Reclamation> {
+    return this.http.get<Reclamation>(`${this.apiUrl}/${id}`);
   }
 
-  // Créer un nouvel avis avec clientId au lieu de userId
-  createAvis(avis: any, clientId: number, articleId: number): Observable<Avis> {
-    console.log("Création d'avis avec clientId:", clientId, "articleId:", articleId);
+  createReclamation(reclamation: any, clientId: number, articleId: number): Observable<Reclamation> {
+    console.log("Création de réclamation avec clientId:", clientId, "articleId:", articleId);
     
     // S'assurer que clientId est un nombre
     const clientIdNum = Number(clientId);
@@ -57,24 +55,23 @@ export class AvisService {
     }
     
     // Créer un nouvel objet pour éviter d'envoyer des propriétés inutiles
-    const avisData = {
-      description: avis.description,
-      note: avis.note,
+    const reclamationData = {
+      description: reclamation.description,
       // Envoyer uniquement les photos nécessaires avec leur ID
-      photos: avis.photos.map((photo: Photo) => ({
+      photos: reclamation.photos.map((photo: Photo) => ({
         id: photo.id,
         name: photo.name
       }))
     };
 
-    // Envoi de la requête avec clientId au lieu de userId
-    return this.http.post<Avis>(
+    // Utiliser clientId dans l'URL correctement formaté comme un nombre
+    return this.http.post<Reclamation>(
       `${this.apiUrl}?clientId=${clientIdNum}&articleId=${articleId}`, 
-      avisData
+      reclamationData
     ).pipe(
       tap(response => console.log('Réponse du serveur:', response)),
       catchError(error => {
-        console.error('Erreur lors de la création de l\'avis:', error);
+        console.error('Erreur lors de la création de la réclamation:', error);
         return throwError(() => error);
       })
     );
@@ -100,24 +97,24 @@ export class AvisService {
       })
     );
   }
-
-  // Récupérer l'utilisateur d'un avis
-  getUserFromAvis(avisId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${avisId}/user`);
+  
+  // Récupérer l'utilisateur d'un reclamation
+  getUserFromReclamation(reclamationId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${reclamationId}/client`);
   }
 
-  // Modifier un avis existant
-  updateAvis(id: number, avis: Avis): Observable<Avis> {
-    return this.http.put<Avis>(`${this.apiUrl}/${id}`, avis);
+  // Modifier un reclamation existant
+  updateReclamation(id: number, reclamation: Reclamation): Observable<Reclamation> {
+    return this.http.put<Reclamation>(`${this.apiUrl}/${id}`, reclamation);
   }
 
-  // Supprimer un avis
-  deleteAvis(id: number): Observable<void> {
+  // Supprimer un reclamation
+  deleteReclamation(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  getAvisByArticleId(articleId: number): Observable<Avis[]> {
-    return this.http.get<Avis[]>(`${this.apiUrl}/article/${articleId}`);
+  getReclamationByArticleId(articleId: number): Observable<Reclamation[]> {
+    return this.http.get<Reclamation[]>(`${this.apiUrl}/article/${articleId}`);
   }
 
   // Vérifier si un utilisateur a déjà acheté un article spécifique
@@ -130,6 +127,24 @@ export class AvisService {
     }
     
     console.log(`Vérification achat pour clientId: ${clientIdNum}, articleId: ${articleId}`);
-    return this.http.get<boolean>(`${this.apiUrl1}/verification/${clientIdNum}/${articleId}`);
+    return this.http.get<boolean>(`${this.apiUrl}/verification/${clientIdNum}/${articleId}`);
+  }
+
+  getReclamationsByClientId(clientId: number): Observable<Reclamation[]> {
+    // S'assurer que clientId est un nombre
+    const clientIdNum = Number(clientId);
+    if (isNaN(clientIdNum)) {
+      console.error("clientId n'est pas un nombre valide:", clientId);
+      return throwError(() => new Error("ID client invalide"));
+    }
+    
+    console.log(`Récupération des réclamations pour le client ID: ${clientIdNum}`);
+    return this.http.get<Reclamation[]>(`${this.apiUrl}/client/${clientIdNum}`).pipe(
+      tap(reclamations => console.log(`${reclamations.length} réclamations récupérées pour le client ID ${clientIdNum}`)),
+      catchError(error => {
+        console.error(`Erreur lors de la récupération des réclamations pour le client ID ${clientIdNum}:`, error);
+        return throwError(() => error);
+      })
+    );
   }
 }

@@ -182,9 +182,26 @@ export class PanierService {
       this.panier.statut = 'EN_COURS';
     }
   }
+    // Sauvegarder le panier
+  public sauvegarderPanierDansLocalStorage(): void {
+      const clientId = this.getClientId();
+      
+      if (!this.panier) return;
+      
+      // Calculer automatiquement le total du panier
+      this.calculerTotal();
+      
+      if (clientId) {
+        // Sauvegarder dans le panier utilisateur
+        localStorage.setItem(`${this.storageKeyPrefix}${clientId}`, JSON.stringify(this.panier));
+      } else {
+        // Sauvegarder comme panier invité
+        localStorage.setItem(this.guestCartKey, JSON.stringify(this.panier));
+      }
+  }
   
   // Sauvegarder le panier
-  public sauvegarderPanierDansLocalStorage(): void {
+  public (): void {
     const clientId = this.getClientId();
     
     if (!this.panier) return;
