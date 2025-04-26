@@ -131,6 +131,15 @@
           </div>
         </div>
 
+                <!-- Case à cocher avec lien vers la modal -->
+        <div class="form-check mb-3">
+          <input type="checkbox" class="form-check-input" id="reglementCheck" required>
+          <label class="form-check-label" for="reglementCheck">
+            J'accepte les <a href="#" data-bs-toggle="modal" data-bs-target="#reglementModal">règlements de la société</a>
+          </label>
+        </div>
+
+
         <!-- ✅ Bouton d'inscription -->
         <button type="submit" class="btn btn-primary w-75">S'inscrire</button>
       </form>
@@ -150,6 +159,58 @@
 
       <div *ngIf="isSuccessful" class="alert alert-success mt-3">
         Inscription réussie ! Bienvenue 🎉
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal des règlements -->
+<div class="modal fade" id="reglementModal" tabindex="-1" aria-labelledby="reglementModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-light">
+        <h5 class="modal-title fw-bold" id="reglementModalLabel">
+          <i class="bi bi-file-text me-2 text-success"></i>Règlements de la société
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body" style="line-height: 1.8; font-size: 1rem;">
+        <p>En rejoignant notre plateforme, vous acceptez les engagements suivants :</p>
+
+        <ul class="list-unstyled">
+          <li class="mb-2">
+            <i class="bi bi-leaf text-success me-2"></i>
+            Nous accompagnons des <strong>artisans écologiques</strong> et de qualité supérieure.
+          </li>
+          <li class="mb-2">
+            <i class="bi bi-cash-coin text-primary me-2"></i>
+            À chaque paiement d'article, <strong>10%</strong> est reversé à la société.
+          </li>
+          <li class="mb-2">
+            <i class="bi bi-person-check text-warning me-2"></i>
+            Votre demande d’inscription sera <strong>évaluée</strong> selon vos critères environnementaux et éthiques.
+            Vous recevrez un email de <strong>confirmation</strong> (acceptée ou rejetée).
+          </li>
+          <li class="mb-2">
+            <i class="bi bi-box-seam text-info me-2"></i>
+            Lors du dépôt d’un article, une <strong>évaluation</strong> sera également effectuée et vous en serez informé.
+          </li>
+          <li class="mb-2">
+            <i class="bi bi-bell text-secondary me-2"></i>
+            Vous recevrez des <strong>notifications</strong> sur le site concernant les décisions.
+          </li>
+          <li class="mb-2">
+            <i class="bi bi-shield-exclamation text-danger me-2"></i>
+            Votre image reflète celle de notre société. En cas de <strong>réclamations fréquentes</strong> ou de non-respect de notre charte, vous pourrez être <strong>exclu</strong> de la plateforme.
+          </li>
+        </ul>
+
+        <p class="mt-4 text-success">
+          🌱 Merci de contribuer à une consommation responsable et durable.
+        </p>
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
       </div>
     </div>
   </div>

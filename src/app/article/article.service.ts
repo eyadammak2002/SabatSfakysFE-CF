@@ -101,11 +101,10 @@ filterArticles(categoryId?: number, genre?: string): Observable<Article[]> {
   }
       
   if (genre) {
-    params = params.append('genre', genre);
+    params = params.append('genre', genre.toUpperCase());
   }
   
   // Ajouter le statut comme paramètre fixe
-  params = params.append('statut', 'ACCEPTE');
       
   return this.http.get<Article[]>(`${this.apiUrl}/filter`, { params });
 }

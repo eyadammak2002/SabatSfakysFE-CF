@@ -23,6 +23,16 @@ import { CommandeComponent } from './commande/commande.component';
 import { ListCommandeComponent } from './commande/list-commande/list-commande.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { ArticleDetailComponent } from './article/article-detail/article-detail.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { ProfileFournisseurComponent } from './components/profile-fournisseur/profile-fournisseur.component';
+import { FavorisComponent } from './favoris/favoris.component';
+import { ArticlePersonaliserComponent } from './article-personaliser/article-personaliser.component';
+import { ArticleReclamationComponent } from './article/article-reclamation/article-reclamation.component';
+import { AuthGuard } from './services/auth-guard';
+import { CreateArticlePersonaliserComponent } from './article-personaliser/create-articlePersonaliser/create-articlePersonaliser.component';
+import { FiltredArticlesComponent } from './article/filtred-articles/filtred-articles.component';
+import { ChatbotComponent } from './components/chatbot/chatbot.component';
+import { ChatComponent } from './chat/chat.component';
 
 const routes: Routes = [
   { path: '', component: ListArticleComponent },
@@ -31,7 +41,18 @@ const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'photo', component: PhotoComponent },
   { path: 'createPhoto', component: CreatePhotoComponent },
+  { path: 'profile', component: ProfileComponent },
+  { path: 'profileFR', component: ProfileFournisseurComponent },
+  { path: 'favoris', component: FavorisComponent },
 
+  {
+    path: 'mes-reclamations',
+    loadComponent: () => import('./article/client-reclamation-list/client-reclamation-list.component')
+      .then(m => m.ClientReclamationListComponent),
+    canActivate: [AuthGuard] // Assurez-vous que l'utilisateur est authentifié
+  }
+  
+,
   {
     path: 'auth', component: AuthenticationComponent, children: [
       { path: '', redirectTo: 'client/login', pathMatch: 'full' },
@@ -48,6 +69,9 @@ const routes: Routes = [
   { path: 'createArticle', component: CreateArticleComponent },
   { path: 'editArticle/:id', component: EditArticleComponent },
   { path: 'detailArticle/:id', component: ArticleDetailComponent },
+  { path: 'articlereclamation/:id', component: ArticleReclamationComponent },
+  { path: 'articlePersonaliser', component: ArticlePersonaliserComponent },
+  { path: 'createArticlePersonaliser', component: CreateArticlePersonaliserComponent },
 
   
   { path: 'pack', component: PackComponent },
@@ -57,6 +81,27 @@ const routes: Routes = [
   { path: 'panier', component: PanierComponent },
   { path: 'commande', component: CommandeComponent },
   { path: 'listCommande', component: ListCommandeComponent },
+
+
+   // Routes pour le filtrage par catégorie
+   { path: 'chaussures', component: FiltredArticlesComponent },
+   { path: 'chaussures/:genre', component: FiltredArticlesComponent },
+   { path: 'botte', component: FiltredArticlesComponent },
+   { path: 'botte/:genre', component: FiltredArticlesComponent },
+   { path: 'mocassins', component: FiltredArticlesComponent },
+   { path: 'mocassins/:genre', component: FiltredArticlesComponent },
+   
+   // Routes pour le filtrage par genre
+   { path: 'homme', component: FiltredArticlesComponent },
+   { path: 'homme/:category', component: FiltredArticlesComponent },
+   { path: 'femme', component: FiltredArticlesComponent },
+   { path: 'femme/:category', component: FiltredArticlesComponent },
+   { path: 'enfant', component: FiltredArticlesComponent },
+   { path: 'enfant/:category', component: FiltredArticlesComponent },
+
+   { path: 'chatbot', component: ChatbotComponent },
+   { path: 'chat', component: ChatComponent },
+
 
 ];
 

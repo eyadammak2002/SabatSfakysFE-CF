@@ -6,10 +6,34 @@
         </div>
 
         <!-- Barre de recherche -->
-        <div class="search-bar">
+       <!-- <div class="search-bar">
             <i class="fas fa-search"></i>
             <input type="text" placeholder="Rechercher...">
         </div>
+        -->
+
+        <div class="ai-search-container">
+            <h2>Recherche intelligente</h2>
+            
+            <div class="search-bar">
+              <input 
+                type="text" 
+                [(ngModel)]="searchQuery" 
+                placeholder="Posez votre question..." 
+                (keyup.enter)="onSearch()">
+              <button (click)="onSearch()" [disabled]="isLoading">
+                <i class="fas fa-search"></i>
+                {{ isLoading ? 'Chargement...' : 'Rechercher' }}
+              </button>
+            </div>
+            
+            <div class="response-container" *ngIf="aiResponse">
+              <h3>Réponse:</h3>
+              <div class="response-content">
+                {{ aiResponse }}
+              </div>
+            </div>
+          </div>
 
         <!-- Icônes de navigation (Favoris, Panier, Profil) -->
         <div class="icon-links">
@@ -74,6 +98,7 @@
                 <a (click)="redirectToProfile()" ngbDropdownItem>Profile</a>
                 <a (click)="redirectToArticle()" ngbDropdownItem>Articles</a>
                 <a (click)="redirectToCommande()" ngbDropdownItem>Ma Commande</a>
+                <a (click)="redirectToListReclamation()" ngbDropdownItem>Mes Reclamations</a>
                 <a (click)="redirectToListCommande()" ngbDropdownItem><i class="fas fa-shopping-cart menu-icon"></i> Commandes</a>
                 <a routerLink="/fournisseur/notifications" ngbDropdownItem>Notifications</a>
                 <div class="me-3">
@@ -141,58 +166,68 @@
 
     <!-- Menu de navigation (Catégories) -->
     <nav *ngIf="!showFournisseurDashboard" class="nav-links">
+       <!-- Remplacez votre navigation existante par celle-ci -->
+
         <div ngbDropdown class="dropdown">
-            <a routerLink="/chaussures" ngbDropdownToggle>Chaussures</a>
+            <a href="#" (click)="filterByCategory('chaussures', $event)" ngbDropdownToggle>Chaussures Classiques</a>
             <div ngbDropdownMenu class="dropdown-menu">
-                <a routerLink="/chaussures/femme" ngbDropdownItem>Femme</a>
-                <a routerLink="/chaussures/homme" ngbDropdownItem>Homme</a>
-                <a routerLink="/chaussures/enfant" ngbDropdownItem>Enfant</a>
-            </div>
-        </div>
-        <div ngbDropdown class="dropdown">
-            <a routerLink="/sacs" ngbDropdownToggle>Sacs</a>
-            <div ngbDropdownMenu class="dropdown-menu">
-                <a routerLink="/sacs/femme" ngbDropdownItem>Femme</a>
-                <a routerLink="/sacs/homme" ngbDropdownItem>Homme</a>
-                <a routerLink="/sacs/enfant" ngbDropdownItem>Enfant</a>
-            </div>
-        </div>
-        <div ngbDropdown class="dropdown">
-            <a routerLink="/autre" ngbDropdownToggle>Autre</a>
-            <div ngbDropdownMenu class="dropdown-menu">
-                <a routerLink="/autre/femme" ngbDropdownItem>Femme</a>
-                <a routerLink="/autre/homme" ngbDropdownItem>Homme</a>
-                <a routerLink="/autre/enfant" ngbDropdownItem>Enfant</a>
-            </div>
-        </div>
-        <div ngbDropdown class="dropdown">
-            <a routerLink="/homme" ngbDropdownToggle>Homme</a>
-            <div ngbDropdownMenu class="dropdown-menu">
-                <a routerLink="/homme/chaussures" ngbDropdownItem>Chaussures</a>
-                <a routerLink="/homme/sacs" ngbDropdownItem>Sacs</a>
-                <a routerLink="/homme/autre" ngbDropdownItem>Autre</a>
-            </div>
-        </div>
-        
-        <div ngbDropdown class="dropdown">
-            <a routerLink="/femme" ngbDropdownToggle>Femme</a>
-            <div ngbDropdownMenu class="dropdown-menu">
-                <a routerLink="/femme/chaussures" ngbDropdownItem>Chaussures</a>
-                <a routerLink="/femme/sacs" ngbDropdownItem>Sacs</a>
-                <a routerLink="/femme/autre" ngbDropdownItem>Autre</a>
-            </div>
-        </div>
-        <div ngbDropdown class="dropdown">
-            <a routerLink="/enfant" ngbDropdownToggle>Enfant</a>
-            <div ngbDropdownMenu class="dropdown-menu">
-                <a routerLink="/enfant/chaussures" ngbDropdownItem>Chaussures</a>
-                <a routerLink="/enfant/sacs" ngbDropdownItem>Sacs</a>
-                <a routerLink="/enfant/autre" ngbDropdownItem>Autre</a>
+                <a href="#" (click)="filterByCategoryAndGenre('chaussures', 'FEMME', $event)" ngbDropdownItem>FEMME</a>
+                <a href="#" (click)="filterByCategoryAndGenre('chaussures', 'HOMME', $event)" ngbDropdownItem>HOMME</a>
+                <a href="#" (click)="filterByCategoryAndGenre('chaussures', 'ENFANT', $event)" ngbDropdownItem>ENFANT</a>
             </div>
         </div>
 
-        <div class="dropdown">
-            <a routerLink="/personnaliser">Personnaliser</a>
+        <div ngbDropdown class="dropdown">
+            <a href="#" (click)="filterByCategory('botte', $event)" ngbDropdownToggle>Bottes</a>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a href="#" (click)="filterByCategoryAndGenre('botte', 'FEMME', $event)" ngbDropdownItem>FEMME</a>
+                <a href="#" (click)="filterByCategoryAndGenre('botte', 'HOMME', $event)" ngbDropdownItem>HOMME</a>
+                <a href="#" (click)="filterByCategoryAndGenre('botte', 'ENFANT', $event)" ngbDropdownItem>ENFANT</a>
+            </div>
+        </div>
+
+        <div ngbDropdown class="dropdown">
+            <a href="#" (click)="filterByCategory('mocassins', $event)" ngbDropdownToggle>Mocassins</a>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a href="#" (click)="filterByCategoryAndGenre('mocassins', 'FEMME', $event)" ngbDropdownItem>FEMME</a>
+                <a href="#" (click)="filterByCategoryAndGenre('mocassins', 'HOMME', $event)" ngbDropdownItem>HOMME</a>
+                <a href="#" (click)="filterByCategoryAndGenre('mocassins', 'ENFANT', $event)" ngbDropdownItem>ENFANT</a>
+            </div>
+        </div>
+
+     <!-- <div ngbDropdown class="dropdown">
+            <a href="#" (click)="filterByGenre('HOMME', $event)" ngbDropdownToggle>HOMME</a>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a href="#" (click)="filterByGenreAndCategory('HOMME', 'chaussures', $event)" ngbDropdownItem>Chaussures</a>
+                <a href="#" (click)="filterByGenreAndCategory('HOMME', 'botte', $event)" ngbDropdownItem>Sacs</a>
+                <a href="#" (click)="filterByGenreAndCategory('HOMME', 'mocassins', $event)" ngbDropdownItem>Autre</a>
+            </div>
+        </div>
+
+        <div ngbDropdown class="dropdown">
+            <a href="#" (click)="filterByGenre('FEMME', $event)" ngbDropdownToggle>FEMME</a>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a href="#" (click)="filterByGenreAndCategory('FEMME', 'chaussures', $event)" ngbDropdownItem>Chaussures</a>
+                <a href="#" (click)="filterByGenreAndCategory('FEMME', 'botte', $event)" ngbDropdownItem>Sacs</a>
+                <a href="#" (click)="filterByGenreAndCategory('FEMME', 'mocassins', $event)" ngbDropdownItem>Autre</a>
+            </div>
+        </div>
+
+        <div ngbDropdown class="dropdown">
+            <a href="#" (click)="filterByGenre('ENFANT', $event)" ngbDropdownToggle>ENFANT</a>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a href="#" (click)="filterByGenreAndCategory('ENFANT', 'chaussures', $event)" ngbDropdownItem>Chaussures</a>
+                <a href="#" (click)="filterByGenreAndCategory('ENFANT', 'botte', $event)" ngbDropdownItem>Sacs</a>
+                <a href="#" (click)="filterByGenreAndCategory('ENFANT', 'mocassins', $event)" ngbDropdownItem>Autre</a>
+            </div>
+        </div>--> 
+
+        <div ngbDropdown class="dropdown" display="dynamic" placement="bottom">
+            <a class="nav-link" routerLink="/personnaliser" ngbDropdownToggle>Chaussures Personnalisées</a>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a class="dropdown-item" routerLink="/createArticlePersonaliser">Commander un chaussures personnaliser</a>
+                <a class="dropdown-item" routerLink="/articlePersonaliser">Mes commandes de chaussures personnaliser</a>
+            </div>
         </div>
     </nav>
 

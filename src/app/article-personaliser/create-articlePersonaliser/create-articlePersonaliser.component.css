@@ -1,0 +1,363 @@
+.container {
+    max-width: 800px; /* Réduit la largeur du formulaire */
+    margin: auto;
+}
+
+.card {
+    border-radius: 10px;
+    padding: 15px;
+    background: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+}
+
+.card h5 {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.form-group {
+    margin-bottom: 10px; /* Réduit l’espace entre les champs */
+}
+
+.form-control, select {
+  
+    border-radius: 5px;
+    font-size: 14px;
+    padding: 8px;
+}
+
+.article-photo {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.article-photo:hover {
+    transform: scale(1.1);
+}
+
+.btn {
+    padding: 8px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+.btn-primary {
+    background-color: #3c2313;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #2b180f;
+}
+
+.btn-secondary {
+    background-color: #bbb;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #999;
+}
+
+
+/* ✅ Conteneur principal */
+.photo-select {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Espacement entre les images */
+    margin-top: 10px;
+}
+
+/* ✅ Style pour chaque option de photo */
+.photo-option {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* ✅ Input caché (case à cocher) */
+.photo-option input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* ✅ Style des images */
+.article-photo {
+    width: 130px; /* Taille de l’image */
+    height: 130px;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    border: 2px solid transparent;
+}
+
+/* ✅ Effet au survol */
+.article-photo:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ✅ Effet lorsque la case est cochée */
+.photo-option input:checked + label .article-photo {
+    border: 2px solid #3c2313; /* Marron foncé */
+    transform: scale(1.1);
+}
+
+/* ✅ Label pour gérer le clic */
+.photo-option label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+
+.photo-select {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .photo-option {
+    position: relative;
+    margin-bottom: 10px;
+  }
+  
+  .article-photo {
+    height: 100px;
+    width: auto;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+  }
+  
+  /* Style pour indiquer une photo sélectionnée */
+  input[type="checkbox"]:checked + label .article-photo {
+    border: 2px solid #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+
+  /* CSS pour embellir et organiser la section des photos */
+
+/* Conteneur principal */
+.photo-gallery-container {
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    margin-top: 25px;
+    border-left: 4px solid #63a50a;
+  }
+  
+  /* Titre de la section */
+  .photo-gallery-title {
+    color: #3c2313;
+    font-weight: 600;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #63a50a;
+    padding-bottom: 8px;
+    display: inline-block;
+  }
+  
+  /* Description */
+  .photo-gallery-description {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  
+  /* Grille de photos */
+  .photo-grid {
+    padding: 10px 0;
+  }
+  
+  /* Carte photo individuelle */
+  .photo-card {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    height: 100%;
+    background-color: white;
+    border: 2px solid transparent;
+  }
+  
+  .photo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  }
+  
+  .photo-card.border-success {
+    border-color: #63a50a;
+    box-shadow: 0 4px 10px rgba(99, 165, 10, 0.2);
+  }
+  
+  /* Style de l'image */
+  .photo-image {
+    height: 120px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .photo-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  
+  .photo-card:hover .photo-image img {
+    transform: scale(1.1);
+  }
+  
+  /* Overlay au survol */
+  .photo-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(60, 35, 19, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .photo-card:hover .photo-overlay {
+    opacity: 1;
+  }
+  
+  /* Badge de sélection */
+  .photo-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #63a50a;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+  }
+  
+  .photo-card.border-success .photo-badge {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  /* Zone des boutons */
+  .photo-actions {
+    padding: 10px;
+    background-color: white;
+  }
+  
+  /* Style des boutons */
+  .btn-photo-select {
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+  
+  .btn-success {
+    background-color: #63a50a;
+    border-color: #63a50a;
+  }
+  
+  .btn-success:hover {
+    background-color: #548e09;
+    border-color: #548e09;
+  }
+  
+  .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  /* Pagination (à ajouter si nécessaire) */
+  .photo-pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Adaptation mobile */
+  @media (max-width: 768px) {
+    .photo-gallery-container {
+      padding: 15px;
+    }
+    
+    .photo-image {
+      height: 100px;
+    }
+  }
+
+/* Custom photo card styling */
+.photo-card {
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Custom image styling */
+  .photo-img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .photo-card:hover .photo-img {
+    transform: scale(1.05); /* Slight zoom on hover */
+  }
+  
+
+  /* Optional: Add some hover effect for the photo card */
+  .photo-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  
+  .select-btn {
+    background-color: #63a50a !important;
+    color: white !important;
+  }
+  
+  .select-btn:hover {
+    background-color: #548e08 !important;
+    transform: translateY(-2px);
+  }
+  
+  .remove-btn {
+    background-color: white !important;
+    color: #dc3545 !important;
+    border: 1px solid #dc3545 !important;
+  }
+  
+  .remove-btn:hover {
+    background-color: #fff9f9 !important;
+    color: #c82333 !important;
+    transform: translateY(-2px);
+  }
+  
+  .photo-btn-small {
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }

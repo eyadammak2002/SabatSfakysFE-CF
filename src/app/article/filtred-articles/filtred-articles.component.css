@@ -1,20 +1,20 @@
 /* Styles pour les cartes de produits */
 .product-card {
     transition: transform 0.3s, box-shadow 0.3s;
-    border: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
     overflow: hidden;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
   
   .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
   }
   
   .product-image {
     height: 200px;
     overflow: hidden;
-    position: relative;
   }
   
   .product-image img {
@@ -29,109 +29,178 @@
   }
   
   .card-title {
-    font-size: 1.1rem;
     font-weight: 600;
+    font-size: 1.1rem;
     margin-bottom: 0.5rem;
-    white-space: nowrap;
+    height: 40px;
     overflow: hidden;
-    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
   
-  .description {
-    color: #6c757d;
+  .card-text.description {
     font-size: 0.9rem;
-    margin-bottom: 0.5rem;
+    color: #6c757d;
+    overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
-    overflow: hidden;
-    height: 60px;
   }
   
-  .price {
-    font-weight: bold;
-    color: #d35400;
-    font-size: 1.2rem;
-  }
-  
-  .product-badges {
-    margin-top: 0.5rem;
-  }
-  
-  .badge {
-    font-size: 0.7rem;
-    font-weight: 500;
-    padding: 0.35em 0.65em;
-  }
-  
-  /* Styles pour le breadcrumb */
-  .breadcrumb {
-    background-color: transparent;
-    padding: 0;
-    margin-bottom: 1rem;
-  }
-  
-  .breadcrumb-item + .breadcrumb-item::before {
-    content: ">";
-  }
-  
-  .breadcrumb-item a {
-    color: #007bff;
-    text-decoration: none;
-  }
-  
-  .breadcrumb-item a:hover {
-    text-decoration: underline;
-  }
-  
-  .breadcrumb-item.active {
-    color: #6c757d;
-  }
-  
-  /* Style pour le titre de la page */
-  h2 {
+  .card-text.price {
     font-weight: 700;
-    margin-bottom: 1rem;
-    color: #333;
-    border-bottom: 2px solid #f8f9fa;
-    padding-bottom: 0.5rem;
-  }
-  
-  /* Style pour la carte d'info de catégorie */
-  .category-info {
-    background-color: #f8f9fa;
-    border-left: 4px solid #007bff;
-    margin-bottom: 20px;
-  }
-  
-  .category-info .card-title {
-    color: #007bff;
     font-size: 1.2rem;
+    color: #dc3545;
   }
   
-  /* Style pour le compteur de résultats */
-  .results-count {
-    color: #6c757d;
-    font-style: italic;
-    margin-bottom: 15px;
+  .product-badges .badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
   }
   
-  /* Styles responsive */
+  /* Styles pour la modal d'ajout au panier */
+  .modal {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modal-dialog {
+    max-width: 500px;
+  }
+  
+  /* Styles pour la sélection de couleur */
+  .color-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .color-option {
+    cursor: pointer;
+    text-align: center;
+    margin-right: 10px;
+  }
+  
+  .color-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin: 0 auto 5px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+  }
+  
+  .color-circle.selected {
+    transform: scale(1.1);
+    border: 2px solid #3c2313;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  
+  .color-name {
+    font-size: 0.8rem;
+    margin-top: 3px;
+  }
+  
+  .color-name.selected {
+    font-weight: bold;
+    color: #3c2313;
+  }
+  
+  /* Styles pour la sélection de pointure */
+  .size-option {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    background-color: #f8f9fa;
+  }
+  
+  .size-option:hover:not(.out-of-stock) {
+    border-color: #6c757d;
+    background-color: #e9ecef;
+  }
+  
+  .size-option.selected {
+    background-color: #3c2313;
+    color: white;
+    border-color: #3c2313;
+  }
+  
+  .size-option.out-of-stock {
+    opacity: 0.5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+    background-color: #f1f1f1;
+  }
+  
+  .out-of-stock-indicator {
+    position: absolute;
+    color: red;
+    font-size: 0.8rem;
+    right: 5px;
+    top: 5px;
+  }
+  
+  /* Styles pour les boutons */
+  .btn-primary {
+    background-color: #3c2313;
+    border-color: #3c2313;
+  }
+  
+  .btn-primary:hover, .btn-primary:focus {
+    background-color: #2a1a0e;
+    border-color: #2a1a0e;
+  }
+  
+  .btn-outline-secondary {
+    color: #3c2313;
+    border-color: #3c2313;
+  }
+  
+  .btn-outline-secondary:hover, .btn-outline-secondary:focus {
+    background-color: #3c2313;
+    color: white;
+  }
+  
+  /* Style pour le carousel dans la modal */
+  .carousel-inner img {
+    border-radius: 8px;
+  }
+  
+  .carousel-control-prev, .carousel-control-next {
+    width: 10%;
+    opacity: 0.7;
+  }
+  
+  .carousel-control-prev:hover, .carousel-control-next:hover {
+    opacity: 1;
+  }
+  
+  /* Styles responsifs */
   @media (max-width: 768px) {
-    .product-image {
-      height: 150px;
+    .modal-dialog {
+      margin: 0.5rem;
     }
     
-    .card-title {
-      font-size: 1rem;
+    .color-option {
+      margin-right: 5px;
     }
     
-    .description {
-      font-size: 0.8rem;
-      height: 50px;
+    .color-circle {
+      width: 25px;
+      height: 25px;
     }
     
-    .price {
-      font-size: 1.1rem;
+    .size-option {
+      width: 35px;
+      height: 35px;
+      font-size: 0.9rem;
     }
   }

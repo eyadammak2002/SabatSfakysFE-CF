@@ -1,0 +1,120 @@
+<div class="chat-container">
+    <!-- Formulaire de connexion -->
+    <div *ngIf="!connected" class="login-form">
+      <h2>Rejoindre le chat</h2>
+      <div class="form-group">
+        <label for="username">Nom d'utilisateur</label>
+        <input 
+          type="text" 
+          id="username" 
+          [(ngModel)]="username" 
+          placeholder="Votre nom" 
+          class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="userId">ID utilisateur</label>
+        <input 
+          type="number" 
+          id="userId" 
+          [(ngModel)]="userId" 
+          placeholder="Votre ID" 
+          class="form-control">
+      </div>
+      <button (click)="connect()" class="btn btn-primary">Connexion</button>
+    </div>
+  
+    <!-- Chat principal -->
+    <div *ngIf="connected" class="chat-box">
+      <div class="chat-header">
+        <h2>
+          <span *ngIf="!selectedUser && !currentRoom">Chat public</span>
+          <span *ngIf="selectedUser">Chat privé avec utilisateur #{{selectedUser}}</span>
+          <span *ngIf="currentRoom">Salle: {{currentRoom}}</span>
+        </h2>
+        
+        <!-- Options de navigation -->
+        <div class="chat-options">
+          <button 
+            *ngIf="selectedUser || currentRoom" 
+            (click)="goToPublicChat()" 
+            class="btn btn-sm btn-info">
+            Retour au chat public
+          </button>
+          
+          <!-- Formulaire pour rejoindre une salle -->
+          <div class="room-form">
+            <input 
+              type="text" 
+              [(ngModel)]="roomId" 
+              placeholder="ID de la salle" 
+              class="form-control">
+            <button (click)="joinRoom()" class="btn btn-sm btn-success">Rejoindre</button>
+          </div>
+          
+          <!-- Choisir un utilisateur pour chat privé -->
+          <div class="user-dropdown">
+            <select [(ngModel)]="selectedUser" (change)="selectUser(selectedUser!)" class="form-control">
+              <option [ngValue]="null">Sélectionner un utilisateur...</option>
+              <!-- Remplacez par une liste dynamique d'utilisateurs -->
+              <option [ngValue]="1">Utilisateur #1</option>
+              <option [ngValue]="2">Utilisateur #2</option>
+              <option [ngValue]="3">Utilisateur #3</option>
+            </select>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Messages -->
+      <div class="messages-container">
+        <!-- Messages publics -->
+        <div *ngIf="!selectedUser && !currentRoom" class="messages">
+          <div *ngFor="let msg of messages" class="message" [ngClass]="{'own-message': msg.senderId === userId}">
+            <div class="message-header">
+              <span class="sender">{{msg.sender}}</span>
+              <span class="time">{{msg.timestamp | date:'short'}}</span>
+            </div>
+            <div class="message-content" [ngClass]="{'system-message': msg.type !== 'CHAT'}">
+              {{msg.content}}
+            </div>
+          </div>
+        </div>
+        
+        <!-- Messages privés -->
+        <div *ngIf="selectedUser" class="messages">
+          <div *ngFor="let msg of privateMessages" class="message" [ngClass]="{'own-message': msg.senderId === userId}">
+            <div class="message-header">
+              <span class="sender">{{msg.sender}}</span>
+              <span class="time">{{msg.timestamp | date:'short'}}</span>
+            </div>
+            <div class="message-content">
+              {{msg.content}}
+            </div>
+          </div>
+        </div>
+        
+        <!-- Messages de salle -->
+        <div *ngIf="currentRoom" class="messages">
+          <div *ngFor="let msg of roomMessages" class="message" [ngClass]="{'own-message': msg.senderId === userId}">
+            <div class="message-header">
+              <span class="sender">{{msg.sender}}</span>
+              <span class="time">{{msg.timestamp | date:'short'}}</span>
+            </div>
+            <div class="message-content" [ngClass]="{'system-message': msg.type !== 'CHAT'}">
+              {{msg.content}}
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Formulaire pour envoyer un message -->
+      <div class="message-form">
+        <input 
+          type="text" 
+          [(ngModel)]="messageContent" 
+          placeholder="Écrivez votre message..." 
+          class="form-control"
+          (keyup.enter)="sendMessage()">
+        <button (click)="sendMessage()" class="btn btn-primary">Envoyer</button>
+      </div>
+    </div>
+  </div>

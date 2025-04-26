@@ -61,40 +61,21 @@
         </div>
       </div>
     </div>
-    
-    <!-- Affichage des informations de catégorie si disponible -->
-    <div *ngIf="category && !isLoading" class="row mb-4">
-      <div class="col-12">
-        <div class="card category-info">
-          <div class="card-body">
-            <h5 class="card-title">{{ category.name }}</h5>
-            <p class="card-text">{{ category.description }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Compteur d'articles -->
-    <div *ngIf="!isLoading && articles.length > 0" class="row mb-3">
-      <div class="col-12">
-        <p class="results-count">{{ articles.length }} article(s) trouvé(s)</p>
-      </div>
-    </div>
+  
     
     <!-- Grille d'articles -->
     <div *ngIf="!isLoading && articles.length > 0" class="row">
-      <div *ngFor="let article of articles" class="col-md-4 col-sm-6 mb-4">
+      <div *ngFor="let article of articles" class="col-lg-2 col-md-3 col-sm-4 col-6">
         <div class="card h-100 product-card">
           <!-- Image principale -->
-          <div class="product-image">
+          <div class="product-image" *ngFor="let photo of article.photos; let i = index" 
+          class="carousel-item" 
+          [class.active]="i === 0">
             <img *ngIf="article.photos && article.photos.length > 0" 
-                 [src]="'http://localhost:8080/photos/' + article.photos[0].name" 
+                [src]="photo.url" 
                  class="card-img-top" 
                  alt="{{ article.name }}">
-            <img *ngIf="!article.photos || article.photos.length === 0" 
-                 src="assets/images/no-image.png" 
-                 class="card-img-top" 
-                 alt="Image non disponible">
+          
           </div>
           
           <!-- Corps de la carte produit -->
@@ -118,7 +99,7 @@
               <a [routerLink]="['/article-details', article.id]" class="btn btn-primary">
                 <i class="fas fa-search me-1"></i> Voir détails
               </a>
-              <button class="btn">
+              <button class="btn"  (click)="ouvrirModal(article)">
                 <i class="fas fa-shopping-cart"></i>
               </button>
             </div>
@@ -152,3 +133,84 @@
       </div>
     </div>
   </div>
+
+
+  <!-- Modal pour l'ajout au panier -->
+<div *ngIf="selectedArticle" class="modal d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #3c2313; color: white;">
+                <h5 class="modal-title">Ajouter au Panier</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="selectedArticle = null"></button>
+            </div>
+            <div class="modal-body text-center">
+                
+                <!-- Modal Carousel -->
+                <div id="carouselArticle" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div *ngFor="let photo of selectedArticle.photos; let i = index" 
+                             class="carousel-item" 
+                             [class.active]="i === 0">
+                            <img [src]="photo.url" class="d-block w-100 rounded" alt="Image article"
+                                 style="max-height: 300px; object-fit: cover;">
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselArticle" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselArticle" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    </button>
+                </div>
+  
+                <h4 class="mt-3 mb-3">{{ selectedArticle.name }}</h4>
+                <h5 class="text-danger mb-4">{{ selectedArticle.prixVente }} DT</h5>
+                
+                <!-- Sélection des couleurs avec cercles de couleur -->
+                <div *ngIf="selectedArticle?.stocks?.length" class="mb-4">
+                    <h6 class="text-start mb-2">Couleur :</h6>
+                    <div class="d-flex flex-wrap justify-content-start color-selection">
+                        <div *ngFor="let couleur of getUniqueColors(selectedArticle.stocks)" 
+                             class="color-option me-3 mb-2" 
+                             (click)="selectCouleur(couleur)">
+                            <div class="color-circle"
+                                 [style.background-color]="couleur.nom"
+                                 [class.selected]="selectedCouleur?.id === couleur.id">
+                            </div>
+                            <div class="color-name" [class.selected]="selectedCouleur?.id === couleur.id">
+                                {{ couleur.nom }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sélection des pointures avec indication de stock -->
+                <div *ngIf="selectedCouleur && selectedPointures.length > 0" class="mb-4">
+                    <h6 class="text-start mb-2">Pointure :</h6>
+                    <div class="d-flex flex-wrap justify-content-start">
+                        <div *ngFor="let pointure of selectedPointures"
+                             class="size-option me-2 mb-2"
+                             [class.selected]="selectedPointure?.id === pointure.id"
+                             [class.out-of-stock]="pointureOutOfStock[pointure.id]"
+                             (click)="selectPointure(pointure)">
+                            {{ pointure.taille }}
+                            <div *ngIf="pointureOutOfStock[pointure.id]" class="out-of-stock-indicator">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" (click)="selectedArticle = null">
+                    Annuler
+                </button>
+                <button type="button" class="btn btn-primary" 
+                        [disabled]="!selectedCouleur || !selectedPointure || stockInsuffisant"
+                        (click)="confirmerAjoutAuPanier()">
+                    <i class="fas fa-shopping-cart me-2"></i> Ajouter au panier
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
