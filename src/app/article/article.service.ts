@@ -83,4 +83,30 @@ export class ArticleService {
     }
     return this.http.delete<any>(`${this.apiUrl}/photos/${id}`);
   }
+
+  // Dans ArticleService
+getArticlesByCategory(categoryId: number): Observable<Article[]> {
+  return this.http.get<Article[]>(`${this.apiUrl}/category/${categoryId}/statut/ACCEPTE`);
+}
+
+getArticlesByGenre(genre: string): Observable<Article[]> {
+  return this.http.get<Article[]>(`${this.apiUrl}/genre/${genre}/statut/ACCEPTE`);
+}
+
+filterArticles(categoryId?: number, genre?: string): Observable<Article[]> {
+  let params = new HttpParams();
+      
+  if (categoryId) {
+    params = params.append('categoryId', categoryId.toString());
+  }
+      
+  if (genre) {
+    params = params.append('genre', genre);
+  }
+  
+  // Ajouter le statut comme paramètre fixe
+  params = params.append('statut', 'ACCEPTE');
+      
+  return this.http.get<Article[]>(`${this.apiUrl}/filter`, { params });
+}
 }

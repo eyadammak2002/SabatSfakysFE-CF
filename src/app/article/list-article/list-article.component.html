@@ -71,14 +71,13 @@
 
 
 
-  
-<!-- ✅ Modal for selecting color and size -->
+<!-- ✅ Modal amélioré pour la sélection des couleurs et pointures -->
 <div *ngIf="selectedArticle" class="modal d-block" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="background-color: #3c2313; color: white;">
                 <h5 class="modal-title">Ajouter au Panier</h5>
-                <button type="button" class="btn-close" (click)="selectedArticle = null"></button>
+                <button type="button" class="btn-close btn-close-white" (click)="selectedArticle = null"></button>
             </div>
             <div class="modal-body text-center">
                 
@@ -100,44 +99,63 @@
                     </button>
                 </div>
   
-                <p class="mt-3"><strong>{{ selectedArticle.name }}</strong></p>
-           <!-- Sélection des couleurs sans doublon -->
-              <div *ngIf="selectedArticle?.stocks?.length">
-                  <label><strong>Couleur :</strong></label>
-                  <div class="d-flex flex-wrap">
-                  <button *ngFor="let couleur of getUniqueColors(selectedArticle.stocks)" 
-                          class="btn m-1"
-                          [class.btn-primary]="selectedCouleur === couleur"
-                          [class.btn-outline-primary]="selectedCouleur !== couleur"
-                          (click)="selectCouleur(couleur)">
-                      {{ couleur.nom }}
-                  </button>
-                  </div>
-              </div>
-              
-              
-              <!-- Sélection des pointures -->
-              <div *ngIf="selectedCouleur && selectedPointures.length > 0">
-                  <label><strong>Pointure :</strong></label>
-                  <div class="d-flex flex-wrap">
-                      <button *ngFor="let pointure of selectedPointures"
-                      class="btn m-1"
-                      [class.btn-success]="selectedPointure?.id === pointure.id"
-                      [class.btn-outline-success]="selectedPointure?.id !== pointure.id"
-                      (click)="selectedPointure = pointure">  <!-- ✅ Stocke l'objet Pointure entier -->
-                      {{ pointure.taille }} <!-- ✅ Affiche la taille -->
-                      </button>
-                  </div>
-              </div>
-              
-    
+                <h4 class="mt-3 mb-3">{{ selectedArticle.name }}</h4>
+                <h5 class="text-danger mb-4">{{ selectedArticle.prixVente }} DT</h5>
+                
+                <!-- ✅ Sélection des couleurs avec cercles de couleur -->
+                <div *ngIf="selectedArticle?.stocks?.length" class="mb-4">
+                    <h6 class="text-start mb-2">Couleur :</h6>
+                    <div class="d-flex flex-wrap justify-content-start color-selection">
+                        <div *ngFor="let couleur of getUniqueColors(selectedArticle.stocks)" 
+                             class="color-option me-3 mb-2" 
+                             (click)="selectCouleur(couleur)">
+                            <div class="color-circle"
+                                 [style.background-color]="couleur.nom"
+                                 [class.selected]="selectedCouleur?.id === couleur.id">
+                            </div>
+                            <div class="color-name" [class.selected]="selectedCouleur?.id === couleur.id">
+                                {{ couleur.nom }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ✅ Sélection des pointures avec indication de stock -->
+                <div *ngIf="selectedCouleur && selectedPointures.length > 0" class="mb-4">
+                    <h6 class="text-start mb-2">Pointure :</h6>
+                    <div class="d-flex flex-wrap justify-content-start">
+                        <div *ngFor="let pointure of selectedPointures"
+                             class="size-option me-2 mb-2"
+                             [class.selected]="selectedPointure?.id === pointure.id"
+                             [class.out-of-stock]="pointureOutOfStock[pointure.id]"
+                             (click)="selectPointure(pointure)">
+                            {{ pointure.taille }}
+                            <div *ngIf="pointureOutOfStock[pointure.id]" class="out-of-stock-indicator">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ✅ Message de stock 
+                <div *ngIf="selectedPointure && !stockInsuffisant" class="alert alert-success mt-3">
+                    <i class="fas fa-check-circle me-2"></i> En stock
+                </div>
+                
+                <div *ngIf="stockInsuffisant" class="alert alert-danger mt-3">
+                    <i class="fas fa-times-circle me-2"></i> Épuisé
+                </div>-->
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="selectedArticle = null">Annuler</button>
-                <button type="button" class="btn btn-success" 
-                        [disabled]="!selectedCouleur || !selectedPointure"
-                        (click)="confirmerAjoutAuPanier()">Ajouter</button>
+                <button type="button" class="btn btn-outline-secondary" (click)="selectedArticle = null">
+                    Annuler
+                </button>
+                <button type="button" class="btn btn-primary" 
+                        [disabled]="!selectedCouleur || !selectedPointure || stockInsuffisant"
+                        (click)="confirmerAjoutAuPanier()">
+                    <i class="fas fa-shopping-cart me-2"></i> Ajouter au panier
+                </button>
             </div>
         </div>
     </div>
-  </div>
+</div>

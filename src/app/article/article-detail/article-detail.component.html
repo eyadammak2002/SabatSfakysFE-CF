@@ -1,389 +1,435 @@
-
-
 <div class="container mt-4">
-    <!-- Affichage pendant le chargement -->
-    <div *ngIf="isLoading" class="text-center my-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Chargement...</span>
+  <!-- Affichage pendant le chargement -->
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="mt-2">Chargement des détails de l'article...</p>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+    <button class="btn btn-outline-primary ms-3" (click)="retourListe()">Retour à la liste des articles</button>
+  </div>
+
+  <!-- Détails de l'article -->
+  <div *ngIf="article && !isLoading" class="article-details">
+    <div class="row">
+      <!-- Bouton retour -->
+      <div class="col-12 mb-3">
+        <button class="btn btn-outline-secondary" (click)="retourListe()">
+          <i class="fas fa-arrow-left"></i> Retour aux articles
+        </button>
       </div>
-      <p class="mt-2">Chargement des détails de l'article...</p>
-    </div>
-  
-    <!-- Message d'erreur -->
-    <div *ngIf="errorMessage" class="alert alert-danger">
-      {{ errorMessage }}
-      <button class="btn btn-outline-primary ms-3" (click)="retourListe()">Retour à la liste des articles</button>
-    </div>
-  
-    <!-- Détails de l'article -->
-    <div *ngIf="article && !isLoading" class="article-details">
-      <div class="row">
-        <!-- Bouton retour -->
-        <div class="col-12 mb-3">
-          <button class="btn btn-outline-secondary" (click)="retourListe()">
-            <i class="fas fa-arrow-left"></i> Retour aux articles
-          </button>
-        </div>
-  
-        <!-- Galerie d'images -->
-        <div class="col-md-6 mb-4">
-          <div class="card shadow">
-            <div class="image-gallery position-relative">
-              <!-- Image principale -->
-              <img *ngIf="article.photos && article.photos.length > 0" 
-                  [src]="article.photos[currentImageIndex].url" 
-                  class="card-img-top main-image" 
-                  [alt]="article.name">
-              
-              <!-- Navigation d'images -->
-              <div class="image-controls" *ngIf="article.photos && article.photos.length > 1">
-                <button class="btn btn-light btn-sm rounded-circle shadow-sm" (click)="prevImage()">
-                  <i class="fas fa-chevron-left"></i>
-                </button>
-                <button class="btn btn-light btn-sm rounded-circle shadow-sm" (click)="nextImage()">
-                  <i class="fas fa-chevron-right"></i>
-                </button>
-              </div>
-              
-              <!-- Miniatures des images -->
-              <div class="image-thumbnails d-flex mt-2 overflow-auto" *ngIf="article.photos && article.photos.length > 1">
-                <img *ngFor="let photo of article.photos; let i = index"
-                    [src]="photo.url"
-                    [alt]="article.name + ' - image ' + (i+1)"
-                    class="thumbnail-image mx-1"
-                    [class.active]="i === currentImageIndex"
-                    (click)="currentImageIndex = i">
-              </div>
+
+      <!-- Galerie d'images -->
+      <div class="col-md-6 mb-4">
+        <div class="card shadow">
+          <div class="image-gallery position-relative">
+            <!-- Image principale -->
+            <img *ngIf="article.photos && article.photos.length > 0" 
+                [src]="article.photos[currentImageIndex].url" 
+                class="card-img-top main-image" 
+                [alt]="article.name">
+            
+            <!-- Navigation d'images -->
+            <div class="image-controls" *ngIf="article.photos && article.photos.length > 1">
+              <button class="btn btn-light btn-sm rounded-circle shadow-sm" (click)="prevImage()">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="btn btn-light btn-sm rounded-circle shadow-sm" (click)="nextImage()">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+            
+            <!-- Miniatures des images -->
+            <div class="image-thumbnails d-flex mt-2 overflow-auto" *ngIf="article.photos && article.photos.length > 1">
+              <img *ngFor="let photo of article.photos; let i = index"
+                  [src]="photo.url"
+                  [alt]="article.name + ' - image ' + (i+1)"
+                  class="thumbnail-image mx-1"
+                  [class.active]="i === currentImageIndex"
+                  (click)="currentImageIndex = i">
             </div>
           </div>
         </div>
-  
-        <!-- Informations sur l'article -->
-        <div class="col-md-6">
-          <div class="card shadow">
-            <div class="card-body">
-              <h2 class="card-title fw-bold">{{ article.name }}</h2>
-              <p class="text-muted">Référence: #{{ article.id }}</p>
+      </div>
+
+      <!-- Informations sur l'article -->
+      <div class="col-md-6">
+        <div class="card shadow">
+          <div class="card-body">
+            <h2 class="card-title fw-bold">{{ article.name }}</h2>
+            <p class="text-muted">Référence: #{{ article.id }}</p>
+            
+            <div class="price-info my-3">
+              <h3 class="text-danger fw-bold">{{ article.prixVente }} DT</h3>
               
-              <div class="price-info my-3">
-                <h3 class="text-danger fw-bold">{{ article.prixVente }} DT</h3>
-                
-                <span *ngIf="article.prixVente < article.prixVente" class="badge bg-success ms-2">
-                  En promotion !
-                </span>
-              </div>
-              
-              <div class="description-box my-4">
-                <h5 class="card-subtitle mb-2">Description</h5>
-                <p class="card-text">{{ article.description }}</p>
-              </div>
-              
-              <hr>
-              
-              <!-- Sélection d'options -->
-              <div class="options-selection">
-                <!-- Sélection des couleurs -->
-                <div *ngIf="article.stocks?.length" class="mb-3">
-                  <label class="form-label fw-bold">Couleur :</label>
-                  <div class="d-flex flex-wrap">
-                    <button *ngFor="let couleur of getUniqueColors(article.stocks)" 
-                            class="btn m-1"
-                            [class.btn-primary]="selectedCouleur?.id === couleur.id"
-                            [class.btn-outline-primary]="selectedCouleur?.id !== couleur.id"
-                            (click)="selectCouleur(couleur)">
-                      {{ couleur.nom }}
-                    </button>
-                  </div>
-                </div>
-                
-                <!-- Sélection des pointures -->
-                <div *ngIf="selectedCouleur && selectedPointures.length > 0" class="mb-3">
-                  <label class="form-label fw-bold">Pointure :</label>
-                  <div class="d-flex flex-wrap">
-                    <button *ngFor="let pointure of selectedPointures"
-                            class="btn m-1"
-                            [class.btn-success]="selectedPointure?.id === pointure.id"
-                            [class.btn-outline-success]="selectedPointure?.id !== pointure.id"
-                            (click)="selectedPointure = pointure">
-                      {{ pointure.taille }}
-                    </button>
-                  </div>
-                </div>
-                
-                <!-- Bouton d'ajout au panier -->
-                <div class="d-grid gap-2 mt-4">
-                  <button class="btn btn-lg btn-success" 
-                          [disabled]="!selectedCouleur || !selectedPointure"
-                          (click)="ajouterAuPanier()">
-                    <i class="fas fa-shopping-cart me-2"></i> Ajouter au panier
+              <span *ngIf="article.prixVente < article.prixVente" class="badge bg-success ms-2">
+                En promotion !
+              </span>
+            </div>
+            
+            <div class="description-box my-4">
+              <h5 class="card-subtitle mb-2">Description</h5>
+              <p class="card-text">{{ article.description }}</p>
+            </div>
+            
+            <hr>
+            
+            <!-- Sélection d'options -->
+            <div class="options-selection">
+              <!-- Sélection des couleurs -->
+              <div *ngIf="article.stocks?.length" class="mb-3">
+                <label class="form-label fw-bold">Couleur :</label>
+                <div class="d-flex flex-wrap">
+                  <button *ngFor="let couleur of getUniqueColors(article.stocks)" 
+                          class="btn m-1"
+                          [class.btn-primary]="selectedCouleur?.id === couleur.id"
+                          [class.btn-outline-primary]="selectedCouleur?.id !== couleur.id"
+                          (click)="selectCouleur(couleur)">
+                    {{ couleur.nom }}
                   </button>
                 </div>
               </div>
+              
+              <!-- Sélection des pointures avec indication de disponibilité -->
+              <div *ngIf="selectedCouleur && selectedPointures.length > 0" class="mb-3">
+                <label class="form-label fw-bold">Pointure :</label>
+                <div class="d-flex flex-wrap">
+                  <button *ngFor="let pointure of selectedPointures"
+                          class="btn m-1 position-relative"
+                          [class.btn-success]="selectedPointure?.id === pointure.id"
+                          [class.btn-outline-success]="selectedPointure?.id !== pointure.id && !pointureOutOfStock[pointure.id]"
+                          [class.btn-outline-secondary]="pointureOutOfStock[pointure.id]"
+                          [class.disabled]="pointureOutOfStock[pointure.id]"
+                          [style.opacity]="pointureOutOfStock[pointure.id] ? '0.6' : '1'"
+                          (click)="!pointureOutOfStock[pointure.id] && selectPointure(pointure)">
+                    {{ pointure.taille }}
+                    <div *ngIf="pointureOutOfStock[pointure.id]" 
+                         class="position-absolute" 
+                         style="top: 0; right: 0; left: 0; bottom: 0; display: flex; align-items: center; justify-content: center;">
+                      <i class="fas fa-times text-danger" style="font-size: 0.9rem; position: absolute;"></i>
+                    </div>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Message d'information sur le stock -->
+              <div *ngIf="selectedPointure">
+                <div *ngIf="!stockInsuffisant" class="alert alert-success mt-2 mb-3">
+                  <i class="fas fa-check-circle me-2"></i> En stock
+                </div>
+                
+                <div *ngIf="stockInsuffisant" class="alert alert-danger mt-2 mb-3">
+                  <i class="fas fa-times-circle me-2"></i> Épuisé
+                </div>
+              </div>
+              
+              <!-- Bouton d'ajout au panier et favoris -->
+              <div class="d-flex gap-2 mt-4">
+                <!-- Nouveau bouton favoris avec juste un cœur -->
+                <button class="btn btn-lg position-relative" (click)="toggleFavori()" 
+                        [ngClass]="{'btn-danger': isFavori, 'btn-outline-danger': !isFavori}"
+                        style="min-width: 60px; transition: all 0.3s ease;">
+                  <i class="fas fa-heart" style="font-size: 1.5rem;"></i>
+                  <span *ngIf="favorisCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+                    {{ favorisCount }}
+                    <span class="visually-hidden">favoris</span>
+                  </span>
+                </button>
+
+                <!-- Bouton d'ajout au panier -->
+                <button class="btn btn-lg btn-success flex-grow-1" 
+                        [disabled]="!selectedCouleur || !selectedPointure || stockInsuffisant || (selectedPointure && pointureOutOfStock[selectedPointure.id])"
+                        (click)="ajouterAuPanier()">
+                  <i class="fas fa-shopping-cart me-2"></i> Ajouter au panier
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-  
-     
-      <!-- Section des avis -->
-<div class="row mt-5">
-    <div class="col-12">
-      <div class="card shadow">
-        <div class="card-header d-flex justify-content-between align-items-center" 
-             style="background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%); color: white;">
-          <h3 class="mb-0"><i class="fas fa-star me-2"></i> Avis clients</h3>
-          <button class="btn" style="background-color: #63a50a; color: white;" (click)="ouvrirFormAvis()">
-            <i class="fas fa-pen me-1"></i> Donner mon avis
-          </button>
-        </div>
-        <div class="card-body">
-          <!-- Chargement des avis -->
-          <div *ngIf="isLoadingAvis" class="text-center my-3">
-            <div class="spinner-border" role="status" style="color: #3c2313;">
-              <span class="visually-hidden">Chargement des avis...</span>
-            </div>
-            <p class="mt-2">Chargement des avis...</p>
-          </div>
-          
-          <!-- Aucun avis -->
-          <div *ngIf="!isLoadingAvis && avis.length === 0" class="text-center my-4 py-5" 
-               style="background-color: #f9f9f9; border-radius: 10px;">
-            <i class="fas fa-comment-slash fa-3x mb-3" style="color: #ccc;"></i>
-            <p class="text-muted">
-              Aucun avis pour cet article. Soyez le premier à donner votre avis !
-            </p>
-            <button class="btn" style="background-color: #63a50a; color: white;" (click)="ouvrirFormAvis()">
+    </div>
+
+    <div class="d-flex mt-2">
+      <button #btnReclamation
+      class="btn btn-outline-secondary w-100" 
+      (click)="btnReclamation.className='btn btn-danger w-100'; allerReclamation()">
+      <i class="fas fa-exclamation-circle me-2"></i> Réclamer
+      </button>
+    </div>
+    
+    <!-- Section des avis -->
+    <div class="row mt-5">
+      <div class="col-12">
+        <div class="card shadow">
+          <div class="card-header d-flex justify-content-between align-items-center" 
+               style="background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%); color: white;">
+            <h3 class="mb-0"><i class="fas fa-star me-2"></i> Avis clients</h3>
+            <!-- Bouton "Donner mon avis" -->
+            <button class="btn" 
+              (click)="gererClicAvis()"
+              style="color: white; cursor: pointer;"
+              [ngClass]="{
+                'bg-disabled': !isLoggedIn() || !userPeutDonnerAvis, 
+                'bg-custom': isLoggedIn() && userPeutDonnerAvis
+              }">
               <i class="fas fa-pen me-1"></i> Donner mon avis
             </button>
+
+            <!-- Indicateur de chargement pendant la vérification -->
+            <span *ngIf="verificationAchatEnCours" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                <span class="visually-hidden">Vérification...</span>
+              </div>
+            </span>
           </div>
-          
-          <!-- Liste des avis -->
-          <div *ngIf="!isLoadingAvis && avis.length > 0" class="avis-list">
-            <div *ngFor="let avisItem of avis" class="avis-item mb-4 p-3" 
-                 style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #63a50a; background-color: #f9f9f9;">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <div class="client-info">
-                  <strong style="color: #3c2313;">{{ avisItem.user?.username || 'Utilisateur #' + avisItem.user?.id }}</strong>
-                  
-                </div>
-                <div class="d-flex align-items-center">
-                  <small class="text-muted me-3">{{ avisItem.dateAjout | date:'dd/MM/yyyy' }}</small>
-                  <div class="rating">
-                    <i *ngFor="let star of [1,2,3,4,5]" 
-                       class="fas fa-star" 
-                       [style.color]="star <= avisItem.note ? '#FFC107' : '#e0e0e0'"></i>
-                  </div>
-                  <!-- Boutons d'actions pour l'auteur de l'avis -->
-                  <div *ngIf="isAvisAuthor(avisItem)" class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                      <li><a class="dropdown-item text-danger" href="javascript:void(0)" (click)="supprimerAvis(avisItem.id)">
-                        <i class="fas fa-trash me-2"></i> Supprimer</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+          <div class="card-body">
+            <!-- Chargement des avis -->
+            <div *ngIf="isLoadingAvis" class="text-center my-3">
+              <div class="spinner-border" role="status" style="color: #3c2313;">
+                <span class="visually-hidden">Chargement des avis...</span>
               </div>
-              <div class="comment-section mt-2">
-                <h6 class="comment-title mb-2" style="color: #3c2313; font-weight: 600;">Commentaire</h6>
-                <div class="comment-content p-3" style="border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9fa;">
-                  <p class="avis-text my-2" style="white-space: pre-line;">{{ avisItem.description }}</p>
+              <p class="mt-2">Chargement des avis...</p>
+            </div>
+            
+            <!-- Aucun avis -->
+            <div *ngIf="!isLoadingAvis && avis.length === 0" class="text-center my-4 py-5" 
+                 style="background-color: #f9f9f9; border-radius: 10px;">
+              <i class="fas fa-comment-slash fa-3x mb-3" style="color: #ccc;"></i>
+              <p class="text-muted">
+                Aucun avis pour cet article. Soyez le premier à donner votre avis !
+              </p>
+              <button class="btn" style="background-color: #63a50a; color: white;" (click)="ouvrirFormAvis()">
+                <i class="fas fa-pen me-1"></i> Donner mon avis
+              </button>
+            </div>
+            
+            <!-- Liste des avis -->
+            <div *ngIf="!isLoadingAvis && avis.length > 0" class="avis-list">
+              <div *ngFor="let avisItem of avis" class="avis-item mb-4 p-3" 
+                   style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #63a50a; background-color: #f9f9f9;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div class="client-info">
+                    <strong style="color: #3c2313;">{{ avisItem.user?.username || 'Utilisateur #' + avisItem.user?.id }}</strong>
+                  </div>
+                  <div class="d-flex align-items-center">
+                    <small class="text-muted me-3">{{ avisItem.dateAjout | date:'dd/MM/yyyy' }}</small>
+                    <div class="rating">
+                      <i *ngFor="let star of [1,2,3,4,5]" 
+                         class="fas fa-star" 
+                         [style.color]="star <= avisItem.note ? '#FFC107' : '#e0e0e0'"></i>
+                    </div>
+                    <!-- Boutons d'actions pour l'auteur de l'avis -->
+                    <div *ngIf="isAvisAuthor(avisItem)" class="dropdown">
+                      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item text-danger" href="javascript:void(0)" (click)="supprimerAvis(avisItem.id)">
+                          <i class="fas fa-trash me-2"></i> Supprimer</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <!-- Photos de l'avis -->
-              <div *ngIf="avisItem.photos && avisItem.photos.length > 0" class="avis-photos mt-3">
-                <div class="row g-2">
-                  <div *ngFor="let photo of avisItem.photos" class="col-6 col-md-4 col-lg-3">
-                    <div class="photo-thumbnail">
-                      <img [src]="'http://localhost:8080/uploads/' + photo.name" 
-                           class="img-thumbnail" 
-                           alt="Photo avis client"
-                           style="width: 100%; height: 150px; object-fit: cover; cursor: pointer;"
-                          >
+                <div class="comment-section mt-2">
+                  <h6 class="comment-title mb-2" style="color: #3c2313; font-weight: 600;">Commentaire</h6>
+                  <div class="comment-content p-3" style="border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9fa;">
+                    <p class="avis-text my-2" style="white-space: pre-line;">{{ avisItem.description }}</p>
+                  </div>
+                </div>
+                <!-- Photos de l'avis -->
+                <div *ngIf="avisItem.photos && avisItem.photos.length > 0" class="avis-photos mt-3">
+                  <div class="row g-2">
+                    <div *ngFor="let photo of avisItem.photos" class="col-6 col-md-4 col-lg-3">
+                      <div class="photo-thumbnail">
+                        <img [src]="'http://localhost:8080/uploads/' + photo.name" 
+                             class="img-thumbnail" 
+                             alt="Photo avis client"
+                             style="width: 100%; height: 150px; object-fit: cover; cursor: pointer;">
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-
-
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-    </div>
-  </div>
+</div>
+
 <!-- Modal Formulaire d'Avis avec Upload de Photos -->
 <div class="modal fade" id="avisModal" tabindex="-1" aria-labelledby="avisModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header" style="background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%); color: white;">
-          <h5 class="modal-title" id="avisModalLabel"><i class="fas fa-comment-alt me-2"></i> Donner votre avis</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background-color: white;"></button>
-        </div>
-        <div class="modal-body">
-          <form [formGroup]="avisForm">
-            <div class="mb-3">
-              <label for="note" class="form-label fw-bold" style="color: #3c2313;">Note</label>
-              <select formControlName="note" id="note" class="form-select">
-                <option value="">Sélectionnez une note</option>
-                <option value="5">5 - Excellent</option>
-                <option value="4">4 - Très bon</option>
-                <option value="3">3 - Bon</option>
-                <option value="2">2 - Moyen</option>
-                <option value="1">1 - Décevant</option>
-              </select>
-              <div *ngIf="avisForm.get('note')?.invalid && avisForm.get('note')?.touched" class="text-danger">
-                <small><i class="fas fa-exclamation-circle"></i> Veuillez sélectionner une note</small>
-              </div>
-            </div>
-            
-            <div class="mb-3">
-              <label for="description" class="form-label fw-bold" style="color: #3c2313;">Votre avis</label>
-              <textarea formControlName="description" class="form-control" id="description" rows="4" 
-                        placeholder="Partagez votre expérience avec ce produit..." 
-                        style="border-color: #ddd;"></textarea>
-              <div *ngIf="avisForm.get('description')?.invalid && avisForm.get('description')?.touched" class="text-danger">
-                <small *ngIf="avisForm.get('description')?.errors?.['required']">
-                  <i class="fas fa-exclamation-circle"></i> Veuillez saisir votre avis
-                </small>
-                <small *ngIf="avisForm.get('description')?.errors?.['minlength']">
-                  <i class="fas fa-exclamation-circle"></i> Votre avis doit contenir au moins 10 caractères
-                </small>
-              </div>
-            </div>
-            
-            <!-- Section Upload de photos -->
-           <!-- Section Upload de photos -->
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header" style="background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%); color: white;">
+        <h5 class="modal-title" id="avisModalLabel"><i class="fas fa-comment-alt me-2"></i> Donner votre avis</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background-color: white;"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="avisForm">
           <div class="mb-3">
-            <label class="form-label fw-bold" style="color: #3c2313;">
-              <i class="fas fa-camera me-2"></i> Ajouter des photos (optionnel)
-            </label>
-            <div class="upload-zone p-3 border rounded" style="background-color: #f9f9f9; border-color: #ddd;">
-              <!-- Zone de sélection de fichiers -->
-              <div class="mb-3">
-                <label class="btn w-100" style="background-color: #f8f9fa; border: 2px dashed #ddd; cursor: pointer; padding: 15px; transition: all 0.3s;">
-                  <input type="file" (change)="selectFiles($event)" multiple style="display: none;" accept="image/*" [disabled]="isUploading"/>
-                  <i class="fas fa-file-image fa-2x mb-2" style="color: #63a50a;"></i>
-                  <div>Sélectionner des photos</div>
-                  <small class="text-muted">Cliquez pour parcourir vos fichiers</small>
-                </label>
-              </div>
-              
-              <!-- Liste des fichiers sélectionnés -->
-              <div *ngIf="currentFiles.length > 0" class="mb-3">
-                <h6 style="color: #3c2313;">Fichiers sélectionnés :</h6>
-                <ul class="list-group">
-                  <li *ngFor="let file of currentFiles; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
-                    <div class="ms-2 me-auto">
-                      {{ file.name }}
+            <label for="note" class="form-label fw-bold" style="color: #3c2313;">Note</label>
+            <select formControlName="note" id="note" class="form-select">
+              <option value="">Sélectionnez une note</option>
+              <option value="5">5 - Excellent</option>
+              <option value="4">4 - Très bon</option>
+              <option value="3">3 - Bon</option>
+              <option value="2">2 - Moyen</option>
+              <option value="1">1 - Décevant</option>
+            </select>
+            <div *ngIf="avisForm.get('note')?.invalid && avisForm.get('note')?.touched" class="text-danger">
+              <small><i class="fas fa-exclamation-circle"></i> Veuillez sélectionner une note</small>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="description" class="form-label fw-bold" style="color: #3c2313;">Votre avis</label>
+            <textarea formControlName="description" class="form-control" id="description" rows="4" 
+                      placeholder="Partagez votre expérience avec ce produit..." 
+                      style="border-color: #ddd;"></textarea>
+            <div *ngIf="avisForm.get('description')?.invalid && avisForm.get('description')?.touched" class="text-danger">
+              <small *ngIf="avisForm.get('description')?.errors?.['required']">
+                <i class="fas fa-exclamation-circle"></i> Veuillez saisir votre avis
+              </small>
+              <small *ngIf="avisForm.get('description')?.errors?.['minlength']">
+                <i class="fas fa-exclamation-circle"></i> Votre avis doit contenir au moins 10 caractères
+              </small>
+            </div>
+          </div>
+          
+          <!-- Section Upload de photos -->
+         <div class="mb-3">
+          <label class="form-label fw-bold" style="color: #3c2313;">
+            <i class="fas fa-camera me-2"></i> Ajouter des photos (optionnel)
+          </label>
+          <div class="upload-zone p-3 border rounded" style="background-color: #f9f9f9; border-color: #ddd;">
+            <!-- Zone de sélection de fichiers -->
+            <div class="mb-3">
+              <label class="btn w-100" style="background-color: #f8f9fa; border: 2px dashed #ddd; cursor: pointer; padding: 15px; transition: all 0.3s;">
+                <input type="file" (change)="selectFiles($event)" multiple style="display: none;" accept="image/*" [disabled]="isUploading"/>
+                <i class="fas fa-file-image fa-2x mb-2" style="color: #63a50a;"></i>
+                <div>Sélectionner des photos</div>
+                <small class="text-muted">Cliquez pour parcourir vos fichiers</small>
+              </label>
+            </div>
+            
+            <!-- Liste des fichiers sélectionnés -->
+            <div *ngIf="currentFiles.length > 0" class="mb-3">
+              <h6 style="color: #3c2313;">Fichiers sélectionnés :</h6>
+              <ul class="list-group">
+                <li *ngFor="let file of currentFiles; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                  <div class="ms-2 me-auto">
+                    {{ file.name }}
+                  </div>
+                  <div *ngIf="progressInfos[i].value > 0 && progressInfos[i].value < 100" class="progress" style="width: 40%;">
+                    <div class="progress-bar" role="progressbar" [style.width.%]="progressInfos[i].value" 
+                         [attr.aria-valuenow]="progressInfos[i].value" aria-valuemin="0" aria-valuemax="100"
+                         style="background-color: #63a50a;">
+                      {{ progressInfos[i].value }}%
                     </div>
-                    <div *ngIf="progressInfos[i].value > 0 && progressInfos[i].value < 100" class="progress" style="width: 40%;">
-                      <div class="progress-bar" role="progressbar" [style.width.%]="progressInfos[i].value" 
-                           [attr.aria-valuenow]="progressInfos[i].value" aria-valuemin="0" aria-valuemax="100"
-                           style="background-color: #63a50a;">
-                        {{ progressInfos[i].value }}%
-                      </div>
-                    </div>
-                    <span *ngIf="progressInfos[i]?.value === 100" class="badge bg-success rounded-pill">
-                      <i class="fas fa-check"></i>
-                    </span>
-                  </li>
-                </ul>
-                
-                <div class="mt-2">
-                  <button class="btn" (click)="uploadPhotos()" [disabled]="isUploading"
-                          style="background-color: #63a50a; color: white; transition: all 0.3s;">
-                    <span *ngIf="isUploading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                    <i class="fas fa-upload me-2"></i> Télécharger les photos
-                  </button>
-                </div>
-              </div>
+                  </div>
+                  <span *ngIf="progressInfos[i]?.value === 100" class="badge bg-success rounded-pill">
+                    <i class="fas fa-check"></i>
+                  </span>
+                </li>
+              </ul>
               
-              <!-- Messages d'information -->
-              <div *ngIf="uploadMessage" class="alert mt-2" [class.alert-success]="uploadSuccess" [class.alert-danger]="uploadError">
-                <i class="fas" [class.fa-check-circle]="uploadSuccess" [class.fa-exclamation-triangle]="uploadError"></i>
-                {{ uploadMessage }}
+              <div class="mt-2">
+                <button class="btn" (click)="uploadPhotos()" [disabled]="isUploading"
+                        style="background-color: #63a50a; color: white; transition: all 0.3s;">
+                  <span *ngIf="isUploading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                  <i class="fas fa-upload me-2"></i> Télécharger les photos
+                </button>
               </div>
-              
-              <!-- Photos disponibles -->
-              <div class="photo-gallery-container mt-4">
-                <h6 class="photo-gallery-title"><i class="fas fa-images me-2"></i> Photos disponibles</h6>
-                <p class="photo-gallery-description">Sélectionnez parmi les photos disponibles pour votre avis.</p>
-                <div class="photo-grid">
-                  <div class="row">
-                    <div *ngFor="let photo of allPhoto" class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
-                      <!-- Use ngIf in a wrapper div -->
-                      <div *ngIf="!photosToHide.includes(photo.id)">
-                        <div class="photo-card" [ngClass]="{'border-success': isPhotoSelected(photo.id)}">
-                          <img [src]="'http://localhost:8080/uploads/' + photo.name" class="photo-img" alt="{{ photo.name }}"
-                               style="width: 100%; height: 150px; object-fit: cover;">
-                          <div class="photo-card-body">
-                            <button 
-                              type="button" 
-                              class="photo-btn-small w-100"
-                              [ngClass]="{
-                                'select-btn': !isPhotoSelected(photo.id), 
-                                'remove-btn': isPhotoSelected(photo.id)
-                              }"
-                              style="
-                                border-radius: 20px;
-                                font-size: 0.85rem;
-                                transition: all 0.3s;
-                                padding: 6px 12px;
-                                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                                border: none;
-                                background-color: #63a50a;
-                                color: white;
-                              "
-                              (click)="togglePhotoSelection(photo)">
-                              <span *ngIf="!isPhotoSelected(photo.id)" style="display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-plus me-1"></i> Sélectionner
-                              </span>
-                              <span *ngIf="isPhotoSelected(photo.id)" style="display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-times me-1"></i> Retirer
-                              </span>
-                            </button>
-                          </div>
+            </div>
+            
+            <!-- Messages d'information -->
+            <div *ngIf="uploadMessage" class="alert mt-2" [class.alert-success]="uploadSuccess" [class.alert-danger]="uploadError">
+              <i class="fas" [class.fa-check-circle]="uploadSuccess" [class.fa-exclamation-triangle]="uploadError"></i>
+              {{ uploadMessage }}
+            </div>
+            
+            <!-- Photos disponibles -->
+            <div class="photo-gallery-container mt-4">
+              <h6 class="photo-gallery-title"><i class="fas fa-images me-2"></i> Photos disponibles</h6>
+              <p class="photo-gallery-description">Sélectionnez parmi les photos disponibles pour votre avis.</p>
+              <div class="photo-grid">
+                <div class="row">
+                  <div *ngFor="let photo of allPhoto" class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
+                    <!-- Use ngIf in a wrapper div -->
+                    <div *ngIf="!photosToHide.includes(photo.id)">
+                      <div class="photo-card" [ngClass]="{'border-success': isPhotoSelected(photo.id)}">
+                        <img [src]="'http://localhost:8080/uploads/' + photo.name" class="photo-img" alt="{{ photo.name }}"
+                             style="width: 100%; height: 150px; object-fit: cover;">
+                        <div class="photo-card-body">
+                          <button 
+                            type="button" 
+                            class="photo-btn-small w-100"
+                            [ngClass]="{
+                              'select-btn': !isPhotoSelected(photo.id), 
+                              'remove-btn': isPhotoSelected(photo.id)
+                            }"
+                            style="
+                              border-radius: 20px;
+                              font-size: 0.85rem;
+                              transition: all 0.3s;
+                              padding: 6px 12px;
+                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                              border: none;
+                              background-color: #63a50a;
+                              color: white;
+                            "
+                            (click)="togglePhotoSelection(photo)">
+                            <span *ngIf="!isPhotoSelected(photo.id)" style="display: flex; align-items: center; justify-content: center;">
+                              <i class="fas fa-plus me-1"></i> Sélectionner
+                            </span>
+                            <span *ngIf="isPhotoSelected(photo.id)" style="display: flex; align-items: center; justify-content: center;">
+                              <i class="fas fa-times me-1"></i> Retirer
+                            </span>
+                          </button>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Photos sélectionnées -->
-              <div *ngIf="newlyUploadedPhotos.length > 0" class="mt-3">
-                <h6 style="color: #3c2313;">Photos sélectionnées pour votre avis :</h6>
-                <div class="row">
-                  <div *ngFor="let photo of newlyUploadedPhotos; let i = index" class="col-4 position-relative mb-3">
-                    <img [src]="'http://localhost:8080/uploads/' + photo.name" class="img-thumbnail" alt="Photo sélectionnée"
-                        style="width: 100%; height: 150px; object-fit: cover; border: 2px solid #63a50a;">
-                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
-                            style="border-radius: 50%; width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
-                            (click)="supprimerPhotoUploadee(i)">
-                      <i class="fas fa-times"></i>
-                    </button>
-                  </div>
+            <!-- Photos sélectionnées -->
+            <div *ngIf="newlyUploadedPhotos.length > 0" class="mt-3">
+              <h6 style="color: #3c2313;">Photos sélectionnées pour votre avis :</h6>
+              <div class="row">
+                <div *ngFor="let photo of newlyUploadedPhotos; let i = index" class="col-4 position-relative mb-3">
+                  <img [src]="'http://localhost:8080/uploads/' + photo.name" class="img-thumbnail" alt="Photo sélectionnée"
+                      style="width: 100%; height: 150px; object-fit: cover; border: 2px solid #63a50a;">
+                  <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+                          style="border-radius: 50%; width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
+                          (click)="supprimerPhotoUploadee(i)">
+                    <i class="fas fa-times"></i>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-          </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn" data-bs-dismiss="modal" 
-                  style="background-color: #e9ecef; color: #333;">
-            <i class="fas fa-times me-2"></i> Annuler
-          </button>
-          <button type="button" class="btn" [disabled]="avisForm.invalid || isUploading" (click)="soumettreAvis()"
-                  style="background-color: #3c2313; color: white;">
-            <i class="fas fa-paper-plane me-2"></i> Publier l'avis
-          </button>
-        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-bs-dismiss="modal" 
+                style="background-color: #e9ecef; color: #333;">
+          <i class="fas fa-times me-2"></i> Annuler
+        </button>
+        <button type="button" class="btn" [disabled]="avisForm.invalid || isUploading" (click)="soumettreAvis()"
+                style="background-color: #3c2313; color: white;">
+          <i class="fas fa-paper-plane me-2"></i> Publier l'avis
+        </button>
       </div>
     </div>
   </div>
+</div>

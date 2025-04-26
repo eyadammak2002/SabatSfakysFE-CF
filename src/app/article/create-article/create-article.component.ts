@@ -104,6 +104,14 @@ photosToHide: number[] = []; // IDs des photos à masquer
     return this.selectedPhotos.some(p => p.id === photoId);
   }
 
+  calculerPrixVente() {
+    if (this.articleForm.prixFournisseur) {
+      // Calcul du prix de vente avec une majoration de 10%
+      this.articleForm.prixVente = +(this.articleForm.prixFournisseur * 1.1).toFixed(2);
+    } else {
+      this.articleForm.prixVente = 0;
+    }
+  }
 
   getPhotos(): void {
     this.photoService.get().subscribe({
