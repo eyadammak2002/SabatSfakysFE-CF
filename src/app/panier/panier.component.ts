@@ -54,6 +54,7 @@ export class PanierComponent implements OnInit {
     // Si le panier a des lignes, charger les quantités de stock pour chaque produit
     if (this.panier.lignesPanier && this.panier.lignesPanier.length > 0) {
       this.panier.lignesPanier.forEach((ligne: LignePanier) => {
+        console.log("LignePanier",ligne);
         const key = `${ligne.article.id}-${ligne.couleur.id}-${ligne.pointure.id}`;
       
         this.stockService.getStockQuantity(ligne.article.id, ligne.couleur.id, ligne.pointure.id)

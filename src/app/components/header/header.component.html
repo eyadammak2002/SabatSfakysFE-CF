@@ -6,12 +6,12 @@
         </div>
 
         <!-- Barre de recherche -->
-       <!-- <div class="search-bar">
+        <div class="search-bar">
             <i class="fas fa-search"></i>
             <input type="text" placeholder="Rechercher...">
         </div>
-        -->
-
+   
+<!--
         <div class="ai-search-container">
             <h2>Recherche intelligente</h2>
             
@@ -34,7 +34,7 @@
               </div>
             </div>
           </div>
-
+     -->
         <!-- Icônes de navigation (Favoris, Panier, Profil) -->
         <div class="icon-links">
             <a routerLink="/favoris" class="icon-link"><i class="far fa-heart"></i></a>
@@ -96,11 +96,9 @@
                 <a ngbDropdownItem>Panier</a>
                 <a ngbDropdownItem>Favoris</a>
                 <a (click)="redirectToProfile()" ngbDropdownItem>Profile</a>
-                <a (click)="redirectToArticle()" ngbDropdownItem>Articles</a>
                 <a (click)="redirectToCommande()" ngbDropdownItem>Ma Commande</a>
                 <a (click)="redirectToListReclamation()" ngbDropdownItem>Mes Reclamations</a>
                 <a (click)="redirectToListCommande()" ngbDropdownItem><i class="fas fa-shopping-cart menu-icon"></i> Commandes</a>
-                <a routerLink="/fournisseur/notifications" ngbDropdownItem>Notifications</a>
                 <div class="me-3">
                     <span class="text-bold d-block">{{ username }}</span>
                     <small class="text-muted">{{ email }}</small>

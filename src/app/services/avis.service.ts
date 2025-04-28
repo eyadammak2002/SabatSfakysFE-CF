@@ -101,6 +101,27 @@ export class AvisService {
     );
   }
 
+  getFournisseurIdByEmail(email: string): Observable<number> {
+  console.log("Récupération du fournisseur pour l'email:", email);
+  return this.http.get<any>(`${this.apiUrl}/fournisseur/email/${email}`).pipe(
+    tap(fournisseur => console.log("Fournisseur récupéré:", fournisseur)),
+    map(fournisseur => {
+      if (fournisseur && typeof fournisseur.id === 'number') {
+        return fournisseur.id;
+      } else if (fournisseur && typeof fournisseur.id === 'string') {
+        return Number(fournisseur.id);
+      } else {
+        console.error("ID fournisseur invalide ou manquant:", fournisseur);
+        throw new Error("ID fournisseur invalide ou manquant");
+      }
+    }),
+    catchError(error => {
+      console.error("Erreur lors de la récupération du fournisseur:", error);
+      return throwError(() => error);
+    })
+  );
+}
+
   // Récupérer l'utilisateur d'un avis
   getUserFromAvis(avisId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${avisId}/user`);

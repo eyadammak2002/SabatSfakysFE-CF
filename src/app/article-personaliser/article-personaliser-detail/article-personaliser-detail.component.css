@@ -1,0 +1,112 @@
+/* Styles pour le chat et les détails de l'article */
+
+/* Styles de la partie article */
+.article-info {
+    padding: 15px;
+  }
+  
+  .carousel-item img {
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Styles du chat */
+  .chat-messages {
+    min-height: 300px;
+    background-color: #f8f9fa;
+  }
+  
+  .message {
+    margin-bottom: 15px;
+  }
+  
+  .message-container {
+    display: flex;
+    margin-bottom: 10px;
+  }
+  
+  .own-container {
+    justify-content: flex-end;
+  }
+  
+  .message-content {
+    max-width: 80%;
+    border-radius: 15px;
+    padding: 10px 15px;
+    background-color: #e9ecef;
+    position: relative;
+  }
+  
+  .own-content {
+    background-color: #cfe2ff;
+    color: #0a58ca;
+  }
+  
+  .message-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+  }
+  
+  .sender-name {
+    font-weight: bold;
+  }
+  
+  .message-time {
+    color: #6c757d;
+    font-size: 0.75rem;
+  }
+  
+  .message-text {
+    word-break: break-word;
+  }
+  
+  /* Message système */
+  .system-message-container {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+  }
+  
+  .system-message-content {
+    background-color: #fff3cd;
+    color: #664d03;
+    border-radius: 10px;
+    padding: 8px 15px;
+    text-align: center;
+    font-size: 0.9rem;
+    border: 1px solid #ffecb5;
+    max-width: 90%;
+  }
+  
+  /* Formulaire de saisie */
+  .chat-input {
+    background-color: #fff;
+  }
+  
+  .chat-input .form-control {
+    border-radius: 20px 0 0 20px;
+    border: 1px solid #ced4da;
+  }
+  
+  .chat-input .btn {
+    border-radius: 0 20px 20px 0;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 992px) {
+    .message-content {
+      max-width: 90%;
+    }
+  }
+  
+  /* Animation pour les nouveaux messages */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .message:last-child {
+    animation: fadeIn 0.3s ease-in-out;
+  }

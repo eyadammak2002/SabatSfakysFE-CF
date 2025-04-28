@@ -52,6 +52,8 @@ import { ClientReclamationListComponent } from './article/client-reclamation-lis
 import { FiltredArticlesComponent } from './article/filtred-articles/filtred-articles.component';
 import { ChatbotComponent } from './components/chatbot/chatbot.component';
 import { ChatComponent } from './chat/chat.component';
+import { ArticlePersonaliserDetailComponent } from './article-personaliser/article-personaliser-detail/article-personaliser-detail.component';
+import { FournisseurArticlesPersonalisesComponent } from './article-personaliser/fournisseur-articles-personalises/fournisseur-articles-personalises.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +74,8 @@ import { ChatComponent } from './chat/chat.component';
     FiltredArticlesComponent,
     ChatbotComponent,
     ChatComponent,
+    
+    
 
   ],
   imports: [
@@ -115,7 +119,8 @@ import { ChatComponent } from './chat/chat.component';
     MatDialogModule,
     MatButtonModule,
     ClientReclamationListComponent,
-
+    ArticlePersonaliserDetailComponent,
+    FournisseurArticlesPersonalisesComponent
   ],
   exports: [
     ConfirmDialogComponent

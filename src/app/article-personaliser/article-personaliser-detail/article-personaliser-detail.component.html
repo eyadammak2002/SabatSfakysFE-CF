@@ -1,0 +1,212 @@
+<div class="container mt-4">
+    <!-- Section de chargement -->
+    <div *ngIf="isLoading" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="mt-2">Chargement des informations...</p>
+    </div>
+  
+    <!-- Section d'erreur -->
+    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger">
+      <i class="fas fa-exclamation-triangle me-2"></i> {{ errorMessage }}
+    </div>
+  
+    <!-- Détails de l'article + chat -->
+    <div *ngIf="article && !isLoading" class="row">
+      <!-- Détails de l'article -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0"><i class="fas fa-tshirt me-2"></i> Détails de l'article</h5>
+          </div>
+          <div class="card-body">
+            <!-- Photos de l'article -->
+            <div *ngIf="article.photos && article.photos.length > 0" class="mb-4">
+              <div id="articleCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                  <div *ngFor="let photo of article.photos; let i = index" 
+                       class="carousel-item" [ngClass]="{'active': i === 0}">
+                    <img [src]="'http://localhost:8080/uploads/' + photo.name" 
+                         class="d-block w-100" 
+                         alt="{{ article.name }}"
+                         style="height: 300px; object-fit: contain;">
+                  </div>
+                </div>
+                <button *ngIf="article.photos.length > 1" class="carousel-control-prev" type="button" data-bs-target="#articleCarousel" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Précédent</span>
+                </button>
+                <button *ngIf="article.photos.length > 1" class="carousel-control-next" type="button" data-bs-target="#articleCarousel" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Suivant</span>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Informations principales -->
+            <div class="article-info">
+              <h4 class="mb-3">{{ article.name }}</h4>
+              
+              <div class="mb-3">
+                <span class="badge" 
+                      [ngClass]="{
+                        'bg-warning': article.statut === 'EN_ATTENTE',
+                        'bg-success': article.statut === 'ACCEPTE',
+                        'bg-danger': article.statut === 'REFUSE',
+                        'bg-info': article.statut === 'EN_PRODUCTION',
+                        'bg-primary': article.statut === 'TERMINE'
+                      }">
+                  <i class="fas" 
+                     [ngClass]="{
+                       'fa-clock': article.statut === 'EN_ATTENTE',
+                       'fa-check-circle': article.statut === 'ACCEPTE',
+                       'fa-times-circle': article.statut === 'REFUSE',
+                       'fa-cogs': article.statut === 'EN_PRODUCTION',
+                       'fa-flag-checkered': article.statut === 'TERMINE'
+                     }"></i>
+                  {{ article.statut }}
+                </span>
+              </div>
+              
+              <p class="text-muted mb-4">
+                <i class="fas fa-barcode me-2"></i> Référence: <strong>{{ article.ref }}</strong>
+              </p>
+              
+              <!-- Description -->
+              <div class="card mb-3">
+                <div class="card-header bg-light">
+                  <i class="fas fa-align-left me-2"></i> Description
+                </div>
+                <div class="card-body">
+                  <p>{{ article.description }}</p>
+                </div>
+              </div>
+              
+              <!-- Détails supplémentaires -->
+              <div class="row mb-3">
+                <div class="col-6">
+                  <div class="card h-100">
+                    <div class="card-header bg-light">
+                      <i class="fas fa-venus-mars me-2"></i> Genre
+                    </div>
+                    <div class="card-body d-flex align-items-center justify-content-center">
+                      <h5 class="mb-0">{{ article.genre }}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card h-100">
+                    <div class="card-header bg-light">
+                      <i class="fas fa-tshirt me-2"></i> Tissu
+                    </div>
+                    <div class="card-body d-flex align-items-center justify-content-center">
+                      <h5 class="mb-0">{{ article.tissu }}</h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Catégorie et Fournisseur -->
+              <div class="row mb-4">
+                <div class="col-6">
+                  <div class="card h-100">
+                    <div class="card-header bg-light">
+                      <i class="fas fa-tag me-2"></i> Catégorie
+                    </div>
+                    <div class="card-body d-flex align-items-center justify-content-center">
+                      <h5 class="mb-0" *ngIf="article.category">{{ article.category.name }}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card h-100">
+                    <div class="card-header bg-light">
+                      <i class="fas fa-industry me-2"></i> Fournisseur
+                    </div>
+                    <div class="card-body d-flex align-items-center justify-content-center">
+                      <h5 class="mb-0" *ngIf="article.fournisseur">{{ article.fournisseur.nom }}</h5>
+                      <p class="mb-0 text-muted" *ngIf="!article.fournisseur">Non assigné</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Bouton retour -->
+              <button (click)="goBack()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i> Retour à la liste
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Section chat -->
+      <div class="col-lg-6">
+        <div class="card shadow-sm h-100 d-flex flex-column">
+          <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0">
+              <i class="fas fa-comments me-2"></i> 
+              Discussion avec le fournisseur
+            </h5>
+          </div>
+          <div class="card-body p-0 flex-grow-1 d-flex flex-column">
+            <!-- Messages du chat -->
+            <div class="chat-messages p-3 flex-grow-1" style="overflow-y: auto; max-height: 500px;">
+              <div *ngIf="messages.length === 0" class="text-center my-5 text-muted">
+                <i class="fas fa-comment-slash fa-3x mb-3"></i>
+                <p>Aucun message pour le moment. Commencez la conversation!</p>
+              </div>
+              
+              <div *ngFor="let message of messages" 
+                  class="message mb-3" 
+                  [ngClass]="{'own-message': isOwnMessage(message), 'system-message': message.systemMessage}">
+                
+                <!-- Message système -->
+                <div *ngIf="message.systemMessage" class="system-message-container">
+                  <div class="system-message-content">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {{ message.content }}
+                    <small class="message-time d-block mt-1">{{ formatDate(message.timestamp) }}</small>
+                  </div>
+                </div>
+                
+                <!-- Message normal -->
+                <div *ngIf="!message.systemMessage" 
+                    class="message-container" 
+                    [ngClass]="{'own-container': isOwnMessage(message)}">
+                  <div class="message-content" [ngClass]="{'own-content': isOwnMessage(message)}">
+                    <div class="message-header">
+                      <span class="sender-name">{{ message.sender }}</span>
+                      <small class="message-time">{{ formatDate(message.timestamp) }}</small>
+                    </div>
+                    <div class="message-text">
+                      {{ message.content }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Formulaire pour envoyer un message -->
+            <div class="chat-input p-3 border-top">
+              <div class="input-group">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  placeholder="Écrivez votre message..." 
+                  [(ngModel)]="messageContent"
+                  (keyup.enter)="sendMessage()">
+                <button 
+                  class="btn btn-primary" 
+                  [disabled]="!messageContent.trim()" 
+                  (click)="sendMessage()">
+                  <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

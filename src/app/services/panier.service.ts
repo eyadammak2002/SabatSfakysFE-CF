@@ -389,4 +389,9 @@ export class PanierService {
   getPanierById(id: number): Observable<Panier> {
     return this.http.get<Panier>(`${this.apiUrl2}/${id}`);
   }
+
+  getDernierPanierClient(clientId: number) {
+    return this.http.get<Panier>(`http://localhost:8080/panier/dernier/${clientId}`);
+  }
+  
 }

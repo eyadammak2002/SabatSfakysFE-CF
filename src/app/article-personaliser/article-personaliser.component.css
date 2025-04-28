@@ -1,0 +1,61 @@
+/* Styles pour la section chat */
+.chat-messages {
+    height: 400px;
+    overflow-y: auto;
+    background-color: #f9f9f9;
+  }
+  
+  .message-container {
+    margin-bottom: 15px;
+    max-width: 80%;
+  }
+  
+  .message-container.text-end {
+    margin-left: auto;
+  }
+  
+  .message-bubble {
+    border-radius: 15px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    max-width: 100%;
+  }
+  
+  /* Style des bulles de message */
+  .message-bubble.bg-primary {
+    border-top-right-radius: 4px;
+  }
+  
+  .message-bubble.bg-light {
+    border-top-left-radius: 4px;
+    border: 1px solid #dee2e6;
+  }
+  
+  .message-bubble.bg-secondary {
+    border-radius: 15px;
+    max-width: 90%;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+  }
+  
+  .chat-input {
+    background-color: #f9f9f9;
+  }
+  
+  /* Animation pour les nouveaux messages */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .message-container {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  /* Style des badges de statut */
+  .badge {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    border-radius: 20px;
+  }

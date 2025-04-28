@@ -141,8 +141,4 @@ export class ArticlePersonaliserComponent implements OnInit {
         };
     }
   }
-
-
-
-  
 }

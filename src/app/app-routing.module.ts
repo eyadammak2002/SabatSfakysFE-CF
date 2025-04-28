@@ -33,6 +33,8 @@ import { CreateArticlePersonaliserComponent } from './article-personaliser/creat
 import { FiltredArticlesComponent } from './article/filtred-articles/filtred-articles.component';
 import { ChatbotComponent } from './components/chatbot/chatbot.component';
 import { ChatComponent } from './chat/chat.component';
+import { ArticlePersonaliserDetailComponent } from './article-personaliser/article-personaliser-detail/article-personaliser-detail.component';
+import { FournisseurArticlesPersonalisesComponent } from './article-personaliser/fournisseur-articles-personalises/fournisseur-articles-personalises.component';
 
 const routes: Routes = [
   { path: '', component: ListArticleComponent },
@@ -72,7 +74,8 @@ const routes: Routes = [
   { path: 'articlereclamation/:id', component: ArticleReclamationComponent },
   { path: 'articlePersonaliser', component: ArticlePersonaliserComponent },
   { path: 'createArticlePersonaliser', component: CreateArticlePersonaliserComponent },
-
+  { path: 'article-personaliser/:id', component: ArticlePersonaliserDetailComponent },
+  { path: 'fournisseur/articles-personalises',  component: FournisseurArticlesPersonalisesComponent },
   
   { path: 'pack', component: PackComponent },
   { path: 'createPack', component: CreatePackComponent },

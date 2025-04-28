@@ -74,6 +74,12 @@
                     Créé le {{ article.dateAjout | date:'dd/MM/yyyy' }}
                   </p>
                   
+                  <!-- Affichage du fournisseur -->
+                  <p *ngIf="article.fournisseur" class="card-text text-muted small mb-2">
+                    <i class="fas fa-industry me-1"></i>
+                    Fournisseur: {{ article.fournisseur.nom }}
+                  </p>
+                  
                   <p class="card-text" *ngIf="article.description" style="max-height: 80px; overflow: hidden;">
                     {{ article.description }}
                   </p>
@@ -106,6 +112,12 @@
                 <!-- Actions -->
                 <div class="card-footer bg-white border-top-0">
                   <div class="d-grid gap-2">
+
+                     <!-- Ajout du bouton "Voir détails & Chat" -->
+                    <button class="btn btn-primary btn-sm" [routerLink]="['/article-personaliser', article.id]">
+                      <i class="fas fa-comments me-1"></i> Voir détails & Chat
+                    </button>
+                    
                     <button class="btn btn-outline-primary btn-sm" (click)="modifierArticlePersonalise(article.id!)" 
                             [disabled]="article.statut === 'EN_PRODUCTION' || article.statut === 'LIVRE'">
                       <i class="fas fa-edit me-1"></i> Modifier

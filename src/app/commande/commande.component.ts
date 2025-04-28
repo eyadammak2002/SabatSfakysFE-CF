@@ -27,24 +27,36 @@ export class CommandeComponent implements OnInit, AfterViewInit {
 // Modification de ngOnInit pour récupérer l'ID sauvegardé
 // Dans commande.component.ts, méthode ngOnInit()
 ngOnInit(): void {
-  this.panier = this.panierService.getPanier();
+  const clientId = this.panierService.getClientId(); // récupère le client connecté
   
-  // Récupérer l'ID du panier depuis localStorage
-  const savedPanierId = localStorage.getItem('panierIdCMD');
-  console.log("ID du panier récupéré:", savedPanierId);
+  if (clientId) {
+    this.panierService.getDernierPanierClient(clientId).subscribe({
+      next: (panier) => {
+        this.panier = panier;
   
-  if (savedPanierId) {
-    this.panierIdCMD = parseInt(savedPanierId, 10); // Conversion en nombre
-    console.log("ID du panier à utiliser pour la commande:", this.panierIdCMD);
-    
-    // Si le panier actuel n'a pas d'ID mais qu'on a un ID sauvegardé, l'utiliser
-    if (this.panier.id === null) {
-      this.panier.id = this.panierIdCMD;
-    }
+        // Charger les articles
+        this.panier.lignesPanier.forEach((ligne) => {
+          console.log("ligne",ligne);
+          this.panierService.getArticleFromLignePanier(ligne.id).subscribe({
+            next: (article) => {
+              ligne.article = article;
+            },
+            error: (err) => {
+              console.error(`Erreur lors de la récupération de l'article pour la ligne ${ligne.id}`, err);
+            }
+          });
+        });
+  
+        this.initPayPalConfig();
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération du dernier panier', err);
+      }
+    });
   }
   
-  this.initPayPalConfig();
 }
+
   ngAfterViewInit(): void {}
 
   // Initialisation de la configuration PayPal

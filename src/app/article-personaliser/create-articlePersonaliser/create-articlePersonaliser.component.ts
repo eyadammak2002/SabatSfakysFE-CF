@@ -12,6 +12,7 @@ import { FileUploadService } from 'src/app/services/file-upload.service';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { ArticlePersonaliser, ArticlePersonaliserService } from '../article-personaliser.service';
 import { Genre } from 'src/app/produit/Genre';
+import { Fournisseur } from 'src/app/pack/Fournisseur';
 
 @Component({
   selector: 'app-create-article-personaliser',
@@ -24,6 +25,7 @@ export class CreateArticlePersonaliserComponent {
   selectedPhotos: Photo[] = [];
   allCategory: Category[] = [];
   allPhoto: Photo[] = [];
+  fournisseurs: Fournisseur[] = []; // Liste des fournisseurs disponibles
 
   // Upload properties
   selectedFiles?: FileList;
@@ -54,9 +56,21 @@ export class CreateArticlePersonaliserComponent {
       telephone: '',
       password: '', // tu peux mettre undefined ou laisser vide si optionnel
       sexe: Genre.FEMME // ✅ aussi avec l'énum
+    },
+    fournisseur: {
+      id: 0,
+      nom: '',
+      email: '',
+      adresse: '',
+      telephone: '',
+      motDePasse: '',
+      statut: 'EN_ATTENTE',
+      logo: { id: 0, name: '', url: '' } // selon ton modèle Photo
     }
   };
   
+  // ID du fournisseur sélectionné (pour l'API)
+  selectedFournisseurId: number = 0;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -71,12 +85,41 @@ export class CreateArticlePersonaliserComponent {
   ngOnInit(): void {
     this.getPhotos();
     this.getCategory();
+    this.getFournisseurs(); // Récupérer la liste des fournisseurs
+    
     const user = this.tokenStorageService.getUser();
     if (user && user.email) {
       this.articleForm.client.email = user.email;
     } else {
       console.error('Aucun utilisateur connecté');
     }
+  }
+
+  // Récupérer la liste des fournisseurs
+  getFournisseurs(): void {
+    this.articlePersonaliserService.getAllFournisseurs().subscribe({
+      next: (data) => {
+        this.fournisseurs = data;
+        console.log('Fournisseurs récupérés:', this.fournisseurs);
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération des fournisseurs:', err);
+      }
+    });
+  }
+
+  // Méthode appelée lorsqu'un fournisseur est sélectionné
+  onFournisseurChange(event: any): void {
+    const selectedId = parseInt(event.target.value, 10);
+    this.selectedFournisseurId = selectedId;
+    
+    // Optionnel: mettre à jour l'objet fournisseur dans articleForm
+    const selectedFournisseur = this.fournisseurs.find(f => f.id === selectedId);
+    if (selectedFournisseur) {
+      this.articleForm.fournisseur = selectedFournisseur;
+    }
+    
+    console.log('Fournisseur sélectionné:', this.selectedFournisseurId);
   }
 
   // Helper method to check if a photo is selected (used in template)
@@ -198,18 +241,30 @@ export class CreateArticlePersonaliserComponent {
   }
 
   onSubmit() {
-    if (this.articleForm.ref && this.articleForm.name  ) {
+    if (this.articleForm.ref && this.articleForm.name && this.selectedFournisseurId > 0) {
       const emailClient = this.articleForm.client.email;
       
-      this.articlePersonaliserService.createArticlePersonaliser(this.articleForm, emailClient).subscribe({
+      this.articlePersonaliserService.createArticlePersonaliser(
+        this.articleForm, 
+        emailClient, 
+        this.selectedFournisseurId
+      ).subscribe({
         next: (data) => {
           console.log('Article personnalisé créé avec succès', data);
           this.router.navigate(['/articlePersonaliser']);
         },
-        error: (err) => console.error('Erreur lors de la création de l\'article personnalisé', err)
+        error: (err) => {
+          console.error('Erreur lors de la création de l\'article personnalisé', err);
+          alert('Erreur : ' + (err.error || 'Erreur inconnue lors de la création de l\'article'));
+        }
       });
     } else {
-      console.error('Veuillez remplir tous les champs obligatoires');
+      let errorMessage = 'Veuillez remplir tous les champs obligatoires';
+      if (this.selectedFournisseurId <= 0) {
+        errorMessage = 'Veuillez sélectionner un fournisseur';
+      }
+      alert(errorMessage);
+      console.error(errorMessage);
     }
   }
 

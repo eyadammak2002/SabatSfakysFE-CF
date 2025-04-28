@@ -30,6 +30,14 @@
           </a>
         </div>
         
+        <!-- Dans votre menu latéral -->
+        <div class="nav-item">
+          <a class="nav-link" (click)="redirectToArticlesPersonalises()">
+            <i class="fas fa-tshirt"></i>
+            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Articles Personnalisés</span>
+          </a>
+        </div>
+
         <div class="nav-item">
           <a class="nav-link" (click)="redirectToListCommandeParFR()">
             <i class="fas fa-shopping-cart"></i>

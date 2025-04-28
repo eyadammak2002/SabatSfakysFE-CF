@@ -143,5 +143,7 @@ redirectToSettings(): void {
   this.router.navigate(['/settings']);
 }
 
-
+redirectToArticlesPersonalises(): void {
+  this.router.navigate(['/fournisseur/articles-personalises']);
+}
 }
