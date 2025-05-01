@@ -4,22 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Client } from '@stomp/stompjs';
 import * as SockJS from 'sockjs-client';
-import { ArticlePersonaliserService, ArticlePersonaliser } from '../article-personaliser.service';
+import { ArticlePersonaliserService, ArticlePersonaliser, ChatMessage } from '../article-personaliser.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { Subscription } from 'rxjs';
-
-// Interface pour les messages chat
-interface ChatMessage {
-  type: string;       // Type de message ('CHAT', 'JOIN', 'LEAVE', 'STATUS_UPDATE')
-  content: string;    // Contenu du message
-  sender: string;     // Nom de l'expéditeur
-  senderId: number;   // ID de l'expéditeur
-  timestamp: string;  // Horodatage du message
-  room?: string;      // Salle de chat (optionnel)
-  recipientId?: number; // ID du destinataire (pour les messages privés)
-  articlePersonaliserId?: number; // ID de l'article personnalisé
-  systemMessage?: boolean; // Si c'est un message système
-}
 
 @Component({
   selector: 'app-article-personaliser-detail',
@@ -40,6 +27,7 @@ export class ArticlePersonaliserDetailComponent implements OnInit, OnDestroy {
   messageContent: string = '';
   currentUser: any = null;
   connected: boolean = false;
+  isChatAvailable: boolean = false;
   
   private routeSub: Subscription | null = null;
 
@@ -79,7 +67,10 @@ export class ArticlePersonaliserDetailComponent implements OnInit, OnDestroy {
         this.article = data;
         this.isLoading = false;
         
-        // Une fois l'article chargé, charger l'historique des messages
+        // Une fois l'article chargé, vérifier si le chat est disponible
+        this.checkChatAvailability();
+        
+        // Puis charger l'historique des messages
         this.loadChatHistory();
       },
       error: (err) => {
@@ -88,6 +79,14 @@ export class ArticlePersonaliserDetailComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       }
     });
+  }
+  
+  // Vérifier si le chat est disponible
+  checkChatAvailability(): void {
+    if (!this.article) return;
+    
+    // Le chat est disponible uniquement si l'article est au statut ACCEPTE ou TERMINE
+    this.isChatAvailable = this.article.statut === 'ACCEPTE' || this.article.statut === 'TERMINE';
   }
   
   // Initialiser la connexion WebSocket
@@ -118,6 +117,13 @@ export class ArticlePersonaliserDetailComponent implements OnInit, OnDestroy {
             }, 100);
           });
           
+          // S'abonner aux notifications d'erreur
+          this.stompClient?.subscribe(`/user/topic/errors`, (message) => {
+            const errorMsg = JSON.parse(message.body);
+            console.error('Error message:', errorMsg);
+            alert(errorMsg.content);
+          });
+          
           // S'abonner aux notifications personnelles
           if (this.currentUser && this.currentUser.id) {
             this.stompClient?.subscribe(`/user/${this.currentUser.id}/topic/notifications`, (message) => {
@@ -140,31 +146,36 @@ export class ArticlePersonaliserDetailComponent implements OnInit, OnDestroy {
     }
   }
   
-// Dans article-personaliser-detail.component.ts
-loadChatHistory(): void {
-  if (!this.articleId) return;
-  
-  this.articleService.getChatHistoryForArticle(this.articleId).subscribe({
-    next: (data) => {
-      console.log("Données de chat reçues:", data);
-      this.messages = data || []; // Assurez-vous que messages n'est jamais null
-      // Faire défiler vers le bas après chargement
-      setTimeout(() => {
-        this.scrollToBottom();
-      }, 100);
-    },
-    error: (error) => {
-      console.error('Erreur lors du chargement de l\'historique du chat:', error);
-      // Initialiser messages comme un tableau vide en cas d'erreur
-      this.messages = [];
-      // Vous pourriez afficher un message d'erreur à l'utilisateur ici
-    }
-  });
-}
+  loadChatHistory(): void {
+    if (!this.articleId) return;
+    
+    this.articleService.getChatHistoryForArticle(this.articleId).subscribe({
+      next: (data) => {
+        console.log("Données de chat reçues:", data);
+        this.messages = data || []; // Assurez-vous que messages n'est jamais null
+        // Faire défiler vers le bas après chargement
+        setTimeout(() => {
+          this.scrollToBottom();
+        }, 100);
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement de l\'historique du chat:', error);
+        // Initialiser messages comme un tableau vide en cas d'erreur
+        this.messages = [];
+        // Vous pourriez afficher un message d'erreur à l'utilisateur ici
+      }
+    });
+  }
   
   // Envoyer un message
   sendMessage(): void {
     if (!this.messageContent.trim() || !this.connected || !this.currentUser || !this.articleId) return;
+    
+    // Vérifier si le chat est disponible avant d'envoyer
+    if (!this.isChatAvailable) {
+      alert("Le chat n'est pas encore disponible. Il sera activé lorsque l'article sera accepté.");
+      return;
+    }
     
     const message: ChatMessage = {
       type: 'CHAT',
@@ -179,6 +190,9 @@ loadChatHistory(): void {
     // Si l'article a un fournisseur, ajouter le recipientId
     if (this.article && this.article.fournisseur) {
       message.recipientId = this.article.fournisseur.id;
+    } else if (this.isClientUser() && this.article?.client?.id !== this.currentUser.id) {
+      // Si c'est un message du fournisseur vers le client
+      message.recipientId = this.article?.client?.id;
     }
     
     if (this.stompClient) {
@@ -189,6 +203,12 @@ loadChatHistory(): void {
     }
     
     this.messageContent = '';
+  }
+  
+  // Déterminer si l'utilisateur actuel est un client
+  isClientUser(): boolean {
+    return this.currentUser && this.currentUser.roles && 
+           this.currentUser.roles.includes('ROLE_CLIENT');
   }
   
   // Faire défiler automatiquement vers le bas
@@ -218,9 +238,24 @@ loadChatHistory(): void {
     return this.currentUser && message.senderId === this.currentUser.id;
   }
   
+  // Vérifier si un message est un message système d'activation du chat
+  isChatActivationMessage(message: ChatMessage): boolean {
+    return message.systemMessage === true && message.type === 'CHAT_ACTIVATION';
+  }
+  
+  
   // Retourner à la liste des articles
   goBack(): void {
-    this.router.navigate(['/articlePersonaliser']);
+    // Utiliser le rôle pour déterminer où retourner
+    if (this.currentUser && this.currentUser.roles) {
+      if (this.currentUser.roles.includes('ROLE_FOURNISSEUR')) {
+        this.router.navigate(['/fournisseur/articles-personalises']);
+      } else {
+        this.router.navigate(['/articlePersonaliser']);
+      }
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   ngOnDestroy(): void {
@@ -234,4 +269,7 @@ loadChatHistory(): void {
       this.stompClient.deactivate();
     }
   }
+
+
+  
 }

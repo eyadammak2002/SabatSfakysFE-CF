@@ -1,9 +1,13 @@
+import { CommonModule, NgClass } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Panier, PanierService } from 'src/app/services/panier.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
   selector: 'app-list-commande',
+  standalone: true,
+  imports: [FormsModule, CommonModule, NgClass],
   templateUrl: './list-commande.component.html',
   styleUrls: ['./list-commande.component.css']
 })

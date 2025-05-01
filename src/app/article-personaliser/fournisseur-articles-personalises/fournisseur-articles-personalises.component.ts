@@ -23,7 +23,9 @@ export class FournisseurArticlesPersonalisesComponent implements OnInit {
   errorMessage: string | null = null;
   fournisseurId: number = 0;
   statusFilter: string = 'all';
-  
+  unreadMessageCounts: { [articleId: number]: number } = {};
+
+
   constructor(
     private articleService: ArticlePersonaliserService,
     private tokenStorage: TokenStorageService,
@@ -77,21 +79,48 @@ export class FournisseurArticlesPersonalisesComponent implements OnInit {
   // Voir les détails d'un article avec chat
   viewArticleDetails(articleId: number | undefined): void {
     if (articleId) {
-      this.router.navigate(['/article-personaliser', articleId]);
+      // Vérifier d'abord si le chat est disponible pour cet article
+      this.checkChatAvailability(articleId);
     }
+  }
+
+  // Vérifier si le chat est disponible avant de naviguer
+  checkChatAvailability(articleId: number): void {
+    const article = this.articles.find(a => a.id === articleId);
+    
+    // Si l'article n'est pas accepté, ajouter une note d'information
+    if (article && article.statut !== 'ACCEPTE' && article.statut !== 'TERMINE') {
+      const message = `Note: Le chat avec le client ne sera disponible qu'après avoir accepté cette demande d'article.`;
+      alert(message);
+    }
+    
+    // Naviguer vers les détails de l'article dans tous les cas
+    this.router.navigate(['/article-personaliser', articleId]);
   }
 
   // Changer le statut d'un article
   changeArticleStatus(articleId: number | undefined, newStatus: string): void {
     if (!articleId) return;
     
-    const message = prompt('Ajouter un message (optionnel):');
+    let message = '';
     
-    this.articleService.changeArticleStatus(articleId, newStatus, message || '', this.fournisseurId).subscribe({
+    // Si le statut est passé à ACCEPTE, expliquer l'activation du chat
+    if (newStatus === 'ACCEPTE') {
+      message = prompt('Ajouter un message pour le client (optionnel):\nNote: Cette action activera le chat avec le client.') || '';
+    } else {
+      message = prompt('Ajouter un message (optionnel):') || '';
+    }
+    
+    this.articleService.changeArticleStatus(articleId, newStatus, message, this.fournisseurId).subscribe({
       next: () => {
         // Rechargement des articles après changement
         this.loadArticles();
-        alert('Statut de l\'article modifié avec succès.');
+        
+        if (newStatus === 'ACCEPTE') {
+          alert('Statut de l\'article modifié avec succès. Le chat avec le client est maintenant disponible.');
+        } else {
+          alert('Statut de l\'article modifié avec succès.');
+        }
       },
       error: (err) => {
         console.error("Erreur lors du changement de statut:", err);
@@ -111,4 +140,7 @@ export class FournisseurArticlesPersonalisesComponent implements OnInit {
       default: return 'bg-secondary';
     }
   }
+
+
+  
 }

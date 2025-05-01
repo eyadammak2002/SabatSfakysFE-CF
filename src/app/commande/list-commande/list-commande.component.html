@@ -1,37 +1,66 @@
-<h2>Mes commandes validées</h2>
+<div class="container my-4">
+  <h2 class="mb-4">Mes commandes validées</h2>
 
-<div *ngIf="commandes.length > 0; else noCommande">
-  <div *ngFor="let commande of commandes" class="card my-3">
-    <div class="card-header">
-      <strong>Commande #{{ commande.id }}</strong>
-    </div>
-    <div class="card-body">
-      <p><strong>Adresse de livraison :</strong> {{ commande.adresseLivraison }}</p>
-      <p><strong>Total :</strong> {{ commande.total }} TND</p>
+  <div *ngIf="commandes.length > 0; else noCommande">
+    <div class="row" *ngFor="let commande of commandes">
+      <div class="col-12 mb-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bgPerso text-white d-flex justify-content-between">
+            <strong>Code Commande {{ commande.id }}</strong>
+            <span>Total : {{ commande.total }} TND</span>
+          </div>
 
-      <h5>Lignes du panier :</h5>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Article</th>
-            <th>Quantité</th>
-            <th>Prix Unitaire</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let ligne of commande.lignesPanier">
-            <td>{{ ligne.article.name }}</td>
-            <td>{{ ligne.quantite }}</td>
-            <td>{{ ligne.prixUnitaire }} TND</td>
-            <td>{{ ligne.total }} TND</td>
-          </tr>
-        </tbody>
-      </table>
+          <div class="card-body">
+            <p><strong>Adresse de livraison :</strong> {{ commande.adresseLivraison }}</p>
+
+            <h6 class="mt-3">Lignes du panier :</h6>
+            <div class="table-responsive">
+              <table class="table table-bordered table-sm align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Article</th>
+                    <th>Quantité</th>
+                    <th>Prix Unitaire</th>
+                    <th>Total</th>
+                    <th>Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let ligne of commande.lignesPanier">
+                    <td>{{ ligne.article?.name || 'Chargement...' }}</td>
+                    <td>{{ ligne.quantite }}</td>
+                    <td>{{ ligne.prixUnitaire }} TND</td>
+                    <td>{{ ligne.total }} TND</td>
+                    <td>
+                      <span
+                        [ngClass]="{
+                          'badge': true,
+                          'bg-success': ligne.statut === 'LIVRER_FR',
+                          'bg-warning': ligne.statut === 'COMMANDEE',
+                          'bg-primary': ligne.statut === 'VALIDER',
+                          'bg-info': ligne.statut === 'PAYER',
+                          'bg-danger': ligne.statut === 'ANNULER'
+                        }">
+                        {{ ligne.statut }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card-footer text-muted">
+            Date : {{ commande.dateCommande | date: 'medium' }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<ng-template #noCommande>
-  <p>Aucune commande validée pour l’instant.</p>
-</ng-template>
+  <ng-template #noCommande>
+    <div class="alert alert-info text-center mt-4">
+      Aucune commande validée pour l’instant.
+    </div>
+  </ng-template>
+</div>

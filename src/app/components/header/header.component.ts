@@ -237,7 +237,7 @@ checkUserRole(): void {
   redirectToPack(): void { this.router.navigate(['/pack']); }
   redirectToListCommande(): void { this.router.navigate(['/listCommande']); }
   redirectToCommande(): void { this.router.navigate(['/commande']); }
-  redirectToListCommandeParFR(): void { this.router.navigate(['/listCommande']); }
+  redirectToListCommandeParFR(): void { this.router.navigate(['/listCommandeFR']); }
   redirectToProfile(): void {
     if (this.email) {
       this.router.navigate(['/profile'], { queryParams: { email: this.email } });
@@ -260,6 +260,15 @@ checkUserRole(): void {
 
 
     logout(): void {
+       // Réinitialiser l'adresse de livraison dans le panier actif
+    this.panierService.resetAdresseLivraison();
+    
+    // Vider le panier courant
+    this.panierService.viderPanier();
+    
+    // Supprimer l'entrée spécifique du panier invité dans localStorage
+    localStorage.removeItem('guest_cart');
+    
     this.tokenStorageService.signOut();
     this.isLoggedIn = false;
     this.router.navigate(['/accueil']).then(() => {

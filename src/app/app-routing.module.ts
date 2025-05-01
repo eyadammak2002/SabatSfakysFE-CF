@@ -35,6 +35,9 @@ import { ChatbotComponent } from './components/chatbot/chatbot.component';
 import { ChatComponent } from './chat/chat.component';
 import { ArticlePersonaliserDetailComponent } from './article-personaliser/article-personaliser-detail/article-personaliser-detail.component';
 import { FournisseurArticlesPersonalisesComponent } from './article-personaliser/fournisseur-articles-personalises/fournisseur-articles-personalises.component';
+import { ForgetPasswordComponent } from './authentication/forget-password/forget-password.component';
+import { ResetPasswordComponent } from './authentication/reset-password/reset-password.component';
+import { ListCommandeFRComponent } from './commande/list-commande-fr/list-commande-fr.component';
 
 const routes: Routes = [
   { path: '', component: ListArticleComponent },
@@ -52,20 +55,21 @@ const routes: Routes = [
     loadComponent: () => import('./article/client-reclamation-list/client-reclamation-list.component')
       .then(m => m.ClientReclamationListComponent),
     canActivate: [AuthGuard] // Assurez-vous que l'utilisateur est authentifié
-  }
-  
-,
+  },
   {
     path: 'auth', component: AuthenticationComponent, children: [
       { path: '', redirectTo: 'client/login', pathMatch: 'full' },
       { path: 'client/login', component: LoginComponent },
       { path: 'client/register', component: RegisterComponent },
+
+      { path: 'forgetPassword', component: ForgetPasswordComponent },
+
       { path: 'fournisseur/login', component: LoginFournisseurComponent },
       { path: 'fournisseur/register', component: RegisterFournisseurComponent }
     ]
   },
-
-
+  
+  { path: 'resetPassword', component: ResetPasswordComponent },
   { path: 'article', component: ArticleComponent },
   { path: 'accueil', component: ListArticleComponent },
   { path: 'createArticle', component: CreateArticleComponent },
@@ -84,6 +88,7 @@ const routes: Routes = [
   { path: 'panier', component: PanierComponent },
   { path: 'commande', component: CommandeComponent },
   { path: 'listCommande', component: ListCommandeComponent },
+  { path: 'listCommandeFR', component: ListCommandeFRComponent },
 
 
    // Routes pour le filtrage par catégorie

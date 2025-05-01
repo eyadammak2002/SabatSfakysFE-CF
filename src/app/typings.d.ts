@@ -5,3 +5,5 @@ declare interface VideoFrame {
     readonly height: number;
     close(): void;
   }
+
+

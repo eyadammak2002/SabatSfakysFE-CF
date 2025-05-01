@@ -54,26 +54,29 @@ import { ChatbotComponent } from './components/chatbot/chatbot.component';
 import { ChatComponent } from './chat/chat.component';
 import { ArticlePersonaliserDetailComponent } from './article-personaliser/article-personaliser-detail/article-personaliser-detail.component';
 import { FournisseurArticlesPersonalisesComponent } from './article-personaliser/fournisseur-articles-personalises/fournisseur-articles-personalises.component';
+import { ForgetPasswordComponent } from './authentication/forget-password/forget-password.component';
+import { ResetPasswordComponent } from './authentication/reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    FournisseurDashboardComponent,
+    
     ListArticleComponent,
-    ListCommandeComponent,
+   
     ConfirmDialogComponent,
     ArticleDetailComponent,
     ErrorDialogComponent,
     ArticleVueComponent,
-    ListCommandeFRComponent,
-    ProfileComponent,
+    
     ProfileFournisseurComponent,
-    FavorisComponent,
+    
     FiltredArticlesComponent,
     ChatbotComponent,
     ChatComponent,
+    ResetPasswordComponent,
+
     
     
 
@@ -120,7 +123,14 @@ import { FournisseurArticlesPersonalisesComponent } from './article-personaliser
     MatButtonModule,
     ClientReclamationListComponent,
     ArticlePersonaliserDetailComponent,
-    FournisseurArticlesPersonalisesComponent
+    FournisseurArticlesPersonalisesComponent,
+    FournisseurDashboardComponent,
+    ProfileComponent,
+    FavorisComponent,
+    ForgetPasswordComponent,
+    ListCommandeComponent,
+    ListCommandeFRComponent,
+
   ],
   exports: [
     ConfirmDialogComponent

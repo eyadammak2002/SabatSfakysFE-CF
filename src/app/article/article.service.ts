@@ -19,6 +19,16 @@ export class ArticleService {
   get(): Observable<Article[]> {
     return this.http.get<Article[]>(this.apiUrl);
   }
+
+  getByFournisseur(email: string): Observable<Article[]> {
+    return this.http.get<Article[]>(`http://localhost:8080/article/fournisseur?email=${email}`);
+  }
+  
+  getArticlesByFournisseur(email: string): Observable<Article[]> {
+    return this.http.get<Article[]>(`http://localhost:8080/article/fournisseur?email=${email}`);
+  }
+  
+  
   getArticlesAujourdhui(): Observable<Article[]> {
     return this.http.get<Article[]>(`${this.apiUrl}/aujourdhui`);
   }

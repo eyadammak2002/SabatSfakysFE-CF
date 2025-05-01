@@ -1,3 +1,4 @@
+import { GoogleLoginProvider, GoogleSigninButtonModule, SocialAuthService } from '@abacritt/angularx-social-login';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -5,15 +6,20 @@ import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/Authentication.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { PanierService } from 'src/app/services/panier.service';
+import { TokenRequest } from '../TokenRequest';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule,RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, GoogleSigninButtonModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  private accessToken = '';
+  private tokenRequest: TokenRequest = new TokenRequest();
+  user: any;
+  
   form: any = {
     username: null,
     password: null
@@ -24,6 +30,7 @@ export class LoginComponent implements OnInit {
   returnUrl: string = '/accueil';
 
   constructor(
+    private authServiceGoogle: SocialAuthService,
     private authService: AuthenticationService,
     private tokenStorage: TokenStorageService,
     private router: Router,
@@ -50,9 +57,23 @@ export class LoginComponent implements OnInit {
       this.route.queryParams.subscribe(params => {
         if (params['returnUrl']) {
           this.returnUrl = params['returnUrl'];
+          localStorage.setItem('returnUrl', this.returnUrl);
         }
       });
     }
+
+    // Écouter les changements d'authentification Google
+    this.authServiceGoogle.authState.subscribe(user => {
+      this.user = user;
+      if (user) {
+        this.accessToken = user.idToken;
+        console.log("User signed in:", user);
+        console.log("Access Token:", this.accessToken);
+        setTimeout(() => {
+          this.signinGoogle();
+        }, 2000);
+      }
+    });
   }
 
   getQueryParams() {
@@ -66,7 +87,7 @@ export class LoginComponent implements OnInit {
       this.errorMessage = "Veuillez remplir tous les champs.";
       return;
     }
-        
+      
     this.authService.loginClient(this.form.username, this.form.password).subscribe(
       data => {
         console.log('Connexion réussie', data);
@@ -83,31 +104,94 @@ export class LoginComponent implements OnInit {
         this.tokenStorage.saveUser(data);
         this.isLoggedIn = true;
         localStorage.setItem("token", data.accessToken);
-                
+          
         // Mettre à jour le clientId dans le panier
         if (data.id) {
           this.panierService.mettreAJourClientId(data.id);
           // Fusionner le panier invité
           this.panierService.fusionnerPanierInvite();
         }
-                
+          
         // Rediriger vers l'URL de retour si disponible
         this.router.navigate([this.returnUrl]);
       },
       err => {
-        // Gestion des erreurs...
+        console.error('Erreur lors de la connexion :', err);
+        this.errorMessage = err.error?.message || 'Connexion échouée. Vérifiez vos identifiants.';
       }
     );
   }
 
+  signinGoogle(): void {
+    this.tokenRequest.token = this.accessToken;
+    console.log("Sending Google token:", this.tokenRequest);
+    
+    this.authService.loginWithGoogle(this.tokenRequest).subscribe(
+      data => {
+        // Sauvegarder les détails de l'utilisateur
+        const user = {
+          id: data.id,
+          username: data.username,
+          email: data.email,
+          role: data.role,
+        };
+
+        // Sauvegarder le token et les détails de l'utilisateur
+        this.tokenStorage.saveToken(data.accessToken);
+        this.tokenStorage.saveUser(user);
+        localStorage.setItem("token", data.accessToken);
+
+        // Mettre à jour le statut de connexion
+        this.isLoggedIn = true;
+        console.log("isLoggedIn after Google Login:", this.isLoggedIn);
+        
+        // Mettre à jour le clientId dans le panier si disponible
+        if (data.id) {
+          this.panierService.mettreAJourClientId(data.id);
+          // Fusionner le panier invité
+          this.panierService.fusionnerPanierInvite();
+        }
+
+        // Récupérer returnUrl depuis localStorage ou utiliser la valeur par défaut
+        const savedReturnUrl = localStorage.getItem('returnUrl');
+        const returnUrl = savedReturnUrl || '/accueil';
+        
+        // Nettoyer localStorage
+        if (savedReturnUrl) {
+          localStorage.removeItem('returnUrl');
+        }
+        
+        this.router.navigate([returnUrl]);
+      },
+      err => {
+        console.error("Google Login Error:", err);
+        this.errorMessage = err.error?.message || "Erreur lors de la connexion avec Google";
+      }
+    );
+  }
 
   goBack(): void {
     this.router.navigate(['/accueil']);
   }
+
+  getAccessToken(): void {
+    this.authServiceGoogle.getAccessToken(GoogleLoginProvider.PROVIDER_ID).then(accessToken => {
+      this.accessToken = accessToken;
+      console.log("Access token récupéré:", this.accessToken);
+    });
+  }
   
   signInWithGoogle() {
-    console.log("Connexion avec Google");
+    if (this.authServiceGoogle) {
+      console.log("Connexion avec Google");
+      this.authServiceGoogle.signIn(GoogleLoginProvider.PROVIDER_ID).then(user => {
+        console.log("Token Google:", user.idToken);
+        this.getAccessToken();
+      }).catch(error => {
+        console.error('Erreur lors de la connexion avec Google:', error);
+      });
+    } else {
+      console.error('authServiceGoogle est undefined');
+    }
   }
-
-
 }

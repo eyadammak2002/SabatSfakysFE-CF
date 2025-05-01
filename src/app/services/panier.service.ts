@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, tap, throwError } from 'rxjs';
 import { TokenStorageService } from './token-storage.service';
 import { Article, Couleur, Pointure } from '../article/article';
 import { StockService } from '../panier/stock.service';
@@ -14,7 +14,10 @@ export interface LignePanier {
   total: number;
   couleur: Couleur;
   pointure: Pointure;
+  statut?: 'EN_COURS' | 'VALIDER' | 'COMMANDEE' | 'ANNULER' | 'LIVRER' | 'PAYER' | 'LIVRER_FR';
+
 }
+
 
 export interface Panier {
   id: number | null;
@@ -144,44 +147,76 @@ export class PanierService {
     return user && user.id ? user.id : null;
   }
 
-  // Charger le panier depuis le stockage local
-  public chargerPanierDepuisLocalStorage(): void {
-    const clientId = this.getClientId();
-    
-    if (clientId) {
-      // Si l'utilisateur est connecté, charger son panier
-      const savedPanier = localStorage.getItem(`${this.storageKeyPrefix}${clientId}`);
-      this.panier = savedPanier ? JSON.parse(savedPanier) : null;
-      
-      // Si l'utilisateur vient de se connecter, fusionner avec le panier invité
-      this.fusionnerPanierInvite();
+ // Méthode chargerPanierDepuisLocalStorage sécurisée contre les erreurs TypeScript
+public chargerPanierDepuisLocalStorage(): void {
+  const clientId = this.getClientId();
+  
+  if (clientId) {
+    // Si l'utilisateur est connecté, charger son panier
+    const savedPanier = localStorage.getItem(`${this.storageKeyPrefix}${clientId}`);
+    if (savedPanier) {
+      this.panier = JSON.parse(savedPanier);
     } else {
-      // Si aucun utilisateur n'est connecté, essayer de charger le panier invité
-      const guestCart = localStorage.getItem(this.guestCartKey);
-      this.panier = guestCart ? JSON.parse(guestCart) : null;
+      this.panier = null;
     }
     
-    // Initialiser un panier vide si aucun n'a été trouvé
-    if (!this.panier) {
-      this.panier = {
-        id: null,
-        clientId: clientId,
-        lignesPanier: [],
-        total: 0,
-        statut: 'EN_COURS',
-        adresseLivraison: ''
-      };
-    }
+    // Si l'utilisateur vient de se connecter, fusionner avec le panier invité
+    this.fusionnerPanierInvite();
+  } else {
+    // Si aucun utilisateur n'est connecté, essayer de charger le panier invité
+    const guestCart = localStorage.getItem(this.guestCartKey);
     
-    // Vérifier et corriger les valeurs manquantes
-    if (!this.panier.adresseLivraison) {
-      this.panier.adresseLivraison = '';
-    }
-    
-    if (!this.panier.statut) {
-      this.panier.statut = 'EN_COURS';
+    if (guestCart) {
+      try {
+        // Analyser le panier invité en toute sécurité
+        const panierData = JSON.parse(guestCart);
+        
+        // S'assurer que les propriétés nécessaires existent
+        if (panierData && typeof panierData === 'object') {
+          // Créer un nouveau panier avec l'adresse réinitialisée
+          this.panier = {
+            ...panierData,
+            adresseLivraison: '' // Réinitialiser l'adresse
+          };
+          
+          // Sauvegarder immédiatement cette modification
+          localStorage.setItem(this.guestCartKey, JSON.stringify(this.panier));
+        } else {
+          // Format invalide, créer un nouveau panier
+          this.panier = null;
+        }
+      } catch (error) {
+        console.error('Erreur lors de l\'analyse du panier invité:', error);
+        this.panier = null;
+      }
+    } else {
+      // Aucun panier invité trouvé
+      this.panier = null;
     }
   }
+  
+  // Initialiser un panier vide si aucun n'a été trouvé
+  if (!this.panier) {
+    this.panier = {
+      id: null,
+      clientId: clientId,
+      lignesPanier: [],
+      total: 0,
+      statut: 'EN_COURS',
+      adresseLivraison: ''  // S'assurer que l'adresse est vide pour un nouveau panier
+    };
+  }
+  
+  // Vérifier et corriger les valeurs manquantes - utilisation de l'opérateur de chaînage optionnel
+  if (!this.panier.statut) {
+    this.panier.statut = 'EN_COURS';
+  }
+  
+  // Sauvegarder immédiatement les modifications si c'est un panier invité
+  if (!clientId && this.panier) {
+    this.sauvegarderPanierDansLocalStorage();
+  }
+}
     // Sauvegarder le panier
   public sauvegarderPanierDansLocalStorage(): void {
       const clientId = this.getClientId();
@@ -326,28 +361,61 @@ export class PanierService {
     this.sauvegarderPanierDansLocalStorage();
   }
 
-  validerPanier(panier: Panier): Observable<Panier> {
-    if (!panier.id) {
-      console.error('Le panier n\'a pas d\'ID');
-      // Vous pouvez soit lever une erreur, soit chercher l'ID du panier d'une autre façon
-    }
-    return this.http.put<Panier>(`${this.apiUrl2}/valider`, panier);
+ // Ajouter une nouvelle méthode spécifique pour réinitialiser l'adresse de livraison
+resetAdresseLivraison(): void {
+  if (!this.panier) return;
+  
+  // Réinitialiser l'adresse de livraison
+  this.panier.adresseLivraison = '';
+  
+  // Sauvegarder les changements
+  this.sauvegarderPanierDansLocalStorage();
+}
+
+// Modifier la méthode validerPanier pour réinitialiser l'adresse après validation
+validerPanier(panier: Panier): Observable<Panier> {
+  if (!panier.id) {
+    console.error('Le panier n\'a pas d\'ID');
   }
+  
+  // Appel à l'API pour valider le panier
+  return this.http.put<Panier>(`${this.apiUrl2}/valider`, panier).pipe(
+    tap(() => {
+      // Après validation réussie, réinitialiser l'adresse de livraison
+      this.resetAdresseLivraison();
+    })
+  );
+}
 
-  // Vider le panier après validation
-  viderPanier(): void {
-    if (!this.panier) return;
+// Modifier la méthode viderPanier dans PanierService pour réinitialiser l'adresse de livraison
 
-    this.panier.lignesPanier = [];
-    this.panier.total = 0;
-    this.sauvegarderPanierDansLocalStorage();
+// Méthode viderPanier modifiée
+viderPanier(): void {
+  if (!this.panier) return;
+
+  // Vider le contenu du panier
+  this.panier.lignesPanier = [];
+  this.panier.total = 0;
+  
+  // Réinitialiser l'adresse de livraison
+  this.panier.adresseLivraison = '';
+  
+  // Sauvegarder les changements dans le localStorage
+  this.sauvegarderPanierDansLocalStorage();
+  
+  // Si c'est un panier invité, assurer que les modifications sont enregistrées
+  if (!this.getClientId()) {
+    localStorage.setItem(this.guestCartKey, JSON.stringify(this.panier));
   }
-
+}
   // Récupérer les commandes validées d'un utilisateur
   getCommandesByUser(userId: number): Observable<Panier[]> {
     return this.http.get<Panier[]>(`${this.apiUrl2}/commandes/user/${userId}`);
   }
 
+  getCommandesByFournisseur(userId: number): Observable<Panier[]> {
+    return this.http.get<Panier[]>(`${this.apiUrl2}/commandes/fournisseur/${userId}`);
+  }
   getArticleFromLignePanier(lignePanierId: number): Observable<Article> {
     return this.http.get<Article>(`${this.apiUrl3}/${lignePanierId}/article`);
   }
@@ -393,5 +461,15 @@ export class PanierService {
   getDernierPanierClient(clientId: number) {
     return this.http.get<Panier>(`http://localhost:8080/panier/dernier/${clientId}`);
   }
+
+
+
+  changerStatutEnLivrerFr(lignePanierIds: number[]): Observable<any> {
+    return this.http.put(`http://localhost:8080/lignePanier/changerStatutLivrerFr`, lignePanierIds);
+  }
   
+
+  getFournisseurByEmail(email: string): Observable<any> {
+    return this.http.get(`http://localhost:8080/fournisseur/email/${email}`);
+  }
 }

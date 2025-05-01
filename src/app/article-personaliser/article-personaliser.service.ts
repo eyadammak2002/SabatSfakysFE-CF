@@ -58,8 +58,7 @@ export class ArticlePersonaliserService {
   private apiUrl3 = 'http://127.0.0.1:8080';
   
 
-  constructor(private http: HttpClient,    private tokenStorage: TokenStorageService,
-  ) { }
+  constructor(private http: HttpClient, private tokenStorage: TokenStorageService) { }
 
   // === MÉTHODES POUR LES ARTICLES PERSONNALISÉS ===
 
@@ -220,6 +219,11 @@ export class ArticlePersonaliserService {
     return this.http.get<number>(`${this.chatApiUrl}/unread/${userId}`);
   }
   
+  // Vérifier si le chat est disponible pour un article
+  isChatAvailable(articleId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${this.chatApiUrl}/available/${articleId}`);
+  }
+  
   changeArticleStatus(articleId: number, newStatus: string, message: string, fournisseurId: number): Observable<ArticlePersonaliser> {
     return this.http.put<ArticlePersonaliser>(`${this.apiUrl}/${articleId}/status`, null, {
         params: new HttpParams()
@@ -227,80 +231,82 @@ export class ArticlePersonaliserService {
             .set('message', message || '')
             .set('frId', fournisseurId.toString())
     });
-}
-
-getFournisseurIdByEmail(email: string): Observable<number> {
-  console.log("Récupération du fournisseur pour l'email:", email);
-  return this.http.get<any>(`${this.apiUrl3}/fournisseur/email/${email}`).pipe(
-    tap(fournisseur => console.log("Fournisseur récupéré:", fournisseur)),
-    map(fournisseur => {
-      if (fournisseur && typeof fournisseur.id === 'number') {
-        return fournisseur.id;
-      } else if (fournisseur && typeof fournisseur.id === 'string') {
-        return Number(fournisseur.id);
-      } else {
-        console.error("ID fournisseur invalide ou manquant:", fournisseur);
-        throw new Error("ID fournisseur invalide ou manquant");
-      }
-    }),
-    catchError(error => {
-      console.error("Erreur lors de la récupération du fournisseur:", error);
-      return throwError(() => error);
-    })
-  );
-}
-
-// Ajoutez cette méthode à votre ArticlePersonaliserService
-getCurrentFournisseurId(): Promise<number | null> {
-  const user = this.tokenStorage.getUser(); // Vous devrez injecter TokenStorageService dans le constructeur
-  
-  // Vérifier si l'utilisateur est connecté
-  if (!user || !user.email) {
-    console.log("Aucun utilisateur connecté");
-    return Promise.resolve(null);
   }
-  
-  const email = user.email;
-  console.log("Recherche du fournisseur pour l'email:", email);
-  
-  // Vérifier si l'ID fournisseur est déjà disponible dans le token
-  if (user.fournisseurId && !isNaN(Number(user.fournisseurId))) {
-    const fournisseurIdNum = Number(user.fournisseurId);
-    console.log("ID fournisseur trouvé dans le token:", fournisseurIdNum);
-    return Promise.resolve(fournisseurIdNum);
-  }
-  
-  // Sinon faire l'appel API pour récupérer l'ID fournisseur
-  return this.getFournisseurIdByEmail(email).toPromise()
-    .then(fournisseurId => {
-      if (fournisseurId !== null && fournisseurId !== undefined) {
-        // S'assurer que c'est un nombre
-        const fournisseurIdNum = Number(fournisseurId);
-        if (!isNaN(fournisseurIdNum)) {
-          console.log("Fournisseur ID obtenu depuis l'API:", fournisseurIdNum);
-          // Stocker l'ID dans le localStorage pour éviter de refaire l'appel
-          const currentUser = this.tokenStorage.getUser();
-          currentUser.fournisseurId = fournisseurIdNum;
-          this.tokenStorage.saveUser(currentUser);
-          return fournisseurIdNum;
+
+  getFournisseurIdByEmail(email: string): Observable<number> {
+    console.log("Récupération du fournisseur pour l'email:", email);
+    return this.http.get<any>(`${this.apiUrl3}/fournisseur/email/${email}`).pipe(
+      tap(fournisseur => console.log("Fournisseur récupéré:", fournisseur)),
+      map(fournisseur => {
+        if (fournisseur && typeof fournisseur.id === 'number') {
+          return fournisseur.id;
+        } else if (fournisseur && typeof fournisseur.id === 'string') {
+          return Number(fournisseur.id);
         } else {
-          console.error("L'API a renvoyé un ID fournisseur qui n'est pas un nombre:", fournisseurId);
+          console.error("ID fournisseur invalide ou manquant:", fournisseur);
+          throw new Error("ID fournisseur invalide ou manquant");
+        }
+      }),
+      catchError(error => {
+        console.error("Erreur lors de la récupération du fournisseur:", error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  // Ajoutez cette méthode à votre ArticlePersonaliserService
+  getCurrentFournisseurId(): Promise<number | null> {
+    const user = this.tokenStorage.getUser(); // Vous devrez injecter TokenStorageService dans le constructeur
+    
+    // Vérifier si l'utilisateur est connecté
+    if (!user || !user.email) {
+      console.log("Aucun utilisateur connecté");
+      return Promise.resolve(null);
+    }
+    
+    const email = user.email;
+    console.log("Recherche du fournisseur pour l'email:", email);
+    
+    // Vérifier si l'ID fournisseur est déjà disponible dans le token
+    if (user.fournisseurId && !isNaN(Number(user.fournisseurId))) {
+      const fournisseurIdNum = Number(user.fournisseurId);
+      console.log("ID fournisseur trouvé dans le token:", fournisseurIdNum);
+      return Promise.resolve(fournisseurIdNum);
+    }
+    
+    // Sinon faire l'appel API pour récupérer l'ID fournisseur
+    return this.getFournisseurIdByEmail(email).toPromise()
+      .then(fournisseurId => {
+        if (fournisseurId !== null && fournisseurId !== undefined) {
+          // S'assurer que c'est un nombre
+          const fournisseurIdNum = Number(fournisseurId);
+          if (!isNaN(fournisseurIdNum)) {
+            console.log("Fournisseur ID obtenu depuis l'API:", fournisseurIdNum);
+            // Stocker l'ID dans le localStorage pour éviter de refaire l'appel
+            const currentUser = this.tokenStorage.getUser();
+            currentUser.fournisseurId = fournisseurIdNum;
+            this.tokenStorage.saveUser(currentUser);
+            return fournisseurIdNum;
+          } else {
+            console.error("L'API a renvoyé un ID fournisseur qui n'est pas un nombre:", fournisseurId);
+            return null;
+          }
+        } else {
+          console.warn("L'API a renvoyé un ID fournisseur null ou undefined");
           return null;
         }
-      } else {
-        console.warn("L'API a renvoyé un ID fournisseur null ou undefined");
+      })
+      .catch(error => {
+        console.error("Erreur lors de la récupération du fournisseur ID:", error);
+        // Si on a une erreur 404, c'est probablement que l'utilisateur est connecté
+        // mais n'est pas enregistré comme fournisseur
+        if (error.status === 404) {
+          console.warn("Utilisateur connecté mais non enregistré comme fournisseur");
+          alert("Votre compte utilisateur n'est pas associé à un profil fournisseur. Veuillez compléter votre profil.");
+        }
         return null;
-      }
-    })
-    .catch(error => {
-      console.error("Erreur lors de la récupération du fournisseur ID:", error);
-      // Si on a une erreur 404, c'est probablement que l'utilisateur est connecté
-      // mais n'est pas enregistré comme fournisseur
-      if (error.status === 404) {
-        console.warn("Utilisateur connecté mais non enregistré comme fournisseur");
-        alert("Votre compte utilisateur n'est pas associé à un profil fournisseur. Veuillez compléter votre profil.");
-      }
-      return null;
-    });
-}
+      });
+  }
+
+  
 }

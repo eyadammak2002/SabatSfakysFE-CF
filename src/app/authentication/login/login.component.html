@@ -20,14 +20,14 @@
             <span class="input-group-text">
               <i class="bi bi-person"></i>
             </span>
-            <input 
-              id="username" 
-              [(ngModel)]="form.username" 
-              name="username" 
-              type="text" 
-              class="form-control" 
-              placeholder="Nom" 
-              required />
+            <input
+               id="username"
+               [(ngModel)]="form.username"
+               name="username"
+               type="text"
+               class="form-control"
+               placeholder="Nom"
+               required />
           </div>
         </div>
 
@@ -37,30 +37,39 @@
             <span class="input-group-text">
               <i class="bi bi-lock"></i>
             </span>
-            <input 
-              id="password" 
-              [(ngModel)]="form.password" 
-              name="motDePasse" 
-              type="password" 
-              class="form-control" 
-              placeholder="Mot de passe" 
-              required />
+            <input
+               id="password"
+               [(ngModel)]="form.password"
+               name="motDePasse"
+               type="password"
+               class="form-control"
+               placeholder="Mot de passe"
+               required />
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+        <button type="submit" class="btn btn-primary w-100 mb-3">Se connecter</button>
       </form>
 
-      <p class="text-center mt-3">
+      <!-- Bouton Google Sign-In -->
+      <div class="text-center">
+        <asl-google-signin-button
+          type="standard"
+          shape="pill"
+          theme="filled_blue"
+          text="signin_with"
+          size="large"
+          logo_alignment="left"
+          width="300">
+        </asl-google-signin-button>
+      </div>
+
+      <p class="text-center mt-4">
         Vous n'avez pas de compte ? <a [routerLink]="['/auth/client/register']" [queryParams]="getQueryParams()" class="text-primary">Créez-en un ici</a>
       </p>
-
-      <div class="mt-5 text-center">
-        <button class="btn btn-outline-danger w-100 mb-2" (click)="signInWithGoogle()">
-          <i class="bi bi-google"></i> Se connecter avec Google
-        </button>
-    
-      </div>
+      <p class="text-center mt-4">
+        Forget Password? <a [routerLink]="['/auth/forgetPassword']" class="text-primary">Forget Password</a>
+      </p>
 
       <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
         {{ errorMessage }}

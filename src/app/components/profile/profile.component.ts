@@ -1,11 +1,23 @@
 // profile.component.ts
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Client, ProfileService } from './profile.service';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 
 @Component({
   selector: 'app-profile',
+  
+  standalone: true,
+  imports: [
+    BrowserModule,
+    RouterModule,
+    ReactiveFormsModule, 
+    FormsModule, 
+    CommonModule 
+  ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })

@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FavorisService } from '../services/favoris.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-favoris',
+  standalone: true,
+  imports: [CommonModule,FormsModule,RouterModule],
   templateUrl: './favoris.component.html',
   styleUrls: ['./favoris.component.css']
 })
