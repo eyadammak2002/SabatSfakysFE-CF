@@ -1,0 +1,68 @@
+<!-- intelligent-search.component.html -->
+<div class="intelligent-search-container">
+    <div class="search-header">
+      <h3>Recherche Intelligente</h3>
+      <p class="search-description">Posez votre question ou recherchez des produits de manière naturelle</p>
+    </div>
+    
+    <div class="search-input-container">
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery" 
+        (input)="onSearchInput($event)"
+        placeholder="Que recherchez-vous ? (ex: chaussures noires pour homme)" 
+        class="intelligent-search-input">
+      
+      <div class="search-buttons">
+        <button (click)="performStandardSearch()" class="search-btn" [disabled]="isLoading">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
+      
+      <div *ngIf="isLoading" class="loading-indicator">
+        <i class="fa fa-spinner fa-spin"></i>
+      </div>
+    </div>
+    
+    <!-- Affichage des résultats -->
+    <div class="search-results-container" *ngIf="showResults">
+      <!-- Message de réponse IA -->
+      <div class="ai-response-message" *ngIf="aiResponse">
+        <i class="fa fa-robot"></i>
+        <p>{{ aiResponse }}</p>
+      </div>
+      
+      <!-- Aucun résultat -->
+      <div class="no-results-message" *ngIf="searchResults.length === 0 && !isLoading">
+        <p>Aucun produit ne correspond à votre recherche.</p>
+        <p>Essayez d'autres termes ou consultez nos catégories populaires:</p>
+        <div class="popular-categories">
+          <a href="/category/chaussures">Chaussures</a>
+          <a href="/category/bottes">Bottes</a>
+          <a href="/category/mocassins">Mocassins</a>
+        </div>
+      </div>
+      
+      <!-- Liste des produits trouvés -->
+      <div class="search-results-grid" *ngIf="searchResults.length > 0">
+        <div class="product-card" *ngFor="let product of searchResults" (click)="viewProductDetails(product)">
+          <div class="product-image">
+            <!-- Utilisez une image par défaut si aucune n'est disponible -->
+            <img src="'http://localhost:8080/uploads/'" alt="{{ product.productName }}">
+          </div>
+          
+          <div class="product-details">
+            <h4 class="product-name">{{ product.productName }}</h4>
+            <p class="product-price">{{ product.price }} TND</p>
+            <p class="product-category" *ngIf="product.category">{{ product.category }}</p>
+            
+            <div class="product-tags">
+              <span class="tag genre-tag" *ngIf="product.genre">{{ product.genre }}</span>
+              <span class="tag color-tag" *ngIf="product.color">{{ product.color }}</span>
+              <span class="tag material-tag" *ngIf="product.material">{{ product.material }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

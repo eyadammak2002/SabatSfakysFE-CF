@@ -38,6 +38,7 @@ import { FournisseurArticlesPersonalisesComponent } from './article-personaliser
 import { ForgetPasswordComponent } from './authentication/forget-password/forget-password.component';
 import { ResetPasswordComponent } from './authentication/reset-password/reset-password.component';
 import { ListCommandeFRComponent } from './commande/list-commande-fr/list-commande-fr.component';
+import { IntelligentSearchComponent } from './intelligent-search/intelligent-search.component';
 
 const routes: Routes = [
   { path: '', component: ListArticleComponent },
@@ -109,7 +110,8 @@ const routes: Routes = [
 
    { path: 'chatbot', component: ChatbotComponent },
    { path: 'chat', component: ChatComponent },
-
+   { path: 'search', component: IntelligentSearchComponent },
+   
 
 ];
 

@@ -1,239 +1,239 @@
 <header class="header">
-    <div class="header-container">
-        <!-- Logo -->
-        <div class="logo">
-            <img src="assets/logo.png" alt="SabatSfakys Logo" class="logo-img">
-        </div>
+  <div class="header-container">
+      <!-- Logo -->
+      <div class="logo">
+          <img src="assets/logo.png" alt="SabatSfakys Logo" class="logo-img">
+      </div>
 
-        <!-- Barre de recherche -->
-        <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Rechercher...">
-        </div>
-   
+      <!-- Barre de recherche -->
+      <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Rechercher...">
+      </div>
+ 
 <!--
-        <div class="ai-search-container">
-            <h2>Recherche intelligente</h2>
-            
-            <div class="search-bar">
-              <input 
-                type="text" 
-                [(ngModel)]="searchQuery" 
-                placeholder="Posez votre question..." 
-                (keyup.enter)="onSearch()">
-              <button (click)="onSearch()" [disabled]="isLoading">
-                <i class="fas fa-search"></i>
-                {{ isLoading ? 'Chargement...' : 'Rechercher' }}
-              </button>
-            </div>
-            
-            <div class="response-container" *ngIf="aiResponse">
-              <h3>Réponse:</h3>
-              <div class="response-content">
-                {{ aiResponse }}
-              </div>
+      <div class="ai-search-container">
+          <h2>Recherche intelligente</h2>
+          
+          <div class="search-bar">
+            <input 
+              type="text" 
+              [(ngModel)]="searchQuery" 
+              placeholder="Posez votre question..." 
+              (keyup.enter)="onSearch()">
+            <button (click)="onSearch()" [disabled]="isLoading">
+              <i class="fas fa-search"></i>
+              {{ isLoading ? 'Chargement...' : 'Rechercher' }}
+            </button>
+          </div>
+          
+          <div class="response-container" *ngIf="aiResponse">
+            <h3>Réponse:</h3>
+            <div class="response-content">
+              {{ aiResponse }}
             </div>
           </div>
-     -->
-        <!-- Icônes de navigation (Favoris, Panier, Profil) -->
-        <div class="icon-links">
-            <a routerLink="/favoris" class="icon-link"><i class="far fa-heart"></i></a>
-            <a routerLink="/panier" class="icon-link"><i class="fas fa-shopping-cart"></i></a>
-            
-    
-
-            <div class="dropdown">
-                <!-- Icône de profil affichée seulement lorsque l'utilisateur est connecté -->
-                <a routerLink="/profil" class="icon-link profile-icon updateProfileIcon">
-                    <i class="fas fa-user"></i>
-                </a>
-                <div class="dropdown-menu" *ngIf="!isLoggedIn">
-                    <a routerLink="/auth/client/login">Client</a>
-                    <a routerLink="/auth/fournisseur/login">Boutique</a>
-                </div>
-            </div>
         </div>
+   -->
+      <!-- Icônes de navigation (Favoris, Panier, Profil) -->
+      <div class="icon-links">
+          <a routerLink="/favoris" class="icon-link"><i class="far fa-heart"></i></a>
+          <a routerLink="/panier" class="icon-link"><i class="fas fa-shopping-cart"></i></a>
+          
+  
 
-        <!-- ✅ Dropdown pour Espace Fournisseur -->
-        <div ngbDropdown class="dropdown">
-            <a *ngIf="showFournisseurDashboard" routerLink="/fournisseur" ngbDropdownToggle class="nav-link d-flex align-items-center">
-                <i class="fas fa-store store-icon"></i>
-                <span class="text-bold">Espace Fournisseur</span>
-            </a>
+          <div class="dropdown">
+              <!-- Icône de profil affichée seulement lorsque l'utilisateur est connecté -->
+              <a routerLink="/profil" class="icon-link profile-icon updateProfileIcon">
+                  <i class="fas fa-user"></i>
+              </a>
+              <div class="dropdown-menu" *ngIf="!isLoggedIn">
+                  <a routerLink="/auth/client/login">Client</a>
+                  <a routerLink="/auth/fournisseur/login">Boutique</a>
+              </div>
+          </div>
+      </div>
 
-            <div ngbDropdownMenu class="dropdown-menu custom-dropdown-menu">
-                <a (click)="redirectToClient()" ngbDropdownItem>Navigate to Espace Client</a>
+      <!-- ✅ Dropdown pour Espace Fournisseur -->
+      <div ngbDropdown class="dropdown">
+          <a *ngIf="showFournisseurDashboard" routerLink="/fournisseur" ngbDropdownToggle class="nav-link d-flex align-items-center">
+              <i class="fas fa-store store-icon"></i>
+              <span class="text-bold">Espace Fournisseur</span>
+          </a>
 
-                <a (click)="redirectToProfileFR()" ngbDropdownItem>Profile</a>
-                <a (click)="redirectToCreateArticle()" ngbDropdownItem><i class="fas fa-plus-circle menu-icon"></i> Déposer Article</a>
-                <a (click)="redirectToCreatePack()" ngbDropdownItem><i class="fas fa-plus-circle menu-icon"></i>Créer Pack</a>
-                <a (click)="redirectToPack()" ngbDropdownItem>tous les Packs</a>   
-                <a routerLink="/fournisseur/notifications" ngbDropdownItem><i class="fas fa-bell menu-icon"></i> Notifications</a>
-                
-                <!-- ✅ Profil en bas du menu -->
-                <div class="dropdown-profile">
-                    <span class="profile-name">{{ username }}</span><br><br>
-                    <span class="profile-name">{{ email }}</span>
-                </div>
+          <div ngbDropdownMenu class="dropdown-menu custom-dropdown-menu">
+              <a (click)="redirectToClient()" ngbDropdownItem>Navigate to Espace Client</a>
 
-                <!-- ✅ LogOut avec icône -->
-                <a href="javascript:void(0);" *ngIf="isLoggedIn" (click)="logout()" class="nav-link logout-link mt-4">
-                    <i class="fas fa-sign-out-alt menu-icon"></i> Déconnexion
-                </a>
-            </div>
-        </div>
+              <a (click)="redirectToProfileFR()" ngbDropdownItem>Profile</a>
+              <a (click)="redirectToCreateArticle()" ngbDropdownItem><i class="fas fa-plus-circle menu-icon"></i> Déposer Article</a>
+              <a (click)="redirectToCreatePack()" ngbDropdownItem><i class="fas fa-plus-circle menu-icon"></i>Créer Pack</a>
+              <a (click)="redirectToPack()" ngbDropdownItem>tous les Packs</a>   
+              <a routerLink="/fournisseur/notifications" ngbDropdownItem><i class="fas fa-bell menu-icon"></i> Notifications</a>
+              
+              <!-- ✅ Profil en bas du menu -->
+              <div class="dropdown-profile">
+                  <span class="profile-name">{{ username }}</span><br><br>
+                  <span class="profile-name">{{ email }}</span>
+              </div>
 
-        <div ngbDropdown class="dropdown">
-            <a *ngIf="showClientDashboard" routerLink="/fournisseur" ngbDropdownToggle class="nav-link">
-                <i class="fas fa-store" style="padding-right:15px; padding-left: 20px;font-size: medium;color:  #ebebeb;"></i>
-                <span style="font-size: 18px;color: #4c2b17;font-weight: bold;">Espace Client</span>
-            </a>
+              <!-- ✅ LogOut avec icône -->
+              <a href="javascript:void(0);" *ngIf="isLoggedIn" (click)="logout()" class="nav-link logout-link mt-4">
+                  <i class="fas fa-sign-out-alt menu-icon"></i> Déconnexion
+              </a>
+          </div>
+      </div>
 
-            <div ngbDropdownMenu class="dropdown-menu">
-                <a *ngIf="role === 'ROLE_CLIENT' && role2 === 'ROLE_FOURNISSEUR'" (click)="redirectToFR()" ngbDropdownItem>
-                    <i class="fas fa-store menu-icon"></i> Revenir à l'Espace Fournisseur
-                </a>
-                <a ngbDropdownItem>Panier</a>
-                <a ngbDropdownItem>Favoris</a>
-                <a (click)="redirectToProfile()" ngbDropdownItem>Profile</a>
-                <a (click)="redirectToCommande()" ngbDropdownItem>Ma Commande</a>
-                <a (click)="redirectToListReclamation()" ngbDropdownItem>Mes Reclamations</a>
-                <a (click)="redirectToListCommande()" ngbDropdownItem><i class="fas fa-shopping-cart menu-icon"></i> Commandes</a>
-                <div class="me-3">
-                    <span class="text-bold d-block">{{ username }}</span>
-                    <small class="text-muted">{{ email }}</small>
-                </div>
-                <!-- LogOut conditionnel avec ton nouveau design -->
-                <a href="javascript:void(0);" *ngIf="isLoggedIn" (click)="logout()" class="nav-link" style="font-size: medium;">
-                    <i class="feather icon-log-out" style="padding-right:15px; padding-left: 20px; font-size: medium; color: #ebebeb;"></i>
-                    <span style="font-size: 18px; color: #4c2b17; font-weight: bold;">LogOut</span>
-                </a>
-            </div>
-        </div>
+      <div ngbDropdown class="dropdown">
+          <a *ngIf="showClientDashboard" routerLink="/fournisseur" ngbDropdownToggle class="nav-link">
+              <i class="fas fa-store" style="padding-right:15px; padding-left: 20px;font-size: medium;color:  #ebebeb;"></i>
+              <span style="font-size: 18px;color: #4c2b17;font-weight: bold;">Espace Client</span>
+          </a>
+
+          <div ngbDropdownMenu class="dropdown-menu">
+              <a *ngIf="role === 'ROLE_CLIENT' && role2 === 'ROLE_FOURNISSEUR'" (click)="redirectToFR()" ngbDropdownItem>
+                  <i class="fas fa-store menu-icon"></i> Revenir à l'Espace Fournisseur
+              </a>
+              <a ngbDropdownItem>Panier</a>
+              <a ngbDropdownItem>Favoris</a>
+              <a (click)="redirectToProfile()" ngbDropdownItem>Profile</a>
+              <a (click)="redirectToCommande()" ngbDropdownItem>Ma Commande</a>
+              <a (click)="redirectToListReclamation()" ngbDropdownItem>Mes Reclamations</a>
+              <a (click)="redirectToListCommande()" ngbDropdownItem><i class="fas fa-shopping-cart menu-icon"></i> Commandes</a>
+              <div class="me-3">
+                  <span class="text-bold d-block">{{ username }}</span>
+                  <small class="text-muted">{{ email }}</small>
+              </div>
+              <!-- LogOut conditionnel avec ton nouveau design -->
+              <a href="javascript:void(0);" *ngIf="isLoggedIn" (click)="logout()" class="nav-link" style="font-size: medium;">
+                  <i class="feather icon-log-out" style="padding-right:15px; padding-left: 20px; font-size: medium; color: #ebebeb;"></i>
+                  <span style="font-size: 18px; color: #4c2b17; font-weight: bold;">LogOut</span>
+              </a>
+          </div>
+      </div>
 
 <!-- Icône de notification avec compteur de notifications non lues -->
 <div class="notification-icon" (click)="toggleNotifications($event)">
-    <i class="fas fa-bell"></i>
-    <span class="notification-badge" *ngIf="unreadNotifications.length > 0">
-      {{ unreadNotifications.length }}
-    </span>
+  <i class="fas fa-bell"></i>
+  <span class="notification-badge" *ngIf="unreadNotifications.length > 0">
+    {{ unreadNotifications.length }}
+  </span>
+</div>
+
+<!-- Dropdown des notifications -->
+<div class="notification-dropdown" [class.show]="isNotificationDropdownOpen">
+  <div class="notification-header">
+    <h3>Notifications</h3>
+    <button class="clear-btn" (click)="clearNotifications()" *ngIf="unreadNotifications.length > 0 || readNotifications.length > 0">
+      <i class="fas fa-trash"></i>
+    </button>
   </div>
   
-  <!-- Dropdown des notifications -->
-  <div class="notification-dropdown" [class.show]="isNotificationDropdownOpen">
-    <div class="notification-header">
-      <h3>Notifications</h3>
-      <button class="clear-btn" (click)="clearNotifications()" *ngIf="unreadNotifications.length > 0 || readNotifications.length > 0">
-        <i class="fas fa-trash"></i>
-      </button>
-    </div>
-    
-    <!-- Section des notifications non lues -->
-    <div class="notification-section" *ngIf="unreadNotifications.length > 0" >
-      <h4 class="section-title">Nouvelles ({{ unreadNotifications.length }})</h4>
-      <div class="notification-list">
-        <div class="notification-item unread" *ngFor="let notification of unreadNotifications" onclick="getCommandeById">
-          <div class="notification-content">
-            <div class="notification-message">{{ notification.message }}</div>
-            <div class="notification-time">{{ notification.createdAt | date:'short' }}</div>
-          </div>
+  <!-- Section des notifications non lues -->
+  <div class="notification-section" *ngIf="unreadNotifications.length > 0" >
+    <h4 class="section-title">Nouvelles ({{ unreadNotifications.length }})</h4>
+    <div class="notification-list">
+      <div class="notification-item unread" *ngFor="let notification of unreadNotifications" onclick="getCommandeById">
+        <div class="notification-content">
+          <div class="notification-message">{{ notification.message }}</div>
+          <div class="notification-time">{{ notification.createdAt | date:'short' }}</div>
         </div>
       </div>
-    </div>
-    
-    <!-- Section des notifications lues -->
-    <div class="notification-section" *ngIf="readNotifications.length > 0">
-      <h4 class="section-title">Lues ({{ readNotifications.length }})</h4>
-      <div class="notification-list">
-        <div class="notification-item read" *ngFor="let notification of readNotifications">
-          <div class="notification-content">
-            <div class="notification-message">{{ notification.message }}</div>
-            <div class="notification-time">{{ notification.createdAt | date:'short' }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Message s'il n'y a pas de notifications -->
-    <div class="no-notifications" *ngIf="unreadNotifications.length === 0 && readNotifications.length === 0">
-      <p>Vous n'avez pas de notifications</p>
     </div>
   </div>
-      
+  
+  <!-- Section des notifications lues -->
+  <div class="notification-section" *ngIf="readNotifications.length > 0">
+    <h4 class="section-title">Lues ({{ readNotifications.length }})</h4>
+    <div class="notification-list">
+      <div class="notification-item read" *ngFor="let notification of readNotifications">
+        <div class="notification-content">
+          <div class="notification-message">{{ notification.message }}</div>
+          <div class="notification-time">{{ notification.createdAt | date:'short' }}</div>
+        </div>
+      </div>
     </div>
+  </div>
+  
+  <!-- Message s'il n'y a pas de notifications -->
+  <div class="no-notifications" *ngIf="unreadNotifications.length === 0 && readNotifications.length === 0">
+    <p>Vous n'avez pas de notifications</p>
+  </div>
+</div>
+    
+  </div>
 
-    <!-- Menu de navigation (Catégories) -->
-    <nav *ngIf="!showFournisseurDashboard" class="nav-links">
-       <!-- Remplacez votre navigation existante par celle-ci -->
+  <!-- Menu de navigation (Catégories) -->
+  <nav *ngIf="!showFournisseurDashboard" class="nav-links">
+     <!-- Remplacez votre navigation existante par celle-ci -->
 
-        <div ngbDropdown class="dropdown">
-            <a href="#" (click)="filterByCategory('chaussures', $event)" ngbDropdownToggle>Chaussures Classiques</a>
-            <div ngbDropdownMenu class="dropdown-menu">
-                <a href="#" (click)="filterByCategoryAndGenre('chaussures', 'FEMME', $event)" ngbDropdownItem>FEMME</a>
-                <a href="#" (click)="filterByCategoryAndGenre('chaussures', 'HOMME', $event)" ngbDropdownItem>HOMME</a>
-                <a href="#" (click)="filterByCategoryAndGenre('chaussures', 'ENFANT', $event)" ngbDropdownItem>ENFANT</a>
-            </div>
-        </div>
+      <div ngbDropdown class="dropdown">
+          <a href="#" (click)="filterByCategory('chaussures', $event)" ngbDropdownToggle>Chaussures Classiques</a>
+          <div ngbDropdownMenu class="dropdown-menu">
+              <a href="#" (click)="filterByCategoryAndGenre('chaussures', 'FEMME', $event)" ngbDropdownItem>FEMME</a>
+              <a href="#" (click)="filterByCategoryAndGenre('chaussures', 'HOMME', $event)" ngbDropdownItem>HOMME</a>
+              <a href="#" (click)="filterByCategoryAndGenre('chaussures', 'ENFANT', $event)" ngbDropdownItem>ENFANT</a>
+          </div>
+      </div>
 
-        <div ngbDropdown class="dropdown">
-            <a href="#" (click)="filterByCategory('botte', $event)" ngbDropdownToggle>Bottes</a>
-            <div ngbDropdownMenu class="dropdown-menu">
-                <a href="#" (click)="filterByCategoryAndGenre('botte', 'FEMME', $event)" ngbDropdownItem>FEMME</a>
-                <a href="#" (click)="filterByCategoryAndGenre('botte', 'HOMME', $event)" ngbDropdownItem>HOMME</a>
-                <a href="#" (click)="filterByCategoryAndGenre('botte', 'ENFANT', $event)" ngbDropdownItem>ENFANT</a>
-            </div>
-        </div>
+      <div ngbDropdown class="dropdown">
+          <a href="#" (click)="filterByCategory('botte', $event)" ngbDropdownToggle>Bottes</a>
+          <div ngbDropdownMenu class="dropdown-menu">
+              <a href="#" (click)="filterByCategoryAndGenre('botte', 'FEMME', $event)" ngbDropdownItem>FEMME</a>
+              <a href="#" (click)="filterByCategoryAndGenre('botte', 'HOMME', $event)" ngbDropdownItem>HOMME</a>
+              <a href="#" (click)="filterByCategoryAndGenre('botte', 'ENFANT', $event)" ngbDropdownItem>ENFANT</a>
+          </div>
+      </div>
 
-        <div ngbDropdown class="dropdown">
-            <a href="#" (click)="filterByCategory('mocassins', $event)" ngbDropdownToggle>Mocassins</a>
-            <div ngbDropdownMenu class="dropdown-menu">
-                <a href="#" (click)="filterByCategoryAndGenre('mocassins', 'FEMME', $event)" ngbDropdownItem>FEMME</a>
-                <a href="#" (click)="filterByCategoryAndGenre('mocassins', 'HOMME', $event)" ngbDropdownItem>HOMME</a>
-                <a href="#" (click)="filterByCategoryAndGenre('mocassins', 'ENFANT', $event)" ngbDropdownItem>ENFANT</a>
-            </div>
-        </div>
+      <div ngbDropdown class="dropdown">
+          <a href="#" (click)="filterByCategory('mocassins', $event)" ngbDropdownToggle>Mocassins</a>
+          <div ngbDropdownMenu class="dropdown-menu">
+              <a href="#" (click)="filterByCategoryAndGenre('mocassins', 'FEMME', $event)" ngbDropdownItem>FEMME</a>
+              <a href="#" (click)="filterByCategoryAndGenre('mocassins', 'HOMME', $event)" ngbDropdownItem>HOMME</a>
+              <a href="#" (click)="filterByCategoryAndGenre('mocassins', 'ENFANT', $event)" ngbDropdownItem>ENFANT</a>
+          </div>
+      </div>
 
-     <!-- <div ngbDropdown class="dropdown">
-            <a href="#" (click)="filterByGenre('HOMME', $event)" ngbDropdownToggle>HOMME</a>
-            <div ngbDropdownMenu class="dropdown-menu">
-                <a href="#" (click)="filterByGenreAndCategory('HOMME', 'chaussures', $event)" ngbDropdownItem>Chaussures</a>
-                <a href="#" (click)="filterByGenreAndCategory('HOMME', 'botte', $event)" ngbDropdownItem>Sacs</a>
-                <a href="#" (click)="filterByGenreAndCategory('HOMME', 'mocassins', $event)" ngbDropdownItem>Autre</a>
-            </div>
-        </div>
+   <!-- <div ngbDropdown class="dropdown">
+          <a href="#" (click)="filterByGenre('HOMME', $event)" ngbDropdownToggle>HOMME</a>
+          <div ngbDropdownMenu class="dropdown-menu">
+              <a href="#" (click)="filterByGenreAndCategory('HOMME', 'chaussures', $event)" ngbDropdownItem>Chaussures</a>
+              <a href="#" (click)="filterByGenreAndCategory('HOMME', 'botte', $event)" ngbDropdownItem>Sacs</a>
+              <a href="#" (click)="filterByGenreAndCategory('HOMME', 'mocassins', $event)" ngbDropdownItem>Autre</a>
+          </div>
+      </div>
 
-        <div ngbDropdown class="dropdown">
-            <a href="#" (click)="filterByGenre('FEMME', $event)" ngbDropdownToggle>FEMME</a>
-            <div ngbDropdownMenu class="dropdown-menu">
-                <a href="#" (click)="filterByGenreAndCategory('FEMME', 'chaussures', $event)" ngbDropdownItem>Chaussures</a>
-                <a href="#" (click)="filterByGenreAndCategory('FEMME', 'botte', $event)" ngbDropdownItem>Sacs</a>
-                <a href="#" (click)="filterByGenreAndCategory('FEMME', 'mocassins', $event)" ngbDropdownItem>Autre</a>
-            </div>
-        </div>
+      <div ngbDropdown class="dropdown">
+          <a href="#" (click)="filterByGenre('FEMME', $event)" ngbDropdownToggle>FEMME</a>
+          <div ngbDropdownMenu class="dropdown-menu">
+              <a href="#" (click)="filterByGenreAndCategory('FEMME', 'chaussures', $event)" ngbDropdownItem>Chaussures</a>
+              <a href="#" (click)="filterByGenreAndCategory('FEMME', 'botte', $event)" ngbDropdownItem>Sacs</a>
+              <a href="#" (click)="filterByGenreAndCategory('FEMME', 'mocassins', $event)" ngbDropdownItem>Autre</a>
+          </div>
+      </div>
 
-        <div ngbDropdown class="dropdown">
-            <a href="#" (click)="filterByGenre('ENFANT', $event)" ngbDropdownToggle>ENFANT</a>
-            <div ngbDropdownMenu class="dropdown-menu">
-                <a href="#" (click)="filterByGenreAndCategory('ENFANT', 'chaussures', $event)" ngbDropdownItem>Chaussures</a>
-                <a href="#" (click)="filterByGenreAndCategory('ENFANT', 'botte', $event)" ngbDropdownItem>Sacs</a>
-                <a href="#" (click)="filterByGenreAndCategory('ENFANT', 'mocassins', $event)" ngbDropdownItem>Autre</a>
-            </div>
-        </div>--> 
+      <div ngbDropdown class="dropdown">
+          <a href="#" (click)="filterByGenre('ENFANT', $event)" ngbDropdownToggle>ENFANT</a>
+          <div ngbDropdownMenu class="dropdown-menu">
+              <a href="#" (click)="filterByGenreAndCategory('ENFANT', 'chaussures', $event)" ngbDropdownItem>Chaussures</a>
+              <a href="#" (click)="filterByGenreAndCategory('ENFANT', 'botte', $event)" ngbDropdownItem>Sacs</a>
+              <a href="#" (click)="filterByGenreAndCategory('ENFANT', 'mocassins', $event)" ngbDropdownItem>Autre</a>
+          </div>
+      </div>--> 
 
-        <div ngbDropdown class="dropdown" display="dynamic" placement="bottom">
-            <a class="nav-link" routerLink="/personnaliser" ngbDropdownToggle>Chaussures Personnalisées</a>
-            <div ngbDropdownMenu class="dropdown-menu">
-                <a class="dropdown-item" routerLink="/createArticlePersonaliser">Commander un chaussures personnaliser</a>
-                <a class="dropdown-item" routerLink="/articlePersonaliser">Mes commandes de chaussures personnaliser</a>
-            </div>
-        </div>
-    </nav>
+      <div ngbDropdown class="dropdown" display="dynamic" placement="bottom">
+          <a class="nav-link" routerLink="/personnaliser" ngbDropdownToggle>Chaussures Personnalisées</a>
+          <div ngbDropdownMenu class="dropdown-menu">
+              <a class="dropdown-item" routerLink="/createArticlePersonaliser">Commander un chaussures personnaliser</a>
+              <a class="dropdown-item" routerLink="/articlePersonaliser">Mes commandes de chaussures personnaliser</a>
+          </div>
+      </div>
+  </nav>
 
-    <!-- Menu de navigation (Catégories) -->
-    <nav *ngIf="showFournisseurDashboard" class="nav-links">
-        <div class="dropdown">
-            <a (click)="redirectToArticle()" ngbDropdownItem><i class="fas fa-box menu-icon"></i> tous les Articles</a>       
-            <a (click)="redirectToListCommandeParFR()" ngbDropdownItem><i class="fas fa-shopping-cart menu-icon"></i> tous les Commandes</a>
-        </div>
-    </nav>
+  <!-- Menu de navigation (Catégories) -->
+  <nav *ngIf="showFournisseurDashboard" class="nav-links">
+      <div class="dropdown">
+          <a (click)="redirectToArticle()" ngbDropdownItem><i class="fas fa-box menu-icon"></i> tous les Articles</a>       
+          <a (click)="redirectToListCommandeParFR()" ngbDropdownItem><i class="fas fa-shopping-cart menu-icon"></i> tous les Commandes</a>
+      </div>
+  </nav>
 </header>

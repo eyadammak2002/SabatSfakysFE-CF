@@ -56,6 +56,7 @@ import { ArticlePersonaliserDetailComponent } from './article-personaliser/artic
 import { FournisseurArticlesPersonalisesComponent } from './article-personaliser/fournisseur-articles-personalises/fournisseur-articles-personalises.component';
 import { ForgetPasswordComponent } from './authentication/forget-password/forget-password.component';
 import { ResetPasswordComponent } from './authentication/reset-password/reset-password.component';
+import { IntelligentSearchComponent } from './intelligent-search/intelligent-search.component';
 
 @NgModule({
   declarations: [
@@ -76,6 +77,7 @@ import { ResetPasswordComponent } from './authentication/reset-password/reset-pa
     ChatbotComponent,
     ChatComponent,
     ResetPasswordComponent,
+    IntelligentSearchComponent,
 
     
     

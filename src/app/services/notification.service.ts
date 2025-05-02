@@ -144,4 +144,10 @@ export class NotificationService implements OnDestroy {
       return this.http.put(`${this.apiUrl1}/markAllRead`, {});
     }
 
+    markAsRead(ids: number[]): Observable<any> {
+      return this.http.put(`${this.apiUrl}/markAsRead`, ids);
+    }
+    
+    
+    
 }

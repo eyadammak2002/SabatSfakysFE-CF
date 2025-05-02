@@ -213,20 +213,38 @@ checkUserRole(): void {
   toggleNotifications(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
+    
+    // Store previous state to check if we're closing the dropdown
+    const wasOpen = this.isNotificationDropdownOpen;
+    
+    // Toggle dropdown state
     this.isNotificationDropdownOpen = !this.isNotificationDropdownOpen;
     console.log('Dropdown is now:', this.isNotificationDropdownOpen ? 'open' : 'closed');
     
-    // Si le dropdown est ouvert, marquer toutes les notifications comme lues
+    // If dropdown was open and now it's closed, refresh the page
+    if (wasOpen && !this.isNotificationDropdownOpen) {
+      window.location.reload();
+    }
+    
+    // If the dropdown is opened, mark all notifications as read
     if (this.isNotificationDropdownOpen && this.unreadNotifications.length > 0) {
       this.markAllAsRead();
     }
   }
 
+  
   @HostListener('document:click', ['$event'])
   closeDropdowns(event: Event): void {
     const notificationIcon = this.el.nativeElement.querySelector('.notification-icon');
     if (notificationIcon && !notificationIcon.contains(event.target as Node)) {
+      // Check if dropdown was open before closing it
+      const wasOpen = this.isNotificationDropdownOpen;
       this.isNotificationDropdownOpen = false;
+      
+      // If dropdown was open and now it's being closed, refresh the page
+      if (wasOpen) {
+        window.location.reload();
+      }
     }
   }
 
@@ -237,7 +255,7 @@ checkUserRole(): void {
   redirectToPack(): void { this.router.navigate(['/pack']); }
   redirectToListCommande(): void { this.router.navigate(['/listCommande']); }
   redirectToCommande(): void { this.router.navigate(['/commande']); }
-  redirectToListCommandeParFR(): void { this.router.navigate(['/listCommandeFR']); }
+  redirectToListCommandeParFR(): void { this.router.navigate(['/listCommande']); }
   redirectToProfile(): void {
     if (this.email) {
       this.router.navigate(['/profile'], { queryParams: { email: this.email } });

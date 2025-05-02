@@ -12,7 +12,6 @@ import { AppRoutingModule } from 'src/app/app-routing.module';
   
   standalone: true,
   imports: [
-    BrowserModule,
     RouterModule,
     ReactiveFormsModule, 
     FormsModule, 

@@ -184,8 +184,14 @@ private initPayPalConfig(): void {
       },
       error: (err) => {
         console.error("Erreur lors de la validation:", err);
-        alert("Erreur lors de la validation du panier !");
+      
+        const messageErreur = typeof err.error === 'string'
+          ? err.error
+          : "Erreur lors de la validation du panier !";
+      
+        alert(messageErreur);
       }
+      
     });
   
     this.panier.statut = 'COMMANDEE'; 

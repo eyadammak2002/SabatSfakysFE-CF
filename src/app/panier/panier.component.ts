@@ -115,7 +115,10 @@ export class PanierComponent implements OnInit {
     const panier = this.panierService.getPanier();
     if (panier && panier.statut === 'VALIDER') {
       // Rediriger vers la page de détail de la commande
-      this.router.navigate(['/commande']);
+      
+      setTimeout(() => {
+        this.router.navigate(['/accueil']);
+      }, 2000);
     }
   }
 
@@ -204,8 +207,8 @@ export class PanierComponent implements OnInit {
             queryParams: { returnUrl: '/panier' } 
           });
         } else {
-          alert("Une erreur est survenue lors de la création du panier.");
-        }
+          const messageErreur = err.error?.message || err.error || "Une erreur est survenue lors de la création du panier.";
+          alert(messageErreur);        }
       }
     });
   }
