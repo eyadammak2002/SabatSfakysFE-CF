@@ -5,11 +5,30 @@
           <img src="assets/logo.png" alt="SabatSfakys Logo" class="logo-img">
       </div>
 
-      <!-- Barre de recherche -->
-      <div class="search-bar">
-          <i class="fas fa-search"></i>
-          <input type="text" placeholder="Rechercher...">
+
+
+      <div class="search-input-container">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (input)="onSearchInput($event)"
+          placeholder="Que recherchez-vous ? (ex: chaussures noires pour homme)" 
+          class="intelligent-search-input">
+        
+        <div class="search-buttons">
+          <button (click)="performStandardSearch()" class="search-btn" [disabled]="isLoading">
+            <i class="fa fa-search"></i>
+          </button>
+        </div>
+        
+        <div *ngIf="isLoading" class="loading-indicator">
+          <i class="fa fa-spinner fa-spin"></i>
+        </div>
       </div>
+
+
+   
+      
  
 <!--
       <div class="ai-search-container">

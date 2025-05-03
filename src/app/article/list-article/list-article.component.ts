@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { StockService } from 'src/app/panier/stock.service';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { SearchDataService } from 'src/app/services/search-data.service';
 
 @Component({
   selector: 'app-list-article',
@@ -23,18 +24,48 @@ export class ListArticleComponent implements OnInit {
   
   // Nouvel objet pour suivre le statut du stock de chaque pointure
   pointureOutOfStock: { [id: number]: boolean } = {};
+  searchResults: any[] = [];
+  aiResponse: string = '';
+  isSearchMode: boolean = false;
+  isSearchLoading: boolean = false;
+
 
   constructor(
     private articleService: ArticleService,
     private panierService: PanierService,
     private router: Router,
-    private stockService: StockService
+    private stockService: StockService,
+    private searchDataService: SearchDataService
   ) {}
 
   ngOnInit(): void {
     this.getArticlesWithStatut('ACCEPTE');
+  
+    this.searchDataService.searchResults$.subscribe(results => {
+      console.log('Résultats de recherche reçus dans le composant:', results);
+      this.searchResults = results;
+    });
+  
+    this.searchDataService.aiResponse$.subscribe(message => {
+      console.log('Message IA reçu :', message);
+      this.aiResponse = message;
+    });
+  
+    this.searchDataService.searchActive$.subscribe(active => {
+      console.log('Mode recherche actif :', active);
+      this.isSearchMode = active;
+    });
+  
+    this.searchDataService.loading$.subscribe(loading => {
+      console.log('Chargement en cours :', loading);
+      this.isSearchLoading = loading;
+    });
   }
+  
 
+  resetSearch(): void {
+    this.searchDataService.clearSearchResults();
+  }
   selectCouleur(couleur: Couleur) {
     this.selectedCouleur = couleur;
     this.stockInsuffisant = false;

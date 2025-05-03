@@ -1,74 +1,105 @@
 <div class="container">
-    
-    <h2 class="text-center">🛍️ Articles Disponibles</h2>
-    <hr>
-
-    <div class="row">
-        <div *ngFor="let article of allArticles" class="col-lg-2 col-md-3 col-sm-4 col-6">
-            <div class="card mb-3 shadow">
-                
-                <!-- ✅ Galerie d'images Bootstrap (sans autoplay) -->
-                <div class="carousel slide" [attr.id]="'carousel' + article.id" data-bs-interval="false">
-                    
-                    <div class="carousel-inner">
-                        <div *ngFor="let photo of article.photos; let first = first" 
-                             class="carousel-item" 
-                             [class.active]="first">
-                             <img [src]="photo.url" class="d-block w-100"
-                             alt="{{ article.name }}" 
-                             style="max-height: 30vh;width: 100%; object-fit: cover; background-color: #f8f9fa;">
-                             </div>
-                    </div>
-
-                    <!-- ✅ Mini-cercles indicateurs en dessous -->
-                    <div class="carousel-indicators position-relative mt-2">
-                        <button *ngFor="let photo of article.photos; let i = index" 
-                                type="button" 
-                                [attr.data-bs-target]="'#carousel' + article.id"
-                                [attr.data-bs-slide-to]="i"
-                                [class.active]="i === 0"
-                                aria-current="true"
-                                class="bg-dark rounded-circle"
-                                style="width: 7px; height: 7px; margin: 5px; border: none; opacity: 0.8;">
-                        </button>
-                    </div>
-
-                    <!-- ✅ Boutons de navigation -->
-                    <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-
-                <div class="card-body text-center ">
-                    <h4 class="card-title" style="font-weight: bold;">{{ article.name }}</h4>
-                    <p class="text-muted small" >{{ article.description | slice:0:50 }}...</p>
-                    <p  style="border-bottom: 2px solid black;"></p>
-
-                    <!-- ✅ Ligne avec Prix et Icône -->
-                    <div class="d-flex justify-content-between align-items-center">
-                       
-                        <strong style="color: red;">prix  {{ article.prixVente }}  DT</strong>
-                        <button class="btn" (click)="ouvrirModal(article)">
-                            <i class="fas fa-shopping-cart"></i>
-                          </button>
-                          <button class="btn" (click)="voirDetailsArticle(article)">
-                          Voir plus
-                          </button>
-                          
-                    </div> 
-
-                </div>
-            </div>
+    <!-- Message de réponse IA -->
+    <div *ngIf="isSearchMode && aiResponse" class="row mb-4">
+      <div class="col-12">
+        <div class="ai-response-message">
+          <i class="fas fa-robot"></i>
+          <p>{{ aiResponse }}</p>
+          <button class="btn btn-sm btn-outline-secondary" (click)="resetSearch()">
+            <i class="fas fa-times"></i> Effacer la recherche
+          </button>
         </div>
+      </div>
     </div>
-</div>
-
-
+    
+    <!-- Titre adaptatif -->
+    <h2 class="text-center">
+      <span *ngIf="!isSearchMode">🛍️ Articles Disponibles</span>
+      <span *ngIf="isSearchMode">🔍 Résultats de recherche</span>
+    </h2>
+    <hr>
+  
+    <!-- Message si aucun résultat -->
+    <div *ngIf="isSearchMode && searchResults.length === 0" class="row">
+      <div class="col-12 text-center py-5">
+        <p>Aucun produit ne correspond à votre recherche.</p>
+        <p>Essayez d'autres termes ou consultez nos catégories populaires:</p>
+        <div class="popular-categories mt-3">
+          <a href="/category/chaussures" class="btn btn-outline-primary mx-2">Chaussures</a>
+          <a href="/category/bottes" class="btn btn-outline-primary mx-2">Bottes</a>
+          <a href="/category/mocassins" class="btn btn-outline-primary mx-2">Mocassins</a>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="isSearchLoading" class="row mb-4">
+        <div class="col-12 text-center">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+          <p class="mt-2">Chargement des détails des articles...</p>
+        </div>
+      </div>
+    <!-- Affichage des articles -->
+    <div class="row">
+      <!-- Utiliser searchResults si en mode recherche, sinon utiliser allArticles -->
+      <div *ngFor="let article of isSearchMode ? searchResults : allArticles" class="col-lg-2 col-md-3 col-sm-4 col-6">
+        <div class="card mb-3 shadow">
+          <!-- Galerie d'images Bootstrap (sans autoplay) -->
+          <div class="carousel slide" [attr.id]="'carousel' + article.id" data-bs-interval="false">
+            <div class="carousel-inner">
+              <div *ngFor="let photo of article.photos; let first = first" 
+                   class="carousel-item" 
+                   [class.active]="first">
+                <img [src]="photo.url" class="d-block w-100"
+                   alt="{{ article.name }}" 
+                   style="max-height: 30vh;width: 100%; object-fit: cover; background-color: #f8f9fa;">
+              </div>
+            </div>
+  
+            <!-- Mini-cercles indicateurs en dessous -->
+            <div class="carousel-indicators position-relative mt-2">
+              <button *ngFor="let photo of article.photos; let i = index" 
+                      type="button" 
+                      [attr.data-bs-target]="'#carousel' + article.id"
+                      [attr.data-bs-slide-to]="i"
+                      [class.active]="i === 0"
+                      aria-current="true"
+                      class="bg-dark rounded-circle"
+                      style="width: 7px; height: 7px; margin: 5px; border: none; opacity: 0.8;">
+              </button>
+            </div>
+  
+            <!-- Boutons de navigation -->
+            <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+  
+          <div class="card-body text-center">
+            <h4 class="card-title" style="font-weight: bold;">{{ article.name }}</h4>
+            <p class="text-muted small">{{ article.description | slice:0:50 }}...</p>
+            <p style="border-bottom: 2px solid black;"></p>
+  
+            <!-- Ligne avec Prix et Icône -->
+            <div class="d-flex justify-content-between align-items-center">
+              <strong style="color: red;">prix {{ article.prixVente }} DT</strong>
+              <button class="btn" (click)="ouvrirModal(article)">
+                <i class="fas fa-shopping-cart"></i>
+              </button>
+              <button class="btn" (click)="voirDetailsArticle(article)">
+                Voir plus
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
 <!-- ✅ Modal amélioré pour la sélection des couleurs et pointures -->

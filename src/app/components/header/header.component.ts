@@ -1,12 +1,14 @@
 import { Component, ElementRef, HostListener, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 import { Article } from 'src/app/article/article';
 import { ArticleService } from 'src/app/article/article.service';
 import { CategoryService } from 'src/app/category/category.service';
 import { AIService } from 'src/app/services/ai.service';
 import { NotificationEntity, NotificationService } from 'src/app/services/notification.service';
 import { PanierService } from 'src/app/services/panier.service';
+import { SearchDataService } from 'src/app/services/search-data.service';
+import { SearchResponse, SearchService } from 'src/app/services/search.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 declare var global: any;
 @Component({
@@ -41,7 +43,10 @@ export class HeaderComponent implements OnInit {
 
   searchQuery: string = '';
   aiResponse: string = '';
-
+  searchResults: any[] = [];
+  showResults: boolean = false;
+  
+  private searchTerms = new Subject<string>();
 
 
   constructor(
@@ -53,10 +58,20 @@ export class HeaderComponent implements OnInit {
     private el: ElementRef,
     private articleService: ArticleService, 
     private categoryService: CategoryService ,
-    private aiService: AIService
+    private aiService: AIService,
+    private searchService: SearchService,
+    private searchDataService: SearchDataService,
   ) {}
 
   ngOnInit(): void {
+    this.searchTerms.pipe(
+          debounceTime(300),
+          distinctUntilChanged()
+        ).subscribe(term => {
+          this.performSearch(term);
+  });
+
+
     this.loadNotifications();
     
     // S'abonner aux notifications avec gestion des erreurs
@@ -106,7 +121,93 @@ export class HeaderComponent implements OnInit {
     this.updateProfileIcon();
   }
 
+ // Gestion de la saisie de l'utilisateur
+ onSearchInput(event: any): void {
+  const term = event.target.value.trim();
+  this.searchQuery = term;
+  
+  if (term) {
+    this.searchTerms.next(term);
+  } else {
+    this.searchResults = [];
+    this.aiResponse = '';
+    this.showResults = false;
+  }
+}
 
+// Modifiez ces méthodes dans header.component.ts
+performSearch(term: string): void {
+  if (!term.trim()) return;
+  
+  this.isLoading = true;
+  this.searchService.naturalLanguageSearch(term).subscribe({
+    next: (response: SearchResponse) => {
+      console.log('Réponse du service de recherche:', response);
+      
+      // Vérification et correction - utiliser articles au lieu de products
+      const articles = response.articles || response.products || [];
+      
+      // Envoyer les résultats via le service partagé
+      this.searchDataService.updateSearchResults(articles, response.message);
+      this.isLoading = false;
+      
+      // Rediriger vers la page d'accueil si ce n'est pas déjà le cas
+      if (this.router.url !== '/accueil') {
+        this.router.navigate(['/accueil']);
+      }
+    },
+    error: (error) => {
+      console.error('Erreur lors de la recherche:', error);
+      this.isLoading = false;
+      // En cas d'erreur, initialiser avec un tableau vide
+      this.searchDataService.updateSearchResults([], 'Une erreur est survenue lors de la recherche.');
+    }
+  });
+}
+
+performStandardSearch(): void {
+  if (!this.searchQuery.trim()) return;
+  
+  this.isLoading = true;
+  this.searchService.searchByKeyword(this.searchQuery).subscribe({
+    next: (results) => {
+      console.log('Résultats de la recherche standard:', results);
+      
+      // S'assurer que results est un tableau
+      const articles = Array.isArray(results) ? results : [];
+      
+      // Envoyer les résultats via le service partagé
+      this.searchDataService.updateSearchResults(articles, `Résultats pour: "${this.searchQuery}"`);
+      this.isLoading = false;
+      
+      // Rediriger vers la page d'accueil si ce n'est pas déjà le cas
+      if (this.router.url !== '/accueil') {
+        this.router.navigate(['/accueil']);
+      }
+    },
+    error: (error) => {
+      console.error('Erreur lors de la recherche standard:', error);
+      this.isLoading = false;
+      // En cas d'erreur, initialiser avec un tableau vide
+      this.searchDataService.updateSearchResults([], `Aucun résultat pour: "${this.searchQuery}"`);
+    }
+  });
+}
+
+// Navigation vers la page de détail d'un produit
+viewProductDetails(product: any): void {
+  this.router.navigate(['/article', product.productId]);
+  this.resetSearch();
+}
+
+
+
+// Méthode pour réinitialiser la recherche
+resetSearch(): void {
+  this.searchQuery = '';
+  this.searchDataService.clearSearchResults();
+  this.showResults = false;
+}
   // Ajoutez cette méthode dans HeaderComponent
 checkUserRole(): void {
   if (this.isLoggedIn) {

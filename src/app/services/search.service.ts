@@ -1,94 +1,81 @@
-// search.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Article } from '../article/article';
 
+// Interface pour structurer la réponse de recherche
 export interface SearchResponse {
-  products: any[];
-  message: string;
   success: boolean;
+  message: string;
   totalResults: number;
-}
-
-export interface SearchRequest {
-  category?: string;
-  genre?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  color?: string;
-  material?: string;
-  size?: string;
-  query?: string;
+  articles?: Article[];  // Ajouter cette propriété
+  products?: Article[];  // Garder cette propriété pour compatibilité
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
-  private apiUrl = 'http://localhost:8080/api/search'; // Adaptez l'URL à votre backend
+  private apiUrl = 'http://localhost:8080/api/search';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
+
+  // Recherche en langage naturel
+  naturalLanguageSearch(query: string): Observable<SearchResponse> {
+    console.log('Recherche naturelle pour:', query);
+    return this.http.post<SearchResponse>(`${this.apiUrl}/query`, { query: query })
+      .pipe(
+        map(response => {
+          console.log('Réponse brute de l\'API:', response);
+          
+          // Normaliser la réponse
+          const normalizedResponse: SearchResponse = {
+            success: response.success !== undefined ? response.success : true,
+            message: response.message || 'Recherche effectuée',
+            totalResults: response.totalResults || 0,
+            articles: response.articles || response.products || []
+          };
+          
+          console.log('Réponse normalisée:', normalizedResponse);
+          return normalizedResponse;
+        }),
+        catchError(error => {
+          console.error('Erreur lors de la recherche naturelle:', error);
+          throw error;
+        })
+      );
+  }
 
   // Recherche par mot-clé
-  searchByKeyword(keyword: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/keyword?keyword=${keyword}`)
+  searchByKeyword(keyword: string): Observable<Article[]> {
+    console.log('Recherche par mot-clé pour:', keyword);
+    return this.http.get<Article[]>(`${this.apiUrl}/keyword?keyword=${keyword}`)
       .pipe(
-        catchError(this.handleError<any[]>('searchByKeyword', []))
+        map(articles => {
+          console.log('Articles trouvés par mot-clé:', articles);
+          return articles;
+        }),
+        catchError(error => {
+          console.error('Erreur lors de la recherche par mot-clé:', error);
+          throw error;
+        })
       );
   }
 
   // Recherche par catégorie
-  searchByCategory(category: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/category/${category}`)
-      .pipe(
-        catchError(this.handleError<any[]>('searchByCategory', []))
-      );
+  searchByCategory(category: string): Observable<Article[]> {
+    return this.http.get<Article[]>(`${this.apiUrl}/category/${category}`);
   }
 
   // Recherche par genre
-  searchByGenre(genre: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/genre/${genre}`)
-      .pipe(
-        catchError(this.handleError<any[]>('searchByGenre', []))
-      );
+  searchByGenre(genre: string): Observable<Article[]> {
+    return this.http.get<Article[]>(`${this.apiUrl}/genre/${genre}`);
   }
 
-  // Recherche par catégorie et genre
-  searchByCategoryAndGenre(category: string, genre: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/category/${category}/genre/${genre}`)
-      .pipe(
-        catchError(this.handleError<any[]>('searchByCategoryAndGenre', []))
-      );
-  }
-
-  // Recherche avancée avec critères multiples
-  advancedSearch(request: SearchRequest): Observable<any[]> {
-    return this.http.post<any[]>(`${this.apiUrl}/advanced`, request)
-      .pipe(
-        catchError(this.handleError<any[]>('advancedSearch', []))
-      );
-  }
-
-  // Recherche en langage naturel
-  naturalLanguageSearch(query: string): Observable<SearchResponse> {
-    return this.http.post<SearchResponse>(`${this.apiUrl}/query`, { query })
-      .pipe(
-        catchError(this.handleError<SearchResponse>('naturalLanguageSearch', {
-          products: [],
-          message: 'Une erreur est survenue lors de la recherche.',
-          success: false,
-          totalResults: 0
-        }))
-      );
-  }
-
-  // Gestion des erreurs
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(`${operation} failed: ${error.message}`);
-      return of(result as T);
-    };
+  // Test de recherche - endpoint simplifié
+  testSearch(query: string): Observable<SearchResponse> {
+    console.log('Test de recherche pour:', query);
+    return this.http.post<SearchResponse>(`${this.apiUrl}/query-test`, { query: query });
   }
 }

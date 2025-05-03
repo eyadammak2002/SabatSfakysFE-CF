@@ -53,7 +53,7 @@ export class IntelligentSearchComponent implements OnInit {
     this.isLoading = true;
     this.searchService.naturalLanguageSearch(term).subscribe({
       next: (response: SearchResponse) => {
-        this.searchResults = response.products;
+        this.searchResults = response.products ? response.products : [];
         this.aiResponse = response.message;
         this.showResults = true;
         this.isLoading = false;

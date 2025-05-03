@@ -180,3 +180,38 @@
   .col-lg-2 {
     width: 20vw;
   }
+
+  .ai-response-message {
+    background-color: #f8f9fa;
+    border-left: 4px solid #4c2b17;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  .ai-response-message i {
+    font-size: 1.5rem;
+    color: #4c2b17;
+    margin-right: 15px;
+  }
+  
+  .ai-response-message p {
+    margin: 0;
+    flex: 1;
+  }
+  
+  .ai-response-message button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 0.8rem;
+  }
+  
+  .popular-categories a {
+    margin: 0 5px;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
