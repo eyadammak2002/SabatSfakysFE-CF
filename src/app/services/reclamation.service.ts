@@ -1,10 +1,11 @@
+//cote FR
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, throwError } from 'rxjs';
+import { map, Observable, of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Photo } from '../photo/Photo';
 import { Article } from '../article/article';
-import { Genre } from '../produit/Genre';
+import { TokenStorageService } from './token-storage.service';
 
 export interface Reclamation {
   id?: number;
@@ -13,6 +14,12 @@ export interface Reclamation {
   photos: Photo[];
   client?: Client;
   article?: Article;
+  resolved?: boolean; // Add this property to track resolution status
+
+}
+export enum Genre {
+  HOMME = "Homme",
+  FEMME = "Femme"
 }
 
 export interface Client {
@@ -32,7 +39,8 @@ export class ReclamationService {
   private apiUrl = 'http://localhost:8080/api/reclamation';
   private apiUrl2 = 'http://localhost:8080/client';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,    private tokenStorage: TokenStorageService
+  ) {}
 
   // Récupérer tous les reclamation
   getAllReclamation(): Observable<Reclamation[]> {
@@ -147,4 +155,99 @@ export class ReclamationService {
       })
     );
   }
+
+ // Get unresolved reclamations
+ getNonResolvedReclamations(): Observable<Reclamation[]> {
+  const url = `${this.apiUrl}/non-resolved`;
+  console.log('Fetching non-resolved reclamations from:', url);
+  return this.http.get<Reclamation[]>(url).pipe(
+    tap(data => console.log('Non-resolved reclamations received:', data.length)),
+    catchError(this.handleError('getNonResolvedReclamations', []))
+  );
+}
+
+// Get resolved reclamations
+getResolvedReclamations(): Observable<Reclamation[]> {
+  const url = `${this.apiUrl}/resolved`;
+  console.log('Fetching resolved reclamations from:', url);
+  return this.http.get<Reclamation[]>(url).pipe(
+    tap(data => console.log('Resolved reclamations received:', data.length)),
+    catchError(this.handleError('getResolvedReclamations', []))
+  );
+}
+
+// Mark a reclamation as resolved
+markReclamationAsResolved(id: number): Observable<Reclamation> {
+  const url = `${this.apiUrl}/${id}/resolve`;
+  console.log('Marking reclamation as resolved at URL:', url);
+  return this.http.put<Reclamation>(url, {}).pipe(
+    tap(data => console.log('Reclamation marked as resolved:', data)),
+    catchError(this.handleError<Reclamation>('markReclamationAsResolved'))
+  );
+}
+
+// Get current fournisseur ID from token
+async getCurrentFournisseurId(): Promise<number | null> {
+  const user = this.tokenStorage.getUser();
+  console.log('Current user from token:', user);
+  if (user && user.id) {
+    console.log('Fournisseur ID from token:', user.id);
+    return user.id;
+  }
+  console.warn('No fournisseur ID found in token');
+  return null;
+}
+
+// Get resolved reclamations by fournisseur ID
+getResolvedReclamationsByFournisseurId(fournisseurId: number): Observable<Reclamation[]> {
+  const url = `${this.apiUrl}/fournisseur/${fournisseurId}/resolved`;
+  console.log(`Fetching resolved reclamations for fournisseur ${fournisseurId} from URL:`, url);
+  return this.http.get<Reclamation[]>(url).pipe(
+    tap(data => console.log(`Resolved reclamations for fournisseur ${fournisseurId}:`, data)),
+    catchError(error => {
+      console.error(`Error retrieving resolved reclamations for fournisseur ${fournisseurId}:`, error);
+      console.error('Full error:', JSON.stringify(error));
+      return throwError(() => error);
+    })
+  );
+}
+
+// Get unresolved reclamations by fournisseur ID
+getNonResolvedReclamationsByFournisseurId(fournisseurId: number): Observable<Reclamation[]> {
+  const url = `${this.apiUrl}/fournisseur/${fournisseurId}/non-resolved`;
+  console.log(`Fetching non-resolved reclamations for fournisseur ${fournisseurId} from URL:`, url);
+  return this.http.get<Reclamation[]>(url).pipe(
+    tap(data => console.log(`Non-resolved reclamations for fournisseur ${fournisseurId}:`, data)),
+    catchError(error => {
+      console.error(`Error retrieving non-resolved reclamations for fournisseur ${fournisseurId}:`, error);
+      console.error('Full error:', JSON.stringify(error));
+      return throwError(() => error);
+    })
+  );
+}
+
+// Get all reclamations by fournisseur ID
+getReclamationsByFournisseurId(fournisseurId: number): Observable<Reclamation[]> {
+  const url = `${this.apiUrl}/fournisseur/${fournisseurId}`;
+  console.log(`Fetching all reclamations for fournisseur ${fournisseurId} from URL:`, url);
+  return this.http.get<Reclamation[]>(url).pipe(
+    tap(data => console.log(`All reclamations for fournisseur ${fournisseurId}:`, data.length)),
+    catchError(error => {
+      console.error(`Error retrieving reclamations for fournisseur ${fournisseurId}:`, error);
+      return throwError(() => error);
+    })
+  );
+}
+
+// Helper method to handle errors
+private handleError<T>(operation = 'operation', result?: T) {
+  return (error: any): Observable<T> => {
+    console.error(`${operation} failed:`, error);
+    // If you want to send the error to remote logging infrastructure
+    console.error(`${operation} error details:`, error.message);
+    
+    // Let the app keep running by returning an empty result
+    return of(result as T);
+  };
+}
 }
