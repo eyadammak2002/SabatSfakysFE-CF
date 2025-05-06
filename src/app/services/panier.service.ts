@@ -27,6 +27,8 @@ export interface Panier {
   statut: string;
   adresseLivraison: string;
   dateCommande?: Date;
+  modePaiement?: string; // Nouveau champ pour le mode de paiement
+
 }
 
 @Injectable({
@@ -472,4 +474,9 @@ viderPanier(): void {
   getFournisseurByEmail(email: string): Observable<any> {
     return this.http.get(`http://localhost:8080/fournisseur/email/${email}`);
   }
+
+  // Dans panier.service.ts, ajoutez cette fonction
+updateModePaiement(panierId: number, modePaiement: string): Observable<Panier> {
+  return this.http.put<Panier>(`${this.apiUrl2}/${panierId}/mode-paiement?modePaiement=${modePaiement}`, {});
+}
 }

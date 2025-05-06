@@ -124,7 +124,14 @@ export class AvisService {
 
   // Récupérer l'utilisateur d'un avis
   getUserFromAvis(avisId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${avisId}/user`);
+    // Changer l'endpoint de /user à /client pour correspondre au backend
+    return this.http.get<any>(`${this.apiUrl}/${avisId}/client`).pipe(
+      tap(userData => console.log(`Données client récupérées pour l'avis ${avisId}:`, userData)),
+      catchError(error => {
+        console.error(`Erreur lors de la récupération des données client pour l'avis ${avisId}:`, error);
+        return throwError(() => error);
+      })
+    );
   }
 
   // Modifier un avis existant
