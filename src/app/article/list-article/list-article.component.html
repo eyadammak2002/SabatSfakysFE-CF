@@ -100,93 +100,157 @@
       </div>
     </div>
   </div>
-
-
-<!-- ✅ Modal amélioré pour la sélection des couleurs et pointures -->
+<!-- Modal amélioré pour la sélection des couleurs et pointures -->
 <div *ngIf="selectedArticle" class="modal d-block" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #3c2313; color: white;">
-                <h5 class="modal-title">Ajouter au Panier</h5>
-                <button type="button" class="btn-close btn-close-white" (click)="selectedArticle = null"></button>
-            </div>
-            <div class="modal-body text-center">
-                
-                <!-- ✅ Modal Carousel -->
-                <div id="carouselArticle" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <div *ngFor="let photo of selectedArticle.photos; let i = index" 
-                             class="carousel-item" 
-                             [class.active]="i === 0">
-                            <img [src]="photo.url" class="d-block w-100 rounded" alt="Image article"
-                                 style="max-height: 300px; object-fit: cover;">
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselArticle" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselArticle" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    </button>
-                </div>
-  
-                <h4 class="mt-3 mb-3">{{ selectedArticle.name }}</h4>
-                <h5 class="text-danger mb-4">{{ selectedArticle.prixVente }} DT</h5>
-                
-                <!-- ✅ Sélection des couleurs avec cercles de couleur -->
-                <div *ngIf="selectedArticle?.stocks?.length" class="mb-4">
-                    <h6 class="text-start mb-2">Couleur :</h6>
-                    <div class="d-flex flex-wrap justify-content-start color-selection">
-                        <div *ngFor="let couleur of getUniqueColors(selectedArticle.stocks)" 
-                             class="color-option me-3 mb-2" 
-                             (click)="selectCouleur(couleur)">
-                            <div class="color-circle"
-                                 [style.background-color]="couleur.nom"
-                                 [class.selected]="selectedCouleur?.id === couleur.id">
+  <div class="modal-dialog modal-dialog-centered modal-xlg" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">
+                  <i class="fas fa-shopping-bag me-2"></i>Ajouter au Panier
+              </h5>
+              <button type="button" class="btn-close btn-close-white" (click)="selectedArticle = null"></button>
+          </div>
+          
+          <div class="modal-body">
+              <div class="row">
+                  <!-- Colonne de gauche pour l'image -->
+                  <div class="col-md-6">
+                      <!-- Carousel amélioré -->
+                      <div id="carouselArticle" class="carousel slide carousel-fade shadow" data-bs-ride="carousel">
+                          <div class="carousel-inner rounded-3">
+                              <div *ngFor="let photo of selectedArticle.photos; let i = index" 
+                                   class="carousel-item" 
+                                   [class.active]="i === activePhotoIndex || (activePhotoIndex === undefined && i === 0)">
+                                  <img [src]="photo.url" class="d-block w-100" alt="Image article"
+                                       style="height: 320px; object-fit: cover;">
+                              </div>
+                          </div>
+                          <button class="carousel-control-prev" type="button" data-bs-target="#carouselArticle" data-bs-slide="prev">
+                              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          </button>
+                          <button class="carousel-control-next" type="button" data-bs-target="#carouselArticle" data-bs-slide="next">
+                              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          </button>
+                      </div>
+                      
+                      <!-- Miniatures sous l'image principale -->
+                      <div class="thumbnails-container mt-3">
+                          <div class="row g-2">
+                            <ng-container *ngFor="let photo of selectedArticle.photos; let i = index">
+                              <div *ngIf="i < 3" class="col-4">
+                                <div class="thumbnail"
+                                     [class.active]="i === activePhotoIndex || (activePhotoIndex === undefined && i === 0)"
+                                     (click)="setActivePhoto(i)">
+                                  <img [src]="photo.url" class="img-fluid rounded" alt="Miniature">
+                                </div>
+                              </div>
+                            </ng-container>
+                            
+                              <div *ngIf="selectedArticle.photos.length > 3" class="col-4">
+                                  <div class="thumbnail more-photos" (click)="showAllPhotos()">
+                                      <span>+{{ selectedArticle.photos.length - 3 }}</span>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  <!-- Colonne de droite pour les détails -->
+                  <div class="col-md-6">
+                      <div class="product-details">
+                          <!-- En-tête produit plus raffiné -->
+                          <div class="product-header">
+                              <h4 class="product-title">{{ selectedArticle.name }}</h4>
+                              <div class="price-tag">
+                                  <span class="price">{{ selectedArticle.prixVente }} DT</span>
+                                  <span *ngIf="selectedArticle.prixVente < selectedArticle.prixVente" class="original-price">
+                                      {{ selectedArticle.prixVente }} DT
+                                  </span>
+                                  <span *ngIf="selectedArticle.prixVente < selectedArticle.prixVente" class="discount-badge">
+                                      -{{ Math.round((1 - selectedArticle.prixVente/selectedArticle.prixVente) * 100) }}%
+                                  </span>
+                              </div>
+                          </div>
+                          
+                          <!-- Remplacer la section "product-short-desc" actuelle -->
+                          <div class="product-short-desc" *ngIf="selectedArticle.description">
+                            <h6 class="description-title">Description</h6>
+                            <div class="description-content">
+                                <p>{{ selectedArticle.description | slice:0:150 }}{{ selectedArticle.description.length > 150 ? '...' : '' }}</p>
+                                <button *ngIf="selectedArticle.description.length > 150" 
+                                        class="btn btn-link btn-sm read-more-btn"
+                                        (click)="toggleFullDescription()">
+                                    {{ showFullDescription ? 'Voir moins' : 'Voir plus' }}
+                                </button>
+                                <div *ngIf="showFullDescription" class="full-description">
+                                    <p>{{ selectedArticle.description }}</p>
+                                </div>
                             </div>
-                            <div class="color-name" [class.selected]="selectedCouleur?.id === couleur.id">
-                                {{ couleur.nom }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- ✅ Sélection des pointures avec indication de stock -->
-                <div *ngIf="selectedCouleur && selectedPointures.length > 0" class="mb-4">
-                    <h6 class="text-start mb-2">Pointure :</h6>
-                    <div class="d-flex flex-wrap justify-content-start">
-                        <div *ngFor="let pointure of selectedPointures"
-                             class="size-option me-2 mb-2"
-                             [class.selected]="selectedPointure?.id === pointure.id"
-                             [class.out-of-stock]="pointureOutOfStock[pointure.id]"
-                             (click)="selectPointure(pointure)">
-                            {{ pointure.taille }}
-                            <div *ngIf="pointureOutOfStock[pointure.id]" class="out-of-stock-indicator">
-                                <i class="fas fa-times"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- ✅ Message de stock 
-                <div *ngIf="selectedPointure && !stockInsuffisant" class="alert alert-success mt-3">
-                    <i class="fas fa-check-circle me-2"></i> En stock
-                </div>
-                
-                <div *ngIf="stockInsuffisant" class="alert alert-danger mt-3">
-                    <i class="fas fa-times-circle me-2"></i> Épuisé
-                </div>-->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" (click)="selectedArticle = null">
-                    Annuler
-                </button>
-                <button type="button" class="btn btn-primary" 
-                        [disabled]="!selectedCouleur || !selectedPointure || stockInsuffisant"
-                        (click)="confirmerAjoutAuPanier()">
-                    <i class="fas fa-shopping-cart me-2"></i> Ajouter au panier
-                </button>
-            </div>
-        </div>
-    </div>
+                          </div>
+                          <!-- Ligne de séparation décorative -->
+                          <div class="divider">
+                              <span></span>
+                          </div>
+                          
+                          <!-- Options de personnalisation -->
+                          <div class="product-options">
+                              <!-- Sélection des couleurs -->
+                              <div *ngIf="selectedArticle?.stocks?.length" class="selection-section">
+                                  <h6 class="selection-title">
+                                     Couleur
+                                  </h6>
+                                  <div class="color-selection">
+                                      <div *ngFor="let couleur of getUniqueColors(selectedArticle.stocks)" 
+                                           class="color-option"
+                                           (click)="selectCouleur(couleur)">
+                                          <div class="color-circle"
+                                               [style.background-color]="couleur.nom"
+                                               [class.selected]="selectedCouleur?.id === couleur.id">
+                                              <i *ngIf="selectedCouleur?.id === couleur.id" class="fas fa-check color-check"></i>
+                                          </div>
+                                          <div class="color-name" [class.selected]="selectedCouleur?.id === couleur.id">
+                                              {{ couleur.nom }}
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                              <h6 class="selection-title">
+                                Pointure
+                            </h6>
+                              <!-- Sélection des pointures -->
+                              <div *ngIf="selectedCouleur && selectedPointures.length > 0" class="selection-section">
+                                  
+                                  <div class="size-selection">
+                                      <div *ngFor="let pointure of selectedPointures"
+                                           class="size-option"
+                                           [class.selected]="selectedPointure?.id === pointure.id"
+                                           [class.out-of-stock]="pointureOutOfStock[pointure.id]"
+                                           (click)="selectPointure(pointure)">
+                                          {{ pointure.taille }}
+                                          <div *ngIf="pointureOutOfStock[pointure.id]" class="out-of-stock-indicator">
+                                              <i class="fas fa-times"></i>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                          
+                        
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
+          <div class="modal-footer">
+              <button type="button" class="btn btn-outline" (click)="selectedArticle = null">
+                  Annuler
+              </button>
+              <button type="button" class="btn btn-primary" 
+                      [disabled]="!selectedCouleur || !selectedPointure || stockInsuffisant"
+                      (click)="confirmerAjoutAuPanier()">
+                  <i class="fas fa-shopping-cart me-2"></i> Ajouter au panier
+              </button>
+          </div>
+      </div>
+  </div>
 </div>

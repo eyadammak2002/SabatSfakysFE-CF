@@ -282,6 +282,6 @@ uploadFile(file: File, index: number): any {
   }
 
   redirectToArticles(): void {
-    this.router.navigate(['/article']);
+    this.router.navigate(['/articles']);
   }
 }

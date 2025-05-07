@@ -1,0 +1,168 @@
+<!-- avis-list.component.html -->
+<div class="content-wrapper">
+    <!-- En-tête moderne et élégant -->
+    <div class="dashboard-header">
+      <div class="header-content">
+        <div class="header-left">
+          <div class="brand-logo">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="header-title">
+            <h2>Avis Clients</h2>
+            <p>Consultez les retours de vos clients sur vos produits</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mini statistiques -->
+      <div class="stats-overview">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ getNoteMoyenneGlobale() }}</span>
+            <span class="stat-label">Note moyenne</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-comment"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ getTotalAvis() }}</span>
+            <span class="stat-label">Total Avis</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-box"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ articles.length }}</span>
+            <span class="stat-label">Produits évalués</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Affichage pendant le chargement -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Chargement des produits et avis...</p>
+    </div>
+  
+    <!-- Liste des articles avec leurs avis -->
+    <div *ngIf="!isLoading">
+      <div *ngIf="articles.length === 0" class="alert alert-info text-center">
+        <i class="fas fa-info-circle me-2"></i>
+        Aucun article trouvé. Ajoutez des articles pour recevoir des avis clients.
+      </div>
+  
+      <!-- Cartes des articles -->
+      <div *ngFor="let article of articles" class="card article-card mb-4">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{{ article.name }}</h5>
+            <div class="rating-summary">
+              <div class="stars">
+                <i *ngFor="let i of [1,2,3,4,5]" class="fas fa-star" 
+                   [ngClass]="{'active': i <= getNoteMoyenne(article), 'inactive': i > getNoteMoyenne(article)}"></i>
+              </div>
+              <span class="rating-text">{{ getNoteMoyenne(article) }} ({{ getNombreAvis(article) }} avis)</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <!-- Informations de l'article -->
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <div class="article-image">
+                <img *ngIf="article.photos && article.photos.length > 0" 
+                     [src]="'http://localhost:8080/uploads/' + article.photos[0].name" 
+                     alt="{{ article.name }}"
+                     class="img-thumbnail">
+                <div *ngIf="!article.photos || article.photos.length === 0" class="no-image">
+                  <i class="fas fa-image"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-9">
+              <h6 class="mb-2">{{ article.name }}</h6>
+              <p class="description">{{ article.description }}</p>
+              <div class="article-details">
+                <p><strong>Référence:</strong> {{ article.ref }}</p>
+                <p><strong>Prix:</strong> {{ article.prixVente }} DT</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Chargement des avis -->
+          <div *ngIf="isArticleAvisLoading(article.id!)" class="text-center my-3">
+            <div class="spinner spinner-sm"></div>
+            <p class="small">Chargement des avis...</p>
+          </div>
+          
+          <!-- Aucun avis -->
+          <div *ngIf="!isArticleAvisLoading(article.id!) && getAvis(article.id!).length === 0" class="no-avis">
+            <i class="fas fa-comment-slash"></i>
+            <p>Aucun avis pour ce produit</p>
+          </div>
+          
+          <!-- Liste des avis -->
+          <div *ngIf="!isArticleAvisLoading(article.id!) && getAvis(article.id!).length > 0" class="avis-container">
+            <h6 class="avis-header">Derniers avis reçus ({{ getAvis(article.id!).length }})</h6>
+            
+            <div class="avis-list">
+              <div *ngFor="let avis of getAvis(article.id!).slice(0, 2)" class="avis-item">
+                <div class="avis-header">
+                  <div class="client-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span>{{ avis.user?.username || 'Client #' + avis.user?.id }}</span>
+                  </div>
+                  <div class="avis-meta">
+                    <div class="stars">
+                      <i *ngFor="let i of [1,2,3,4,5]" class="fas fa-star" 
+                         [ngClass]="{'active': i <= avis.note, 'inactive': i > avis.note}"></i>
+                    </div>
+                    <span class="date">{{ avis.dateAjout | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                </div>
+                <div class="avis-content">
+                  <p>{{ avis.description }}</p>
+                  
+                  <!-- Photos de l'avis -->
+                  <div *ngIf="avis.photos && avis.photos.length > 0" class="avis-photos">
+                    <div class="photo-grid">
+                      <div *ngFor="let photo of avis.photos.slice(0, 3)" class="photo-item">
+                        <img [src]="'http://localhost:8080/uploads/' + photo.name" alt="Photo avis">
+                      </div>
+                      <div *ngIf="avis.photos.length > 3" class="photo-more">
+                        +{{ avis.photos.length - 3 }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Bouton pour voir tous les avis -->
+            <div *ngIf="getAvis(article.id!).length > 2" class="text-center mt-3">
+              <button class="btn-view-all" (click)="voirAvis(article.id!)">
+                Voir tous les avis ({{ getAvis(article.id!).length }})
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-footer">
+          <button class="btn-view-article" (click)="voirAvis(article.id!)">
+            <i class="fas fa-eye me-2"></i>Voir détails et avis
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

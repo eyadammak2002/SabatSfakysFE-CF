@@ -465,7 +465,7 @@ checkUserRole(): void {
       }
       
       // Redirect to supplier articles page
-      this.router.navigate(['/article']);
+      this.router.navigate(['/listCommandeFR']);
     }
 
 

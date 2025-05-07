@@ -25,7 +25,6 @@ export class FournisseurArticlesPersonalisesComponent implements OnInit {
   statusFilter: string = 'all';
   unreadMessageCounts: { [articleId: number]: number } = {};
 
-
   constructor(
     private articleService: ArticlePersonaliserService,
     private tokenStorage: TokenStorageService,
@@ -135,12 +134,23 @@ export class FournisseurArticlesPersonalisesComponent implements OnInit {
       case 'EN_ATTENTE': return 'bg-warning';
       case 'ACCEPTE': return 'bg-success';
       case 'REFUSE': return 'bg-danger';
-      case 'EN_PRODUCTION': return 'bg-info';
-      case 'TERMINE': return 'bg-primary';
+     
       default: return 'bg-secondary';
     }
   }
 
+  // Méthodes pour les statistiques
+  getEnAttente(): number {
+    return this.articles.filter(article => article.statut === 'EN_ATTENTE').length;
+  }
 
-  
+  getAcceptes(): number {
+    return this.articles.filter(article => 
+      article.statut === 'ACCEPTE' || article.statut === 'EN_PRODUCTION'
+    ).length;
+  }
+
+  getTermines(): number {
+    return this.articles.filter(article => article.statut === 'TERMINE').length;
+  }
 }

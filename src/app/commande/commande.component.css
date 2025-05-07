@@ -1,121 +1,1093 @@
-.commande-details {
-    max-width: 800px;  /* Ajuste la largeur maximale de la section */
-    margin: 2rem auto;
-    padding: 2rem;
-    background-color: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    font-family: 'Segoe UI', sans-serif;
-    color: #333;
+/* Container principal */
+.commande-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Roboto', Arial, sans-serif;
+  color: #333;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* En-tête de la commande */
+.commande-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.commande-header h1 {
+  color: #2c3e50;
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #3c2313, #63a50a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.commande-date {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+/* Suivi de commande - Nouveau style amélioré */
+.tracking-container {
+  margin-bottom: 2.5rem;
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.8rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.tracking-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  color: #3c2313;
+  font-weight: 600;
+  text-align: center;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tracking-container h2:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #3c2313, #63a50a);
+  border-radius: 3px;
+}
+
+.tracking-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: 3rem;
+}
+
+/* Ligne horizontale de progression */
+.tracking-steps:before {
+  content: '';
+  position: absolute;
+  top: 30px;
+  height: 4px;
+  background-color: #e0e0e0;
+  width: 100%;
+  left: 0;
+  z-index: 1;
+  border-radius: 4px;
+}
+
+/* Ligne de progression complétée */
+.step-line {
+  position: absolute;
+  top: 30px;
+  height: 4px;
+  background: linear-gradient(90deg, #3c2313, #63a50a);
+  width: 0;
+  left: 0;
+  z-index: 1;
+  border-radius: 4px;
+  transition: width 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  transition: all 0.5s ease;
+}
+
+.step-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.2rem;
+  transition: all 0.5s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 3px solid #e0e0e0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Effet de pulse pour l'étape active */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(60, 35, 19, 0.7);
+    transform: scale(1);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(60, 35, 19, 0);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(60, 35, 19, 0);
+    transform: scale(1);
+  }
+}
+
+/* Effet de glow pour les étapes complétées */
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(99, 165, 10, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(99, 165, 10, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(99, 165, 10, 0.7);
+  }
+}
+
+/* Effet d'apparition des icônes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Animation pour le remplissage du cercle */
+@keyframes fillStep {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Nouvelle animation d'allumage */
+@keyframes lightUp {
+  0% { filter: brightness(0.5); }
+  25% { filter: brightness(1.5); }
+  50% { filter: brightness(1); }
+  75% { filter: brightness(1.3); }
+  100% { filter: brightness(1); }
+}
+
+/* Animation de scintillement */
+@keyframes sparkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.step-icon mat-icon {
+  font-size: 28px;
+  color: #757575;
+  transition: all 0.5s ease;
+  animation: fadeIn 0.7s ease-out forwards;
+}
+
+.step-content {
+  text-align: center;
+  max-width: 150px;
+  transition: all 0.4s ease;
+}
+
+.step-content h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  transition: color 0.4s ease;
+}
+
+.step-content p {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  transition: opacity 0.4s ease;
+  opacity: 0.8;
+}
+
+/* Styles pour étapes complétées */
+.step.completed .step-icon {
+  background-color: #63a50a; /* Le vert de la charte graphique */
+  border-color: #63a50a;
+  animation: glow 2s infinite alternate, lightUp 1.5s ease-in-out 1;
+}
+
+.step.completed .step-icon:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(99, 165, 10, 0.2);
+  animation: fillStep 0.8s ease-out forwards;
+  transform-origin: center;
+  border-radius: 50%;
+}
+
+.step.completed .step-icon:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(99, 165, 10, 0.4) 0%, transparent 70%);
+  animation: sparkle 2s infinite alternate;
+}
+
+.step.completed .step-icon mat-icon {
+  color: white;
+}
+
+.step.completed .step-content h3 {
+  color: #63a50a;
+  font-weight: 600;
+}
+
+.completed-line {
+  background: linear-gradient(90deg, #3c2313, #63a50a) !important;
+}
+
+/* Style pour étape active */
+.step.active .step-icon {
+  background-color: #3c2313; /* Le marron de la charte graphique */
+  border-color: #3c2313;
+  transform: scale(1.15);
+  animation: pulse 2s infinite, lightUp 2s ease-in-out infinite;
+}
+
+.step.active .step-icon:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(60, 35, 19, 0.3) 0%, rgba(60, 35, 19, 0) 70%);
+  animation: fillStep 0.8s ease-out forwards;
+}
+
+.step.active .step-icon:after {
+  content: '';
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  top: -10%;
+  left: -10%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 50%);
+  animation: sparkle 1.5s infinite alternate;
+  border-radius: 50%;
+}
+
+.step.active .step-icon mat-icon {
+  color: white;
+}
+
+.step.active .step-content h3 {
+  color: #3c2313;
+  font-weight: 600;
+}
+
+.step.active .step-content p {
+  opacity: 1;
+}
+
+/* Effet de transition fluide entre les étapes */
+.step {
+  opacity: 0.7;
+  transform: translateY(0);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.step.active, .step.completed {
+  opacity: 1;
+  transform: translateY(-5px);
+}
+
+/* Carte d'information de la commande */
+.commande-info-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid #3c2313;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.commande-info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 0.8rem;
+}
+
+.info-header h2 {
+  font-size: 1.4rem;
+  color: #3c2313;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.info-header mat-icon {
+  color: #3c2313;
+  font-size: 1.8rem;
+  margin-left: 1rem;
+}
+
+.info-content + .info-content {
+  margin-top: 1rem;
+}
+
+.info-content {
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  font-size: 1rem; 
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed #e0e0e0;
+  transition: background-color 0.3s ease;
+  font-size: 1rem; 
+}
+
+.info-item:hover {
+  background-color: #f8f9ff;
+}
+
+.info-item span:first-child {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.status-badge {
+  background: linear-gradient(90deg, #3c2313, #63a50a);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: 0 3px 8px rgba(60, 35, 19, 0.3);
+  animation: pulse 2s infinite;
+}
+
+/* Status spécifiques */
+.status-badge.annulee {
+  background: linear-gradient(90deg, #e74c3c, #c0392b);
+  box-shadow: 0 3px 8px rgba(231, 76, 60, 0.3);
+}
+
+.status-badge.livree {
+  background: linear-gradient(90deg, #63a50a, #54890a);
+  box-shadow: 0 3px 8px rgba(99, 165, 10, 0.3);
+}
+
+/* Section des articles */
+.articles-section {
+  margin-bottom: 2rem;
+}
+
+.articles-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #3c2313;
+  font-weight: 600;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 8px;
+}
+
+.articles-section h2:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #3c2313, #63a50a);
+  border-radius: 3px;
+}
+
+.articles-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.article-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.2rem;
+  display: flex;
+  gap: 1.8rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s ease;
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+  position: relative;
+}
+
+.article-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  border-color: #e3e8ff;
+}
+
+.article-card:hover:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(to bottom, #3c2313, #63a50a);
+}
+
+.article-image {
+  flex: 0 0 150px;
+  height: 150px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+}
+
+.article-card:hover .article-image {
+  transform: scale(1.05);
+}
+
+.article-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.article-card:hover .article-photo {
+  transform: scale(1.1);
+}
+
+.article-info {
+  flex: 1;
+  padding: 0.5rem;
+}
+
+.article-info h3 {
+  font-size: 1.3rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #3c2313;
+  font-weight: 600;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid #f0f0f0;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.article-card:hover .article-info h3 {
+  color: #3c2313;
+}
+
+.article-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.detail-group, .price-group {
+  flex: 1;
+  min-width: 200px;
+  transition: transform 0.3s ease;
+}
+
+.article-card:hover .detail-group,
+.article-card:hover .price-group {
+  transform: translateY(-3px);
+}
+
+.article-details p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #555;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.article-details p:hover {
+  transform: translateX(5px);
+  color: #333;
+}
+
+.article-details p span {
+  font-weight: 500;
+  color: #7f8c8d;
+  margin-right: 0.5rem;
+}
+
+.total-price {
+  font-weight: 600;
+  color: #63a50a !important;
+  font-size: 1.2rem !important;
+  background: linear-gradient(90deg, #63a50a, #63a50a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* Options de paiement */
+.payment-options {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.8rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #f0f0f0;
+}
+
+.payment-options:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  border-color: #e3e8ff;
+}
+
+.payment-options h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  color: #3c2313;
+  font-weight: 600;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 8px;
+}
+
+.payment-options h2:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #3c2313, #63a50a);
+  border-radius: 3px;
+}
+
+.payment-methods {
+  display: flex;
+  gap: 1.8rem;
+  margin-bottom: 1.8rem;
+}
+
+.payment-method {
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.payment-method:before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(60, 35, 19, 0.1), rgba(99, 165, 10, 0));
+  top: 0;
+  left: 0;
+  transform: translateY(100%);
+  transition: transform 0.5s ease;
+}
+
+.payment-method:hover:before {
+  transform: translateY(0);
+}
+
+.payment-method.selected {
+  border-color: #3c2313;
+  background-color: rgba(60, 35, 19, 0.05);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(60, 35, 19, 0.15);
+}
+
+.payment-method.selected:before {
+  background: linear-gradient(45deg, rgba(60, 35, 19, 0.2), rgba(99, 165, 10, 0.05));
+  transform: translateY(0);
+}
+
+.payment-method input[type="radio"] {
+  margin-right: 1rem;
+  transform: scale(1.3);
+  cursor: pointer;
+  accent-color: #3c2313;
+}
+
+.payment-method label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+}
+
+.payment-method mat-icon,
+.payment-method .payment-icon {
+  margin-right: 1rem;
+  font-size: 1.8rem;
+  color: #3c2313;
+  width: 28px;
+  height: 28px;
+  transition: transform 0.3s ease;
+}
+
+.payment-method:hover mat-icon,
+.payment-method:hover .payment-icon {
+  transform: scale(1.2);
+}
+
+.payment-method span {
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.payment-method:hover span {
+  color: #3c2313;
+}
+
+/* Boutons d'action */
+.btn-primary, .btn-cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1.8rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  gap: 0.8rem;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  padding: 0.5rem 0.5rem; 
+}
+
+.btn-primary:before, .btn-cancel:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+  z-index: -1;
+}
+
+.btn-primary:hover:before, .btn-cancel:hover:before {
+  transform: translateX(0);
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #63a50a, #63a50a);
+  color: white;
+  box-shadow: 0 4px 15px rgba(60, 35, 19, 0.3);
+  padding: 0.5rem 0.5rem; 
+
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(60, 35, 19, 0.4);
+}
+
+.btn-cancel {
+  background: linear-gradient(90deg, #e74c3c, #c0392b);
+  color: white;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.btn-cancel:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+}
+
+.btn-primary mat-icon, .btn-cancel mat-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.btn-primary:hover mat-icon, .btn-cancel:hover mat-icon {
+  transform: translateX(-3px);
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
   
-    h2, h3 {
-      text-align: center;
-      color: #2c3e50;
-      margin-bottom: 1rem;
-    }
-  
-    p {
-      font-size: 16px;
-      margin: 0.5rem 0;
-    }
-  
-    strong {
-      color: #2c3e50;
-    }
-  
-    ul {
-      list-style-type: disc;
-      padding-left: 1.5rem;
-      margin-bottom: 1.5rem;
-  
-      li {
-        margin-bottom: 0.5rem;
-        font-size: 15px;
-      }
-    }
-  
-    button {
-      display: inline-block;
-      margin: 1rem 0.5rem 0 0;
-      padding: 10px 20px;
-      font-size: 15px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-  
-      &:first-of-type {
-        background-color: #0070ba;
-        color: white;
-  
-        &:hover {
-          background-color: #005c9d;
-        }
-      }
-  
-      &:last-of-type {
-        background-color: #28a745;
-        color: white;
-  
-        &:hover {
-          background-color: #218838;
-        }
-      }
-    }
-  
-    ngx-paypal {
-      margin-top: 1rem;
-    }
+}
+
+/* Container PayPal */
+.paypal-container {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-top: 1.5rem;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+  position: relative;
+  overflow: hidden;
+}
+
+.paypal-container:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(to bottom, #3c2313, #63a50a);
+}
+
+/* Styles pour les snackbars */
+.success-snackbar {
+  background-color: #63a50a;
+  color: white;
+  box-shadow: 0 5px 15px rgba(99, 165, 10, 0.3);
+  border-radius: 8px;
+}
+
+.error-snackbar {
+  background-color: #e74c3c;
+  color: white;
+  box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+  border-radius: 8px;
+}
+
+/* Animation d'apparition graduelle */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.commande-container > * {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.commande-container > *:nth-child(1) { animation-delay: 0.1s; }
+.commande-container > *:nth-child(2) { animation-delay: 0.2s; }
+.commande-container > *:nth-child(3) { animation-delay: 0.3s; }
+.commande-container > *:nth-child(4) { animation-delay: 0.4s; }
+.commande-container > *:nth-child(5) { animation-delay: 0.5s; }
+
+/* Adaptations pour mobile */
+@media (max-width: 768px) {
+  .commande-container {
+    padding: 1rem;
   }
   
-  .articles-container {
-    display: flex;
-    flex-wrap: wrap;
+  .tracking-steps {
+    flex-direction: column;
+    gap: 2rem;
+    align-items: flex-start;
+    padding-left: 2rem;
+  }
+  
+  .tracking-steps:before {
+    width: 4px;
+    height: 100%;
+    top: 0;
+    left: 30px;
+  }
+  
+  .step-line {
+    width: 4px !important;
+    height: 0%;
+    top: 0;
+    left: 30px;
+    transition: height 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .step {
+    width: 100%;
+    flex-direction: row;
+    align-items: flex-start;
     gap: 1.5rem;
-    justify-content: center;
-    margin-top: 1rem;
+  }
+  
+  .step-content {
+    text-align: left;
+    max-width: none;
+  }
+  
+  .step-icon {
+    margin-bottom: 0;
   }
   
   .article-card {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    width: 100%;  /* Carte pleine largeur */
-    max-width: 600px;  /* Limiter la largeur à 600px */
-    display: flex;
-    flex-direction: row;
-    transition: transform 0.3s;
-  
-    &:hover {
-      transform: translateY(-5px);
-    }
-  
-    .article-photo {
-      width: 150px;  /* Largeur fixe pour l'image */
-      height: 150px; /* Hauteur de l'image */
-      object-fit: cover;
-      border-radius: 8px;
-      margin-right: 1rem;
-    }
-  
-    .article-info {
-      padding: 1rem;
-      flex: 1;  /* Prend le reste de l'espace disponible */
-    
-      h4 {
-        margin-top: 0;
-        font-size: 1.4rem;  /* Taille du titre augmentée */
-        color: #2c3e50;
-      }
-  
-      p {
-        margin: 0.3rem 0;
-        font-size: 14px;
-      }
-  
-      p strong {
-        font-weight: bold;
-      }
-    }
+    flex-direction: column;
   }
   
+  .article-image {
+    width: 100%;
+    height: 180px;
+    margin-bottom: 1rem;
+  }
+  
+  .payment-methods {
+    flex-direction: column;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .step.active, .step.completed {
+    transform: translateX(5px);
+  }
+}/* Styles spécifiques pour les commandes annulées */
+.commande-annulee .step .step-icon {
+  background-color: #e74c3c !important; /* Rouge */
+  border-color: #c0392b !important;
+  transform: scale(0.85) !important; /* Étapes plus petites */
+  animation: none !important; /* Supprime toutes les animations par défaut */
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.2) !important;
+}
+
+.commande-annulee .step .step-icon mat-icon {
+  color: white !important;
+  font-size: 24px !important; /* Icônes légèrement plus petites */
+}
+
+.commande-annulee .step .step-content h3 {
+  color: #e74c3c !important;
+  font-weight: 500 !important;
+  font-size: 0.9rem !important; /* Texte plus petit */
+}
+
+.commande-annulee .step .step-content p {
+  opacity: 0.7 !important;
+  font-size: 0.75rem !important; /* Description plus petite */
+}
+
+/* Ligne de progression rouge */
+.commande-annulee .step-line,
+.commande-annulee .completed-line {
+  background: #e74c3c !important; /* Rouge uni au lieu du dégradé */
+}
+
+/* Tracking steps */
+.commande-annulee .tracking-steps:before {
+  background-color: #ffecec !important; /* Fond très légèrement rouge */
+}
+
+/* Animation spécifique seulement pour l'étape d'annulation active */
+.commande-annulee .step.active .step-icon {
+  background-color: #e74c3c !important;
+  border-color: #c0392b !important;
+  transform: scale(1) !important; /* Taille normale seulement pour l'étape active */
+  animation: pulseRed 2s infinite !important; /* Animation spécifique rouge */
+  box-shadow: 0 0 15px rgba(231, 76, 60, 0.5) !important;
+}
+
+/* Animation spécifique pour l'étape annulée active */
+@keyframes pulseRed {
+  0% {
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+    transform: scale(1);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(231, 76, 60, 0);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+    transform: scale(1);
+  }
+}
+.commande-annulee .step.active .step-content h3 {
+  font-weight: 600 !important;
+  font-size: 1rem !important; /* Taille normale pour l'étape active */
+}
+
+.commande-annulee .step.active .step-content p {
+  opacity: 1 !important;
+  font-size: 0.85rem !important; /* Taille normale pour l'étape active */
+}
+
+
+
+/* Neutraliser les classes completed pour qu'elles n'appliquent pas de styles verts */
+.commande-annulee .step.completed .step-icon {
+  background-color: #e74c3c !important;
+  border-color: #c0392b !important;
+  animation: none !important;
+}
+
+.commande-annulee .step.completed .step-icon:before,
+.commande-annulee .step.completed .step-icon:after {
+  display: none !important; /* Supprime les effets d'animation */
+}
+
+.commande-annulee .step.completed .step-content h3 {
+  color: #e74c3c !important;
+}
+
+/* Adapter le style du message d'annulation */
+.commande-annulee .annulation-message {
+  background-color: #ffecec;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 20px;
+  border-left: 4px solid #e74c3c;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #333;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* S'assurer que l'étape ANNULER est la seule qui a l'animation */
+.commande-annulee .step:not(.active) {
+  opacity: 0.7 !important;
+  transform: none !important;
+}
+
+/* Pour qu'aucune étape ne paraisse complétée avec des étapes vertes */
+.commande-annulee .step.completed:not(.active) .step-icon,
+.commande-annulee .step.active:not([data-statut='ANNULER']) .step-icon {
+  background-color: #e74c3c !important;
+  border-color: #c0392b !important;
+}
+
+/* Adaptation pour mobile */
+@media (max-width: 768px) {
+  .commande-annulee .step-line {
+    background: #e74c3c !important;
+  }
+  
+  .commande-annulee .step {
+    transform: none !important;
+  }
+  
+  .commande-annulee .step.active {
+    transform: translateX(5px) !important;
+  }
+}
+/* Styles pour la carte de mode de paiement */
+.payment-mode-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.payment-mode-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.payment-mode-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.payment-mode-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.payment-mode-header mat-icon {
+  color: #6c757d;
+}
+
+.payment-mode-content {
+  padding: 20px;
+}
+
+.payment-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  border-radius: 50px;
+  color: white;
+  font-weight: 500;
+  background: linear-gradient(90deg, #6c757d, #495057);
+  box-shadow: 0 3px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* Style spécifique pour le badge PayPal */
+.payment-mode-badge.paypal {
+  background: linear-gradient(90deg, #003087, #009cde);
+  box-shadow: 0 3px 8px rgba(0, 48, 135, 0.3);
+}
+
+/* Style spécifique pour le badge Livraison */
+.payment-mode-badge.livraison {
+  background: linear-gradient(90deg, #3c2313, #63a50a);
+  box-shadow: 0 3px 8px rgba(60, 35, 19, 0.3);
+}
+
+/* Style pour commande annulée - mode de paiement */
+.commande-annulee .payment-mode-badge {
+  background: linear-gradient(90deg, #e74c3c, #c0392b) !important;
+  box-shadow: 0 3px 8px rgba(231, 76, 60, 0.3) !important;
+}
+
+.payment-mode-badge mat-icon {
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+
+/* Animation subtile au survol du badge */
+.payment-mode-badge:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
+}

@@ -57,6 +57,9 @@ import { FournisseurArticlesPersonalisesComponent } from './article-personaliser
 import { ForgetPasswordComponent } from './authentication/forget-password/forget-password.component';
 import { ResetPasswordComponent } from './authentication/reset-password/reset-password.component';
 import { IntelligentSearchComponent } from './intelligent-search/intelligent-search.component';
+import { ListReclamationComponent } from './fournisseur-dashboard/list-reclamation/list-reclamation.component';
+import { AvisListComponent } from './fournisseur-dashboard/avis-list/avis-list.component';
+import { DetailArticleAvisComponent } from './fournisseur-dashboard/detail-article-avis/detail-article-avis.component';
 
 @NgModule({
   declarations: [
@@ -78,6 +81,8 @@ import { IntelligentSearchComponent } from './intelligent-search/intelligent-sea
     ChatComponent,
     ResetPasswordComponent,
     IntelligentSearchComponent,
+   
+    DetailArticleAvisComponent,
 
     
     
@@ -132,6 +137,8 @@ import { IntelligentSearchComponent } from './intelligent-search/intelligent-sea
     ForgetPasswordComponent,
     ListCommandeComponent,
     ListCommandeFRComponent,
+    ListReclamationComponent,
+    AvisListComponent,
 
   ],
   exports: [

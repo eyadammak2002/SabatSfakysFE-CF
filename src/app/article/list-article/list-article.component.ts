@@ -28,6 +28,8 @@ export class ListArticleComponent implements OnInit {
   aiResponse: string = '';
   isSearchMode: boolean = false;
   isSearchLoading: boolean = false;
+  activePhotoIndex: number | undefined;
+  showFullDescription: boolean = false;
 
 
   constructor(
@@ -62,6 +64,22 @@ export class ListArticleComponent implements OnInit {
     });
   }
   
+// Ajoutez ces méthodes au composant
+setActivePhoto(index: number): void {
+  this.activePhotoIndex = index;
+}
+
+showAllPhotos(): void {
+  // Cette méthode pourrait ouvrir une galerie d'images plus complète
+  // Pour l'instant, nous allons simplement afficher la première image
+  this.activePhotoIndex = 0;
+}
+
+// N'oubliez pas d'ajouter cette référence Math dans votre template
+// Pour rendre le calcul de remise possible
+get Math() { 
+  return Math; 
+}
 
   resetSearch(): void {
     this.searchDataService.clearSearchResults();
@@ -170,6 +188,7 @@ export class ListArticleComponent implements OnInit {
     this.stockDisponible = null;
     this.stockInsuffisant = false;
     this.pointureOutOfStock = {};
+    this.activePhotoIndex = 0; // Réinitialiser l'index de photo actif
   
     console.log("Article sélectionné:", article);
     if (article.stocks && article.stocks.length > 0) {
@@ -179,6 +198,9 @@ export class ListArticleComponent implements OnInit {
     }
   }
   
+  toggleFullDescription(): void {
+    this.showFullDescription = !this.showFullDescription;
+  }
   getArticlesWithStatut(statut: string): void {
     this.articleService.getArticlesByStatut(statut).subscribe({
       next: (data) => {

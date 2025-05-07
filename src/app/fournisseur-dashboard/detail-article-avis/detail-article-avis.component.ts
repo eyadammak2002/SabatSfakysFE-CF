@@ -7,22 +7,22 @@ import { catchError, forkJoin, of } from 'rxjs';
 import { AvisService } from 'src/app/services/avis.service';
 import { PanierService } from 'src/app/services/panier.service';
 import { FileUploadService } from 'src/app/services/file-upload.service';
-import { Article, Couleur, Pointure } from '../article';
-import { ArticleService } from '../article.service';
 import { Photo } from 'src/app/photo/Photo';
 import { PhotoService } from 'src/app/photo/photo.service';
 import { AuthenticationService } from 'src/app/services/Authentication.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { FavorisService } from 'src/app/services/favoris.service';
 import { StockService } from 'src/app/panier/stock.service';
+import { Article, Couleur, Pointure } from 'src/app/article/article';
+import { ArticleService } from 'src/app/article/article.service';
 declare var bootstrap: any;
 
 @Component({
-  selector: 'app-article-detail',
-  templateUrl: './article-detail.component.html',
-  styleUrls: ['./article-detail.component.css']
+  selector: 'app-detail-article-avis',
+  templateUrl: './detail-article-avis.component.html',
+  styleUrls: ['./detail-article-avis.component.css']
 })
-export class ArticleDetailComponent implements OnInit {
+export class DetailArticleAvisComponent implements OnInit {
   article: Article | null = null;
   articleId: number | null = null;
   isLoading: boolean = true;
@@ -416,7 +416,7 @@ getCurrentClientId(): Promise<number | null> {
   
   // Retour à la liste des articles
   retourListe(): void {
-    this.router.navigate(['/articles']);
+    this.router.navigate(['/fournisseur/listAvis']);
   }
   
   // Méthodes d'upload de photos
@@ -690,20 +690,17 @@ soumettreAvis(): void {
   // Ajouter une méthode pour récupérer les infos utilisateur pour un avis spécifique
   loadUserForAvis(avisId: number): void {
     this.avisService.getUserFromAvis(avisId).subscribe({
-      next: (clientData) => {
-        console.log("clientData",clientData);
-        // Trouver l'avis dans le tableau
+      next: (userData) => {
+        // Trouver l'avis dans le tableau et mettre à jour les informations utilisateur
         const avisIndex = this.avis.findIndex(a => a.id === avisId);
         if (avisIndex !== -1) {
-          // Assigner directement les données client à l'avis
-          this.avis[avisIndex].client = clientData;
-          
-          console.log(`Informations client mises à jour pour l'avis ${avisId}:`, this.avis[avisIndex].client);
-          this.cdr.detectChanges(); // Forcer la mise à jour de l'affichage
+          this.avis[avisIndex].user = userData;
+          this.cdr.detectChanges();
         }
+        console.log(`Informations utilisateur chargées pour l'avis ${avisId}:`, userData);
       },
       error: (err) => {
-        console.error(`Erreur lors du chargement des informations client pour l'avis ${avisId}:`, err);
+        console.error(`Erreur lors du chargement des informations utilisateur pour l'avis ${avisId}:`, err);
       }
     });
   }

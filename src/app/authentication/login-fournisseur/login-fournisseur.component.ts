@@ -42,7 +42,7 @@ export class LoginFournisseurComponent {
         localStorage.setItem("token", data.accessToken);
         
         // Rediriger vers la page des articles/produits du fournisseur
-        this.router.navigate(['/article']);
+        this.router.navigate(['/listCommandeFR']);
       },
       err => {
         console.error('Erreur de connexion', err);

@@ -1,0 +1,247 @@
+<div class="container mt-4">
+    <!-- Affichage pendant le chargement -->
+    <div *ngIf="isLoading" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="mt-2">Chargement des détails de l'article...</p>
+    </div>
+  
+    <!-- Message d'erreur -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+      <button class="btn btn-outline-primary ms-3" (click)="retourListe()">Retour à la liste des articles</button>
+    </div>
+  
+    <!-- Détails de l'article -->
+    <div *ngIf="article && !isLoading" class="article-details">
+      <div class="row">
+        <!-- Bouton retour -->
+        <div class="col-12 mb-3">
+          <button class="btn btn-outline-secondary" (click)="retourListe()">
+            <i class="fas fa-arrow-left"></i> Retour aux articles
+          </button>
+        </div>
+  
+        <!-- Galerie d'images -->
+        <div class="col-md-6 mb-4">
+          <div class="card shadow">
+            <div class="image-gallery position-relative">
+              <!-- Image principale -->
+              <img *ngIf="article.photos && article.photos.length > 0" 
+                  [src]="article.photos[currentImageIndex].url" 
+                  class="card-img-top main-image" 
+                  [alt]="article.name">
+              
+              <!-- Navigation d'images -->
+              <div class="image-controls" *ngIf="article.photos && article.photos.length > 1">
+                <button class="btn btn-light btn-sm rounded-circle shadow-sm" (click)="prevImage()">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="btn btn-light btn-sm rounded-circle shadow-sm" (click)="nextImage()">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+              
+              <!-- Miniatures des images -->
+              <div class="image-thumbnails d-flex mt-2 overflow-auto" *ngIf="article.photos && article.photos.length > 1">
+                <img *ngFor="let photo of article.photos; let i = index"
+                    [src]="photo.url"
+                    [alt]="article.name + ' - image ' + (i+1)"
+                    class="thumbnail-image mx-1"
+                    [class.active]="i === currentImageIndex"
+                    (click)="currentImageIndex = i">
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Informations sur l'article -->
+        <div class="col-md-6">
+          <div class="card shadow">
+            <div class="card-body">
+              <h2 class="card-title fw-bold">{{ article.name }}</h2>
+              <p class="text-muted">Référence: #{{ article.id }}</p>
+              
+              <div class="price-info my-3">
+                <h3 class="text-danger fw-bold">{{ article.prixVente }} DT</h3>
+                
+                <span *ngIf="article.prixVente < article.prixVente" class="badge bg-success ms-2">
+                  En promotion !
+                </span>
+              </div>
+              
+              <div class="description-box my-4">
+                <h5 class="card-subtitle mb-2">Description</h5>
+                <p class="card-text">{{ article.description }}</p>
+              </div>
+              
+              <hr>
+              
+              <!-- Sélection d'options -->
+              <div class="options-selection">
+                <!-- Sélection des couleurs -->
+                <div *ngIf="article.stocks?.length" class="mb-3">
+                  <label class="form-label fw-bold">Couleur :</label>
+                  <div class="d-flex flex-wrap">
+                    <button *ngFor="let couleur of getUniqueColors(article.stocks)" 
+                            class="btn m-1"
+                            [class.btn-primary]="selectedCouleur?.id === couleur.id"
+                            [class.btn-outline-primary]="selectedCouleur?.id !== couleur.id"
+                            (click)="selectCouleur(couleur)">
+                      {{ couleur.nom }}
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Sélection des pointures avec indication de disponibilité -->
+                <div *ngIf="selectedCouleur && selectedPointures.length > 0" class="mb-3">
+                  <label class="form-label fw-bold">Pointure :</label>
+                  <div class="d-flex flex-wrap">
+                    <button *ngFor="let pointure of selectedPointures"
+                            class="btn m-1 position-relative"
+                            [class.btn-success]="selectedPointure?.id === pointure.id"
+                            [class.btn-outline-success]="selectedPointure?.id !== pointure.id && !pointureOutOfStock[pointure.id]"
+                            [class.btn-outline-secondary]="pointureOutOfStock[pointure.id]"
+                            [class.disabled]="pointureOutOfStock[pointure.id]"
+                            [style.opacity]="pointureOutOfStock[pointure.id] ? '0.6' : '1'"
+                            (click)="!pointureOutOfStock[pointure.id] && selectPointure(pointure)">
+                      {{ pointure.taille }}
+                      <div *ngIf="pointureOutOfStock[pointure.id]" 
+                           class="position-absolute" 
+                           style="top: 0; right: 0; left: 0; bottom: 0; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-times text-danger" style="font-size: 0.9rem; position: absolute;"></i>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Message d'information sur le stock -->
+                <div *ngIf="selectedPointure">
+                  <div *ngIf="!stockInsuffisant" class="alert alert-success mt-2 mb-3">
+                    <i class="fas fa-check-circle me-2"></i> En stock
+                  </div>
+                  
+                  <div *ngIf="stockInsuffisant" class="alert alert-danger mt-2 mb-3">
+                    <i class="fas fa-times-circle me-2"></i> Épuisé
+                  </div>
+                </div>
+                
+                <!-- Bouton d'ajout au panier et favoris -->
+                <div class="d-flex gap-2 mt-4">
+                  <!-- Nouveau bouton favoris avec juste un cœur -->
+                  <button class="btn btn-lg position-relative" 
+                          [ngClass]="{'btn-danger': isFavori, 'btn-outline-danger': !isFavori}"
+                          style="min-width: 60px; transition: all 0.3s ease;">
+                    <i class="fas fa-heart" style="font-size: 1.5rem;"></i>
+                    <span *ngIf="favorisCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+                      {{ favorisCount }}
+                      <span class="visually-hidden">favoris</span>
+                    </span>
+                  </button>
+  
+                  <!-- Bouton d'ajout au panier -->
+                  <button class="btn btn-lg btn-success flex-grow-1" 
+                          [disabled]="!selectedCouleur || !selectedPointure || stockInsuffisant || (selectedPointure && pointureOutOfStock[selectedPointure.id])"
+                          >
+                    <i class="fas fa-shopping-cart me-2"></i> Ajouter au panier
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+ 
+      <!-- Section des avis -->
+      <div class="row mt-5">
+        <div class="col-12">
+          <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center" 
+                 style="background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%); color: white;">
+              <h3 class="mb-0"><i class="fas fa-star me-2"></i> Avis clients</h3>
+             
+  
+              <!-- Indicateur de chargement pendant la vérification -->
+              <span *ngIf="verificationAchatEnCours" class="ms-2">
+                <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                  <span class="visually-hidden">Vérification...</span>
+                </div>
+              </span>
+            </div>
+            <div class="card-body">
+              <!-- Chargement des avis -->
+              <div *ngIf="isLoadingAvis" class="text-center my-3">
+                <div class="spinner-border" role="status" style="color: #3c2313;">
+                  <span class="visually-hidden">Chargement des avis...</span>
+                </div>
+                <p class="mt-2">Chargement des avis...</p>
+              </div>
+              
+              <!-- Aucun avis -->
+              <div *ngIf="!isLoadingAvis && avis.length === 0" class="text-center my-4 py-5" 
+                   style="background-color: #f9f9f9; border-radius: 10px;">
+                <i class="fas fa-comment-slash fa-3x mb-3" style="color: #ccc;"></i>
+                <p class="text-muted">
+                  Aucun avis pour cet article. Soyez le premier à donner votre avis !
+                </p>
+          
+              </div>
+              
+              <!-- Liste des avis -->
+              <div *ngIf="!isLoadingAvis && avis.length > 0" class="avis-list">
+                <div *ngFor="let avisItem of avis" class="avis-item mb-4 p-3" 
+                     style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #63a50a; background-color: #f9f9f9;">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="client-info">
+                      <strong style="color: #3c2313;">{{ avisItem.user?.username || 'Utilisateur #' + avisItem.user?.id }}</strong>
+                    </div>
+                    <div class="d-flex align-items-center">
+                      <small class="text-muted me-3">{{ avisItem.dateAjout | date:'dd/MM/yyyy' }}</small>
+                      <div class="rating">
+                        <i *ngFor="let star of [1,2,3,4,5]" 
+                           class="fas fa-star" 
+                           [style.color]="star <= avisItem.note ? '#FFC107' : '#e0e0e0'"></i>
+                      </div>
+                      <!-- Boutons d'actions pour l'auteur de l'avis -->
+                      <div *ngIf="isAvisAuthor(avisItem)" class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                          <li><a class="dropdown-item text-danger" href="javascript:void(0)" (click)="supprimerAvis(avisItem.id)">
+                            <i class="fas fa-trash me-2"></i> Supprimer</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="comment-section mt-2">
+                    <h6 class="comment-title mb-2" style="color: #3c2313; font-weight: 600;">Commentaire</h6>
+                    <div class="comment-content p-3" style="border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9fa;">
+                      <p class="avis-text my-2" style="white-space: pre-line;">{{ avisItem.description }}</p>
+                    </div>
+                  </div>
+                  <!-- Photos de l'avis -->
+                  <div *ngIf="avisItem.photos && avisItem.photos.length > 0" class="avis-photos mt-3">
+                    <div class="row g-2">
+                      <div *ngFor="let photo of avisItem.photos" class="col-6 col-md-4 col-lg-3">
+                        <div class="photo-thumbnail">
+                          <img [src]="'http://localhost:8080/uploads/' + photo.name" 
+                               class="img-thumbnail" 
+                               alt="Photo avis client"
+                               style="width: 100%; height: 150px; object-fit: cover; cursor: pointer;">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 

@@ -1,14 +1,15 @@
 import { CommonModule, NgClass } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { catchError, of, switchMap } from 'rxjs';
 import { Panier, PanierService, LignePanier } from 'src/app/services/panier.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
   selector: 'app-list-commande-fr',
-    standalone: true,
-    imports: [FormsModule, CommonModule, NgClass],
+  standalone: true,
+  imports: [FormsModule, CommonModule, NgClass, RouterModule],
   templateUrl: './list-commande-fr.component.html',
   styleUrls: ['./list-commande-fr.component.css']
 })
@@ -153,5 +154,27 @@ export class ListCommandeFRComponent implements OnInit {
   // Vérifier si toutes les lignes d'une commande sont livrées
   toutesLignesLivrees(commande: Panier): boolean {
     return commande.lignesPanier.every(ligne => ligne.statut === 'LIVRER_FR');
+  }
+
+  // Méthodes pour les statistiques
+  getCommandesLivrees(): number {
+    if (!this.commandes.length) return 0;
+    return this.commandes.filter(commande => this.toutesLignesLivrees(commande)).length;
+  }
+
+  getCommandesEnAttente(): number {
+    if (!this.commandes.length) return 0;
+    return this.commandes.filter(commande => !this.toutesLignesLivrees(commande)).length;
+  }
+
+  getTotalVentes(): number {
+    if (!this.commandes.length) return 0;
+    return this.commandes.reduce((total, commande) => {
+      // Ne compter que les lignes livrées dans le total des ventes
+      const totalCommande = commande.lignesPanier
+        .filter(ligne => ligne.statut === 'LIVRER_FR')
+        .reduce((sum, ligne) => sum + (ligne.total || 0), 0);
+      return total + totalCommande;
+    }, 0);
   }
 }

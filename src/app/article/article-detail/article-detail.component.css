@@ -1,128 +1,181 @@
-/* Styles principaux pour les détails de l'article */
+/* ----- Styles principaux ----- */
 .article-details {
   margin-bottom: 3rem;
+
+  .main-image {
+    width: 100%;
+    height: 400px;
+    object-fit: contain;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+  }
+
+  .image-controls {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    z-index: 5;
+
+    button {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.8;
+      transition: all 0.2s;
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        opacity: 1;
+        background-color: white;
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .image-thumbnails {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .thumbnail-image {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      border-color: #6c757d;
+      transform: translateY(-2px);
+    }
+
+    &.active {
+      border-color: #3c2313;
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .description-box {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+    margin: 15px 0;
+    border-left: 4px solid #63a50a;
+  }
+
+  .price-info {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .options-selection button {
+    margin: 5px;
+    transition: all 0.3s;
+
+    &:hover:not(.disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .avis-list {
+    margin-top: 20px;
+  }
+
+  .avis-item {
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid #63a50a;
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .client-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+
+      .rating {
+        margin-top: 5px;
+        margin-left: 10px;
+      }
+    }
+
+    .comment-section {
+      margin-top: 15px;
+    }
+
+    .comment-content {
+      background-color: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .avis-text {
+      margin: 10px 0;
+      white-space: pre-line;
+      line-height: 1.6;
+    }
+
+    .avis-photos {
+      margin-top: 15px;
+    }
+
+    .photo-thumbnail img {
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
 }
 
-/* ----- Galerie d'images ----- */
-/* Image principale */
-.article-details .main-image {
-  width: 100%;
-  height: 400px;
-  object-fit: contain;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  transition: transform 0.3s ease;
-}
-
-.article-details .main-image:hover {
-  transform: scale(1.02);
-}
-
-/* Contrôles de navigation d'images */
-.article-details .image-controls {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  transform: translateY(-50%);
-  display: flex;
-  justify-content: space-between;
-  padding: 0 10px;
-  z-index: 5;
-}
-
-.article-details .image-controls button {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.8;
-  transition: all 0.2s;
-  background-color: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.article-details .image-controls button:hover {
-  opacity: 1;
-  background-color: white;
-  transform: scale(1.1);
-}
-
-/* Miniatures des images */
-.article-details .image-thumbnails {
-  padding: 10px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.article-details .thumbnail-image {
-  width: 70px;
-  height: 70px;
-  object-fit: cover;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.article-details .thumbnail-image:hover {
-  border-color: #6c757d;
-  transform: translateY(-2px);
-}
-
-.article-details .thumbnail-image.active {
-  border-color: #3c2313;
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* ----- Informations du produit ----- */
-.article-details .description-box {
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
-  margin: 15px 0;
-  border-left: 4px solid #63a50a;
-}
-
-.article-details .price-info {
-  display: flex;
-  align-items: center;
-  margin: 15px 0;
-  padding: 10px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.article-details .options-selection button {
-  transition: all 0.3s;
-  margin: 5px;
-}
-
-.article-details .options-selection button:hover:not(.disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Styles pour les pointures en rupture de stock */
+/* ----- Indicateurs et boutons ----- */
 .btn.disabled {
   cursor: not-allowed;
   pointer-events: all !important;
 }
 
-/* Style pour l'indicateur de rupture de stock */
 .out-of-stock-indicator {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -130,8 +183,8 @@
   border-radius: 0.25rem;
 }
 
-/* Style pour l'indicateur de stock disponible */
-.alert-success, .alert-danger {
+.alert-success,
+.alert-danger {
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
   border-radius: 0.5rem;
@@ -149,7 +202,7 @@
   border-left-color: #dc3545;
   color: #721c24;
 }
-/* Style pour le bouton favoris */
+
 .heart-btn {
   background: transparent;
   border: none;
@@ -158,114 +211,31 @@
   transition: transform 0.2s;
   cursor: pointer;
   outline: none;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  .fa-heart {
+    font-size: 1.8rem;
+    color: #dc3545;
+    transition: transform 0.3s;
+  }
+
+  .fas.fa-heart {
+    animation: heartbeat 1.5s infinite;
+  }
+
+  &:hover .fa-heart {
+    animation: pulse 0.6s ease-in-out;
+  }
 }
 
-.heart-btn:hover {
-  transform: scale(1.05);
-}
-
-.heart-btn:active {
-  transform: scale(0.95);
-}
-
-/* Styles communs pour les deux icônes de cœur */
-.heart-btn .fa-heart {
-  font-size: 1.8rem;
-  color: #dc3545;  /* Couleur rouge pour les deux icônes */
-  transition: transform 0.3s;
-}
-
-/* Style spécifique pour le cœur non-favoris (contour) */
-.heart-btn .far.fa-heart {
-  /* Vous pouvez ajouter des styles spécifiques ici si nécessaire */
-}
-
-/* Style spécifique pour le cœur favoris (plein) */
-.heart-btn .fas.fa-heart {
-  animation: heartbeat 1.5s infinite;
-}
-
-/* Animation au survol pour les deux icônes */
-.heart-btn:hover .fa-heart {
-  animation: pulse 0.6s ease-in-out;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-
-@keyframes heartbeat {
-  0%, 100% { transform: scale(1); }
-  5%, 15% { transform: scale(1.1); }
-  10% { transform: scale(1.15); }
-}
-
-/* ----- Section des avis ----- */
-.article-details .avis-list {
-  margin-top: 20px;
-}
-
-.article-details .avis-item {
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-  border-left: 4px solid #63a50a;
-  background-color: #f9f9f9;
-  padding: 20px;
-  margin-bottom: 20px;
-  transition: transform 0.3s ease;
-}
-
-.article-details .avis-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.article-details .avis-item .client-info {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.article-details .avis-item .client-info .rating {
-  margin-top: 5px;
-  margin-left: 10px;
-}
-
-.article-details .avis-item .comment-section {
-  margin-top: 15px;
-}
-
-.article-details .avis-item .comment-content {
-  background-color: white;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.article-details .avis-item .avis-text {
-  margin: 10px 0;
-  white-space: pre-line;
-  line-height: 1.6;
-}
-
-.article-details .avis-item .avis-photos {
-  margin-top: 15px;
-}
-
-.article-details .avis-item .photo-thumbnail img {
-  border-radius: 8px;
-  transition: transform 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.article-details .avis-item .photo-thumbnail img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
-}
-
-/* ----- Modal d'avis ----- */
+/* ----- Autres blocs ----- */
 .upload-zone {
   background-color: #f9f9f9;
   border-radius: 8px;
@@ -292,68 +262,71 @@
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s;
   border: 2px solid transparent;
-}
 
-.photo-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-}
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
 
-.photo-card-body {
-  padding: 10px;
-  background-color: white;
+  &-body {
+    padding: 10px;
+    background-color: white;
+  }
 }
 
 .border-success {
   border-color: #63a50a !important;
 }
 
-/* Boutons d'action avec effet de transition */
 .btn-action {
   transition: all 0.3s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
 }
 
-.btn-action:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* ----- Animations ----- */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
-/* Media queries pour la responsive */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  5%, 15% { transform: scale(1.1); }
+  10% { transform: scale(1.15); }
+}
+
+/* ----- Responsive ----- */
 @media (max-width: 768px) {
-  .article-details .main-image {
-    height: 300px;
-  }
-  
-  .article-details .thumbnail-image {
-    width: 60px;
-    height: 60px;
-  }
-  
-  .article-details .avis-item {
-    padding: 15px;
+  .article-details {
+    .main-image {
+      height: 300px;
+    }
+
+    .thumbnail-image {
+      width: 60px;
+      height: 60px;
+    }
+
+    .avis-item {
+      padding: 15px;
+    }
   }
 }
 
 @media (max-width: 576px) {
-  .article-details .main-image {
-    height: 250px;
-  }
-  
-  .article-details .price-info {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .article-details .image-controls button {
-    width: 35px;
-    height: 35px;
-  }
-}
+  .article-details {
+    .main-image {
+      height: 250px;
+    }
 
-.bg-disabled {
-  background-color: #d1cfce4f;
-}
-
-.bg-custom {
-  background-color: #63a50a;
+    .price-info {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
 }

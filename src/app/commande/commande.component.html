@@ -1,39 +1,160 @@
-<div class="commande-details">
-  <h2>Détails de la commande</h2>
-  <p><strong>Ajouté le:</strong> {{ panier.dateCommande | date:'dd/MM/yyyy HH:mm' }}</p>
+<div class="commande-container" [ngClass]="{'commande-annulee': panier.statut === 'ANNULER'}">
+  <div class="commande-header">
+    <h1>Détails de ma commande</h1>
+    <p class="commande-date">Ajouté le: {{ panier.dateCommande | date:'dd/MM/yyyy HH:mm' }}</p>
+  </div>
+  
+  <!-- Suivi de commande -->
+  <div class="tracking-container">
+    <h2>Suivi de commande</h2>
+    <div class="tracking-steps">
+      <div *ngFor="let etape of etapesCommande; let index = index" 
+           class="step" 
+           [ngClass]="{
+             'completed': isEtapeCompletee(etape.statut),
+             'active': isEtapeActive(etape.statut),
+             'commande-annulee': etape.statut === 'ANNULER' && isEtapeActive(etape.statut)
 
-  <p><strong>Adresse de Livraison:</strong> {{ panier.adresseLivraison }}</p>
-  <p><strong>Total de la commande:</strong> {{ panier.total }} €</p>
+           }"
+           [attr.data-statut]="etape.statut">
+        <div class="step-icon">
+          <mat-icon>{{ etape.icon }}</mat-icon>
+        </div>
+        <div class="step-content">
+          <h3>{{ etape.label }}</h3>
+          <p>{{ etape.description }}</p>
+        </div>
+        <!-- Ligne de progression, n'affichez pas pour la dernière étape -->
+        <div *ngIf="index < etapesCommande.length - 1" class="step-line" 
+             [ngClass]="{'completed-line': isEtapeCompletee(etapesCommande[index+1].statut)}"></div>
+      </div>
+    </div>
+    
+    <!-- Message pour commande annulée -->
+    <div *ngIf="panier.statut === 'ANNULER'" class="annulation-message">
+      <mat-icon>info</mat-icon>
+      Votre commande a été annulée. Si vous souhaitez passer une nouvelle commande, veuillez vous rendre sur notre catalogue. Pour toute question concernant cette annulation, n'hésitez pas à contacter notre service client au <strong>+216 XX XXX XXX</strong>.
+    </div>
+  </div>
 
-  <h3>Articles Commandés:</h3>
 
-  <div class="articles-container">
-    <div class="article-card" *ngFor="let ligne of panier.lignesPanier">
-      <img 
-        [src]="'http://localhost:8080/uploads/' + ligne.article.photos[0]?.name" 
-        alt="{{ ligne.article.name }}" 
-        class="article-photo"
-      />
 
-      <div class="article-info">
-        <h4>{{ ligne.article.name }}</h4>
-        <p><strong>Réf:</strong> {{ ligne.article.ref }}</p>
-        <p><strong>Description:</strong> {{ ligne.article.description }}</p>
-        <p><strong>Quantité:</strong> {{ ligne.quantite }}</p>
-        <p><strong>Pointure:</strong> {{ ligne.pointure?.id }}</p>
-        <p><strong>Couleur:</strong> {{ ligne.couleur?.id }}</p>
-        <p><strong>Prix unitaire:</strong> {{ ligne.prixUnitaire }} €</p>
-        <p><strong>Total:</strong> {{ ligne.total }} €</p>
+  <div class="commande-info-card">
+    <div class="info-header">
+      <h2>Détails de la livraison</h2>
+      <mat-icon>local_shipping</mat-icon>
+    </div>
+    <!-- Mettre à jour cette partie dans votre HTML -->
+    <div class="payment-mode-card">
+      <div class="payment-mode-header">
+        <h2>Mode de paiement</h2>
+        <mat-icon>payment</mat-icon>
+      </div>
+      <div class="payment-mode-content">
+        <div class="payment-mode-badge"
+            [ngClass]="{
+              'paypal': panier.modePaiement === 'PAYPAL',
+              'livraison': panier.modePaiement === 'LIVRAISON'
+            }">
+          <mat-icon>{{ getPaymentModeIcon() }}</mat-icon>
+          {{ getPaymentModeDisplay() }}
+        </div>
+      </div>
+    </div>
+    <div class="info-content ">
+      <p class="info-item"><span>Adresse de livraison:</span> {{ panier.adresseLivraison }}</p>
+      <p class="info-item"><span>Montant total:</span> <strong>{{ panier.total | number:'1.2-2' }} €</strong></p>
+      <p class="info-item"><span>Statut:</span> 
+        <span class="status-badge" [ngClass]="{'annulee': panier.statut === 'ANNULER', 'livree': panier.statut === 'LIVRER'}">{{ panier.statut }}</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="articles-section">
+    <h2>Articles Commandés</h2>
+    <div class="articles-container">
+      <div class="article-card" *ngFor="let ligne of panier.lignesPanier">
+        <div class="article-image">
+          <img 
+            [src]="'http://localhost:8080/uploads/' + ligne.article.photos[0]?.name" 
+            alt="{{ ligne.article.name }}" 
+            class="article-photo"
+            onError="this.src='assets/images/placeholder.jpg'"
+          />
+        </div>
+
+        <div class="article-info">
+          <h3>{{ ligne.article.name }}</h3>
+          <div class="article-details">
+            <div class="detail-group">
+              <p><span>Réf:</span> {{ ligne.article.ref }}</p>
+              <p><span>Description:</span> {{ ligne.article.description }}</p>
+            </div>
+            <div class="detail-group">
+              <p><span>Quantité:</span> {{ ligne.quantite }}</p>
+              <p *ngIf="ligne.pointure"><span>Pointure:</span> {{ ligne.pointure?.id }}</p>
+              <p *ngIf="ligne.couleur"><span>Couleur:</span> {{ ligne.couleur?.id }}</p>
+            </div>
+            <div class="price-group">
+              <p class="total-price"><span>Total:</span> {{ ligne.total | number:'1.2-2' }} €</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- PayPal -->
-  <button *ngIf="(panier.statut !== 'COMMANDEE' && panier.statut !== 'LIVRER' )&& !payer" (click)="payement()">Payer en ligne</button>
-  <button *ngIf="payer" (click)="validerCommande()">Valider la commande</button>
-  <button *ngIf="panier.statut !== 'COMMANDEE'&& panier.statut !== 'LIVRER'" (click)="annulerCommande()">Annuler la commande</button>
+  <!-- Options de paiement - Ne pas afficher si la commande est annulée ou commandée ou livrée -->
+  <div *ngIf="panier.statut !== 'COMMANDEE' && panier.statut !== 'LIVRER'" class="payment-options">
+    <h2>Mode de paiement</h2>
+    <div class="payment-methods">
+      <div class="payment-method" 
+           [ngClass]="{'selected': modePaiement === 'LIVRAISON'}"
+           (click)="changerModePaiement('LIVRAISON')">
+        <input type="radio" id="paiement-livraison" 
+               name="mode-paiement" 
+               [value]="'LIVRAISON'" 
+               [(ngModel)]="modePaiement">
+        <label for="paiement-livraison">
+          <mat-icon>local_shipping</mat-icon>
+          <span>Paiement à la livraison</span>
+        </label>
+      </div>
+      
+      <div class="payment-method" 
+           [ngClass]="{'selected': modePaiement === 'PAYPAL'}"
+           (click)="changerModePaiement('PAYPAL')">
+        <input type="radio" id="paiement-paypal" 
+               name="mode-paiement" 
+               [value]="'PAYPAL'" 
+               [(ngModel)]="modePaiement">
+        <label for="paiement-paypal">
+          <img src="assets/images/paypal-icon.png" alt="PayPal" class="payment-icon" 
+               onError="this.src='https://cdn.cdnlogo.com/logos/p/60/paypal.svg'; this.style.width='24px';">
+          <span>Paiement par PayPal</span>
+        </label>
+      </div>
+    </div>
+    
+    <!-- Bouton de paiement -->
+    <button *ngIf="!payer" (click)="payement()" class="btn-primary">
+      <mat-icon>{{ modePaiement === 'LIVRAISON' ? 'check_circle' : 'payment' }}</mat-icon>
+      {{ modePaiement === 'LIVRAISON' ? 'Valider la commande' : 'Payer avec PayPal' }}
+    </button>
+  </div>
 
-  <div *ngIf="payer">
+  <!-- Boutons d'action - Ne pas afficher pour les commandes livrées ou annulées -->
+  <div class="action-buttons">
+    <button *ngIf="panier.statut !== 'COMMANDEE' && panier.statut !== 'LIVRER' && panier.statut !== 'ANNULER'" 
+            (click)="annulerCommande()" 
+            class="btn-cancel">
+      <mat-icon>cancel</mat-icon>
+      Annuler la commande
+    </button>
+  </div>
+
+  <!-- Composant PayPal (apparaît uniquement quand le mode paypal est sélectionné et activé) -->
+  <div *ngIf="payer && modePaiement === 'PAYPAL'" class="paypal-container">
     <ngx-paypal [config]="payPalConfig"></ngx-paypal>
   </div>
 </div>

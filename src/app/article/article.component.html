@@ -1,93 +1,8 @@
-
-
-<div class="container mt-5">
-
-
-  <!-- Menu latéral à gauche -->
-  <div class="sidebar" [ngClass]="{'expanded': isSidebarExpanded}">
-      <!-- Bouton pour agrandir/réduire le menu -->
-      <div class="sidebar-toggle">
-        <button (click)="toggleSidebar()" class="toggle-btn">
-          <i class="fas" [ngClass]="{'fa-chevron-right': !isSidebarExpanded, 'fa-chevron-left': isSidebarExpanded}"></i>
-        </button>
-      </div>
-      
-
-      
-      <!-- Liens de navigation -->
-      <nav class="sidebar-nav">
-        <div class="nav-item">
-          <a class="nav-link" (click)="redirectToDashboard()">
-            <i class="fas fa-tachometer-alt"></i>
-            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Tableau de bord</span>
-          </a>
-        </div>
-        
-        <div class="nav-item">
-          <a class="nav-link active" (click)="redirectToArticle()">
-            <i class="fas fa-box"></i>
-            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Tous les Articles</span>
-          </a>
-        </div>
-        
-        <!-- Dans votre menu latéral -->
-        <div class="nav-item">
-          <a class="nav-link" (click)="redirectToArticlesPersonalises()">
-            <i class="fas fa-tshirt"></i>
-            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Articles Personnalisés</span>
-          </a>
-        </div>
-
-        <div class="nav-item">
-          <a class="nav-link" (click)="redirectToListCommandeParFR()">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Toutes les Commandes</span>
-          </a>
-        </div>
-        
-        <div class="nav-item">
-          <a class="nav-link" (click)="redirectToStocks()">
-            <i class="fas fa-warehouse"></i>
-            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Gestion des Stocks</span>
-          </a>
-        </div>
-        
-        <div class="nav-item">
-          <a class="nav-link" (click)="redirectToCategories()">
-            <i class="fas fa-tags"></i>
-            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Catégories</span>
-          </a>
-        </div>
-        
-        <div class="nav-item">
-          <a class="nav-link" (click)="redirectToSettings()">
-            <i class="fas fa-cog"></i>
-            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Paramètres</span>
-          </a>
-        </div>
-      </nav>
-      
-      <!-- Profil utilisateur en bas du menu -->
-      <div class="sidebar-footer">
-        <div class="user-profile">
-          <div class="user-avatar">
-            <i class="fas fa-user"></i>
-          </div>
-          <div class="user-info" [ngClass]="{'visible': isSidebarExpanded}">
-            <h6 class="user-name">Fournisseur</h6>
-            <small class="user-role">Gestionnaire</small>
-          </div>
-        </div>
-        <div class="logout-btn" [ngClass]="{'icon-only': !isSidebarExpanded}">
-          <i class="fas fa-sign-out-alt"></i>
-          <span [ngClass]="{'visible': isSidebarExpanded}">Déconnexion</span>
-        </div>
-      </div>
-  </div>
-  
+<!-- article.component.html -->
+<div class="content-wrapper">
   <!-- En-tête moderne et élégant -->
-  <div class="dashboard-header ">
-    <div class="header-content ">
+  <div class="dashboard-header">
+    <div class="header-content">
       <div class="header-left">
         <div class="brand-logo">
           <i class="fas fa-shoe-prints"></i>
@@ -153,25 +68,25 @@
   </div>
 
   <!-- Tableau des articles -->
-  <div class="card shadow-lg border-0 overflow-hidden" >
-    <div class="card-body p-0" >
+  <div class="card shadow-lg border-0 overflow-hidden">
+    <div class="card-body p-0">
       <div class="table-responsive">
         <table class="table table-hover custom-table mb-0">
           <thead>
-            <tr style="  background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%);">
-              <th scope="col" class="px-3 py-3  font-weight-bold">ID</th>
-              <th scope="col" class="px-3 py-3  font-weight-bold">Référence</th>
-              <th scope="col" class="px-3 py-3  font-weight-bold">Nom</th>
-              <th scope="col" class="px-3 py-3  font-weight-bold">Description</th>
-              <th scope="col" class="px-3 py-3  font-weight-bold">Prix Fournisseur</th>
-              <th scope="col" class="px-3 py-3  font-weight-bold">Prix Vente</th>
-              <th scope="col" class="px-3 py-3  font-weight-bold">Genre</th>
-              <th scope="col" class="px-3 py-3  font-weight-bold">Tissu</th>
-              <th scope="col" class="px-3 py-3  font-weight-bold">Stock</th>
-              <th scope="col" class="px-3 py-3  font-weight-bold">Catégorie</th>
-              <th scope="col" class="px-3 py-3  font-weight-bold">Photos</th>
-              <th scope="col" class="px-3 py-3  font-weight-bold">Statut</th>
-              <th scope="col" class="px-3 py-3  font-weight-bold">Actions</th>
+            <tr style="background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%);">
+              <th scope="col" class="px-3 py-3 font-weight-bold">ID</th>
+              <th scope="col" class="px-3 py-3 font-weight-bold">Référence</th>
+              <th scope="col" class="px-3 py-3 font-weight-bold">Nom</th>
+              <th scope="col" class="px-3 py-3 font-weight-bold">Description</th>
+              <th scope="col" class="px-3 py-3 font-weight-bold">Prix Fournisseur</th>
+              <th scope="col" class="px-3 py-3 font-weight-bold">Prix Vente</th>
+              <th scope="col" class="px-3 py-3 font-weight-bold">Genre</th>
+              <th scope="col" class="px-3 py-3 font-weight-bold">Tissu</th>
+              <th scope="col" class="px-3 py-3 font-weight-bold">Stock</th>
+              <th scope="col" class="px-3 py-3 font-weight-bold">Catégorie</th>
+              <th scope="col" class="px-3 py-3 font-weight-bold">Photos</th>
+              <th scope="col" class="px-3 py-3 font-weight-bold">Statut</th>
+              <th scope="col" class="px-3 py-3 font-weight-bold">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -221,13 +136,13 @@
                 <div *ngIf="article.photos && article.photos.length > 0" class="d-flex">
                   <div *ngFor="let photo of article.photos.slice(0, 3)" class="position-relative me-1">
                     <img [src]="'http://localhost:8080/uploads/' + photo.name" 
-                         [alt]="photo.name" 
-                         class="img-thumbnail"
-                         style="width: 100px; height: 100px; object-fit:fill;">
+                        [alt]="photo.name" 
+                        class="img-thumbnail"
+                        style="width: 100px; height: 100px; object-fit:fill;">
                   </div>
                   <div *ngIf="article.photos.length > 3" 
-                       class="img-thumbnail d-flex align-items-center justify-content-center" 
-                       style="width: 40px; height: 40px; background-color: #f8f9fa;">
+                        class="img-thumbnail d-flex align-items-center justify-content-center" 
+                        style="width: 40px; height: 40px; background-color: #f8f9fa;">
                     <small>+{{ article.photos.length - 3 }}</small>
                   </div>
                 </div>

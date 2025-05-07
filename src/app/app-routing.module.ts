@@ -39,11 +39,14 @@ import { ForgetPasswordComponent } from './authentication/forget-password/forget
 import { ResetPasswordComponent } from './authentication/reset-password/reset-password.component';
 import { ListCommandeFRComponent } from './commande/list-commande-fr/list-commande-fr.component';
 import { IntelligentSearchComponent } from './intelligent-search/intelligent-search.component';
+import { ListReclamationComponent } from './fournisseur-dashboard/list-reclamation/list-reclamation.component';
+import { FournisseurDashboardComponent } from './fournisseur-dashboard/fournisseur-dashboard.component';
+import { AvisListComponent } from './fournisseur-dashboard/avis-list/avis-list.component';
+import { DetailArticleAvisComponent } from './fournisseur-dashboard/detail-article-avis/detail-article-avis.component';
 
 const routes: Routes = [
   { path: '', component: ListArticleComponent },
   { path: 'banner', component: BannerComponent },
-  { path: 'categories', component: CategoriesComponent },
   { path: 'about', component: AboutComponent },
   { path: 'photo', component: PhotoComponent },
   { path: 'createPhoto', component: CreatePhotoComponent },
@@ -71,16 +74,14 @@ const routes: Routes = [
   },
   
   { path: 'resetPassword', component: ResetPasswordComponent },
-  { path: 'article', component: ArticleComponent },
   { path: 'accueil', component: ListArticleComponent },
-  { path: 'createArticle', component: CreateArticleComponent },
-  { path: 'editArticle/:id', component: EditArticleComponent },
   { path: 'detailArticle/:id', component: ArticleDetailComponent },
+  { path: 'detailArticleFR/:id', component:   DetailArticleAvisComponent
+  },
   { path: 'articlereclamation/:id', component: ArticleReclamationComponent },
   { path: 'articlePersonaliser', component: ArticlePersonaliserComponent },
   { path: 'createArticlePersonaliser', component: CreateArticlePersonaliserComponent },
   { path: 'article-personaliser/:id', component: ArticlePersonaliserDetailComponent },
-  { path: 'fournisseur/articles-personalises',  component: FournisseurArticlesPersonalisesComponent },
   
   { path: 'pack', component: PackComponent },
   { path: 'createPack', component: CreatePackComponent },
@@ -89,7 +90,6 @@ const routes: Routes = [
   { path: 'panier', component: PanierComponent },
   { path: 'commande', component: CommandeComponent },
   { path: 'listCommande', component: ListCommandeComponent },
-  { path: 'listCommandeFR', component: ListCommandeFRComponent },
 
 
    // Routes pour le filtrage par catégorie
@@ -112,6 +112,24 @@ const routes: Routes = [
    { path: 'chat', component: ChatComponent },
    { path: 'search', component: IntelligentSearchComponent },
    
+   { 
+    path: '',
+    component: FournisseurDashboardComponent, // Composant qui contient le layout commun
+    canActivate: [AuthGuard], // Vérification d'authentification
+    children: [
+      { path: '', redirectTo: 'articles', pathMatch: 'full' },
+      { path: 'articles', component: ArticleComponent },
+      { path: 'createArticle', component: CreateArticleComponent },
+      { path: 'editArticle/:id', component: EditArticleComponent },
+      { path: 'listCommandeFR', component: ListCommandeFRComponent },
+      { path: 'fournisseur/listReclamation', component: ListReclamationComponent },
+      { path: 'fournisseur/listAvis', component: AvisListComponent }, 
+      { path: 'fournisseur/articles-personalises',  component: FournisseurArticlesPersonalisesComponent },
+      { path: 'categories', component: CategoriesComponent },
+      { path: 'settings', component: ProfileComponent }
+      // Ajoutez d'autres routes enfants selon besoin
+    ]
+  },
 
 ];
 

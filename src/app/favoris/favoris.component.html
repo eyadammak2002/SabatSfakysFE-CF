@@ -1,43 +1,61 @@
-<div class="container">
+<div class="favorites-container">
+  <div class="favorites-header">
     <h2>Mes Articles Favoris</h2>
     
-    <div *ngIf="isLoading" class="text-center my-4">
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">Chargement...</span>
-      </div>
+  </div>
+  
+  <!-- État de chargement -->
+  <div *ngIf="isLoading" class="loader-container">
+    <div class="pulse-loader"></div>
+    <p>Chargement de vos favoris</p>
+  </div>
+  
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="error-message">
+    <i class="fas fa-exclamation-circle"></i>
+    <p>{{ errorMessage }}</p>
+  </div>
+  
+  <!-- Aucun favori -->
+  <div *ngIf="!isLoading && favoris.length === 0" class="empty-state">
+    <div class="empty-icon">
+      <i class="far fa-heart"></i>
     </div>
-    
-    <div *ngIf="errorMessage" class="alert alert-danger">
-      {{ errorMessage }}
-    </div>
-    
-    <div *ngIf="!isLoading && favoris.length === 0" class="alert alert-info">
-      Vous n'avez pas encore d'articles favoris.
-    </div>
-    
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-      <div class="col" *ngFor="let article of favoris">
-        <div class="card h-100">
-          <img *ngIf="article.photos && article.photos.length > 0" 
-               [src]="'http://localhost:8080/api/photos/' + article.photos[0].id" 
-               class="card-img-top" 
-               alt="{{ article.nom }}">
-          
-          <div class="card-body">
-            <h5 class="card-title">{{ article.nom }}</h5>
-            <p class="card-text">{{ article.description }}</p>
-            <p class="card-price">{{ article.prix | currency:'EUR' }}</p>
-          </div>
-          
-          <div class="card-footer d-flex justify-content-between">
-            <button class="btn btn-primary" [routerLink]="['/article', article.id]">
-              Voir détails
-            </button>
-            <button class="btn btn-danger" (click)="removeFromFavoris(article.id)">
-              <i class="fas fa-heart-broken"></i> Retirer
-            </button>
-          </div>
+    <h3>Vous n'avez pas encore d'articles favoris</h3>
+    <p>Explorez notre catalogue pour découvrir des produits qui vous plaisent</p>
+    <button class="cta-button">Découvrir nos produits</button>
+  </div>
+  
+  <!-- Liste des favoris -->
+  <div *ngIf="!isLoading && favoris.length > 0" class="favorites-list">
+    <div class="favorite-item" *ngFor="let article of favoris">
+      <div class="favorite-image">
+        <img *ngIf="article.photos && article.photos.length > 0"
+        [src]="'http://localhost:8080/uploads/' + article.photos[0]?.name"              alt="{{ article.nom }}">
+        <div *ngIf="!article.photos || article.photos.length === 0" class="no-image">
+          <i class="fas fa-image"></i>
         </div>
+        <div class="image-overlay">
+          <button class="overlay-btn view-btn" [routerLink]="['/article', article.id]">
+            <i class="fas fa-eye"></i>
+          </button>
+          <button class="overlay-btn remove-btn" (click)="removeFromFavoris(article.id)">
+            <i class="fas fa-heart-broken"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="favorite-content">
+        <h3 class="favorite-title">{{ article.nom }}</h3>
+        <p class="favorite-description">{{ article.description }}</p>
+      </div>
+      
+      <div class="favorite-footer">
+        <div class="price-tag">{{ article.prix | currency:'EUR' }}</div>
+        <button class="details-button" [routerLink]="['/article', article.id]">
+          Voir détails
+        </button>
       </div>
     </div>
   </div>
+</div>

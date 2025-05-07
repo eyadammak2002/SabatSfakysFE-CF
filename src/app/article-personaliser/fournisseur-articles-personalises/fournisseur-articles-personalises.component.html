@@ -1,118 +1,182 @@
-<div class="container mt-4">
-    <div class="row mb-4">
-      <div class="col">
-        <h2 class="text-center mb-2">Demandes d'Articles Personnalisés</h2>
-        <p class="text-muted text-center">Gérez les demandes de vos clients pour des articles sur mesure</p>
+<!-- fournisseur-articles-personalises.component.html -->
+<div class="content-wrapper">
+  <!-- En-tête moderne et élégant -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="brand-logo">
+          <i class="fas fa-shoe-prints"></i>
+        </div>
+        <div class="header-title">
+          <h2>Chaussures Personnalisés</h2>
+          <p>Gérez les demandes de vos clients pour des articles sur mesure</p>
+        </div>
       </div>
-    </div>
-  
-    <!-- Filtres -->
-    <div class="row mb-4">
-      <div class="col-md-6 mx-auto">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <label class="me-2">Filtrer par statut:</label>
-                <select class="form-select form-select-sm d-inline-block w-auto" [(ngModel)]="statusFilter" (change)="applyFilter()">
-                  <option value="all">Tous les statuts</option>
-                  <option value="EN_ATTENTE">En attente</option>
-                  <option value="ACCEPTE">Acceptés</option>
-                  <option value="REFUSE">Refusés</option>
-                  <option value="EN_PRODUCTION">En production</option>
-                  <option value="TERMINE">Terminés</option>
-                </select>
-              </div>
-              <button class="btn btn-sm btn-primary" (click)="loadArticles()">
-                <i class="fas fa-sync-alt me-1"></i> Actualiser
-              </button>
-            </div>
-          </div>
+      <div class="header-actions">
+        <div class="action-buttons">
+          <button class="btn-refresh" (click)="loadArticles()">
+            <span class="btn-icon"><i class="fas fa-sync-alt"></i></span>
+            <span class="btn-text">Actualiser</span>
+          </button>
         </div>
       </div>
     </div>
-  
-    <!-- Affichage pendant le chargement -->
-    <div *ngIf="isLoading" class="text-center my-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Chargement...</span>
+    
+    <!-- Mini statistiques -->
+    <div class="stats-overview">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-shoe-prints"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ articles.length || 0 }}</span>
+          <span class="stat-label">Total Demandes</span>
+        </div>
       </div>
-      <p class="mt-2">Chargement des articles personnalisés...</p>
-    </div>
-  
-    <!-- Message d'erreur -->
-    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger">
-      {{ errorMessage }}
-    </div>
-  
-    <!-- Pas d'articles personnalisés -->
-    <div *ngIf="!isLoading && !errorMessage && articles.length === 0" class="text-center my-5">
-      <div class="alert alert-info">
-        <i class="fas fa-info-circle me-2"></i>
-        Aucune demande d'article personnalisé pour le moment.
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ getEnAttente() }}</span>
+          <span class="stat-label">En Attente</span>
+        </div>
       </div>
-    </div>
-  
-    <!-- Liste des articles personnalisés -->
-    <div *ngIf="!isLoading && articles.length > 0" class="row">
-      <div class="col-12">
-        <div class="card shadow-sm mb-4">
-          <div class="card-header bg-primary text-white">
-            <h5 class="mb-0"><i class="fas fa-tshirt me-2"></i> Articles personnalisés ({{ filteredArticles.length }})</h5>
-          </div>
-          <div class="card-body p-0">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Réf</th>
-                  <th>Nom</th>
-                  <th>Client</th>
-                  <th>Date</th>
-                  <th>Statut</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let article of filteredArticles">
-                  <td>{{ article.ref }}</td>
-                  <td>{{ article.name }}</td>
-                  <td>{{ article.client?.username || article.client?.email }}</td>
-                  <td>{{ article.dateAjout | date:'dd/MM/yyyy' }}</td>
-                  <td>
-                    <span class="badge" [ngClass]="getStatusClass(article.statut)">
-                      {{ article.statut }}
-                    </span>
-                  </td>
-                  <td>
-                    <div class="btn-group">
-                      <button class="btn btn-sm btn-primary" (click)="viewArticleDetails(article.id)">
-                        <i class="fas fa-eye me-1"></i> Voir détails
-                      </button>
-                      
-                      <!-- Boutons conditionnels selon le statut -->
-                      <div *ngIf="article.statut === 'EN_ATTENTE'" class="btn-group ms-2">
-                        <button class="btn btn-sm btn-success" (click)="changeArticleStatus(article.id, 'ACCEPTE')">
-                          <i class="fas fa-check me-1"></i> Accepter
-                        </button>
-                        <button class="btn btn-sm btn-danger" (click)="changeArticleStatus(article.id, 'REFUSE')">
-                          <i class="fas fa-times me-1"></i> Refuser
-                        </button>
-                      </div>
-                      
-                      <button *ngIf="article.statut === 'ACCEPTE'" class="btn btn-sm btn-info ms-2" (click)="changeArticleStatus(article.id, 'EN_PRODUCTION')">
-                        <i class="fas fa-cogs me-1"></i> En production
-                      </button>
-                      
-                      <button *ngIf="article.statut === 'EN_PRODUCTION'" class="btn btn-sm btn-primary ms-2" (click)="changeArticleStatus(article.id, 'TERMINE')">
-                        <i class="fas fa-flag-checkered me-1"></i> Terminer
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ getAcceptes() }}</span>
+          <span class="stat-label">Acceptés</span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-flag-checkered"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ getTermines() }}</span>
+          <span class="stat-label">Terminés</span>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Filtres -->
+  <div class="filter-section">
+    <div class="filter-container">
+      <div class="filter-group">
+        <label>Filtrer par statut:</label>
+        <select class="form-select" [(ngModel)]="statusFilter" (change)="applyFilter()">
+          <option value="all">Tous les statuts</option>
+          <option value="EN_ATTENTE">En attente</option>
+          <option value="ACCEPTE">Acceptés</option>
+          <option value="REFUSE">Refusés</option>
+
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Affichage pendant le chargement -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des articles personnalisés...</p>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage && !isLoading" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Pas d'articles personnalisés -->
+  <div *ngIf="!isLoading && !errorMessage && articles.length === 0" class="alert alert-info text-center">
+    <i class="fas fa-info-circle me-2"></i>
+    Aucune demande d'article personnalisé pour le moment.
+  </div>
+
+  <!-- Liste des articles personnalisés -->
+  <div *ngIf="!isLoading && articles.length > 0" class="card shadow-lg border-0 overflow-hidden">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover custom-table mb-0">
+          <thead>
+            <tr style="background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%);">
+              <th class="px-3 py-3 text-white">Réf</th>
+              <th class="px-3 py-3 text-white">Nom</th>
+              <th class="px-3 py-3 text-white">Client</th>
+              <th class="px-3 py-3 text-white">Date</th>
+              <th class="px-3 py-3 text-white">Statut</th>
+              <th class="px-3 py-3 text-white">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of filteredArticles" class="align-middle">
+              <td class="px-3 py-3 fw-bold">{{ article.ref }}</td>
+              <td class="px-3 py-3 fw-bold">{{ article.name }}</td>
+              <td class="px-3 py-3">{{ article.client?.username || article.client?.email }}</td>
+              <td class="px-3 py-3">{{ article.dateAjout | date:'dd/MM/yyyy' }}</td>
+              <td class="px-3 py-3">
+                <span class="status-badge"
+                  [ngClass]="{
+                    'status-attente': article.statut === 'EN_ATTENTE',
+                    'status-accepte': article.statut === 'ACCEPTE',
+                    'status-refuse': article.statut === 'REFUSE',
+                    'status-production': article.statut === 'EN_PRODUCTION',
+                    'status-termine': article.statut === 'TERMINE'
+                  }">
+                  <i class="fas"
+                    [ngClass]="{
+                      'fa-clock': article.statut === 'EN_ATTENTE',
+                      'fa-check': article.statut === 'ACCEPTE',
+                      'fa-times': article.statut === 'REFUSE',
+                      'fa-cogs': article.statut === 'EN_PRODUCTION',
+                      'fa-flag-checkered': article.statut === 'TERMINE'
+                    }">
+                  </i>
+                  <span class="status-text">
+                    {{ article.statut === 'EN_ATTENTE' ? 'EN ATTENTE' : 
+                       article.statut === 'ACCEPTE' ? 'ACCEPTÉ' : 
+                       article.statut === 'REFUSE' ? 'REFUSÉ' : 
+                       article.statut === 'EN_PRODUCTION' ? 'EN PRODUCTION' : 
+                       article.statut === 'TERMINE' ? 'TERMINÉ' : article.statut }}
+                  </span>
+                </span>
+              </td>
+              <td class="px-3 py-3">
+                <div class="action-buttons">
+                  <button class="btn btn-view" title="Voir détails" (click)="viewArticleDetails(article.id)">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  
+                  <!-- Boutons conditionnels selon le statut -->
+                  <div *ngIf="article.statut === 'EN_ATTENTE'" class="action-group">
+                    <button class="btn btn-accept" title="Accepter" (click)="changeArticleStatus(article.id, 'ACCEPTE')">
+                      <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn btn-refuse" title="Refuser" (click)="changeArticleStatus(article.id, 'REFUSE')">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                  
+                  <button *ngIf="article.statut === 'ACCEPTE'" class="btn btn-production" title="Marquer en production" (click)="changeArticleStatus(article.id, 'EN_PRODUCTION')">
+                    <i class="fas fa-cogs"></i>
+                  </button>
+                  
+                  <button *ngIf="article.statut === 'EN_PRODUCTION'" class="btn btn-termine" title="Terminer" (click)="changeArticleStatus(article.id, 'TERMINE')">
+                    <i class="fas fa-flag-checkered"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
