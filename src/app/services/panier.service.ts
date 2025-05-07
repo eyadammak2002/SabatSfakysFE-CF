@@ -27,7 +27,7 @@ export interface Panier {
   statut: string;
   adresseLivraison: string;
   dateCommande?: Date;
-  modePaiement?: string; // Nouveau champ pour le mode de paiement
+  modePaiement?: string;
 
 }
 
