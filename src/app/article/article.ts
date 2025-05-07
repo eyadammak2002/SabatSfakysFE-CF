@@ -35,5 +35,7 @@ export interface Article {
   photos: Photo[]; 
   fournisseur: Fournisseur; 
   stocks: Stock[];// Liste des stocks associés
-
+  isFavori?: boolean;     // Statut de favori
+  reduction?: number;    // Pourcentage de réduction (optionnel)
+  prixOriginal?: number;  // Prix avant réduction
 }

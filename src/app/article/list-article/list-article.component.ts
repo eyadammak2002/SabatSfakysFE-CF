@@ -33,7 +33,78 @@ export class ListArticleComponent implements OnInit {
 
   ngOnInit(): void {
     this.getArticlesWithStatut('ACCEPTE');
+    // Chargement des favoris après chargement des articles
+    this.loadFavoris();
   }
+
+  // DÉBUT DES NOUVELLES FONCTIONS POUR LES FAVORIS ET RÉDUCTIONS
+  
+  // Charger les favoris depuis le localStorage
+  loadFavoris(): void {
+    setTimeout(() => {
+      const favoris = localStorage.getItem('favoris');
+      if (favoris) {
+        const favorisIds = JSON.parse(favoris) as number[];
+        this.allArticles.forEach(article => {
+          // Ajouter la propriété isFavori si elle n'existe pas
+          (article as any).isFavori = favorisIds.includes(article.id);
+        });
+      } else {
+        // Initialiser tous les articles comme non-favoris
+        this.allArticles.forEach(article => {
+          (article as any).isFavori = false;
+        });
+      }
+    }, 500); // Délai pour s'assurer que les articles sont chargés
+  }
+  
+  // Fonction pour basculer le statut favori d'un article
+  toggleFavori(article: Article): void {
+    // Ajouter la propriété isFavori si elle n'existe pas
+    if ((article as any).isFavori === undefined) {
+      (article as any).isFavori = false;
+    }
+    
+    // Inverser le statut
+    (article as any).isFavori = !(article as any).isFavori;
+    
+    // Sauvegarder dans le localStorage
+    const favorisIds = this.allArticles
+      .filter(a => (a as any).isFavori)
+      .map(a => a.id);
+    
+    localStorage.setItem('favoris', JSON.stringify(favorisIds));
+    
+    // Afficher un message (vous pouvez remplacer par une notification toast)
+    if ((article as any).isFavori) {
+      console.log(`${article.name} ajouté aux favoris`);
+    } else {
+      console.log(`${article.name} retiré des favoris`);
+    }
+  }
+  
+  // Calculer la réduction pour un article
+  calculateReduction(article: Article): number | undefined {
+    // Vérifier si l'article a un prix original (avant réduction)
+    if ((article as any).prixOriginal && (article as any).prixOriginal > article.prixVente) {
+      return Math.round(
+        (((article as any).prixOriginal - article.prixVente) / (article as any).prixOriginal) * 100
+      );
+    }
+    return undefined;
+  }
+  
+  // Méthode pour obtenir la réduction d'un article (à utiliser dans le template)
+  getReduction(article: Article): number | undefined {
+    return (article as any).reduction || this.calculateReduction(article);
+  }
+  
+  // Méthode pour vérifier si un article est en favori (à utiliser dans le template)
+  isFavori(article: Article): boolean {
+    return (article as any).isFavori === true;
+  }
+  
+  // FIN DES NOUVELLES FONCTIONS
 
   selectCouleur(couleur: Couleur) {
     this.selectedCouleur = couleur;
@@ -152,6 +223,14 @@ export class ListArticleComponent implements OnInit {
     this.articleService.getArticlesByStatut(statut).subscribe({
       next: (data) => {
         this.allArticles = data;
+        // Calculer les réductions pour tous les articles si nécessaire
+        this.allArticles.forEach(article => {
+          if ((article as any).prixOriginal && (article as any).prixOriginal > article.prixVente) {
+            (article as any).reduction = this.calculateReduction(article);
+          }
+        });
+        // Charger les favoris après avoir chargé les articles
+        this.loadFavoris();
       },
       error: (err) => {
         console.error('Error fetching articles', err);
@@ -163,6 +242,14 @@ export class ListArticleComponent implements OnInit {
     this.articleService.getArticlesAujourdhui().subscribe({
       next: (data) => {
         this.allArticles = data;
+        // Calculer les réductions pour tous les articles si nécessaire
+        this.allArticles.forEach(article => {
+          if ((article as any).prixOriginal && (article as any).prixOriginal > article.prixVente) {
+            (article as any).reduction = this.calculateReduction(article);
+          }
+        });
+        // Charger les favoris après avoir chargé les articles
+        this.loadFavoris();
       },
       error: (err) => {
         console.error('Erreur lors du chargement des articles:', err);
@@ -201,4 +288,17 @@ export class ListArticleComponent implements OnInit {
   voirDetailsArticle(article: Article): void {
     this.router.navigate(['/detailArticle', article.id]);
   }
+  // Méthode pour ajouter la classe d'effet pressé
+cardPress(element: HTMLElement): void {
+  if (element) {
+    element.classList.add('card-pressed');
+  }
+}
+
+// Méthode pour retirer la classe d'effet pressé
+cardRelease(element: HTMLElement): void {
+  if (element) {
+    element.classList.remove('card-pressed');
+  }
+}
 }

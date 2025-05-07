@@ -1,0 +1,43 @@
+<div class="container">
+    <h2>Mes Articles Favoris</h2>
+    
+    <div *ngIf="isLoading" class="text-center my-4">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+    </div>
+    
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+    
+    <div *ngIf="!isLoading && favoris.length === 0" class="alert alert-info">
+      Vous n'avez pas encore d'articles favoris.
+    </div>
+    
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <div class="col" *ngFor="let article of favoris">
+        <div class="card h-100">
+          <img *ngIf="article.photos && article.photos.length > 0" 
+               [src]="'http://localhost:8080/api/photos/' + article.photos[0].id" 
+               class="card-img-top" 
+               alt="{{ article.nom }}">
+          
+          <div class="card-body">
+            <h5 class="card-title">{{ article.nom }}</h5>
+            <p class="card-text">{{ article.description }}</p>
+            <p class="card-price">{{ article.prix | currency:'EUR' }}</p>
+          </div>
+          
+          <div class="card-footer d-flex justify-content-between">
+            <button class="btn btn-primary" [routerLink]="['/article', article.id]">
+              Voir détails
+            </button>
+            <button class="btn btn-danger" (click)="removeFromFavoris(article.id)">
+              <i class="fas fa-heart-broken"></i> Retirer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

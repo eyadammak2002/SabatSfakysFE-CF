@@ -1,6 +1,9 @@
 import { Component, ElementRef, HostListener, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Article } from 'src/app/article/article';
+import { ArticleService } from 'src/app/article/article.service';
+import { CategoryService } from 'src/app/category/category.service';
 import { NotificationEntity, NotificationService } from 'src/app/services/notification.service';
 import { PanierService } from 'src/app/services/panier.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
@@ -28,14 +31,23 @@ export class HeaderComponent implements OnInit {
   allNotifications: NotificationEntity[] = [];
   unreadNotifications: NotificationEntity[] = [];
   readNotifications: NotificationEntity[] = [];
-
+// Propriétés pour le filtrage
+  filteredArticles: Article[] = [];
+  isLoading: boolean = false;
+  currentCategory: string = '';
+  currentGenre: string = '';
+  selectedCategory: any = null;
+  
   constructor(
     private tokenStorageService: TokenStorageService,
     private router: Router,
     public panierService:PanierService,
     public notificationService: NotificationService,
     private renderer: Renderer2,
-    private el: ElementRef
+    private el: ElementRef,
+    private articleService: ArticleService, // Injectez ArticleService
+    private categoryService: CategoryService // Injectez CategoryService
+
   ) {}
 
   ngOnInit(): void {
@@ -228,7 +240,7 @@ checkUserRole(): void {
       // Eventuellement afficher un message à l'utilisateur
     }
   }
-
+  
   redirectToProfileFR(): void {
     if (this.email) {
       this.router.navigate(['/profileFR'], { queryParams: { email: this.email } });
@@ -237,6 +249,10 @@ checkUserRole(): void {
       // Eventuellement afficher un message à l'utilisateur
     }
   }
+
+  redirectToListReclamation(): void { this.router.navigate(['/mes-reclamations']);}
+
+
     logout(): void {
     this.tokenStorageService.signOut();
     this.isLoggedIn = false;
@@ -324,5 +340,143 @@ checkUserRole(): void {
     this.showFournisseurDashboard=true;
     this.router.navigate(['/article']);
   }*/
+
+    // Méthode pour charger une catégorie par son nom
+  loadCategoryByName(categoryName: string): void {
+    const id = this.getCategoryId(categoryName);
+  
+    if (id === 0) {
+      console.error('Catégorie inconnue:', categoryName);
+      return;
+    }
+  
+    this.categoryService.getById(id).subscribe({
+      next: (category) => {
+        console.log('Catégorie récupérée:', category);
+        this.selectedCategory = category;
+        
+        // Une fois la catégorie chargée, naviguer vers la page de filtrage
+        this.router.navigate([`/${categoryName.toLowerCase()}`]);
+        
+        // Stocker les informations de catégorie en session storage
+        sessionStorage.setItem('categoryId', id.toString());
+        sessionStorage.setItem('categoryName', categoryName);
+      },
+      error: (error) => {
+        console.error('Erreur lors de la récupération de la catégorie:', error);
+      }
+    });
+  }
+
+  // Méthode pour filtrer les articles par catégorie
+  filterByCategory(categoryName: string, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+    }
+    
+    const categoryId = this.getCategoryId(categoryName);
+    
+    // Charger d'abord la catégorie
+    this.loadCategoryByName(categoryName);
+    
+    // Puis filtrer les articles
+    this.articleService.getArticlesByCategory(categoryId).subscribe({
+      next: (articles) => {
+        console.log(`Articles de la catégorie ${categoryName}:`, articles);
+        sessionStorage.setItem('filteredArticles', JSON.stringify(articles));
+        sessionStorage.setItem('filterType', 'category');
+      },
+      error: (error) => {
+        console.error(`Erreur lors du filtrage des articles par catégorie ${categoryName}:`, error);
+      }
+    });
+  }
+
+  // Méthode pour filtrer les articles par genre
+  filterByGenre(genre: string, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+    }
+    
+    this.articleService.getArticlesByGenre(genre).subscribe({
+      next: (articles) => {
+        console.log(`Articles du genre ${genre}:`, articles);
+        sessionStorage.setItem('filteredArticles', JSON.stringify(articles));
+        sessionStorage.setItem('filterType', 'genre');
+        sessionStorage.setItem('genreName', genre);
+        
+        this.router.navigate([`/${genre.toLowerCase()}`]);
+      },
+      error: (error) => {
+        console.error(`Erreur lors du filtrage des articles par genre ${genre}:`, error);
+      }
+    });
+  }
+
+  // Méthode pour filtrer par catégorie et genre
+  filterByCategoryAndGenre(categoryName: string, genre: string, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+    }
+    
+    const categoryId = this.getCategoryId(categoryName);
+    
+    // Charger d'abord la catégorie
+    this.loadCategoryByName(categoryName);
+    
+    // Puis filtrer les articles par catégorie et genre
+    this.articleService.filterArticles(categoryId, genre).subscribe({
+      next: (articles) => {
+        console.log(`Articles de la catégorie ${categoryName} et du genre ${genre}:`, articles);
+        sessionStorage.setItem('filteredArticles', JSON.stringify(articles));
+        sessionStorage.setItem('filterType', 'categoryAndGenre');
+        sessionStorage.setItem('genreName', genre);
+        
+        this.router.navigate([`/${categoryName.toLowerCase()}/${genre.toLowerCase()}`]);
+      },
+      error: (error) => {
+        console.error(`Erreur lors du filtrage des articles par catégorie ${categoryName} et genre ${genre}:`, error);
+      }
+    });
+  }
+
+  // Méthode pour filtrer par genre et catégorie (ordre inversé)
+  filterByGenreAndCategory(genre: string, categoryName: string, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+    }
+    
+    const categoryId = this.getCategoryId(categoryName);
+    
+    // Charger d'abord la catégorie
+    this.loadCategoryByName(categoryName);
+    
+    // Puis filtrer les articles par genre et catégorie
+    this.articleService.filterArticles(categoryId, genre).subscribe({
+      next: (articles) => {
+        console.log(`Articles du genre ${genre} et de la catégorie ${categoryName}:`, articles);
+        sessionStorage.setItem('filteredArticles', JSON.stringify(articles));
+        sessionStorage.setItem('filterType', 'genreAndCategory');
+        sessionStorage.setItem('genreName', genre);
+        
+        this.router.navigate([`/${genre.toLowerCase()}/${categoryName.toLowerCase()}`]);
+      },
+      error: (error) => {
+        console.error(`Erreur lors du filtrage des articles par genre ${genre} et catégorie ${categoryName}:`, error);
+      }
+    });
+  }
+
+  // Fonction utilitaire pour convertir le nom de catégorie en ID
+  getCategoryId(categoryName: string): number {
+    const categoryMap: {[key: string]: number} = {
+      'chaussures': 1,
+      'sacs': 2,
+      'autre': 3
+      // Ajoutez d'autres catégories selon votre base de données
+    };
+    
+    return categoryMap[categoryName.toLowerCase()] || 0;
+  }
 
 }

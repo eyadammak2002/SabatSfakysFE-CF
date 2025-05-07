@@ -43,6 +43,13 @@ import { ConfirmDialogComponent } from './components/confirm-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ArticleDetailComponent } from './article/article-detail/article-detail.component';
 import { ErrorDialogComponent } from './components/error-dialog.component';
+import { ArticleVueComponent } from './article/article-vue/article-vue.component';
+import { ListCommandeFRComponent } from './commande/list-commande-fr/list-commande-fr.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { ProfileFournisseurComponent } from './components/profile-fournisseur/profile-fournisseur.component';
+import { FavorisComponent } from './favoris/favoris.component';
+import { ClientReclamationListComponent } from './article/client-reclamation-list/client-reclamation-list.component';
+import { FiltredArticlesComponent } from './article/filtred-articles/filtred-articles.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +62,12 @@ import { ErrorDialogComponent } from './components/error-dialog.component';
     ConfirmDialogComponent,
     ArticleDetailComponent,
     ErrorDialogComponent,
+    ArticleVueComponent,
+    ListCommandeFRComponent,
+    ProfileComponent,
+    ProfileFournisseurComponent,
+    FavorisComponent,
+    FiltredArticlesComponent,
 
   ],
   imports: [
@@ -97,6 +110,7 @@ import { ErrorDialogComponent } from './components/error-dialog.component';
     CommandeComponent,
     MatDialogModule,
     MatButtonModule,
+    ClientReclamationListComponent,
 
   ],
   exports: [

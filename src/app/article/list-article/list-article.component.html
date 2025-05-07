@@ -1,77 +1,125 @@
-<div class="container">
+<div class="welcome-banner position-relative mb-5">
+    <!-- Image de fond avec effet parallaxe -->
+    <div class="parallax-container">
+        <img src="/assets/img.png" alt="Bienvenue" class="w-100 parallax-img">
+        <div class="overlay"></div>
+    </div>
     
-    <h2 class="text-center">🛍️ Articles Disponibles</h2>
-    <hr>
-
-    <div class="row">
-        <div *ngFor="let article of allArticles" class="col-lg-2 col-md-3 col-sm-4 col-6">
-            <div class="card mb-3 shadow">
-                
-                <!-- ✅ Galerie d'images Bootstrap (sans autoplay) -->
-                <div class="carousel slide" [attr.id]="'carousel' + article.id" data-bs-interval="false">
-                    
-                    <div class="carousel-inner">
-                        <div *ngFor="let photo of article.photos; let first = first" 
-                             class="carousel-item" 
-                             [class.active]="first">
-                             <img [src]="photo.url" class="d-block w-100"
-                             alt="{{ article.name }}" 
-                             style="max-height: 30vh;width: 100%; object-fit: cover; background-color: #f8f9fa;">
-                             </div>
-                    </div>
-
-                    <!-- ✅ Mini-cercles indicateurs en dessous -->
-                    <div class="carousel-indicators position-relative mt-2">
-                        <button *ngFor="let photo of article.photos; let i = index" 
-                                type="button" 
-                                [attr.data-bs-target]="'#carousel' + article.id"
-                                [attr.data-bs-slide-to]="i"
-                                [class.active]="i === 0"
-                                aria-current="true"
-                                class="bg-dark rounded-circle"
-                                style="width: 7px; height: 7px; margin: 5px; border: none; opacity: 0.8;">
-                        </button>
-                    </div>
-
-                    <!-- ✅ Boutons de navigation -->
-                    <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-
-                <div class="card-body text-center ">
-                    <h4 class="card-title" style="font-weight: bold;">{{ article.name }}</h4>
-                    <p class="text-muted small" >{{ article.description | slice:0:50 }}...</p>
-                    <p  style="border-bottom: 2px solid black;"></p>
-
-                    <!-- ✅ Ligne avec Prix et Icône -->
-                    <div class="d-flex justify-content-between align-items-center">
-                       
-                        <strong style="color: red;">prix  {{ article.prixVente }}  DT</strong>
-                        <button class="btn" (click)="ouvrirModal(article)">
-                            <i class="fas fa-shopping-cart"></i>
-                          </button>
-                          <button class="btn" (click)="voirDetailsArticle(article)">
-                          Voir plus
-                          </button>
-                          
-                    </div> 
-
-                </div>
-            </div>
-        </div>
+    <!-- Texte de bienvenue -->
+    <div class="welcome-content text-center position-absolute top-50 start-50 translate-middle">
+        <h1 class="display-4 fw-bold text-white mb-3">Bienvenue dans notre boutique</h1>
+        <p class="lead text-white mb-4">Découvrez notre collection exclusive de produits de qualité</p>
+        <button class="btn btn-light btn-lg px-4 me-2">Nos nouveautés</button>
+        <button class="btn btn-outline-light btn-lg px-4">En savoir plus</button>
     </div>
 </div>
-
-
-
-
-<!-- ✅ Modal amélioré pour la sélection des couleurs et pointures -->
+<div class="container">
+    <!-- Section titre élégant -->
+    <div class="section-heading text-center my-5">
+      <p class="text-muted mt-3 heading-subtitle">Découvrez nos articles soigneusement sélectionnés pour vous</p>
+      <div class="decorative-line mx-auto mt-3"></div>
+    </div>
+    
+    <!-- Grille d'articles avec justification droite -->
+    <div class="row g-4 justify-content-end">
+      <div *ngFor="let article of allArticles" class="col-lg-3 col-md-4 col-sm-6 col-12">
+        <!-- Card cliquable avec effet bombé (plus petit) -->
+        <div class="card card-clickable h-100 rounded-4 overflow-hidden border-0 position-relative article-card" 
+             style="box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: all 0.3s;"
+             (click)="voirDetailsArticle(article)"
+             #cardElement
+             (mousedown)="cardPress(cardElement)"
+             (mouseup)="cardRelease(cardElement)"
+             (mouseleave)="cardRelease(cardElement)">
+          
+          <!-- Cœur de favoris -->
+          <div class="position-absolute end-0 top-0 m-3 z-index-10">
+            <button class="btn p-0 bg-white rounded-circle shadow-lg d-flex justify-content-center align-items-center favorite-btn"
+                    style="width: 35px; height: 35px; transform: translateY(0); transition: all 0.2s ease;"
+                    (click)="$event.stopPropagation(); toggleFavori(article)">
+              <i class="fas fa-heart" 
+                 [ngClass]="{'text-danger': isFavori(article), 'text-secondary': !isFavori(article)}"
+                 style="font-size: 18px;"></i>
+            </button>
+          </div>
+          
+          <!-- Badge de remise (optionnel) -->
+          <div *ngIf="getReduction(article)" class="position-absolute start-0 top-0 m-3">
+            <span class="badge bg-danger py-2 px-3 fw-bold">-{{ getReduction(article) }}%</span>
+          </div>
+          
+          <!-- Conteneur pour l'effet de reflet -->
+          <div class="reflection-container position-relative">
+            <!-- Galerie d'images Bootstrap -->
+            <div class="carousel slide" [attr.id]="'carousel' + article.id" data-bs-interval="false" (click)="$event.stopPropagation()">
+              <div class="carousel-inner">
+                <div *ngFor="let photo of article.photos; let first = first" 
+                     class="carousel-item" 
+                     [class.active]="first">
+                  <div class="image-container" style="height: 200px; overflow: hidden;">
+                    <img [src]="photo.url" class="w-100"
+                         alt="{{ article.name }}" 
+                         style="height: 100%; width: 100%; object-fit: cover; transition: transform 0.5s;">
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Indicateurs -->
+              <div class="carousel-indicators position-relative my-2">
+                <button *ngFor="let photo of article.photos; let i = index" 
+                        type="button" 
+                        [attr.data-bs-target]="'#carousel' + article.id"
+                        [attr.data-bs-slide-to]="i"
+                        [class.active]="i === 0"
+                        aria-current="true"
+                        class="bg-dark rounded-circle"
+                        style="width: 6px; height: 6px; margin: 0 3px; border: none; opacity: 0.7;">
+                </button>
+              </div>
+  
+              <!-- Boutons de navigation -->
+              <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+            
+            <!-- Élément de reflet -->
+            <div class="reflection-effect"></div>
+          </div>
+  
+          <div class="card-body d-flex flex-column p-3" (click)="$event.stopPropagation()">
+            <h5 class="card-title fw-bold mb-2 fs-6">{{ article.name }}</h5>
+            <p class="text-muted small mb-2">{{ article.description | slice:0:60 }}{{ article.description.length > 60 ? '...' : '' }}</p>
+            
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <div class="price fw-bold" style="color: #2c0c0c;">
+                {{ article.prixVente }} DT
+                <small *ngIf="article.prixOriginal" class="text-decoration-line-through text-muted ms-2" style="font-size: 0.75rem;">
+                  {{ article.prixOriginal }} DT
+                </small>
+              </div>
+            </div>
+            
+            <hr class="my-2">
+  
+            <div class="d-flex justify-content-between mt-auto">
+              <button class="btn btn-outline-dark btn-sm flex-grow-1 me-2" (click)="$event.stopPropagation(); voirDetailsArticle(article)">
+                Détails
+              </button>
+              <button class="btn btn-primary btn-sm flex-grow-1" (click)="$event.stopPropagation(); ouvrirModal(article)">
+                <i class="fas fa-shopping-cart me-1"></i>Acheter
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ✅ Modal amélioré pour la sélection des couleurs et pointures -->
 <div *ngIf="selectedArticle" class="modal d-block" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -159,3 +207,38 @@
         </div>
     </div>
 </div>
+    <section class="landing-sabat d-flex align-items-center justify-content-center">
+        <div class="container">
+          <div class="row align-items-center">
+      
+            <!-- Partie Gauche : Images des téléphones -->
+            <div class="col-md-6 text-center mb-4 mb-md-0">
+              <div class="phones-images">
+                <img src="/assets/phone.png" alt="App Screenshot" class="phone-img first-phone">
+                <img src="/assets/phone.png" alt="App Screenshot" class="phone-img second-phone">
+              </div>
+            </div>
+      
+            <!-- Partie Droite : Texte + Boutons -->
+            <div class="col-md-6 text-center text-md-start">
+              <img src="/assets/logo.png" alt="Sabat Sfakys Logo" class="sabat-logo mb-4">
+              <h1 class="landing-title mb-4">1ère Application de chaussures</h1>
+      
+              <div class="download-buttons d-flex flex-wrap justify-content-center justify-content-md-start gap-3">
+                <a href="#" class="store-btn">
+                  <img src="/assets/googleplay1.png" alt="Google Play" height="50">
+                </a>
+                <a href="#" class="store-btn">
+                  <img src="/assets/AppStore.png" alt="App Store" height="50">
+                </a>
+                <a href="#" class="store-btn">
+                  <img src="/assets/appgallery1.png" alt="AppGallery" height="50">
+                </a>
+              </div>
+            </div>
+      
+          </div>
+        </div>
+      </section>
+      
+  </div>

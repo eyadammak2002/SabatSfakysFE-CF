@@ -66,31 +66,40 @@ export class LoginComponent implements OnInit {
       this.errorMessage = "Veuillez remplir tous les champs.";
       return;
     }
-    
-    this.authService.login(this.form.username, this.form.password).subscribe(
+        
+    this.authService.loginClient(this.form.username, this.form.password).subscribe(
       data => {
         console.log('Connexion réussie', data);
+        
+        // Avant de sauvegarder l'utilisateur, vérifiez s'il est fournisseur
+        if (data.roles && data.roles.includes('ROLE_FOURNISSEUR')) {
+          console.log('Fournisseur se connectant comme client');
+          // Si c'est un fournisseur, forcez le rôle actif à ROLE_CLIENT
+          data.role = 'ROLE_CLIENT';
+          data.role2 = 'ROLE_FOURNISSEUR';
+        }
+        
         this.tokenStorage.saveToken(data.accessToken);
         this.tokenStorage.saveUser(data);
         this.isLoggedIn = true;
         localStorage.setItem("token", data.accessToken);
-        
+                
         // Mettre à jour le clientId dans le panier
         if (data.id) {
           this.panierService.mettreAJourClientId(data.id);
           // Fusionner le panier invité
           this.panierService.fusionnerPanierInvite();
         }
-        
+                
         // Rediriger vers l'URL de retour si disponible
         this.router.navigate([this.returnUrl]);
       },
       err => {
-        console.error('Erreur de connexion', err);
-        this.errorMessage = "Nom d'utilisateur ou mot de passe incorrect";
+        // Gestion des erreurs...
       }
     );
   }
+
 
   goBack(): void {
     this.router.navigate(['/accueil']);

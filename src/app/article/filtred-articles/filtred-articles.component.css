@@ -1,137 +1,154 @@
-/* Styles pour les cartes de produits */
-.product-card {
-    transition: transform 0.3s, box-shadow 0.3s;
-    border: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    overflow: hidden;
-  }
-  
-  .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-  }
-  
-  .product-image {
-    height: 200px;
-    overflow: hidden;
-    position: relative;
-  }
-  
-  .product-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s;
-  }
-  
-  .product-card:hover .product-image img {
-    transform: scale(1.05);
-  }
-  
-  .card-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .description {
-    color: #6c757d;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    height: 60px;
-  }
-  
-  .price {
-    font-weight: bold;
-    color: #d35400;
-    font-size: 1.2rem;
-  }
-  
-  .product-badges {
-    margin-top: 0.5rem;
-  }
-  
-  .badge {
-    font-size: 0.7rem;
-    font-weight: 500;
-    padding: 0.35em 0.65em;
-  }
-  
-  /* Styles pour le breadcrumb */
-  .breadcrumb {
-    background-color: transparent;
-    padding: 0;
-    margin-bottom: 1rem;
-  }
-  
-  .breadcrumb-item + .breadcrumb-item::before {
-    content: ">";
-  }
-  
-  .breadcrumb-item a {
-    color: #007bff;
-    text-decoration: none;
-  }
-  
-  .breadcrumb-item a:hover {
-    text-decoration: underline;
-  }
-  
-  .breadcrumb-item.active {
-    color: #6c757d;
-  }
-  
-  /* Style pour le titre de la page */
-  h2 {
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: #333;
-    border-bottom: 2px solid #f8f9fa;
-    padding-bottom: 0.5rem;
-  }
-  
-  /* Style pour la carte d'info de catégorie */
-  .category-info {
-    background-color: #f8f9fa;
-    border-left: 4px solid #007bff;
-    margin-bottom: 20px;
-  }
-  
-  .category-info .card-title {
-    color: #007bff;
-    font-size: 1.2rem;
-  }
-  
-  /* Style pour le compteur de résultats */
-  .results-count {
-    color: #6c757d;
-    font-style: italic;
-    margin-bottom: 15px;
-  }
-  
-  /* Styles responsive */
-  @media (max-width: 768px) {
-    .product-image {
-      height: 150px;
-    }
-    
-    .card-title {
-      font-size: 1rem;
-    }
-    
-    .description {
-      font-size: 0.8rem;
-      height: 50px;
-    }
-    
-    .price {
-      font-size: 1.1rem;
-    }
-  }
+/* Styles pour les cartes d'articles */
+.article-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.article-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.hover-shadow:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Style pour les badges de catégorie et genre */
+.badge {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Style pour les images */
+.image-container img:hover {
+  transform: scale(1.05);
+}
+
+/* Styles pour les indicateurs de carousel */
+.carousel-indicators button {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50%;
+  margin: 0 4px;
+}
+
+/* Style pour les prix */
+.price-container {
+  font-weight: bold;
+  color: #3c2313;
+}
+
+/* Styles pour le modal de sélection */
+.color-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.color-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.color-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #e6e6e6;
+  transition: all 0.2s;
+}
+
+.color-circle.selected {
+  border: 2px solid #3c2313;
+  transform: scale(1.1);
+}
+
+.color-name {
+  margin-top: 5px;
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.color-name.selected {
+  font-weight: bold;
+  color: #3c2313;
+}
+
+.size-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.size-option.selected {
+  background-color: #3c2313;
+  color: white;
+  border-color: #3c2313;
+}
+
+.size-option.out-of-stock {
+  background-color: #f8f8f8;
+  color: #aaa;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.out-of-stock-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff6b6b;
+  color: white;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Animation pour les boutons */
+.btn {
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Boutons personnalisés en marron */
+.btn-brown {
+  background-color: #3c2313;
+  color: white;
+  border-color: #3c2313;
+}
+
+.btn-brown:hover, .btn-brown:focus, .btn-brown:active {
+  background-color: #2a190d;
+  color: white;
+  border-color: #2a190d;
+}
+
+.btn-outline-brown {
+  color: #3c2313;
+  border-color: #3c2313;
+  background-color: transparent;
+}
+
+.btn-outline-brown:hover, .btn-outline-brown:focus, .btn-outline-brown:active {
+  background-color: #3c2313;
+  color: white;
+  border-color: #3c2313;
+}

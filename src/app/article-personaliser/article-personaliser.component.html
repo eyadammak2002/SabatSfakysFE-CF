@@ -1,0 +1,126 @@
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="col">
+      <h2 class="text-center mb-2">Mes Articles Personnalisés</h2>
+      <p class="text-muted text-center">Consultez et gérez vos demandes d'articles sur mesure</p>
+    </div>
+  </div>
+
+  <!-- Bouton pour créer un nouvel article personnalisé -->
+  <div class="row mb-4">
+    <div class="col-12 text-center">
+      <button class="btn btn-primary" (click)="creerArticlePersonalise()">
+        <i class="fas fa-plus-circle me-2"></i> Créer un nouvel article personnalisé
+      </button>
+    </div>
+  </div>
+
+  <!-- Affichage pendant le chargement -->
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="mt-2">Chargement de vos articles personnalisés...</p>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage && !isLoading" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Pas d'articles personnalisés -->
+  <div *ngIf="!isLoading && !errorMessage && articlesPersonalises.length === 0" class="text-center my-5">
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle me-2"></i>
+      Vous n'avez pas encore créé d'articles personnalisés.
+    </div>
+    <p class="text-muted mt-3">
+      Créez votre premier article personnalisé en cliquant sur le bouton ci-dessus.
+    </p>
+  </div>
+
+  <!-- Liste des articles personnalisés -->
+  <div *ngIf="!isLoading && articlesPersonalises.length > 0" class="row">
+    <div class="col-12">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0"><i class="fas fa-tshirt me-2"></i> Vos articles personnalisés ({{ articlesPersonalises.length }})</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div *ngFor="let article of articlesPersonalises" class="col-md-6 col-lg-4 mb-4">
+              <div class="card h-100 border-0 shadow-sm article-card">
+                <!-- Photos de l'article -->
+                <div *ngIf="article.photos && article.photos.length > 0" class="position-relative">
+                  <img [src]="'http://localhost:8080/uploads/' + article.photos[0].name" 
+                       class="card-img-top" 
+                       alt="{{ article.name }}"
+                       style="height: 200px; object-fit: cover;">
+                  <!-- Badge statut -->
+                  <span [class]="getStatutFormate(article.statut).classe" class="position-absolute top-0 end-0 m-2">
+                    <i [class]="getStatutFormate(article.statut).icone + ' me-1'"></i>
+                    {{ getStatutFormate(article.statut).texte }}
+                  </span>
+                </div>
+                <!-- Si pas de photo -->
+                <div *ngIf="!article.photos || article.photos.length === 0" class="card-img-top bg-light d-flex justify-content-center align-items-center" style="height: 200px;">
+                  <i class="fas fa-image fa-3x text-muted"></i>
+                </div>
+                
+                <div class="card-body">
+                  <h5 class="card-title">{{ article.name }}</h5>
+                  <p class="card-text text-muted small mb-2">
+                    <i class="far fa-calendar-alt me-1"></i>
+                    Créé le {{ article.dateAjout | date:'dd/MM/yyyy' }}
+                  </p>
+                  
+                  <p class="card-text" *ngIf="article.description" style="max-height: 80px; overflow: hidden;">
+                    {{ article.description }}
+                  </p>
+                  
+                  <!-- Détails article -->
+                  <div class="row mt-3 mb-2 g-2">
+                    <div class="col-6" *ngIf="article.category">
+                      <span class="badge bg-secondary w-100">
+                        <i class="fas fa-layer-group me-1"></i> {{ article.category.name }}
+                      </span>
+                    </div>
+                    <div class="col-6" *ngIf="article.genre">
+                      <span class="badge bg-info w-100">
+                        <i class="fas fa-venus-mars me-1"></i> {{ article.genre }}
+                      </span>
+                    </div>
+                    <div class="col-6" *ngIf="article.tissu">
+                      <span class="badge bg-dark w-100">
+                        <i class="fas fa-tshirt me-1"></i> {{ article.tissu }}
+                      </span>
+                    </div>
+                    <div class="col-6" *ngIf="article.ref">
+                      <span class="badge bg-secondary w-100">
+                        <i class="fas fa-hashtag me-1"></i> {{ article.ref }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="card-footer bg-white border-top-0">
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm" (click)="modifierArticlePersonalise(article.id!)" 
+                            [disabled]="article.statut === 'EN_PRODUCTION' || article.statut === 'LIVRE'">
+                      <i class="fas fa-edit me-1"></i> Modifier
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" (click)="supprimerArticlePersonalise(article.id!)"
+                            [disabled]="article.statut === 'EN_PRODUCTION' || article.statut === 'LIVRE'">
+                      <i class="fas fa-trash-alt me-1"></i> Supprimer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

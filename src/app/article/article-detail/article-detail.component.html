@@ -169,14 +169,14 @@
                style="background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%); color: white;">
             <h3 class="mb-0"><i class="fas fa-star me-2"></i> Avis clients</h3>
             <!-- Bouton "Donner mon avis" -->
-            <button class="btn" 
+                 <button class="btn" 
               (click)="gererClicAvis()"
               style="color: white; cursor: pointer;"
               [ngClass]="{
                 'bg-disabled': !isLoggedIn() || !userPeutDonnerAvis, 
                 'bg-custom': isLoggedIn() && userPeutDonnerAvis
               }">
-              <i class="fas fa-pen me-1"></i> Donner mon avis
+         <i class="fas fa-pen me-1"></i> Donner mon avis 
             </button>
 
             <!-- Indicateur de chargement pendant la vérification -->

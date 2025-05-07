@@ -115,15 +115,7 @@ export class RegisterFournisseurComponent implements OnInit {
     this.router.navigate(['/accueil']);
   }
 
-  signInWithGoogle() {
-    console.log("Connexion avec Google");
-    // Implémentation future
-  }
 
-  signInWithFacebook() {
-    console.log("Connexion avec Facebook");
-    // Implémentation future
-  }
 
 
 }
