@@ -320,7 +320,7 @@ uploadFile(file: File, index: number): any {
       this.articleService.update(this.articleForm.id,this.articleForm, emailFournisseur).subscribe({
         next: (data) => {
           console.log('Article mis à jour avec succès', data);
-          this.router.navigate(['/article']);
+          this.router.navigate(['/articles']);
         },
         error: (err) => console.error('Erreur lors de la mise à jour de l\'article', err)
       });
@@ -330,7 +330,7 @@ uploadFile(file: File, index: number): any {
   }
 
   redirectToArticles(): void {
-    this.router.navigate(['/article']);
+    this.router.navigate(['/articles']);
   }
 
 

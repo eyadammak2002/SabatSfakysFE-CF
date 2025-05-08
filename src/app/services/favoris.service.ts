@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
 import { TokenStorageService } from './token-storage.service';
 
@@ -99,35 +99,42 @@ export class FavorisService {
     );
   }
 
-  /**
-   * Vérifier si un article est dans les favoris
-   */
-  isFavori(articleId: number): Observable<boolean> {
-    return this.getClientIdByEmail().pipe(
-      switchMap(clientId => {
-        if (!clientId) {
-          return of(false);
-        }
-        return this.http.get<boolean>(`${API_URL}/client/${clientId}/article/${articleId}/check`);
-      })
-    );
-  }
-
+// In favoris.service.ts
+isFavori(articleId: number): Observable<boolean> {
+  return this.getClientIdByEmail().pipe(
+    switchMap(clientId => {
+      if (!clientId) {
+        return of(false);
+      }
+      return this.http.get<boolean>(`${API_URL}/client/${clientId}/article/${articleId}/check`);
+    })
+  );
+}
   /**
    * Basculer l'état favori d'un article (ajouter/supprimer)
    */
-  toggleFavori(articleId: number): Observable<any> {
-    return this.isFavori(articleId).pipe(
-      switchMap(isFavori => {
-        if (isFavori) {
-          return this.removeFromFavoris(articleId);
-        } else {
-          return this.addToFavoris(articleId);
-        }
-      })
-    );
-  }
-
+  // Le problème potentiel dans votre service est la gestion des erreurs
+toggleFavori(articleId: number): Observable<any> {
+  return this.isFavori(articleId).pipe(
+    switchMap(isFavori => {
+      if (isFavori) {
+        return this.removeFromFavoris(articleId);
+      } else {
+        return this.addToFavoris(articleId);
+      }
+    }),
+    // Ajouter un gestionnaire d'erreur au niveau du service
+    catchError(error => {
+      // Si l'erreur vient d'une tentative d'ajout d'un favori déjà existant,
+      // considérer comme un succès
+      if (error.status === 400 && error.error === "Cet article est déjà dans vos favoris") {
+        return of({ success: true, message: "Article déjà en favoris" });
+      }
+      // Sinon, propager l'erreur
+      return throwError(() => error);
+    })
+  );
+}
   /**
    * Obtenir le nombre de fois qu'un article a été mis en favori
    */

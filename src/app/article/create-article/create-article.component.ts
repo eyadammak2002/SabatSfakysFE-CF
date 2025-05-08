@@ -272,7 +272,7 @@ uploadFile(file: File, index: number): any {
       this.articleService.create(this.articleForm, emailFournisseur).subscribe({
         next: (data) => {
           console.log('Article créé avec succès', data);
-          this.router.navigate(['/article']);
+          this.router.navigate(['/articles']);
         },
         error: (err) => console.error('Erreur lors de la création de l\'article', err)
       });

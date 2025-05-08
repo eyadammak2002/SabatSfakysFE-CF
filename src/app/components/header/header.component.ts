@@ -502,29 +502,55 @@ checkUserRole(): void {
     });
   }
 
-  // Méthode pour filtrer les articles par catégorie
-  filterByCategory(categoryName: string, event?: Event): void {
-    if (event) {
-      event.preventDefault();
-    }
-    
-    const categoryId = this.getCategoryId(categoryName);
-    
-    // Charger d'abord la catégorie
-    this.loadCategoryByName(categoryName);
-    
-    // Puis filtrer les articles
-    this.articleService.getArticlesByCategory(categoryId).subscribe({
-      next: (articles) => {
-        console.log(`Articles de la catégorie ${categoryName}:`, articles);
-        sessionStorage.setItem('filteredArticles', JSON.stringify(articles));
-        sessionStorage.setItem('filterType', 'category');
-      },
-      error: (error) => {
-        console.error(`Erreur lors du filtrage des articles par catégorie ${categoryName}:`, error);
-      }
-    });
+  // Modifiez la méthode filterByCategory dans header.component.ts
+
+filterByCategory(categoryName: string, event?: Event): void {
+  if (event) {
+    event.preventDefault();
   }
+  
+  // Réinitialiser les filtres précédents
+  sessionStorage.removeItem('filteredArticles');
+  sessionStorage.removeItem('filterType');
+  sessionStorage.removeItem('genreName');
+  
+  const categoryId = this.getCategoryId(categoryName);
+  
+  console.log(`Filtrage par catégorie: ${categoryName}, ID: ${categoryId}`);
+  
+  // Charger d'abord la catégorie
+  this.categoryService.getById(categoryId).subscribe({
+    next: (category) => {
+      console.log('Catégorie récupérée:', category);
+      this.selectedCategory = category;
+      
+      // Stocker les informations de catégorie en session storage
+      sessionStorage.setItem('categoryId', categoryId.toString());
+      sessionStorage.setItem('categoryName', categoryName);
+      
+      // Puis filtrer les articles
+      this.articleService.getArticlesByCategorie(categoryId).subscribe({
+        next: (articles) => {
+          console.log(`Articles de la catégorie ${categoryName} (${articles.length} trouvés):`, articles);
+          sessionStorage.setItem('filteredArticles', JSON.stringify(articles));
+          sessionStorage.setItem('filterType', 'category');
+          
+          // Naviguer vers la page de la catégorie
+          this.router.navigate([`/${categoryName.toLowerCase()}`]).then(() => {
+            // Rafraîchir la page pour s'assurer que les nouveaux filtres sont appliqués
+            // window.location.reload(); // Décommentez si nécessaire
+          });
+        },
+        error: (error) => {
+          console.error(`Erreur lors du filtrage des articles par catégorie ${categoryName}:`, error);
+        }
+      });
+    },
+    error: (error) => {
+      console.error('Erreur lors de la récupération de la catégorie:', error);
+    }
+  });
+}
 
   // Méthode pour filtrer les articles par genre
   filterByGenre(genre: string, event?: Event): void {
@@ -611,7 +637,6 @@ checkUserRole(): void {
     
     return categoryMap[categoryName.toLowerCase()] || 0;
   }
-
 
   onSearch(): void {
     if (!this.searchQuery.trim()) return;

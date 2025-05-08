@@ -118,4 +118,9 @@ filterArticles(categoryId?: number, genre?: string): Observable<Article[]> {
       
   return this.http.get<Article[]>(`${this.apiUrl}/filter`, { params });
 }
+
+getArticlesByCategorie(categoryId: number): Observable<Article[]> {
+  return this.http.get<Article[]>(`${this.apiUrl}/category/${categoryId}`);
+}
+
 }

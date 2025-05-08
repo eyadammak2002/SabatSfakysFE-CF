@@ -1,106 +1,149 @@
 <div class="container">
-    <!-- Message de réponse IA -->
-    <div *ngIf="isSearchMode && aiResponse" class="row mb-4">
-      <div class="col-12">
-        <div class="ai-response-message">
-          <i class="fas fa-robot"></i>
-          <p>{{ aiResponse }}</p>
-          <button class="btn btn-sm btn-outline-secondary" (click)="resetSearch()">
-            <i class="fas fa-times"></i> Effacer la recherche
-          </button>
-        </div>
+  <!-- Message de réponse IA -->
+  <div *ngIf="isSearchMode && aiResponse" class="row mb-4">
+    <div class="col-12">
+      <div class="ai-response-message">
+        <i class="fas fa-robot"></i>
+        <p>{{ aiResponse }}</p>
+        <button class="btn btn-sm btn-outline-secondary" (click)="resetSearch()">
+          <i class="fas fa-times"></i> Effacer la recherche
+        </button>
       </div>
     </div>
-    
-    <!-- Titre adaptatif -->
-    <h2 class="text-center">
+  </div>
+  
+  <!-- Titre adaptatif -->
+  <div class="section-title-container">
+    <h2 class="section-title">
       <span *ngIf="!isSearchMode">🛍️ Articles Disponibles</span>
       <span *ngIf="isSearchMode">🔍 Résultats de recherche</span>
     </h2>
-    <hr>
+  </div>
   
-    <!-- Message si aucun résultat -->
-    <div *ngIf="isSearchMode && searchResults.length === 0" class="row">
-      <div class="col-12 text-center py-5">
-        <p>Aucun produit ne correspond à votre recherche.</p>
-        <p>Essayez d'autres termes ou consultez nos catégories populaires:</p>
-        <div class="popular-categories mt-3">
-          <a href="/category/chaussures" class="btn btn-outline-primary mx-2">Chaussures</a>
-          <a href="/category/bottes" class="btn btn-outline-primary mx-2">Bottes</a>
-          <a href="/category/mocassins" class="btn btn-outline-primary mx-2">Mocassins</a>
-        </div>
+  <!-- Message si aucun résultat -->
+  <div *ngIf="isSearchMode && searchResults.length === 0" class="row">
+    <div class="col-12 text-center py-5">
+      <p>Aucun produit ne correspond à votre recherche.</p>
+      <p>Essayez d'autres termes ou consultez nos catégories populaires:</p>
+      <div class="popular-categories mt-3">
+        <a href="#" (click)="filterByCategory('chaussures', $event)" class="btn btn-outline-primary mx-2">Chaussures</a>
+        <a href="#" (click)="filterByCategory('botte', $event)" class="btn btn-outline-primary mx-2">Bottes</a>
+        <a href="#" (click)="filterByCategory('mocassins', $event)" class="btn btn-outline-primary mx-2">Mocassins</a>
       </div>
     </div>
-    <div *ngIf="isSearchLoading" class="row mb-4">
-        <div class="col-12 text-center">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Chargement...</span>
-          </div>
-          <p class="mt-2">Chargement des détails des articles...</p>
-        </div>
+  </div>
+
+  <!-- Indicateur de chargement -->
+  <div *ngIf="isSearchLoading" class="row mb-4">
+    <div class="col-12 text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
       </div>
-    <!-- Affichage des articles -->
+      <p class="mt-2">Chargement des détails des articles...</p>
+    </div>
+  </div>
+
+  <!-- Affichage des articles -->
+  <div class="articles-container">
     <div class="row">
       <!-- Utiliser searchResults si en mode recherche, sinon utiliser allArticles -->
-      <div *ngFor="let article of isSearchMode ? searchResults : allArticles" class="col-lg-2 col-md-3 col-sm-4 col-6">
-        <div class="card mb-3 shadow">
-          <!-- Galerie d'images Bootstrap (sans autoplay) -->
-          <div class="carousel slide" [attr.id]="'carousel' + article.id" data-bs-interval="false">
-            <div class="carousel-inner">
-              <div *ngFor="let photo of article.photos; let first = first" 
-                   class="carousel-item" 
-                   [class.active]="first">
-                <img [src]="photo.url" class="d-block w-100"
-                   alt="{{ article.name }}" 
-                   style="max-height: 30vh;width: 100%; object-fit: cover; background-color: #f8f9fa;">
+      <div *ngFor="let article of isSearchMode ? searchResults : allArticles; let i = index" class="col-xl-2-4 col-lg-2-4 col-md-4 col-sm-6 col-6 mb-4">
+        <!-- Modification de la structure de carte d'article -->
+        <div class="article-card" [attr.data-aos]="'fade-up'" [attr.data-aos-delay]="i * 50">
+
+          
+          <!-- Nouveau bouton favoris en haut à droite -->
+          
+          <!-- Heart icon for favorites -->
+         <!-- Bouton si l'article est déjà en favoris -->
+          <button *ngIf="isFavorite(article.id)" 
+          (click)="toggleFavoris(article)" 
+          class="favorite-btn position-relative border-0 bg-transparent">
+          <i class="fas fa-heart text-danger" style="font-size: 1.5rem;"></i>
+
+          <span *ngIf="getFavoriteCount(article.id) > 0" 
+          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+          {{ getFavoriteCount(article.id) }}
+          <span class="visually-hidden">favoris</span>
+          </span>
+          </button>
+
+          <!-- Bouton si l'article n'est pas en favoris -->
+          <button *ngIf="!isFavorite(article.id)" 
+          (click)="toggleFavoris(article)" 
+          class="favorite-btn position-relative border-0 bg-transparent">
+          <i class="far fa-heart text-dark" style="font-size: 1.5rem;"></i>
+
+          <span *ngIf="getFavoriteCount(article.id) > 0" 
+          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+          {{ getFavoriteCount(article.id) }}
+          <span class="visually-hidden">favoris</span>
+          </span>
+          </button>
+
+          
+
+          <!-- Galerie d'images (conservée) -->
+          <div class="card-img-container">
+            <div class="carousel slide card-carousel" [attr.id]="'carousel' + article.id" data-bs-interval="false">
+              <div class="carousel-inner">
+                <div *ngFor="let photo of article.photos; let first = first" 
+                    class="carousel-item" 
+                    [class.active]="first">
+                  <img [src]="photo.url" class="article-img"
+                    alt="{{ article.name }}" loading="lazy">
+                </div>
               </div>
-            </div>
-  
-            <!-- Mini-cercles indicateurs en dessous -->
-            <div class="carousel-indicators position-relative mt-2">
-              <button *ngFor="let photo of article.photos; let i = index" 
-                      type="button" 
-                      [attr.data-bs-target]="'#carousel' + article.id"
-                      [attr.data-bs-slide-to]="i"
-                      [class.active]="i === 0"
-                      aria-current="true"
-                      class="bg-dark rounded-circle"
-                      style="width: 7px; height: 7px; margin: 5px; border: none; opacity: 0.8;">
+              
+              <!-- Indicateurs de carousel (conservés) -->
+              <div class="article-indicators">
+                <div *ngFor="let photo of article.photos; let i = index" 
+                    class="indicator-dot" 
+                    [class.active]="i === 0"
+                    [attr.data-bs-target]="'#carousel' + article.id"
+                    [attr.data-bs-slide-to]="i">
+                </div>
+              </div>
+              
+              <!-- Contrôles de carousel (conservés) -->
+              <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Précédent</span>
+              </button>
+              <button class="carousel-control-next" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Suivant</span>
               </button>
             </div>
-  
-            <!-- Boutons de navigation -->
-            <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
           </div>
-  
-          <div class="card-body text-center">
-            <h4 class="card-title" style="font-weight: bold;">{{ article.name }}</h4>
-            <p class="text-muted small">{{ article.description | slice:0:50 }}...</p>
-            <p style="border-bottom: 2px solid black;"></p>
-  
-            <!-- Ligne avec Prix et Icône -->
-            <div class="d-flex justify-content-between align-items-center">
-              <strong style="color: red;">prix {{ article.prixVente }} DT</strong>
-              <button class="btn" (click)="ouvrirModal(article)">
-                <i class="fas fa-shopping-cart"></i>
-              </button>
-              <button class="btn" (click)="voirDetailsArticle(article)">
-                Voir plus
-              </button>
+          
+          <!-- Corps de la carte (avec améliorations visuelles) -->
+          <div class="card-body">
+            <h4 class="card-title">{{ article.name }}</h4>
+            <p class="card-description">{{ article.description | slice:0:80 }}{{ article.description.length > 80 ? '...' : '' }}</p>
+            
+            <div class="card-divider"></div>
+            
+            <!-- Pied de carte avec prix et actions (conservé) -->
+            <div class="card-footer">
+              <div class="price">{{ article.prixVente }} DT</div>
+              <div class="card-actions">
+                <button class="btn-cart" (click)="ouvrirModal(article)" title="Ajouter au panier">
+                  <i class="fas fa-shopping-cart"></i>
+                </button>
+                <button class="btn-details" (click)="voirDetailsArticle(article)" title="Voir détails">
+                  Détails
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-<!-- Modal amélioré pour la sélection des couleurs et pointures -->
+</div>
+
+<!-- Le modal reste inchangé comme demandé -->
 <div *ngIf="selectedArticle" class="modal d-block" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-dialog-centered modal-xlg" role="document">
       <div class="modal-content">
@@ -172,7 +215,7 @@
                               </div>
                           </div>
                           
-                          <!-- Remplacer la section "product-short-desc" actuelle -->
+                          <!-- Description -->
                           <div class="product-short-desc" *ngIf="selectedArticle.description">
                             <h6 class="description-title">Description</h6>
                             <div class="description-content">
@@ -187,6 +230,7 @@
                                 </div>
                             </div>
                           </div>
+                          
                           <!-- Ligne de séparation décorative -->
                           <div class="divider">
                               <span></span>
@@ -234,8 +278,6 @@
                                   </div>
                               </div>
                           </div>
-                          
-                        
                       </div>
                   </div>
               </div>
