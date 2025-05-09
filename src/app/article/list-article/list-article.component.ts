@@ -9,6 +9,7 @@ import { catchError, map } from 'rxjs/operators';
 import { SearchDataService } from 'src/app/services/search-data.service';
 import { CategoryService } from 'src/app/category/category.service';
 import { FavorisService } from 'src/app/services/favoris.service';
+import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
   selector: 'app-list-article',
@@ -48,7 +49,8 @@ export class ListArticleComponent implements OnInit {
     private stockService: StockService,
     private searchDataService: SearchDataService,
     private categoryService: CategoryService,
-    private favorisService: FavorisService 
+    private favorisService: FavorisService ,
+    private tokenStorage: TokenStorageService // Ajoutez cette ligne
 
 
     
@@ -91,6 +93,10 @@ export class ListArticleComponent implements OnInit {
     this.loadFavoriteStatus();
   }
 
+  isLoggedIn(): boolean {
+    const user = this.tokenStorage.getUser();
+    return !!user && !!user.id;
+  }
 
   loadFavoriteStatus(): void {
     this.favoritesLoading = true;
@@ -160,8 +166,20 @@ export class ListArticleComponent implements OnInit {
   
   // Update toggleFavoris to maintain favorite status sync
   toggleFavoris(article: Article): void {
+    if (!this.isLoggedIn()) {
+      // Rediriger vers la page de connexion avec l'URL de retour
+      this.router.navigate(['auth/client/login'], { 
+        queryParams: { returnUrl: this.router.url } 
+      });
+      return;
+    }
     this.favorisService.toggleFavori(article.id).subscribe({
       next: (response) => {
+        if (response && response.error) {
+          console.error('Erreur:', response.error);
+          alert(response.error);
+          return;
+        }
         // Update both local arrays to maintain consistency
         const isFav = !this.isFavorite(article.id);
         this.favoritesStatus[article.id] = isFav;
@@ -172,11 +190,28 @@ export class ListArticleComponent implements OnInit {
         } else if (index === -1 && isFav) {
           this.favorisIds.push(article.id);
         }
+        this.loadFavoritesCount();
+
       },
       error: (err) => {
         console.error('Erreur lors de la mise à jour des favoris:', err);
       }
     });
+  }
+  handleFavoriteClick(article: Article, event: Event): void {
+    if (event) {
+      event.stopPropagation(); // Empêcher la propagation du clic
+    }
+    this.toggleFavoris(article);
+  }
+  
+  isNewArticle(article: any) {
+    if (!article.createdAt) return false;
+    const creationDate = new Date(article.createdAt);
+    const today = new Date();
+    const diffTime = Math.abs(today.getTime() - creationDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 7;
   }
   
 // Ajoutez ces méthodes au composant

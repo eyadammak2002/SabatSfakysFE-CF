@@ -44,103 +44,106 @@
   </div>
 
   <!-- Affichage des articles -->
-  <div class="articles-container">
-    <div class="row">
-      <!-- Utiliser searchResults si en mode recherche, sinon utiliser allArticles -->
-      <div *ngFor="let article of isSearchMode ? searchResults : allArticles; let i = index" class="col-xl-2-4 col-lg-2-4 col-md-4 col-sm-6 col-6 mb-4">
-        <!-- Modification de la structure de carte d'article -->
-        <div class="article-card" [attr.data-aos]="'fade-up'" [attr.data-aos-delay]="i * 50">
-
-          
-          <!-- Nouveau bouton favoris en haut à droite -->
-          
-          <!-- Heart icon for favorites -->
-         <!-- Bouton si l'article est déjà en favoris -->
-          <button *ngIf="isFavorite(article.id)" 
-          (click)="toggleFavoris(article)" 
-          class="favorite-btn position-relative border-0 bg-transparent">
-          <i class="fas fa-heart text-danger" style="font-size: 1.5rem;"></i>
-
-          <span *ngIf="getFavoriteCount(article.id) > 0" 
-          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
-          {{ getFavoriteCount(article.id) }}
-          <span class="visually-hidden">favoris</span>
-          </span>
-          </button>
-
-          <!-- Bouton si l'article n'est pas en favoris -->
-          <button *ngIf="!isFavorite(article.id)" 
-          (click)="toggleFavoris(article)" 
-          class="favorite-btn position-relative border-0 bg-transparent">
-          <i class="far fa-heart text-dark" style="font-size: 1.5rem;"></i>
-
-          <span *ngIf="getFavoriteCount(article.id) > 0" 
-          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
-          {{ getFavoriteCount(article.id) }}
-          <span class="visually-hidden">favoris</span>
-          </span>
-          </button>
-
-          
-
-          <!-- Galerie d'images (conservée) -->
-          <div class="card-img-container">
-            <div class="carousel slide card-carousel" [attr.id]="'carousel' + article.id" data-bs-interval="false">
-              <div class="carousel-inner">
-                <div *ngFor="let photo of article.photos; let first = first" 
-                    class="carousel-item" 
-                    [class.active]="first">
-                  <img [src]="photo.url" class="article-img"
-                    alt="{{ article.name }}" loading="lazy">
-                </div>
-              </div>
-              
-              <!-- Indicateurs de carousel (conservés) -->
-              <div class="article-indicators">
-                <div *ngFor="let photo of article.photos; let i = index" 
-                    class="indicator-dot" 
-                    [class.active]="i === 0"
-                    [attr.data-bs-target]="'#carousel' + article.id"
-                    [attr.data-bs-slide-to]="i">
-                </div>
-              </div>
-              
-              <!-- Contrôles de carousel (conservés) -->
-              <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Précédent</span>
+  <!-- Structure modifiée de la carte d'article -->
+<div class="articles-container">
+  <div class="row">
+    <div *ngFor="let article of isSearchMode ? searchResults : allArticles; let i = index" 
+         class="col-xl-2-4 col-lg-2-4 col-md-4 col-sm-6 col-6 mb-4">
+      
+      <div class="article-card" [attr.data-aos]="'fade-up'" [attr.data-aos-delay]="i * 50">
+        
+        <!-- Galerie d'images -->
+        <div class="card-img-container position-relative">
+          <div class="carousel slide card-carousel" [attr.id]="'carousel' + article.id" data-bs-interval="false">
+            <div class="carousel-inner">
+              <!-- Boutons de favoris -->
+              <button *ngIf="isFavorite(article.id)" 
+                     (click)="toggleFavoris(article)" 
+                     class="favorite-btn position-relative border-0 bg-transparent">
+                <i class="fas fa-heart text-danger" style="font-size: 1.5rem;"></i>
               </button>
-              <button class="carousel-control-next" type="button" [attr.data-bs-target]="'#carousel' + article.id" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Suivant</span>
+  
+              <button *ngIf="!isFavorite(article.id)" 
+                     (click)="toggleFavoris(article)" 
+                     class="favorite-btn position-relative border-0 bg-transparent">
+                <i class="far fa-heart text-dark" style="font-size: 1.5rem;"></i>
               </button>
+              
+              <!-- Images du carousel -->
+              <div *ngFor="let photo of article.photos; let first = first" 
+                  class="carousel-item" 
+                  [class.active]="first">
+                <img [src]="photo.url" class="article-img"
+                  alt="{{ article.name }}" loading="lazy">
+              </div>
+            </div>
+            
+            
+            
+            <!-- Contrôles de carousel -->
+            <button class="carousel-control-prev" type="button" 
+                   [attr.data-bs-target]="'#carousel' + article.id" 
+                   data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Précédent</span>
+            </button>
+            <button class="carousel-control-next" type="button" 
+                   [attr.data-bs-target]="'#carousel' + article.id" 
+                   data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Suivant</span>
+            </button>
+          </div>
+          <!-- Indicateurs de carousel modifiés -->
+          <div class="article-indicators ">
+            <div *ngFor="let photo of article.photos; let i = index" 
+                class="indicator-dot" 
+                [class.active]="i === 0"
+                [attr.data-bs-target]="'#carousel' + article.id"
+                [attr.data-bs-slide-to]="i">
             </div>
           </div>
-          
-          <!-- Corps de la carte (avec améliorations visuelles) -->
-          <div class="card-body">
-            <h4 class="card-title">{{ article.name }}</h4>
-            <p class="card-description">{{ article.description | slice:0:80 }}{{ article.description.length > 80 ? '...' : '' }}</p>
-            
-            <div class="card-divider"></div>
-            
-            <!-- Pied de carte avec prix et actions (conservé) -->
-            <div class="card-footer">
-              <div class="price">{{ article.prixVente }} DT</div>
-              <div class="card-actions">
-                <button class="btn-cart" (click)="ouvrirModal(article)" title="Ajouter au panier">
-                  <i class="fas fa-shopping-cart"></i>
-                </button>
-                <button class="btn-details" (click)="voirDetailsArticle(article)" title="Voir détails">
-                  Détails
-                </button>
+        </div>
+        
+        <!-- Corps de la carte -->
+        <div class="elegant-card-content">
+          <!-- En-tête avec catégorie et nom -->
+          <div class="elegant-card-header mb-1">
+            <div *ngIf="article.category" class="elegant-category">
+              {{ article.category.name }}
+            </div>
+            <div>
+
+              <h4 class="card-title">{{ article.name }}</h4>
+              <p class="card-description">{{ article.description | slice:0:80 }}{{ article.description.length > 80 ? '...' : '' }}</p>
               </div>
+            
+          </div>
+          
+          <!-- Méta-informations de la carte -->
+          <div class="card-meta mt-1">
+            <span>{{ article.prixVente }} <span style="font-weight: bold;">DT</span></span>
+             <!-- Bouton détails repositionné en dehors de la carte -->
+          <button class="btn-details" (click)="voirDetailsArticle(article)" title="Voir détails">
+            Détails
+          </button>
+          </div>
+                    
+         
+          
+          <!-- Pied de carte avec le bouton panier centré -->
+          <div class="card-footer">
+            <div class="card-actions">
+              <button class="btn-cart" (click)="ouvrirModal(article)" title="Ajouter au panier">
+                <i class="fas fa-shopping-cart" ></i>
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 </div>
 
 <!-- Le modal reste inchangé comme demandé -->

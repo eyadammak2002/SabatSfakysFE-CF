@@ -719,22 +719,7 @@
   line-height: 1.3;
 }
 
-.price-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #fff5f5;
-  color: #c53030;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  border: 1px solid #feb2b2;
-}
 
-.price-tag::before {
-  content: "💰";
-}
 
 
 .original-price {
@@ -1193,7 +1178,7 @@
 .article-card {
   height: 100%;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   transition: all 0.3s ease;
   background-color: #fff;
@@ -1343,39 +1328,50 @@
 }
 
 .card-footer {
-  margin-top: auto;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1px;
+  justify-content: center;
+  padding: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: transparent;
+  border-top: none;
 }
 
 
 
 .card-actions {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  transform: translateY(20%); /* Décale le bouton vers le bas */
 }
-
 .btn-cart {
   border: none;
-  background-color: rgba(60, 35, 19, 0.1);
+  background-color: #3c2313;
   padding: 8px;
   border-radius: 50%;
-  width: 38px;
-  height: 38px;
+  width: 43px;
+  height: 43px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  color: #3c2313;
+  color: #fff; 
+
+  i {
+    font-size: 16px;
+  }
 }
 
 .btn-cart:hover {
-  background-color: #3c2313;
-  color: #fff;
-  transform: translateY(-3px);
+  background-color: rgba(60, 35, 19, 0.269); 
+  color: #3c2313; 
+  transform: translateY(-15px);
 }
+
 
 .btn-details {
   border: none;
@@ -1408,13 +1404,7 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.badge-new {
-  background: linear-gradient(135deg, #63a50a, #4c8008);
-}
 
-.badge-promo {
-  background: linear-gradient(135deg, #d64545, #b23535);
-}
 
 /* Effet hover pour les contrôles de carousel */
 .card-carousel .carousel-control-prev,
@@ -1512,4 +1502,474 @@
     width: 20%;
   }
 }
+
+.card-img-container .carousel-inner {
+  position: relative;
+
+  .favorite-btn {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 10;
+    background: transparent;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+  }
+}
+.card-meta {
+  display: flex;
+  justify-content: space-between; /* Pour aligner le prix à gauche et le bouton à droite */
+  align-items: center;
+  margin-top: 0.75rem;
+  width: 100%;
+}
+
+.card-meta {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+
+  .card-meta-item {
+    display: flex;
+    align-items: center;
+    padding: 0.3rem 0.6rem;
+    border-radius: 1rem;
+    background-color: rgba(60, 35, 19, 0.05);
+    color: #3c2313;
+    font-weight: 500;
+    transition: background-color 0.3s;
+
+    .icon {
+      color: #63a50a;
+      margin-right: 0.4rem;
+    }
+
+    &:hover {
+      background-color: #ece4dd; 
+    }
+  }
+}
+
+
+.articles-container {
+  padding: 1.5rem 0;
+}
+
+.row.g-4 {
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+/* Carte élégante */
+.elegant-card {
+  position: relative;
+  background-color: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.elegant-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+/* Badges */
+.elegant-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 5px 12px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  text-transform: uppercase;
+}
+
+.elegant-badge-new {
+  background: linear-gradient(135deg, #63a50a, #4c8008);
+  color: white;
+}
+
+.elegant-badge-promo {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+}
+
+/* Conteneur d'image */
+.elegant-card-image {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+}
+
+/* Bouton de favoris */
+.elegant-favorite-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.elegant-favorite-btn i {
+  color: #ddd;
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+
+.elegant-favorite-btn:hover {
+  background: white;
+  transform: scale(1.05);
+}
+
+.elegant-favorite-btn.active i {
+  color: #e74c3c;
+}
+
+.elegant-favorite-btn:hover i {
+  transform: scale(1.1);
+}
+
+/* Carrousel d'images */
+.elegant-carousel {
+  height: 100%;
+  position: relative;
+}
+
+.elegant-carousel .carousel-inner,
+.elegant-carousel .carousel-item {
+  height: 100%;
+}
+
+.elegant-product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+}
+
+.elegant-card:hover .elegant-product-img {
+  transform: scale(1.08);
+}
+
+/* Navigation du carrousel */
+.elegant-nav-prev,
+.elegant-nav-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 5;
+}
+
+.elegant-nav-prev {
+  left: 10px;
+}
+
+.elegant-nav-next {
+  right: 10px;
+}
+
+.elegant-card:hover .elegant-nav-prev,
+.elegant-card:hover .elegant-nav-next {
+  opacity: 1;
+}
+
+.elegant-nav-prev:hover,
+.elegant-nav-next:hover {
+  background-color: white;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.elegant-nav-prev i,
+.elegant-nav-next i {
+  color: #3c2313;
+  font-size: 14px;
+}
+
+/* Indicateurs du carrousel */
+.elegant-indicators {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  z-index: 5;
+}
+
+.elegant-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.elegant-indicator.active {
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Contenu de la carte */
+.elegant-card-content {
+  padding: 18px 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* En-tête de la carte */
+.elegant-card-header {
+  margin-bottom: 10px;
+}
+
+.elegant-category {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  display: inline-block;
+}
+
+.elegant-category::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 20px;
+  height: 1px;
+  background-color: #3c2313;
+}
+
+.elegant-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+  height: 44px;
+  margin-bottom: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  transition: color 0.3s ease;
+}
+
+.elegant-card:hover .elegant-title {
+  color: #3c2313;
+}
+
+/* Détails du produit */
+.elegant-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-grow: 1;
+}
+
+.elegant-genre {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  color: #555;
+  border-radius: 30px;
+  padding: 4px 12px;
+  background-color: rgba(99, 165, 10, 0.07);
+  width: fit-content;
+}
+
+.elegant-genre i {
+  font-size: 11px;
+  margin-right: 6px;
+  color: #4c8008;
+}
+
+/* Prix */
+.elegant-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: #3c2313;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.elegant-price .currency {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.elegant-old-price {
+  font-size: 14px;
+  color: #999;
+  text-decoration: line-through;
+  font-weight: 400;
+}
+
+/* Actions */
+.elegant-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.elegant-btn {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.elegant-btn-cart {
+  background-color: #3c2313;
+  color: white;
+}
+
+.elegant-btn-cart:hover {
+  background-color: #5a3823;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(60, 35, 19, 0.2);
+}
+
+.elegant-btn-details {
+  background-color: rgba(60, 35, 19, 0.05);
+  color: #3c2313;
+  border: 1px solid rgba(60, 35, 19, 0.1);
+}
+
+.elegant-btn-details:hover {
+  background-color: rgba(60, 35, 19, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.elegant-btn i {
+  font-size: 14px;
+}
+
+/* Adaptations responsives */
+@media (max-width: 992px) {
+  .elegant-card-image {
+    height: 200px;
+  }
+}
+
+@media (max-width: 767px) {
+  .elegant-card-image {
+    height: 180px;
+  }
+  
+  .elegant-card-content {
+    padding: 15px;
+  }
+  
+  .elegant-title {
+    font-size: 15px;
+    height: 42px;
+  }
+  
+  .elegant-btn-label {
+    display: none;
+  }
+  
+  .elegant-btn {
+    padding: 10px 0;
+  }
+  
+  .elegant-btn i {
+    font-size: 16px;
+    margin: 0;
+  }
+  
+  .elegant-badge {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .elegant-card-image {
+    height: 160px;
+  }
+  
+  .elegant-favorite-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .elegant-favorite-btn i {
+    font-size: 16px;
+  }
+  
+  .elegant-price {
+    font-size: 16px;
+  }
+}
+
+/* Classes utilitaires pour les colonnes */
+@media (min-width: 1200px) {
+  .col-xl-2-4 {
+    flex: 0 0 auto;
+    width: 20%;
+  }
+}
+
+@media (min-width: 992px) {
+  .col-lg-2-4 {
+    flex: 0 0 auto;
+    width: 20%;
+  }
+}
+
 

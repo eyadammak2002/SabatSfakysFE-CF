@@ -416,7 +416,7 @@ getCurrentClientId(): Promise<number | null> {
   
   // Retour à la liste des articles
   retourListe(): void {
-    this.router.navigate(['/articles']);
+    this.router.navigate(['/accueil']);
   }
   
   // Méthodes d'upload de photos
