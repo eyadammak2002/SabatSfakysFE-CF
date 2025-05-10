@@ -25,7 +25,7 @@ export class ListArticleComponent implements OnInit {
   stockDisponible: number | null = null; 
   stockInsuffisant: boolean = false;
   selectedCategory: any = null;
-
+  activeIndexes: { [key: number]: number } = {};
   // Nouvel objet pour suivre le statut du stock de chaque pointure
   pointureOutOfStock: { [id: number]: boolean } = {};
   searchResults: any[] = [];
@@ -41,6 +41,9 @@ export class ListArticleComponent implements OnInit {
   favoritesStatus: { [articleId: number]: boolean } = {};
   favoritesLoading = true;
 
+  showTitle: boolean = false;
+  showSubtitle: boolean = false;
+  showButtons: boolean = false;
 
   constructor(
     private articleService: ArticleService,
@@ -57,6 +60,8 @@ export class ListArticleComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.startTextAnimations();
+
     this.getArticlesWithStatut('ACCEPTE');
   
     this.searchDataService.searchResults$.subscribe(results => {
@@ -91,8 +96,33 @@ export class ListArticleComponent implements OnInit {
       }
     });
     this.loadFavoriteStatus();
+
+    this.allArticles.forEach(article => {
+      this.activeIndexes[article.id] = 0;
+    });
   }
 
+  startTextAnimations(): void {
+    // Afficher le titre après un court délai
+    setTimeout(() => {
+      this.showTitle = true;
+      
+      // Afficher le sous-titre après que le titre soit apparu
+      setTimeout(() => {
+        this.showSubtitle = true;
+        
+        // Afficher les boutons après que le sous-titre soit apparu
+        setTimeout(() => {
+          this.showButtons = true;
+        }, 2500);
+      }, 2000);
+    }, 500);
+  }
+  
+// Appelé lorsque le carousel change
+onSlide(event: any, articleId: number): void {
+  this.activeIndexes[articleId] = event.to;
+}
   isLoggedIn(): boolean {
     const user = this.tokenStorage.getUser();
     return !!user && !!user.id;

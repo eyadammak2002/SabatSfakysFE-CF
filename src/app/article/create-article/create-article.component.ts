@@ -23,7 +23,7 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 export class CreateArticleComponent {
   selectedPhotos: Photo[] = [];
   allCategory: Category[] = [];
-  allPhoto: Photo[] = [];
+  allPhoto: Photo[] = []; // Contiendra uniquement les photos liées à cet article
   couleursDisponibles: Couleur[] = [];
   pointuresDisponibles: Pointure[] = [];
   selectedCouleur: Couleur | null = null;
@@ -37,10 +37,10 @@ export class CreateArticleComponent {
   uploadMessage: string = '';
   uploadSuccess: boolean = false;
   uploadError: boolean = false;
-  newlyUploadedPhotos: Photo[] = [];
-// Dans votre composant
-photosToHide: number[] = []; // IDs des photos à masquer
-
+  isUploading: boolean = false;
+  
+  // Article temporaire ID (pour la création)
+  tempArticleId: number = -1;
 
   articleStocks: Stock[] = [];
 
@@ -84,13 +84,22 @@ photosToHide: number[] = []; // IDs des photos à masquer
     private photoService: PhotoService,
     private tokenStorageService: TokenStorageService,
     private uploadService: FileUploadService
-  ) {}
+  ) {
+    // Pour debug des redirections
+    this.router.events.subscribe(event => {
+      console.log('Router event:', event);
+    });
+  }
 
   ngOnInit(): void {
     this.getCouleurs();
     this.getPointures();
-    this.getPhotos();
     this.getCategory();
+    
+    // Initialiser les photos vides pour l'article en cours
+    this.allPhoto = [];
+    this.selectedPhotos = [];
+    
     const user = this.tokenStorageService.getUser();
     if (user && user.email) {
       this.articleForm.fournisseur.email = user.email;
@@ -112,36 +121,6 @@ photosToHide: number[] = []; // IDs des photos à masquer
       this.articleForm.prixVente = 0;
     }
   }
-
-  getPhotos(): void {
-    this.photoService.get().subscribe({
-      next: (data) => {
-        this.allPhoto = data;
-        console.log('Photos récupérées:', this.allPhoto);
-  
-        // Si aucune photo n'a été nouvellement uploadée, récupérer tous les IDs des photos
-        if (this.newlyUploadedPhotos.length === 0) {
-          // Ajouter tous les IDs des photos de la base de données à photosToHide
-          this.photosToHide = this.allPhoto.map(photo => photo.id);
-          console.log('Tous les IDs des photos à masquer:', this.photosToHide);
-        } else {
-          // Mettre à jour la liste des photos sélectionnées après avoir uploadé des photos
-        
-  
-          // Mettre à jour les photos dans le formulaire
-          this.articleForm.photos = [...this.selectedPhotos];
-          console.log('Photos sélectionnées après upload:', this.selectedPhotos);
-
-          console.log('IDs des photos à masquer:', this.photosToHide);
-        }
-      },
-      error: (err) => {
-        console.error('Erreur lors de la récupération des photos:', err);
-      }
-    });
-  }
-  
-
   
   getCategory(): void {
     this.categoryService.get().subscribe({
@@ -196,51 +175,112 @@ photosToHide: number[] = []; // IDs des photos à masquer
     this.uploadError = false;
   }
 
-  uploadPhotos(): void {
+  uploadPhotos(event?: Event): void {
+    // Empêcher la soumission du formulaire si un événement est passé
+    if (event) {
+      event.preventDefault();
+    }
+    
+    // Si un upload est déjà en cours, ne rien faire
+    if (this.isUploading) {
+      console.log('Upload déjà en cours, ignoré');
+      return;
+    }
+    
+    console.log('Début de l\'upload des photos');
+    
     this.uploadMessage = '';
     this.uploadSuccess = false;
     this.uploadError = false;
-    this.newlyUploadedPhotos = [];
     
     if (this.selectedFiles && this.selectedFiles.length > 0) {
-      const uploadObservables = Array.from(this.selectedFiles).map((file, index) => {
-        return this.uploadFile(file, index);
-      });
-
-      // Utiliser forkJoin pour attendre que tous les fichiers soient téléchargés
-      forkJoin(uploadObservables).subscribe({
-        next: (responses) => {
-          this.uploadSuccess = true;
-          this.uploadMessage = 'Toutes les photos ont été téléchargées avec succès.';
-          // Rafraîchir la liste des photos pour inclure les nouvelles
-          this.getPhotos();
-          this.selectedFiles = undefined;
-          this.currentFiles = [];
-        },
-        error: (err) => {
-          this.uploadError = true;
-          this.uploadMessage = 'Une erreur est survenue lors du téléchargement de certaines photos.';
-        }
+      this.isUploading = true;
+      
+      // Créer un article temporaire pour l'upload si nécessaire
+      this.createTempArticle().then(articleId => {
+        console.log('Article temporaire créé avec ID:', articleId);
+        
+        const uploadObservables = Array.from(this.selectedFiles!).map((file, index) => {
+          return this.uploadFile(file, index, articleId);
+        });
+    
+        // Utiliser forkJoin pour attendre que tous les fichiers soient téléchargés
+        forkJoin(uploadObservables).subscribe({
+          next: (responses) => {
+            this.uploadSuccess = true;
+            this.uploadMessage = 'Toutes les photos ont été téléchargées avec succès.';
+            this.selectedFiles = undefined;
+            this.currentFiles = [];
+            this.isUploading = false;
+            
+            console.log('Upload terminé avec succès, PAS de redirection');
+          },
+          error: (err) => {
+            this.uploadError = true;
+            this.uploadMessage = 'Une erreur est survenue lors du téléchargement de certaines photos.';
+            console.error('Erreur upload:', err);
+            this.isUploading = false;
+          },
+          complete: () => {
+            console.log('Upload observable complété');
+            this.isUploading = false;
+          }
+        });
+      }).catch(error => {
+        console.error('Erreur lors de la création de l\'article temporaire:', error);
+        this.uploadError = true;
+        this.uploadMessage = 'Erreur: Impossible de préparer l\'upload';
+        this.isUploading = false;
       });
     }
   }
-// Modifiez la méthode uploadFile pour traiter correctement la réponse
-uploadFile(file: File, index: number): any {
+
+  // Function to fix the issue in CreateArticleComponent
+private createTempArticle(): Promise<number> {
   return new Promise((resolve, reject) => {
+    // If we already have a temp ID, use it
+    if (this.tempArticleId > 0) {
+      resolve(this.tempArticleId);
+      return;
+    }
+    
+    // Instead of uploading the first file here, just resolve with -1
+    // We'll handle all uploads in uploadFile
+    resolve(-1);
+  });
+}
+
+// Modified uploadFile method
+uploadFile(file: File, index: number, articleId: number): any {
+  return new Promise((resolve, reject) => {
+    // Skip if already uploading
+    if (this.progressInfos[index].value > 0) {
+      console.log(`Fichier ${file.name} déjà en cours d'upload, ignoré`);
+      resolve(null);
+      return;
+    }
+
+    // Just use uploadService.upload for all files in CreateArticleComponent
     this.uploadService.upload(file).subscribe({
       next: (event: any) => {
         if (event.type === HttpEventType.UploadProgress) {
           this.progressInfos[index].value = Math.round(100 * event.loaded / event.total);
         } else if (event instanceof HttpResponse) {
-          // Stocker uniquement les données essentielles pour identifier la photo plus tard
-          const newPhoto: Photo = event.body;
-          this.newlyUploadedPhotos.push({...newPhoto}); // Utiliser une copie pour éviter les références partagées
+          // Create new photo from response
+          const newPhoto: Photo = {
+            id: event.body.id || 0, // Use the ID from the response if available
+            name: event.body.fileName,
+            url: event.body.fileDownloadUri
+          };
           
-          // Ne pas ajouter directement à selectedPhotos ici
-          // Au lieu de cela, attendons getPhotos() pour le faire avec les données complètes
+          // Add to photo lists and mark that this is already uploaded
+          // by setting a flag or using the proper ID
+          this.allPhoto.push(newPhoto);
+          this.selectedPhotos.push(newPhoto);
+          this.articleForm.photos = [...this.selectedPhotos];
           
-          console.log('Photo uploadée:', newPhoto);
-          resolve(event.body);
+          this.cdr.detectChanges();
+          resolve(newPhoto);
         }
       },
       error: (err: any) => {
@@ -251,6 +291,7 @@ uploadFile(file: File, index: number): any {
     });
   });
 }
+
   togglePhotoSelection(photo: Photo): void {
     const index = this.selectedPhotos.findIndex(p => p.id === photo.id);
     if (index > -1) {
@@ -259,11 +300,13 @@ uploadFile(file: File, index: number): any {
       this.selectedPhotos.push(photo);
     }
     this.articleForm.photos = [...this.selectedPhotos];
-    this.cdr.detectChanges(); // Use detectChanges instead of markForCheck for immediate update
+    this.cdr.detectChanges();
     console.log('Selected Photos:', this.articleForm.photos);
   }
 
   onSubmit() {
+    console.log('Début de soumission du formulaire d\'article');
+    
     if (this.articleForm.ref && this.articleForm.name && this.articleForm.prixFournisseur && this.articleForm.photos.length > 0 && this.articleStocks.length > 0) {
       this.articleForm.stocks = [...this.articleStocks];
       
@@ -274,14 +317,36 @@ uploadFile(file: File, index: number): any {
           console.log('Article créé avec succès', data);
           this.router.navigate(['/articles']);
         },
-        error: (err) => console.error('Erreur lors de la création de l\'article', err)
+        error: (err) => {
+          console.error('Erreur lors de la création de l\'article', err);
+          alert('Erreur lors de la création de l\'article');
+        }
       });
     } else {
-      console.error('Veuillez remplir tous les champs obligatoires');
+      console.error('Formulaire invalide. Vérifiez que tous les champs sont remplis:');
+      console.log('Ref:', this.articleForm.ref);
+      console.log('Name:', this.articleForm.name);
+      console.log('Prix fournisseur:', this.articleForm.prixFournisseur);
+      console.log('Photos:', this.articleForm.photos.length);
+      console.log('Stocks:', this.articleStocks.length);
+      
+      alert('Veuillez remplir tous les champs obligatoires');
     }
   }
 
   redirectToArticles(): void {
     this.router.navigate(['/articles']);
+  }
+  
+  // Méthode pour supprimer une photo de la liste
+  deletePhoto(photo: any): void {
+    console.log('Suppression de la photo de la sélection:', photo);
+    
+    // Ne supprimer que de nos listes, pas de la base de données
+    this.allPhoto = this.allPhoto.filter(p => p.id !== photo.id);
+    this.selectedPhotos = this.selectedPhotos.filter(p => p.id !== photo.id);
+    this.articleForm.photos = [...this.selectedPhotos];
+    
+    this.cdr.detectChanges();
   }
 }

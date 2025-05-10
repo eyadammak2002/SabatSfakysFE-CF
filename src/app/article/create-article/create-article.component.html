@@ -175,10 +175,16 @@
                         <i class="fas fa-female me-1"></i> Femme
                       </label>
                     </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="genreEnfant" name="genre" value="ENFANT" [(ngModel)]="articleForm.genre">
+                      <label class="form-check-label" for="genreEnfant">
+                        <i class="fas fa-child me-1"></i> Enfant
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
-
+              
               <div class="col-md-6">
                 <div class="form-group mb-4">
                   <label class="fw-bold" style="color: #3c2313;">Tissu</label>
@@ -207,111 +213,124 @@
         </div>
 
         <!-- Section photos -->
-        <div class="card mb-4" style="border-left: 4px solid #63a50a; background-color: #f9f9f9;">
-          <div class="card-body">
-            <h5 class="mb-3" style="color: #3c2313; border-bottom: 2px solid #63a50a; padding-bottom: 8px;">
-              <i class="fas fa-images me-2"></i> Photos
-            </h5>
-            
-            <!-- Upload des photos -->
-            <div class="card mb-4 bg-white">
-              <div class="card-header" style="background-color: #3c2313; color: white;">
-                <h6 class="mb-0"><i class="fas fa-cloud-upload-alt me-2"></i> Uploader de nouvelles photos</h6>
+        <!-- Section photos -->
+<div class="card mb-4" style="border-left: 4px solid #63a50a; background-color: #f9f9f9;">
+  <div class="card-body">
+    <h5 class="mb-3" style="color: #3c2313; border-bottom: 2px solid #63a50a; padding-bottom: 8px;">
+      <i class="fas fa-images me-2"></i> Photos
+    </h5>
+    
+    <!-- Upload des photos -->
+    <div class="card mb-4 bg-white">
+      <div class="card-header" style="background-color: #3c2313; color: white;">
+        <h6 class="mb-0"><i class="fas fa-cloud-upload-alt me-2"></i> Uploader de nouvelles photos</h6>
+      </div>
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col-lg-8 mb-3 mb-lg-0">
+            <label class="btn w-100" style="background-color: #f8f9fa; border: 2px dashed #ddd; cursor: pointer; padding: 15px; transition: all 0.3s;">
+              <input type="file" (change)="selectFiles($event)" multiple style="display: none;" accept="image/*" />
+              <i class="fas fa-file-image fa-2x mb-2" style="color: #63a50a;"></i>
+              <div>Sélectionner des photos</div>
+              <small class="text-muted">Cliquez ou glissez des fichiers ici</small>
+            </label>
+          </div>
+          <div class="col-lg-4">
+            <button class="btn w-100" [disabled]="!selectedFiles || isUploading" (click)="uploadPhotos($event)"
+                    style="background-color: #63a50a; color: white; height: 100%; transition: all 0.3s;">
+              <span *ngIf="isUploading" class="spinner-border spinner-border-sm me-2"></span>
+              <i class="fas fa-upload me-2"></i> Uploader
+            </button>
+          </div>
+        </div>
+
+        <!-- Message d'upload -->
+        <div *ngIf="uploadMessage" class="alert mt-3" [ngClass]="{'alert-success': uploadSuccess, 'alert-danger': uploadError}" role="alert">
+          <i class="fas" [ngClass]="{'fa-check-circle': uploadSuccess, 'fa-exclamation-triangle': uploadError}"></i>
+          {{ uploadMessage }}
+        </div>
+
+        <!-- Barre de progression -->
+        <div *ngIf="progressInfos.length > 0" class="mt-3">
+          <h6 style="color: #3c2313;">Progression de l'upload</h6>
+          <div *ngFor="let progressInfo of progressInfos" class="mb-2">
+            <small class="d-block mb-1">{{ progressInfo.fileName }}</small>
+            <div class="progress" style="height: 10px;">
+              <div
+                class="progress-bar"
+                role="progressbar"
+                [style.width.%]="progressInfo.value"
+                [style.background-color]="'#63a50a'"
+                [attr.aria-valuenow]="progressInfo.value"
+                aria-valuemin="0"
+                aria-valuemax="100">
               </div>
-              <div class="card-body">
-                <div class="row align-items-center">
-                  <div class="col-lg-8 mb-3 mb-lg-0">
-                    <label class="btn w-100" style="background-color: #f8f9fa; border: 2px dashed #ddd; cursor: pointer; padding: 15px; transition: all 0.3s;">
-                      <input type="file" (change)="selectFiles($event)" multiple style="display: none;" />
-                      <i class="fas fa-file-image fa-2x mb-2" style="color: #63a50a;"></i>
-                      <div>Sélectionner des photos</div>
-                      <small class="text-muted">Cliquez ou glissez des fichiers ici</small>
-                    </label>
-                  </div>
-                  <div class="col-lg-4">
-                    <button class="btn w-100" [disabled]="!selectedFiles" (click)="uploadPhotos()"
-                            style="background-color: #63a50a; color: white; height: 100%; transition: all 0.3s;">
-                      <i class="fas fa-upload me-2"></i> Uploader
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Message d'upload -->
-                <div *ngIf="uploadMessage" class="alert mt-3" [ngClass]="{'alert-success': uploadSuccess, 'alert-danger': uploadError}" role="alert">
-                  <i class="fas" [ngClass]="{'fa-check-circle': uploadSuccess, 'fa-exclamation-triangle': uploadError}"></i>
-                  {{ uploadMessage }}
-                </div>
-
-                <!-- Barre de progression -->
-                <div *ngIf="progressInfos.length > 0" class="mt-3">
-                  <h6 style="color: #3c2313;">Progression de l'upload</h6>
-                  <div *ngFor="let progressInfo of progressInfos" class="mb-2">
-                    <small class="d-block mb-1">{{ progressInfo.fileName }}</small>
-                    <div class="progress" style="height: 10px;">
-                      <div
-                        class="progress-bar"
-                        role="progressbar"
-                        [style.width.%]="progressInfo.value"
-                        [style.background-color]="'#63a50a'"
-                        [attr.aria-valuenow]="progressInfo.value"
-                        aria-valuemin="0"
-                        aria-valuemax="100">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-            <!-- Photos disponibles -->
-            <div class="photo-gallery-container mt-4">
-              <h6 class="photo-gallery-title"><i class="fas fa-images me-2"></i> Photos disponibles</h6>
-              <p class="photo-gallery-description">Sélectionnez parmi les photos existantes ou uploadez-en de nouvelles.</p>
-              <div class="photo-grid">
-                <div class="row">
-                <div *ngFor="let photo of allPhoto" class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
-                  <!-- Use ngIf in a wrapper div -->
-                  <div *ngIf="!photosToHide.includes(photo.id)">
-                    <div class="photo-card" [ngClass]="{'border-success': isPhotoSelected(photo.id)}">
-                      <img [src]="'http://localhost:8080/uploads/' + photo.name" class="photo-img" alt="{{ photo.name }}">
-                      <div class="photo-card-body">
-                        <button 
-                        type="button" 
-                        class="photo-btn-small w-100"
-                        [ngClass]="{
-                          'select-btn': !isPhotoSelected(photo.id), 
-                          'remove-btn': isPhotoSelected(photo.id)
-                        }"
-                        style="
-                          border-radius: 20px;
-                          font-size: 0.85rem;
-                          transition: all 0.3s;
-                          padding: 6px 12px;
-                          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                          border: none;
-                        "
-                        (click)="togglePhotoSelection(photo)">
-                        <span *ngIf="!isPhotoSelected(photo.id)" style="display: flex; align-items: center; justify-content: center;">
-                          <i class="fas fa-plus me-1"></i> Sélectionner
-                        </span>
-                        <span *ngIf="isPhotoSelected(photo.id)" style="display: flex; align-items: center; justify-content: center;">
-                          <i class="fas fa-times me-1"></i> Retirer
-                        </span>
-                      </button>
-                      
-                      
-                      
-                      </div>
-                    </div>
-                    
-                  </div>
-                </div>
-              </div>
-            </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Photos disponibles -->
+    <div class="mt-4" *ngIf="allPhoto && allPhoto.length > 0">
+      <h6 style="color: #3c2313;"><i class="fas fa-images me-2"></i> Photos disponibles</h6>
+      <p class="text-muted small">
+        Sélectionnez les photos que vous venez d'uploader pour votre article.
+      </p>
+      
+      <div class="row">
+        <div *ngFor="let photo of allPhoto" class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
+          <div class="card shadow-sm" [ngClass]="{'border-success': isPhotoSelected(photo.id), 'border-0': !isPhotoSelected(photo.id)}" 
+               style="border-radius: 12px; overflow: hidden; transition: all 0.3s;">
+            <div style="height: 150px; overflow: hidden;">
+              <img [src]="photo.url" class="card-img-top" alt="{{ photo.name }}" 
+                   style="height: 100%; width: 100%; object-fit: cover;">
+            </div>
+            <div class="card-body p-2">
+              <p class="card-title mb-2 text-truncate" style="font-size: 0.85rem;">{{ photo.name }}</p>
+              <div class="d-flex justify-content-between">
+                <button 
+                type="button" 
+                class="photo-btn-small w-100 mb-2"
+                [ngClass]="{
+                  'select-btn': !isPhotoSelected(photo.id), 
+                  'remove-btn': isPhotoSelected(photo.id)
+                }"
+                style="
+                  border-radius: 20px;
+                  font-size: 0.85rem;
+                  transition: all 0.3s;
+                  padding: 6px 12px;
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                  border: none;
+                "
+                (click)="togglePhotoSelection(photo)">
+                <span *ngIf="!isPhotoSelected(photo.id)" style="display: flex; align-items: center; justify-content: center;">
+                  <i class="fas fa-plus me-1"></i> Sélectionner
+                </span>
+                <span *ngIf="isPhotoSelected(photo.id)" style="display: flex; align-items: center; justify-content: center;">
+                  <i class="fas fa-times me-1"></i> Retirer
+                </span>
+              </button>
+
+               
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Message si aucune photo n'est disponible -->
+    <div *ngIf="allPhoto.length === 0" class="alert mt-3" 
+         style="background-color: rgba(60, 35, 19, 0.1); border-left: 4px solid #3c2313; color: #3c2313;">
+      <i class="fas fa-info-circle me-2"></i>
+      Aucune photo n'est disponible. Veuillez uploader des photos pour votre article.
+    </div>
+  </div>
+</div>
+
+<!-- Les boutons d'action restent inchangés dans le template principal -->
 
         <!-- Boutons d'action -->
         <div class="d-flex justify-content-between gap-3 mt-4">

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Article, Couleur, Pointure } from './article';
 import { catchError, Observable, throwError } from 'rxjs';
+import { Photo } from '../photo/Photo';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ export class ArticleService {
   private apiUrl = 'http://127.0.0.1:8080/article';  // L'URL de ton back-end
   private apiUrl1 = 'http://127.0.0.1:8080/article/statut/'; 
   private apiUrl2 = 'http://127.0.0.1:8080/photos/name'; 
+
   constructor(private http: HttpClient) {}
 
   notifierArticle(message:string){
@@ -122,5 +124,7 @@ filterArticles(categoryId?: number, genre?: string): Observable<Article[]> {
 getArticlesByCategorie(categoryId: number): Observable<Article[]> {
   return this.http.get<Article[]>(`${this.apiUrl}/category/${categoryId}`);
 }
+
+
 
 }

@@ -1,4 +1,37 @@
 <div class="container">
+  <div class="welcome-banner position-relative mb-5 ">
+    <!-- video de fond avec effet parallaxe -->
+    <div class="parallax-container">
+      <video autoplay muted loop playsinline preload="auto" class="w-100 parallax-video">
+        <source src="/assets/intro.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div class="overlay"></div>
+    </div>
+    
+    <!-- Texte de bienvenue avec animation -->
+    <div class="welcome-content text-center position-absolute top-50 start-50 translate-middle welcome-overlay">
+      <h1 class="display-4 fw-bold mb-3 animated-text welcome-title" [ngClass]="{'typing': showTitle}">
+        <span class="text-wrapper">
+          <span class="line line1"></span>
+          <span class="letters">Bienvenue dans notre boutique</span>
+        </span>
+      </h1>
+      <p class="lead mb-4 animated-text welcome-subtitle" [ngClass]="{'typing': showSubtitle}">
+        <span class="text-wrapper">
+          <span class="line line2"></span>
+          <span class="letters">Découvrez notre collection exclusive de produits de qualité</span>
+        </span>
+      </p>
+      <div class="buttons-container welcome-buttons" [ngClass]="{'fade-in': showButtons}">
+        <button class="btn btn-primary btn-lg px-4 me-2">Nos nouveautés</button>
+        <button class="btn btn-outline-secondary btn-lg px-4">En savoir plus</button>
+      </div>
+    </div>
+    
+  </div>
+
+
   <!-- Message de réponse IA -->
   <div *ngIf="isSearchMode && aiResponse" class="row mb-4">
     <div class="col-12">
@@ -15,7 +48,6 @@
   <!-- Titre adaptatif -->
   <div class="section-title-container">
     <h2 class="section-title">
-      <span *ngIf="!isSearchMode">🛍️ Articles Disponibles</span>
       <span *ngIf="isSearchMode">🔍 Résultats de recherche</span>
     </h2>
   </div>
@@ -43,6 +75,10 @@
     </div>
   </div>
 
+  <div class="section-heading text-center my-5">
+    <p class="text-muted mt-3 heading-subtitle">Découvrez nos articles soigneusement sélectionnés pour vous</p>
+    <div class="decorative-line mx-auto mt-3"></div>
+  </div>
   <!-- Affichage des articles -->
   <!-- Structure modifiée de la carte d'article -->
 <div class="articles-container">
@@ -52,59 +88,59 @@
       
       <div class="article-card" [attr.data-aos]="'fade-up'" [attr.data-aos-delay]="i * 50">
         
-        <!-- Galerie d'images -->
         <div class="card-img-container position-relative">
-          <div class="carousel slide card-carousel" [attr.id]="'carousel' + article.id" data-bs-interval="false">
+          <div class="carousel slide card-carousel"
+               [attr.id]="'carousel' + article.id"
+               data-bs-interval="false"
+               (slid.bs.carousel)="onSlide($event, article.id)">
+            
             <div class="carousel-inner">
               <!-- Boutons de favoris -->
               <button *ngIf="isFavorite(article.id)" 
-                     (click)="toggleFavoris(article)" 
-                     class="favorite-btn position-relative border-0 bg-transparent">
+                      (click)="toggleFavoris(article)" 
+                      class="favorite-btn position-relative border-0 bg-transparent">
                 <i class="fas fa-heart text-danger" style="font-size: 1.5rem;"></i>
               </button>
-  
+        
               <button *ngIf="!isFavorite(article.id)" 
-                     (click)="toggleFavoris(article)" 
-                     class="favorite-btn position-relative border-0 bg-transparent">
+                      (click)="toggleFavoris(article)" 
+                      class="favorite-btn position-relative border-0 bg-transparent">
                 <i class="far fa-heart text-dark" style="font-size: 1.5rem;"></i>
               </button>
-              
+        
               <!-- Images du carousel -->
-              <div *ngFor="let photo of article.photos; let first = first" 
-                  class="carousel-item" 
-                  [class.active]="first">
+              <div *ngFor="let photo of article.photos; let i = index" 
+                   class="carousel-item"
+                   [class.active]="i === 0">
                 <img [src]="photo.url" class="article-img"
-                  alt="{{ article.name }}" loading="lazy">
+                     alt="{{ article.name }}" loading="lazy">
               </div>
             </div>
-            
-            
-            
-            <!-- Contrôles de carousel -->
+        
+            <!-- Contrôles du carousel -->
             <button class="carousel-control-prev" type="button" 
-                   [attr.data-bs-target]="'#carousel' + article.id" 
-                   data-bs-slide="prev">
+                    [attr.data-bs-target]="'#carousel' + article.id" 
+                    data-bs-slide="prev">
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
               <span class="visually-hidden">Précédent</span>
             </button>
             <button class="carousel-control-next" type="button" 
-                   [attr.data-bs-target]="'#carousel' + article.id" 
-                   data-bs-slide="next">
+                    [attr.data-bs-target]="'#carousel' + article.id" 
+                    data-bs-slide="next">
               <span class="carousel-control-next-icon" aria-hidden="true"></span>
               <span class="visually-hidden">Suivant</span>
             </button>
           </div>
-          <!-- Indicateurs de carousel modifiés -->
-          <div class="article-indicators ">
-            <div *ngFor="let photo of article.photos; let i = index" 
-                class="indicator-dot" 
-                [class.active]="i === 0"
-                [attr.data-bs-target]="'#carousel' + article.id"
-                [attr.data-bs-slide-to]="i">
-            </div>
-          </div>
         </div>
         
+        <div class="article-indicators d-flex justify-content-center mt-2">
+          <div *ngFor="let photo of article.photos; let i = index" 
+               class="indicator-dot" 
+               [class.active]="activeIndexes[article.id] === i"
+               [attr.data-bs-target]="'#carousel' + article.id"
+               [attr.data-bs-slide-to]="i">
+          </div>
+        </div>
         <!-- Corps de la carte -->
         <div class="elegant-card-content">
           <!-- En-tête avec catégorie et nom -->
@@ -114,8 +150,8 @@
             </div>
             <div>
 
-              <h4 class="card-title">{{ article.name }}</h4>
-              <p class="card-description">{{ article.description | slice:0:80 }}{{ article.description.length > 80 ? '...' : '' }}</p>
+              <h4 class="card-title mb-0">{{ article.name }}</h4>
+              <p class="card-description mt-0">{{ article.description | slice:0:80 }}{{ article.description.length > 80 ? '...' : '' }}</p>
               </div>
             
           </div>

@@ -70,7 +70,10 @@
   background-color: #e83e8d6e !important;
   color: white;
 }
-
+.bg-violet {
+  background-color: #350e2083 !important;
+  color: white;
+}
 .bg-info {
   background-color: #3c2313 !important;
   color: white;
@@ -652,4 +655,18 @@ th{
   font-weight: bold;
   font-size: 1.3rem;
   color: #ffff; 
+}
+
+.photo-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.photo-thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }

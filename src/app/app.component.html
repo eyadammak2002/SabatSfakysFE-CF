@@ -4,4 +4,4 @@
   <router-outlet></router-outlet> <!-- ✅ Zone dynamique où s'affichent les pages -->
 </main>
 
-<app-footer *ngIf="!isLoginPage"></app-footer> <!-- ✅ Toujours affiché -->
+<app-footer *ngIf="!isLoginPage && !hideFooter"></app-footer>

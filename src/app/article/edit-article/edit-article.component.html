@@ -26,12 +26,13 @@
                     <span class="input-group-text" style="background-color: #3c2313; color: white;">
                       <i class="fas fa-barcode"></i>
                     </span>
-                    <input type="text" class="form-control" [(ngModel)]="articleForm.ref" name="ref" required />
+                    <input type="text" class="form-control" [(ngModel)]="articleForm.ref" name="ref" required disabled />
                   </div>
                   <div *ngIf="userForm.submitted && !articleForm.ref" class="text-danger mt-1">
                     <small><i class="fas fa-exclamation-circle"></i> Référence requise</small>
                   </div>
                 </div>
+                
               </div>
 
               <div class="col-md-6">
@@ -123,42 +124,100 @@
           </div>
         </div>
 
-        <!-- Section prix et détails -->
-        <div class="card mb-4" style="border-left: 4px solid #63a50a; background-color: #f9f9f9;">
-          <div class="card-body">
-            <h5 class="mb-3" style="color: #3c2313; border-bottom: 2px solid #63a50a; padding-bottom: 8px;">
-              <i class="fas fa-euro-sign me-2"></i> Prix et Détails
-            </h5>
-            
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group mb-4">
-                  <label class="fw-bold" style="color: #3c2313;">Prix Fournisseur</label>
-                  <div class="input-group">
-                    <span class="input-group-text" style="background-color: #3c2313; color: white;">
-                      <i class="fas fa-truck"></i>
-                    </span>
-                    <input type="number" class="form-control" [(ngModel)]="articleForm.prixFournisseur" name="prixFournisseur" min="0" step="0.01" required />
-                    <span class="input-group-text" style="background-color: #f8f9fa;">€</span>
-                  </div>
-                </div>
-              </div>
+       <!-- Section prix et détails -->
+<div class="card mb-4" style="border-left: 4px solid #63a50a; background-color: #f9f9f9;">
+  <div class="card-body">
+    <h5 class="mb-3" style="color: #3c2313; border-bottom: 2px solid #63a50a; padding-bottom: 8px;">
+      <i class="fas fa-euro-sign me-2"></i> Prix et Détails
+    </h5>
+    
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group mb-4">
+          <label class="fw-bold" style="color: #3c2313;">Prix Fournisseur</label>
+          <div class="input-group">
+            <span class="input-group-text" style="background-color: #3c2313; color: white;">
+              <i class="fas fa-truck"></i>
+            </span>
+            <input type="number" class="form-control" [(ngModel)]="articleForm.prixFournisseur" name="prixFournisseur" min="0" step="0.01" required />
+            <span class="input-group-text" style="background-color: #f8f9fa;">€</span>
+          </div>
+        </div>
+      </div>
 
-              <div class="col-md-6">
-                <div class="form-group mb-4">
-                  <label class="fw-bold" style="color: #3c2313;">Prix Vente</label>
-                  <div class="input-group">
-                    <span class="input-group-text" style="background-color: #63a50a; color: white;">
-                      <i class="fas fa-tags"></i>
-                    </span>
-                    <input type="number" class="form-control" [(ngModel)]="articleForm.prixVente" name="prixVente" min="0" step="0.01" required />
-                    <span class="input-group-text" style="background-color: #f8f9fa;">€</span>
-                  </div>
-                </div>
-              </div>
+      <div class="col-md-6">
+        <div class="form-group mb-4">
+          <label class="fw-bold" style="color: #3c2313;">Prix Vente</label>
+          <div class="input-group">
+            <span class="input-group-text" style="background-color: #63a50a; color: white;">
+              <i class="fas fa-tags"></i>
+            </span>
+            <input type="number" class="form-control" [(ngModel)]="articleForm.prixVente" name="prixVente" min="0" step="0.01" required />
+            <span class="input-group-text" style="background-color: #f8f9fa;">€</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group mb-4">
+          <label class="fw-bold" style="color: #3c2313;">Genre</label>
+          <div class="d-flex">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" id="genreHomme" name="genre" value="HOMME" 
+                     [(ngModel)]="articleForm.genre">
+              <label class="form-check-label" for="genreHomme">
+                <i class="fas fa-male me-1"></i> Homme
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" id="genreFemme" name="genre" value="FEMME" 
+                     [(ngModel)]="articleForm.genre">
+              <label class="form-check-label" for="genreFemme">
+                <i class="fas fa-female me-1"></i> Femme
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" id="genreEnfant" name="genre" value="ENFANT" 
+                     [(ngModel)]="articleForm.genre">
+              <label class="form-check-label" for="genreEnfant">
+                <i class="fas fa-child me-1"></i> Enfant
+              </label>
             </div>
           </div>
         </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="form-group mb-4">
+          <label class="fw-bold" style="color: #3c2313;">Tissu</label>
+          <div class="d-flex">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" id="tissuCuir" name="tissu" value="CUIR" 
+                     [(ngModel)]="articleForm.tissu">
+              <label class="form-check-label" for="tissuCuir">Cuir</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" id="tissuDain" name="tissu" value="DAIN" 
+                     [(ngModel)]="articleForm.tissu">
+              <label class="form-check-label" for="tissuDain">Daim</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="category" style="color: #3c2313; font-weight: bold;">Catégorie</label>
+      <!-- Modification ici pour comparer par ID -->
+      <select class="form-select" id="category" [(ngModel)]="articleForm.category" name="category" required style="border-color: #ddd;">
+        <option [ngValue]="null" disabled>Sélectionner une catégorie</option>
+        <option *ngFor="let cat of allCategory" [ngValue]="cat">{{ cat.name }}</option>
+      </select>
+    </div>
+  </div>
+</div>
 
         <!-- Section photos -->
         <div class="card mb-4" style="border-left: 4px solid #63a50a; background-color: #f9f9f9;">
@@ -183,7 +242,7 @@
                     </label>
                   </div>
                   <div class="col-lg-4">
-                    <button class="btn w-100" [disabled]="!selectedFiles" (click)="uploadPhotos()"
+                    <button class="btn w-100" [disabled]="!selectedFiles|| isUploading" (click)="uploadPhotos()"
                             style="background-color: #63a50a; color: white; height: 100%; transition: all 0.3s;">
                       <i class="fas fa-upload me-2"></i> Uploader
                     </button>
@@ -225,7 +284,7 @@
                 <div class="row">
                 <div *ngFor="let photo of allPhoto" class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
                   <!-- Use ngIf in a wrapper div -->
-                  <div *ngIf="!photosToHide.includes(photo.id)">
+                  <div >
                     <div class="photo-card" [ngClass]="{'border-success': isPhotoSelected(photo.id)}">
                       <img [src]="'http://localhost:8080/uploads/' + photo.name" class="photo-img" alt="{{ photo.name }}">
                       <div class="photo-card-body">
@@ -288,7 +347,7 @@
           <button type="button" (click)="redirectToArticles()" class="btn btn-lg" style="background-color: #e9ecef; color: #333; width: 180px; border-radius: 30px;">
             <i class="fas fa-arrow-left me-2"></i> Retour
           </button>
-          <button type="submit" class="btn btn-lg" style="background-color: #3c2313; color: white; width: 180px; border-radius: 30px;">
+          <button type="button"  (click)="update()" class="btn btn-lg" style="background-color: #3c2313; color: white; width: 180px; border-radius: 30px;">
             <i class="fas fa-save me-2"></i> Enregistrer
           </button>
         </div>

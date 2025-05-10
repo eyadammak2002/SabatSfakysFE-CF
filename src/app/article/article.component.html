@@ -3,6 +3,7 @@
   <!-- En-tête moderne et élégant -->
   <div class="dashboard-header">
     <div class="header-content">
+     
       <div class="header-left">
         <div class="brand-logo">
           <i class="fas fa-shoe-prints"></i>
@@ -17,6 +18,10 @@
           <button class="btn-create" (click)="redirectToCreateArticle()">
             <span class="btn-icon"><i class="fas fa-plus"></i></span>
             <span class="btn-text">Nouvel Article</span>
+          </button>
+          <button class="btn-create" (click)="loadArticles(email)">
+            <span class="btn-icon"><i class="fas fa-sync-alt"></i></span>
+            <span class="btn-text">Actualiser</span>
           </button>
         </div>
       </div>
@@ -108,6 +113,9 @@
                 <span *ngIf="article.genre === 'FEMME'" class="badge bg-pink">
                   <i class="fas fa-female me-1"></i> Femme
                 </span>
+                <span *ngIf="article.genre === 'ENFANT'" class="badge bg-violet">
+                  <i class="fas fa-female me-1"></i> Enfant
+                </span>
               </td>
               <td class="px-3 py-3">
                 <span class="badge bg-light text-dark">{{ article.tissu }}</span>
@@ -132,24 +140,27 @@
                   Aucune
                 </span>
               </td>
-              <td class="px-3 py-3">
-                <div *ngIf="article.photos && article.photos.length > 0" class="d-flex">
-                  <div *ngFor="let photo of article.photos.slice(0, 3)" class="position-relative me-1">
-                    <img [src]="'http://localhost:8080/uploads/' + photo.name" 
-                        [alt]="photo.name" 
-                        class="img-thumbnail"
-                        style="width: 100px; height: 100px; object-fit:fill;">
+              <td>
+                <div *ngIf="article.photos && article.photos.length > 0" class="photo-container">
+                  <div *ngFor="let photo of article.photos.slice(0, 3)"
+                      >
+                    <img [src]="'http://localhost:8080/uploads/' + photo.name"
+                         [alt]="photo.name"
+                         class="photo-thumbnail"
+                        >
                   </div>
-                  <div *ngIf="article.photos.length > 3" 
-                        class="img-thumbnail d-flex align-items-center justify-content-center" 
-                        style="width: 40px; height: 40px; background-color: #f8f9fa;">
-                    <small>+{{ article.photos.length - 3 }}</small>
+                  <div *ngIf="article.photos.length > 3"
+                       class="photo-thumbnail d-flex align-items-center justify-content-center"
+                       style="width: 30px; height: 30px; background-color: #f8f9fa; font-size: 12px;">
+                    +{{ article.photos.length - 3 }}
                   </div>
                 </div>
+              
                 <span *ngIf="!article.photos || article.photos.length === 0" class="badge bg-light text-secondary">
                   Aucune photo
                 </span>
               </td>
+              
               <td class="px-3 py-3">
                 <span *ngIf="article.statut === 'EN_ATTENTE'" class="badge bg-warning text-dark">
                   <i class="fas fa-clock me-1"></i> En attente

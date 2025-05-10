@@ -11,7 +11,12 @@
           <h2>Gestion des Commandes</h2>
           <p>Suivez et gérez toutes vos commandes</p>
         </div>
+        
       </div>
+      <button class="btn-refresh" (click)="getFournisseurIdAndLoadCommandes()">
+        <span class="btn-icon"><i class="fas fa-sync-alt"></i></span>
+        <span class="btn-text">Actualiser</span>
+      </button>
     </div>
     
     <!-- Mini statistiques -->

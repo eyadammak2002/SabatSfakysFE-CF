@@ -2,7 +2,7 @@
   import { Injectable } from '@angular/core';
   import { HttpClient, HttpEvent, HttpRequest } from '@angular/common/http';
   import { Photo } from './Photo';
-  import { Observable } from 'rxjs';
+  import { catchError, Observable, of, tap } from 'rxjs';
   
   @Injectable({
     providedIn: 'root'
@@ -10,6 +10,8 @@
   export class PhotoService {
     private baseUrl = 'http://localhost:8080';
     private baseUrl2 = 'http://localhost:8080/photo'; // Updated base URL for photo-related operations
+
+    private recentlyLinkedPhotos = new Map<string, Photo>();
 
 
     constructor(private http: HttpClient) {}
@@ -82,5 +84,43 @@
   getAllPhotos(): Observable<any[]> {
     return this.http.get<any[]>(this.baseUrl2);
   }
+
+
+  getByArticleId(articleId: number): Observable<Photo[]> {
+    return this.http.get<Photo[]>(`${this.baseUrl2}/article/${articleId}`);
+  }
+  linkPhotoToArticle(articleId: number, photo: Photo): Observable<Photo> {
+    // Vérifier si cette photo (identifiée par son nom) a récemment été liée
+    const cacheKey = `${articleId}-${photo.name}`;
+    if (this.recentlyLinkedPhotos.has(cacheKey)) {
+      console.log('Photo déjà liée récemment, utilisation du cache:', photo.name);
+      return of(this.recentlyLinkedPhotos.get(cacheKey) as Photo);
+    }
+
+    // Sinon, faire l'appel API
+    return this.http.post<Photo>(`${this.baseUrl2}/link/${articleId}`, photo).pipe(
+      tap(linkedPhoto => {
+        // Stocker dans le cache pour éviter les appels en double
+        this.recentlyLinkedPhotos.set(cacheKey, linkedPhoto);
+        
+        // Purger le cache après 10 secondes pour éviter de conserver des données obsolètes
+        setTimeout(() => {
+          this.recentlyLinkedPhotos.delete(cacheKey);
+        }, 10000);
+      }),
+      catchError(error => {
+        console.error('Erreur lors de la liaison de la photo:', error);
+        throw error;
+      })
+    );
+  }
+
+  // Ajouter dans PhotoService
+uploadAndLinkPhoto(articleId: number, file: File): Observable<Photo> {
+  const formData: FormData = new FormData();
+  formData.append('file', file);
+
+  return this.http.post<Photo>(`${this.baseUrl2}/upload-and-link/${articleId}`, formData);
+}
   }
   

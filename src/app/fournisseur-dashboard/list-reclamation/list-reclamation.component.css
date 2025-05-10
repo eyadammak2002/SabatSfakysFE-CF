@@ -166,3 +166,23 @@
       gap: 10px;
     }
   }
+
+  /* Bouton d'actualisation */
+  .btn-refresh {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .btn-refresh:hover {
+    background: linear-gradient(135deg, #5a3823 0%, #3c2313 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  

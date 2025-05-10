@@ -184,9 +184,9 @@
   </div>
 
   <!-- Menu de navigation principal -->
-  <nav *ngIf="!showFournisseurDashboard" class="nav-links">
+  <nav *ngIf="!showFournisseurDashboard" class="nav-links" style="background-color: rgba(165, 147, 130, 0.22);height: 50px;">
     <div ngbDropdown class="dropdown">
-      <a href="#" (click)="filterByCategory('chaussures', $event)" ngbDropdownToggle>
+      <a  href="#" (click)="filterByCategory('chaussures', $event)" ngbDropdownToggle>
          Chaussures Classiques
       </a>
       <div ngbDropdownMenu class="dropdown-menu">
@@ -203,7 +203,7 @@
     </div>
 
     <div ngbDropdown class="dropdown">
-      <a href="#" (click)="filterByCategory('botte', $event)" ngbDropdownToggle>
+      <a  href="#" (click)="filterByCategory('botte', $event)" ngbDropdownToggle>
         Bottes
       </a>
       <div ngbDropdownMenu class="dropdown-menu">
@@ -219,8 +219,8 @@
       </div>
     </div>
 
-    <div ngbDropdown class="dropdown">
-      <a href="#" (click)="filterByCategory('mocassins', $event)" ngbDropdownToggle>
+    <div ngbDropdown class="dropdown" display="dynamic" placement="bottom">
+      <a   href="#" (click)="filterByCategory('mocassins', $event)" ngbDropdownToggle>
        Mocassins
       </a>
       <div ngbDropdownMenu class="dropdown-menu">
@@ -237,7 +237,7 @@
     </div>
 
     <div *ngIf="isLoggedIn" ngbDropdown class="dropdown" display="dynamic" placement="bottom">
-      <a class="nav-link" routerLink="/personnaliser" ngbDropdownToggle>
+      <a routerLink="/personnaliser" ngbDropdownToggle>
        Chaussures Personnalisées
       </a>
       <div ngbDropdownMenu class="dropdown-menu">
