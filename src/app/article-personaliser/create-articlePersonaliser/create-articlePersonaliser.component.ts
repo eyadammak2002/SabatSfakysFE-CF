@@ -13,13 +13,25 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { ArticlePersonaliser, ArticlePersonaliserService } from '../article-personaliser.service';
 import { Genre } from 'src/app/produit/Genre';
 import { Fournisseur } from 'src/app/pack/Fournisseur';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-create-article-personaliser',
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './create-articlepersonaliser.component.html',
-  styleUrls: ['./create-articlepersonaliser.component.css']
+  styleUrls: ['./create-articlepersonaliser.component.css'],
+  animations: [
+    trigger('fadeAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({ opacity: 0, transform: 'translateY(-10px)' }))
+      ])
+    ])
+  ]
 })
 export class CreateArticlePersonaliserComponent {
   selectedPhotos: Photo[] = [];
@@ -38,6 +50,21 @@ export class CreateArticlePersonaliserComponent {
   // Dans votre composant
   photosToHide: number[] = []; // IDs des photos à masquer
 
+
+  currentStep: number = 1;
+  stepFormSubmitted: boolean = false;
+  stepErrors: { [key: number]: boolean } = {};
+  
+  // Suivi des étapes complétées
+  stepCompleted: { [key: number]: boolean } = {
+    1: false,
+    2: false,
+    3: false,
+    4: false
+  };
+
+
+  
   articleForm: ArticlePersonaliser = {
     id: 0,
     ref: '',
@@ -92,6 +119,80 @@ export class CreateArticlePersonaliserComponent {
       this.articleForm.client.email = user.email;
     } else {
       console.error('Aucun utilisateur connecté');
+    }
+  }
+
+  // Navigation entre les étapes
+  nextStep(): void {
+    if (this.currentStep < 4) {
+      this.currentStep++;
+      window.scrollTo(0, 0); // Remonter en haut de la page
+    }
+  }
+
+  prevStep(): void {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+      window.scrollTo(0, 0); // Remonter en haut de la page
+    }
+  }
+
+  // Navigation directe vers une étape (seulement si les étapes précédentes sont complétées)
+  goToStep(step: number): void {
+    if (step === 1 || this.canNavigateTo(step)) {
+      this.currentStep = step;
+      window.scrollTo(0, 0);
+    }
+  }
+
+  // Vérifier si l'utilisateur peut naviguer vers une étape
+  canNavigateTo(step: number): boolean {
+    for (let i = 1; i < step; i++) {
+      if (!this.stepCompleted[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Validation avant de passer à l'étape suivante
+  validateAndProceed(currentStepNum: number, nextStepNum: number): void {
+    this.stepFormSubmitted = true;
+    let isValid = true;
+
+    // Validation de l'étape 1
+    if (currentStepNum === 1) {
+      if (!this.articleForm.ref || !this.articleForm.name || !this.articleForm.description || this.selectedFournisseurId <= 0) {
+        isValid = false;
+      }
+    }
+    
+    // Validation de l'étape 2
+    else if (currentStepNum === 2) {
+      if (!this.articleForm.category || !this.articleForm.category.id) {
+        isValid = false;
+      }
+    }
+    
+    // Validation de l'étape 3 - on peut toujours passer à l'étape suivante
+    // même sans uploader de photos (peut-être l'utilisateur veut seulement utiliser des photos existantes)
+    else if (currentStepNum === 3) {
+      isValid = true;
+    }
+
+    this.stepErrors[currentStepNum] = !isValid;
+
+    if (isValid) {
+      // Marquer l'étape comme complétée
+      this.stepCompleted[currentStepNum] = true;
+      
+      // Passer à l'étape suivante
+      this.currentStep = nextStepNum;
+      this.stepFormSubmitted = false; // Réinitialiser après changement d'étape
+      window.scrollTo(0, 0); // Remonter en haut de la page
+    } else {
+      // Afficher un message d'erreur
+      console.error(`Veuillez corriger les erreurs à l'étape ${currentStepNum}`);
     }
   }
 

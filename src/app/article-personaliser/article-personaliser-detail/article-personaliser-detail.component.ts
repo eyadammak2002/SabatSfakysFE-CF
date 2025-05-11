@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewChecked, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,7 +15,9 @@ import { Subscription } from 'rxjs';
   templateUrl: './article-personaliser-detail.component.html',
   styleUrls: ['./article-personaliser-detail.component.css']
 })
-export class ArticlePersonaliserDetailComponent implements OnInit, OnDestroy {
+
+
+export class ArticlePersonaliserDetailComponent implements OnInit, OnDestroy, AfterViewChecked {
   articleId: number = 0;
   article: ArticlePersonaliser | null = null;
   isLoading: boolean = true;
@@ -30,6 +32,9 @@ export class ArticlePersonaliserDetailComponent implements OnInit, OnDestroy {
   isChatAvailable: boolean = false;
   
   private routeSub: Subscription | null = null;
+
+  
+  @ViewChild('chatMessages') private chatMessagesContainer!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -54,6 +59,11 @@ export class ArticlePersonaliserDetailComponent implements OnInit, OnDestroy {
     // Initialiser la connexion WebSocket pour le chat
     this.initializeWebSocketConnection();
   }
+  
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
+  }
+
   
   loadArticle(): void {
     if (!this.articleId) {
@@ -212,12 +222,15 @@ export class ArticlePersonaliserDetailComponent implements OnInit, OnDestroy {
   }
   
   // Faire défiler automatiquement vers le bas
-  scrollToBottom(): void {
-    const chatContainer = document.querySelector('.chat-messages');
-    if (chatContainer) {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+  private scrollToBottom(): void {
+    try {
+      this.chatMessagesContainer.nativeElement.scrollTop = 
+        this.chatMessagesContainer.nativeElement.scrollHeight;
+    } catch (err) {
+      console.error("Erreur scrollToBottom:", err);
     }
   }
+  
   
   // Formatter une date pour l'affichage
   formatDate(dateString: string): string {

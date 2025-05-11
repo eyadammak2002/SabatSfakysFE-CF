@@ -60,6 +60,7 @@ import { IntelligentSearchComponent } from './intelligent-search/intelligent-sea
 import { ListReclamationComponent } from './fournisseur-dashboard/list-reclamation/list-reclamation.component';
 import { AvisListComponent } from './fournisseur-dashboard/avis-list/avis-list.component';
 import { DetailArticleAvisComponent } from './fournisseur-dashboard/detail-article-avis/detail-article-avis.component';
+import { ListFournisseurComponent } from './article-personaliser/list-fournisseur/list-fournisseur.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +84,7 @@ import { DetailArticleAvisComponent } from './fournisseur-dashboard/detail-artic
     IntelligentSearchComponent,
    
     DetailArticleAvisComponent,
+        ListFournisseurComponent,
 
     
     

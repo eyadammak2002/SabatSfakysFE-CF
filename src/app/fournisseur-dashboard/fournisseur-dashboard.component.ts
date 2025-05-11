@@ -14,7 +14,9 @@ import { filter } from 'rxjs/operators';
 export class FournisseurDashboardComponent implements OnInit {
   isSidebarExpanded = false;
   currentRoute: string = '';
+  email: string = ''; // Définir la propriété email
 
+  
   constructor(
     private router: Router,
     private tokenStorage: TokenStorageService
@@ -40,6 +42,10 @@ export class FournisseurDashboardComponent implements OnInit {
     // Vérifier si l'utilisateur est connecté
     if (!this.tokenStorage.getUser()) {
       this.router.navigate(['/login']);
+    } else {
+      // Stocker l'email de l'utilisateur
+      const user = this.tokenStorage.getUser();
+      this.email = user.email; // Assignez l'email à la propriété du composant
     }
   }
 

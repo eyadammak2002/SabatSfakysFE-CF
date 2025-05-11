@@ -1,0 +1,284 @@
+/* Variables de couleurs */
+:root {
+    --primary-color: #3c2313;
+    --primary-light: #5a3b25;
+    --primary-dark: #2b180f;
+    --accent-color: #63a50a;
+    --accent-light: #8bc34a;
+    --accent-dark: #558b2f;
+    --light-bg: #f9f9fa;
+    --card-bg: #ffffff;
+    --text-primary: #3c3c3c;
+    --text-secondary: #6c757d;
+    --text-light: #95a0a9;
+    --border-color: #e9ecef;
+  }
+  
+  /* Conteneur principal */
+  .fournisseurs-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  /* En-tête */
+  .fournisseurs-header {
+    text-align: center;
+    margin-bottom: 35px;
+    position: relative;
+  }
+  
+  .fournisseurs-title {
+    color: var(--primary-color);
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .fournisseurs-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: var(--accent-color);
+    border-radius: 3px;
+  }
+  
+  .fournisseurs-subtitle {
+    color: var(--text-secondary);
+    font-size: 16px;
+    max-width: 600px;
+    margin: 20px auto 0;
+  }
+  
+  /* Select personnalisé */
+  .fournisseur-select-container {
+    position: relative;
+    margin-bottom: 40px;
+  }
+  
+  .fournisseur-select {
+    width: 100%;
+    padding: 15px 20px;
+    appearance: none;
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .fournisseur-select:hover {
+    border-color: var(--primary-light);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  }
+  
+  .fournisseur-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(60, 35, 19, 0.2);
+  }
+  
+  .select-icon {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--primary-color);
+    font-size: 18px;
+  }
+  
+  /* Carte détails fournisseur */
+  .fournisseur-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 30px;
+    border: none;
+    animation: fadeInUp 0.5s ease-out;
+  }
+  
+  .fournisseur-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* En-tête de la carte */
+  .fournisseur-card-header {
+    background: linear-gradient(to right, var(--primary-color), var(--primary-light));
+    color: white;
+    padding: 20px;
+    border-radius: 12px 12px 0 0;
+  }
+  
+  .fournisseur-card-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+  }
+  
+  .fournisseur-card-title i {
+    margin-right: 10px;
+  }
+  
+  /* Corps de la carte */
+  .fournisseur-card-body {
+    padding: 0;
+  }
+  
+  /* Zone de logo/image */
+  .fournisseur-logo-container {
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .fournisseur-logo {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.5s ease;
+  }
+  
+  .fournisseur-card:hover .fournisseur-logo {
+    transform: scale(1.05);
+  }
+  
+  /* Zone d'information */
+  .fournisseur-info {
+    padding: 25px;
+  }
+  
+  .info-group {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .info-group:last-child {
+    margin-bottom: 0;
+  }
+  
+  .info-icon {
+    width: 36px;
+    height: 36px;
+    background-color: rgba(60, 35, 19, 0.1);
+    color: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+  }
+  
+  .info-content {
+    flex-grow: 1;
+  }
+  
+  .info-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 3px;
+  }
+  
+  .info-value {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  
+  /* Message placeholder quand aucun fournisseur n'est sélectionné */
+  .select-placeholder {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: var(--light-bg);
+    border-radius: 12px;
+    margin-top: 30px;
+  }
+  
+  .placeholder-icon {
+    font-size: 48px;
+    color: var(--primary-light);
+    opacity: 0.5;
+    margin-bottom: 15px;
+  }
+  
+  .placeholder-text {
+    font-size: 18px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+  
+  .placeholder-subtext {
+    font-size: 14px;
+    color: var(--text-light);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .fournisseurs-container {
+      padding: 20px 15px;
+    }
+    
+    .fournisseurs-title {
+      font-size: 26px;
+    }
+    
+    .fournisseur-select {
+      padding: 12px 15px;
+      font-size: 15px;
+    }
+    
+    .fournisseur-logo-container {
+      height: 150px;
+    }
+    
+    .fournisseur-card-title {
+      font-size: 20px;
+    }
+    
+    .info-group {
+      margin-bottom: 12px;
+    }
+    
+    .info-icon {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+    }
+    
+    .info-value {
+      font-size: 15px;
+    }
+  }

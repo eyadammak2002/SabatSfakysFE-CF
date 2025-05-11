@@ -1,136 +1,325 @@
-<div class="container mt-4">
-  <div class="row mb-4">
-    <div class="col">
-      <h2 class="text-center mb-2">Mes Articles Personnalisés</h2>
-      <p class="text-muted text-center">Consultez et gérez vos demandes d'articles sur mesure</p>
-    </div>
-  </div>
+<style>
+/* Styles généraux */
+.personaliser-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+}
 
-  <!-- Bouton pour créer un nouvel article personnalisé -->
-  <div class="row mb-4">
-    <div class="col-12 text-center">
-      <button class="btn btn-primary" (click)="creerArticlePersonalise()">
+/* En-tête animé */
+.header-section {
+  background: linear-gradient(to right, #f8f9fa, #f8f9fa);
+  border-radius: 12px;
+  padding: 20px 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 10px rgba(60, 35, 19, 0.2);
+  transform: translateY(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.header-section:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.header-content {
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+.main-title {
+  color: #3c2313;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  position: relative;
+  display: inline-block;
+}
+
+.main-title:after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: #63a50a;
+  border-radius: 3px;
+}
+
+.subtitle {
+  color: #6c757d;
+  font-size: 14px;
+  margin-bottom: 20px;
+  margin-top: 15px;
+}
+
+/* Bouton de création d'article */
+.create-btn {
+  background: #3c2313;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-weight: 500;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(60, 35, 19, 0.2);
+}
+
+.create-btn:hover {
+  background: #63a50a;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(99, 165, 10, 0.3);
+}
+
+.create-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(60, 35, 19, 0.2);
+}
+
+/* État de chargement */
+.loading-container {
+  padding: 40px 0;
+}
+
+.spinner-container {
+  width: 50px;
+  height: 50px;
+}
+
+.spinner {
+  border: 3px solid #e9ecef;
+  border-top-color: #3c2313;
+  animation: spinner 1s linear infinite;
+}
+
+@keyframes spinner {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 14px;
+}
+
+/* Message d'erreur */
+.error-message {
+  font-size: 14px;
+  padding: 12px;
+  margin-bottom: 15px;
+}
+
+/* État vide */
+.empty-state {
+  padding: 30px 15px;
+}
+
+.empty-icon-container {
+  width: 60px;
+  height: 60px;
+}
+
+.empty-icon {
+  font-size: 28px;
+}
+
+.empty-title {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.empty-description {
+  font-size: 14px;
+}
+
+/* Liste des articles */
+.articles-title {
+  font-size: 18px;
+}
+
+.articles-count {
+  font-size: 12px;
+}
+
+.articles-grid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+  padding: 15px;
+}
+
+/* Carte d'article */
+.article-card {
+  border-radius: 8px;
+}
+
+.article-image-container {
+  height: 150px;
+}
+
+.article-no-image i {
+  font-size: 28px;
+}
+
+.status-badge {
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+.article-content {
+  padding: 15px;
+}
+
+.article-title {
+  font-size: 16px;
+}
+
+.article-meta {
+  font-size: 12px;
+}
+
+.article-description {
+  font-size: 13px;
+}
+
+.article-tag {
+  font-size: 11px;
+  padding: 3px 6px;
+}
+
+.article-actions {
+  padding: 10px;
+}
+
+.action-btn {
+  font-size: 13px;
+  padding: 8px;
+}
+
+
+</style>
+<div class="personaliser-container mt-5" >
+  <!-- En-tête avec animation -->
+  <div class="header-section mt-5" >
+    <div class="header-content text-center" >
+      <h2 class="main-title">Mes Articles Personnalisés</h2>
+      <p class="subtitle">Consultez et gérez vos demandes d'articles sur mesure</p>
+      
+      <!-- Bouton de création avec effet hover -->
+      <button class="create-btn" (click)="creerArticlePersonalise()">
         <i class="fas fa-plus-circle me-2"></i> Créer un nouvel article personnalisé
       </button>
     </div>
   </div>
 
   <!-- Affichage pendant le chargement -->
-  <div *ngIf="isLoading" class="text-center my-5">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Chargement...</span>
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner-container">
+      <div class="spinner"></div>
     </div>
-    <p class="mt-2">Chargement de vos articles personnalisés...</p>
+    <p class="loading-text">Chargement de vos articles personnalisés...</p>
   </div>
 
   <!-- Message d'erreur -->
-  <div *ngIf="errorMessage && !isLoading" class="alert alert-danger">
+  <div *ngIf="errorMessage && !isLoading" class="error-message">
+    <i class="fas fa-exclamation-triangle me-2"></i>
     {{ errorMessage }}
   </div>
 
   <!-- Pas d'articles personnalisés -->
-  <div *ngIf="!isLoading && !errorMessage && articlesPersonalises.length === 0" class="text-center my-5">
-    <div class="alert "         style="background-color: rgba(60, 35, 19, 0.1); border-left: 4px solid #3c2313; color: #3c2313;">
-      
-      <i class="fas fa-info-circle me-2"></i>
-      Vous n'avez pas encore créé d'articles personnalisés.
+  <div *ngIf="!isLoading && !errorMessage && articlesPersonalises.length === 0" class="empty-state">
+    <div class="empty-icon-container">
+      <i class="fas fa-tshirt empty-icon"></i>
     </div>
-    <p class="text-muted mt-3">
-      Créez votre premier article personnalisé en cliquant sur le bouton ci-dessus.
+    <h3 class="empty-title">Aucun article personnalisé</h3>
+    <p class="empty-description">
+      Vous n'avez pas encore créé d'articles personnalisés.
+      <br>Créez votre premier article en cliquant sur le bouton ci-dessus.
     </p>
   </div>
 
   <!-- Liste des articles personnalisés -->
-  <div *ngIf="!isLoading && articlesPersonalises.length > 0" class="row">
-    <div class="col-12">
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0"><i class="fas fa-tshirt me-2"></i> Vos articles personnalisés ({{ articlesPersonalises.length }})</h5>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div *ngFor="let article of articlesPersonalises" class="col-md-6 col-lg-4 mb-4">
-              <div class="card h-100 border-0 shadow-sm article-card">
-                <!-- Photos de l'article -->
-                <div *ngIf="article.photos && article.photos.length > 0" class="position-relative">
-                  <img [src]="'http://localhost:8080/uploads/' + article.photos[0].name" 
-                       class="card-img-top" 
-                       alt="{{ article.name }}"
-                       style="height: 200px; object-fit: cover;">
-                  <!-- Badge statut -->
-                  <span [class]="getStatutFormate(article.statut).classe" class="position-absolute top-0 end-0 m-2">
-                    <i [class]="getStatutFormate(article.statut).icone + ' me-1'"></i>
-                    {{ getStatutFormate(article.statut).texte }}
-                  </span>
-                </div>
-                <!-- Si pas de photo -->
-                <div *ngIf="!article.photos || article.photos.length === 0" class="card-img-top bg-light d-flex justify-content-center align-items-center" style="height: 200px;">
-                  <i class="fas fa-image fa-3x text-muted"></i>
-                </div>
-                
-                <div class="card-body">
-                  <h5 class="card-title">{{ article.name }}</h5>
-                  <p class="card-text text-muted small mb-2">
-                    <i class="far fa-calendar-alt me-1"></i>
-                    Créé le {{ article.dateAjout | date:'dd/MM/yyyy' }}
-                  </p>
-                  
-                  <!-- Affichage du fournisseur -->
-                  <p *ngIf="article.fournisseur" class="card-text text-muted small mb-2">
-                    <i class="fas fa-industry me-1"></i>
-                    Fournisseur: {{ article.fournisseur.nom }}
-                  </p>
-                  
-                  <p class="card-text" *ngIf="article.description" style="max-height: 80px; overflow: hidden;">
-                    {{ article.description }}
-                  </p>
-                  
-                  <!-- Détails article -->
-                  <div class="row mt-3 mb-2 g-2">
-                    <div class="col-6" *ngIf="article.category">
-                      <span class="badge bg-secondary w-100">
-                        <i class="fas fa-layer-group me-1"></i> {{ article.category.name }}
-                      </span>
-                    </div>
-                    <div class="col-6" *ngIf="article.genre">
-                      <span class="badge bg-info w-100">
-                        <i class="fas fa-venus-mars me-1"></i> {{ article.genre }}
-                      </span>
-                    </div>
-                    <div class="col-6" *ngIf="article.tissu">
-                      <span class="badge bg-dark w-100">
-                        <i class="fas fa-tshirt me-1"></i> {{ article.tissu }}
-                      </span>
-                    </div>
-                    <div class="col-6" *ngIf="article.ref">
-                      <span class="badge bg-secondary w-100">
-                        <i class="fas fa-hashtag me-1"></i> {{ article.ref }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Actions -->
-                <div class="card-footer bg-white border-top-0">
-                  <div class="d-grid gap-2">
-
-                     <!-- Ajout du bouton "Voir détails & Chat" -->
-                    <button class="btn btn-primary btn-sm" [routerLink]="['/article-personaliser', article.id]">
-                      <i class="fas fa-comments me-1"></i> Voir détails & Chat
-                    </button>
-                    
-                    <button class="btn btn-outline-primary btn-sm" (click)="modifierArticlePersonalise(article.id!)" 
-                            [disabled]="article.statut === 'EN_PRODUCTION' || article.statut === 'LIVRE'">
-                      <i class="fas fa-edit me-1"></i> Modifier
-                    </button>
-                    <button class="btn btn-outline-danger btn-sm" (click)="supprimerArticlePersonalise(article.id!)"
-                            [disabled]="article.statut === 'EN_PRODUCTION' || article.statut === 'LIVRE'">
-                      <i class="fas fa-trash-alt me-1"></i> Supprimer
-                    </button>
-                  </div>
-                </div>
-              </div>
+  <div *ngIf="!isLoading && articlesPersonalises.length > 0" class="articles-container">
+    <div class="articles-header"  style="height: 60px;" >
+      <h3 class="">
+        <i class="fas fa-tshirt me-2"></i> Vos articles personnalisés
+        <span class="articles-count">{{ articlesPersonalises.length }}</span>
+      </h3>
+    </div>
+    
+    <div class="articles-grid">
+      <div *ngFor="let article of articlesPersonalises" class="article-card">
+        <div class="article-image-container">
+          <!-- Photos de l'article -->
+          <div *ngIf="article.photos && article.photos.length > 0" class="article-image">
+            <img [src]="'http://localhost:8080/uploads/' + article.photos[0].name" alt="{{ article.name }}">
+            <!-- Badge statut -->
+            <div [class]="'status-badge ' + getStatutFormate(article.statut).classe">
+              <i [class]="getStatutFormate(article.statut).icone + ' me-1'"></i>
+              {{ getStatutFormate(article.statut).texte }}
             </div>
+          </div>
+          <!-- Si pas de photo -->
+          <div *ngIf="!article.photos || article.photos.length === 0" class="article-no-image">
+            <i class="fas fa-image"></i>
+          </div>
+        </div>
+        
+        <div class="article-content">
+          <h4 class="article-title">{{ article.name }}</h4>
+          
+          <div class="article-meta">
+            <div class="article-date">
+              <i class="far fa-calendar-alt me-1"></i>
+              Créé le {{ article.dateAjout | date:'dd/MM/yyyy' }}
+            </div>
+            
+            <!-- Affichage du fournisseur -->
+            <div *ngIf="article.fournisseur" class="article-supplier">
+              <i class="fas fa-industry me-1"></i>
+              Fournisseur: {{ article.fournisseur.nom }}
+            </div>
+          </div>
+          
+          <p class="article-description" *ngIf="article.description">
+            {{ article.description }}
+          </p>
+          
+          <!-- Détails article -->
+          <div class="article-tags">
+            <span class="article-tag category" *ngIf="article.category">
+              <i class="fas fa-layer-group me-1"></i> {{ article.category.name }}
+            </span>
+            <span class="article-tag genre" *ngIf="article.genre">
+              <i class="fas fa-venus-mars me-1"></i> {{ article.genre }}
+            </span>
+            <span class="article-tag material" *ngIf="article.tissu">
+              <i class="fas fa-tshirt me-1"></i> {{ article.tissu }}
+            </span>
+            <span class="article-tag reference" *ngIf="article.ref">
+              <i class="fas fa-hashtag me-1"></i> {{ article.ref }}
+            </span>
+          </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="article-actions">
+          <button class="action-btn view-btn" [routerLink]="['/article-personaliser', article.id]">
+            <i class="fas fa-comments me-1"></i> Voir détails & Chat
+          </button>
+          
+          <div class="action-btn-group">
+            <button class="action-btn edit-btn" 
+                    (click)="modifierArticlePersonalise(article.id!)" 
+                    [disabled]="article.statut === 'EN_PRODUCTION' || article.statut === 'LIVRE'">
+              <i class="fas fa-edit me-1"></i> Modifier
+            </button>
+            <button class="action-btn delete-btn" 
+                    (click)="supprimerArticlePersonalise(article.id!)"
+                    [disabled]="article.statut === 'EN_PRODUCTION' || article.statut === 'LIVRE'">
+              <i class="fas fa-trash-alt me-1"></i> Supprimer
+            </button>
           </div>
         </div>
       </div>

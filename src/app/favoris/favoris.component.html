@@ -36,9 +36,9 @@
           <i class="fas fa-image"></i>
         </div>
         <div class="image-overlay">
-          <button class="overlay-btn view-btn" [routerLink]="['/article', article.id]">
-            <i class="fas fa-eye"></i>
-          </button>
+          <!--<button class="overlay-btn view-btn" [routerLink]="['/article', article.id]">
+            <i class="fas fa-shopping-cart menu-icon"></i>
+          </button>-->
           <button class="overlay-btn remove-btn" (click)="removeFromFavoris(article.id)">
             <i class="fas fa-heart-broken"></i>
           </button>
@@ -46,14 +46,21 @@
       </div>
       
       <div class="favorite-content">
-        <h3 class="favorite-title">{{ article.nom }}</h3>
+        <h3 class="favorite-title">{{ article.name }}</h3>
         <p class="favorite-description">{{ article.description }}</p>
+        <p>
+          <span class="badge bg-marron me-2">{{ article.genre }}</span>
+          <span class="badge bg-marron">{{ article.category.name }}</span>
+        </p>
+        <p class="favorite-description mt-3" ><span class="me-2" style="color: #3c2313;">{{ article.prixVente }}</span><span style="font-weight: bold;color: #3c2313;">DT</span></p>
+
+
       </div>
       
       <div class="favorite-footer">
         <div class="price-tag">{{ article.prix | currency:'EUR' }}</div>
-        <button class="details-button" [routerLink]="['/article', article.id]">
-          Voir détails
+        <button class="details-button" (click)="voirDetailsArticle(article)" title="Voir détails">
+          Voir Détails
         </button>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ProfileService } from '../profile/profile.service';
 import { Fournisseur } from 'src/app/pack/Fournisseur';
+import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
   selector: 'app-profile-fournisseur',
@@ -22,7 +23,9 @@ export class ProfileFournisseurComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private fournisseurService: ProfileService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private tokenStorage: TokenStorageService,
+
   ) {
     // Initialiser le formulaire
     this.profileForm = this.fb.group({
@@ -35,10 +38,16 @@ export class ProfileFournisseurComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Essayer d'abord les paramètres d'URL
     this.route.queryParams.subscribe(params => {
       const email = params['email'];
       if (email) {
         this.fetchFournisseurDataByEmail(email);
+      } else {
+        const user = this.tokenStorage.getUser();
+        const email = user.email;
+        this.fetchFournisseurDataByEmail(email);
+
       }
     });
   }
@@ -49,6 +58,7 @@ export class ProfileFournisseurComponent implements OnInit {
     this.fournisseurService.getFournisseurByEmail(email).subscribe(
       (data: Fournisseur) => {
         this.fournisseur = data;
+        console.log("this.fournisseur",this.fournisseur);
         this.fournisseurId = data.id;
         this.profileForm.patchValue({
           nom: data.nom,

@@ -1,363 +1,471 @@
-.container {
-    max-width: 800px; /* Réduit la largeur du formulaire */
-    margin: auto;
+/* Structure de base du stepper */
+.stepper-container {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  margin: 30px auto;
+  min-height: 500px;
 }
 
-.card {
-    border-radius: 10px;
-    padding: 15px;
-    background: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ddd;
+/* Timeline verticale */
+.vertical-timeline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  width: 150px;
+  position: relative;
 }
 
-.card h5 {
-    font-size: 20px;
-    font-weight: bold;
+/* Conteneur de chaque étape */
+.step-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 15px;
+  cursor: pointer;
+  width: 100%;
+  padding: 10px 0;
+  transition: all 0.3s ease;
 }
 
+/* Cercle de l'étape */
+.step-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #999;
+  border: 2px solid #ddd;
+  transition: all 0.3s ease;
+  margin-bottom: 8px;
+  font-size: 18px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Ligne verticale entre les cercles */
+.timeline-line {
+  height: 30px;
+  width: 3px;
+  background-color: #ddd;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+/* Label de l'étape */
+.step-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  text-align: center;
+  transition: all 0.3s ease;
+  margin-top: 5px;
+}
+
+/* Étape active */
+.step-wrapper.active .step-circle {
+  background-color: #63a50a;
+  color: white;
+  border-color: #63a50a;
+  transform: scale(1.1);
+  box-shadow: 0 0 0 5px rgba(99, 165, 10, 0.2);
+}
+
+.step-wrapper.active .step-label {
+  color: #63a50a;
+  font-weight: 600;
+}
+
+/* Étape complétée */
+.step-wrapper.completed .step-circle {
+  background-color: #3c2313;
+  color: white;
+  border-color: #3c2313;
+}
+
+.step-wrapper.completed .step-label {
+  color: #3c2313;
+}
+
+/* Ligne active (entre deux étapes actives/complétées) */
+.step-wrapper.active + .timeline-line,
+.step-wrapper.completed + .timeline-line {
+  background-color: #63a50a;
+}
+
+/* Étape désactivée */
+.step-wrapper.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Conteneur du contenu de l'étape */
+.step-content-wrapper {
+  flex: 1;
+  padding: 0 20px;
+}
+
+/* Contenu de l'étape */
+.step-content {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: fadeIn 0.4s ease-out;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Animation pour l'apparition de l'étape */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* En-tête de l'étape */
+.step-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eee;
+  padding: 15px 20px;
+}
+
+.step-header h3 {
+  margin: 0;
+  color: #3c2313;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Corps de l'étape */
+.step-body {
+  padding: 20px;
+  flex: 1;
+}
+
+/* Pied de l'étape */
+.step-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #eee;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Formulaires et champs */
 .form-group {
-    margin-bottom: 10px; /* Réduit l’espace entre les champs */
+  margin-bottom: 15px;
 }
 
-.form-control, select {
-  
-    border-radius: 5px;
-    font-size: 14px;
-    padding: 8px;
+.form-control,
+select {
+  border-radius: 5px;
+  font-size: 14px;
+  padding: 8px;
 }
 
-.article-photo {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 5px;
-    transition: transform 0.3s ease-in-out;
+/* Zone d'upload */
+.upload-zone {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 30px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
-.article-photo:hover {
-    transform: scale(1.1);
+.upload-zone:hover {
+  border-color: #63a50a;
+  background-color: #f0f7e6;
 }
 
+/* Liste des fichiers sélectionnés */
+.selected-files-list {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.selected-file-item {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+}
+
+.selected-file-item:last-child {
+  border-bottom: none;
+}
+
+.file-name {
+  flex-grow: 1;
+  font-size: 13px;
+  margin-right: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-size {
+  color: #777;
+  font-size: 12px;
+}
+
+/* Badge compteur de photos */
+.selected-count-badge {
+  display: inline-block;
+  background-color: #e6f4d7;
+  color: #548e09;
+  border-radius: 20px;
+  padding: 5px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #c3e6a1;
+}
+
+/* Grille de photos */
+.photo-grid {
+  margin-top: 15px;
+}
+
+/* Carte photo */
+.photo-card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  height: 100%;
+  background-color: white;
+  border: 2px solid transparent;
+}
+
+.photo-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.photo-card.border-success {
+  border-color: #63a50a;
+  box-shadow: 0 4px 10px rgba(99, 165, 10, 0.2);
+}
+
+/* Image photo */
+.photo-image {
+  height: 120px;
+  overflow: hidden;
+  position: relative;
+}
+
+.photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.photo-card:hover .photo-img {
+  transform: scale(1.1);
+}
+
+/* Overlay au survol */
+.photo-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(60, 35, 19, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.photo-card:hover .photo-overlay {
+  opacity: 1;
+}
+
+/* Badge de sélection */
+.photo-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #63a50a;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s ease;
+}
+
+.photo-card.border-success .photo-badge {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Actions photo */
+.photo-actions {
+  padding: 10px;
+  background-color: #f8f9fa;
+}
+
+/* Styles des boutons */
 .btn {
-    padding: 8px 15px;
-    font-size: 14px;
-    border-radius: 5px;
+  padding: 8px 20px;
+  font-size: 14px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
 }
 
 .btn-primary {
-    background-color: #3c2313;
-    border: none;
+  background-color: #3c2313;
+  border-color: #3c2313;
 }
 
 .btn-primary:hover {
-    background-color: #2b180f;
+  background-color: #2b180f;
+  border-color: #2b180f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.btn-secondary {
-    background-color: #bbb;
-    border: none;
+.btn-success {
+  background-color: #63a50a;
+  border-color: #63a50a;
 }
 
-.btn-secondary:hover {
-    background-color: #999;
+.btn-success:hover {
+  background-color: #548e09;
+  border-color: #548e09;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-
-/* ✅ Conteneur principal */
-.photo-select {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* Espacement entre les images */
-    margin-top: 10px;
+.btn-outline-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* ✅ Style pour chaque option de photo */
-.photo-option {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
+/* Carte récapitulative */
+.summary-card {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid #eee;
 }
 
-/* ✅ Input caché (case à cocher) */
-.photo-option input {
-    position: absolute;
-    opacity: 0;
+.summary-card h5 {
+  margin-bottom: 15px;
+  color: #3c2313;
+  font-weight: 600;
+  border-bottom: 2px solid #63a50a;
+  padding-bottom: 10px;
+  display: inline-block;
+}
+
+.summary-item {
+  margin-bottom: 10px;
+}
+
+.summary-label {
+  font-weight: 600;
+  color: #666;
+  margin-right: 5px;
+}
+
+.summary-value {
+  color: #333;
+}
+
+.summary-description {
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #eee;
+  margin-top: 5px;
+}
+
+/* Galerie de photos sélectionnées */
+.selected-photos-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.selected-photo-item {
+  width: 80px;
+  height: 80px;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.selected-photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Adaptation mobile */
+@media (max-width: 768px) {
+  .stepper-container {
+    flex-direction: column;
+  }
+  
+  .vertical-timeline {
+    flex-direction: row;
     width: 100%;
-    height: 100%;
-}
-
-/* ✅ Style des images */
-.article-photo {
-    width: 130px; /* Taille de l’image */
-    height: 130px;
-    object-fit: cover;
-    border-radius: 8px;
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    border: 2px solid transparent;
-}
-
-/* ✅ Effet au survol */
-.article-photo:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* ✅ Effet lorsque la case est cochée */
-.photo-option input:checked + label .article-photo {
-    border: 2px solid #3c2313; /* Marron foncé */
-    transform: scale(1.1);
-}
-
-/* ✅ Label pour gérer le clic */
-.photo-option label {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
-
-
-.photo-select {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .photo-option {
-    position: relative;
-    margin-bottom: 10px;
-  }
-  
-  .article-photo {
-    height: 100px;
-    width: auto;
-    object-fit: cover;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 5px;
-  }
-  
-  /* Style pour indiquer une photo sélectionnée */
-  input[type="checkbox"]:checked + label .article-photo {
-    border: 2px solid #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-
-  /* CSS pour embellir et organiser la section des photos */
-
-/* Conteneur principal */
-.photo-gallery-container {
-    background-color: #f9f9f9;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.05);
-    margin-top: 25px;
-    border-left: 4px solid #63a50a;
-  }
-  
-  /* Titre de la section */
-  .photo-gallery-title {
-    color: #3c2313;
-    font-weight: 600;
-    margin-bottom: 12px;
-    border-bottom: 2px solid #63a50a;
-    padding-bottom: 8px;
-    display: inline-block;
-  }
-  
-  /* Description */
-  .photo-gallery-description {
-    color: #6c757d;
-    font-size: 14px;
+    padding: 10px;
+    order: 1;
+    overflow-x: auto;
     margin-bottom: 20px;
   }
   
-  /* Grille de photos */
-  .photo-grid {
-    padding: 10px 0;
+  .step-wrapper {
+    margin-bottom: 0;
+    margin-right: 10px;
   }
   
-  /* Carte photo individuelle */
-  .photo-card {
-    border-radius: 10px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    height: 100%;
-    background-color: white;
-    border: 2px solid transparent;
+  .timeline-line {
+    height: 3px;
+    width: 30px;
+    margin: 0 5px;
   }
   
-  .photo-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  .step-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
   }
   
-  .photo-card.border-success {
-    border-color: #63a50a;
-    box-shadow: 0 4px 10px rgba(99, 165, 10, 0.2);
+  .step-label {
+    font-size: 12px;
   }
   
-  /* Style de l'image */
-  .photo-image {
-    height: 120px;
-    overflow: hidden;
-    position: relative;
+  .step-content-wrapper {
+    order: 2;
+    padding: 0;
   }
-  
-  .photo-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-  }
-  
-  .photo-card:hover .photo-image img {
-    transform: scale(1.1);
-  }
-  
-  /* Overlay au survol */
-  .photo-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(60, 35, 19, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  
-  .photo-card:hover .photo-overlay {
-    opacity: 1;
-  }
-  
-  /* Badge de sélection */
-  .photo-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #63a50a;
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transform: scale(0);
-    transition: all 0.3s ease;
-  }
-  
-  .photo-card.border-success .photo-badge {
-    opacity: 1;
-    transform: scale(1);
-  }
-  
-  /* Zone des boutons */
-  .photo-actions {
-    padding: 10px;
-    background-color: white;
-  }
-  
-  /* Style des boutons */
-  .btn-photo-select {
-    border-radius: 20px;
-    transition: all 0.2s ease;
-    font-size: 13px;
-    padding: 5px 10px;
-  }
-  
-  .btn-success {
-    background-color: #63a50a;
-    border-color: #63a50a;
-  }
-  
-  .btn-success:hover {
-    background-color: #548e09;
-    border-color: #548e09;
-  }
-  
-  .btn-outline-danger:hover {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  /* Pagination (à ajouter si nécessaire) */
-  .photo-pagination {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-  }
-  
-  /* Adaptation mobile */
-  @media (max-width: 768px) {
-    .photo-gallery-container {
-      padding: 15px;
-    }
-    
-    .photo-image {
-      height: 100px;
-    }
-  }
-
-/* Custom photo card styling */
-.photo-card {
-    border-radius: 8px;
-    overflow: hidden;
-    transition: all 0.3s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    height: 100%;
-  }
-  
-  /* Custom image styling */
-  .photo-img {
-    width: 100%;
-    height: 100px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-  
-  .photo-card:hover .photo-img {
-    transform: scale(1.05); /* Slight zoom on hover */
-  }
-  
-
-  /* Optional: Add some hover effect for the photo card */
-  .photo-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  
-  .select-btn {
-    background-color: #63a50a !important;
-    color: white !important;
-  }
-  
-  .select-btn:hover {
-    background-color: #548e08 !important;
-    transform: translateY(-2px);
-  }
-  
-  .remove-btn {
-    background-color: white !important;
-    color: #dc3545 !important;
-    border: 1px solid #dc3545 !important;
-  }
-  
-  .remove-btn:hover {
-    background-color: #fff9f9 !important;
-    color: #c82333 !important;
-    transform: translateY(-2px);
-  }
-  
-  .photo-btn-small {
-    font-weight: 500;
-    letter-spacing: 0.3px;
-  }
+}

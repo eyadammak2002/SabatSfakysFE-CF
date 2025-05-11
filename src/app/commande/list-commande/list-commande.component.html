@@ -35,11 +35,11 @@
                       <span
                         [ngClass]="{
                           'badge': true,
-                          'bg-success': ligne.statut === 'LIVRER_FR',
-                          'bg-warning': ligne.statut === 'COMMANDEE',
-                          'bg-primary': ligne.statut === 'VALIDER',
-                          'bg-info': ligne.statut === 'PAYER',
-                          'bg-danger': ligne.statut === 'ANNULER'
+                          'bg-succ': ligne.statut === 'LIVRER_FR',
+                          'bg-warn': ligne.statut === 'COMMANDEE',
+                          'bg-prim': ligne.statut === 'VALIDER',
+                          'bg-inf': ligne.statut === 'PAYER',
+                          'bg-dang': ligne.statut === 'ANNULER'
                         }">
                         {{ ligne.statut }}
                       </span>
@@ -59,7 +59,8 @@
   </div>
 
   <ng-template #noCommande>
-    <div class="alert alert-info text-center mt-4">
+    <div class="alert "         style="background-color: rgba(60, 35, 19, 0.1); border-left: 4px solid #3c2313; color: #3c2313;">
+
       Aucune commande validée pour l’instant.
     </div>
   </ng-template>

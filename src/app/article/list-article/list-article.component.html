@@ -292,7 +292,7 @@
                                               <i *ngIf="selectedCouleur?.id === couleur.id" class="fas fa-check color-check"></i>
                                           </div>
                                           <div class="color-name" [class.selected]="selectedCouleur?.id === couleur.id">
-                                              {{ couleur.nom }}
+                                            {{ getNomCouleur(couleur.nom) }}
                                           </div>
                                       </div>
                                   </div>

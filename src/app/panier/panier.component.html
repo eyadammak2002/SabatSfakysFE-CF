@@ -1,81 +1,150 @@
-<div *ngIf="panier.lignesPanier.length > 0" class="container mt-3">
+<div *ngIf="panier.lignesPanier.length > 0" class="container my-4">
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
-      <div class="card shadow-lg p-3">
-        <div class="card-body">
-
-          <h5 class="fw-bold text-center mb-3">🛒 Mon Panier</h5>
-
-          <div *ngFor="let ligne of panier.lignesPanier; let i = index" class="card shadow-sm mb-2 p-2">
-            <div class="card-body p-2">
-              <div class="row align-items-center gy-2">
-                
-                <div class="col-auto">
-                  <img [src]="ligne.article.photos[0]?.url || 'assets/no-image.png'" 
-                       class="img-fluid rounded shadow-sm" 
-                       style="width: 60px; height: 60px; object-fit: contain;">
-                </div>
-
-                <div class="col">
-                  <h6 class="fw-bold mb-0">{{ ligne.article.name }}</h6>
-                  <p class="text-muted small mb-0">
-                    <i class="fas fa-tag"></i> {{ ligne.article.prixVente }} DT
-                  </p>
-                </div>
-
-                <div class="col-auto text-center">
-                  <span class="badge rounded-circle shadow-sm"
-                        [style.background]="ligne.couleur.nom"
-                        style="width: 18px; height: 18px; display: inline-block;"></span>
-                  <p class="small fw-bold mb-0">{{ ligne.couleur.nom }}</p>
-                  <p class="small"><i class="fas fa-shoe-prints"></i> {{ ligne.pointure.taille }}</p>
-                </div>
-
-                <div class="col-auto text-center">
-                  <label class="small fw-bold text-muted">Qté</label>
-                  <div class="d-flex align-items-center gap-1">
-                    <button 
-                    class="btn btn-sm btn-outline-secondary px-2" 
-                    (click)="modifierQuantite(i, -1,ligne)"
-                    [disabled]="ligne.quantite <= 1">
-                    ➖
-                  </button>
-                  <span class="fw-bold">{{ ligne.quantite }}</span>
-                  <button 
-                    class="btn btn-sm btn-outline-secondary px-2" 
-                    (click)="modifierQuantite(i, 1, ligne)"
-                    [disabled]="ligne.quantite >= (stockDisponible.get(ligne.article.id + '-' + ligne.couleur.id + '-' + ligne.pointure.id) ?? 0)">
-                    ➕
-                  </button> 
+      <div class="card rounded-lg shadow-lg border-0">
+        <div class="card-header bg-gradient-primary text-white p-3">
+          <h5 class="fw-bold text-center mb-0">
+            <i class="fas fa-shopping-cart me-2"></i>Mon Panier
+          </h5>
+        </div>
+        <div class="card-body p-4">
+          <!-- Liste des articles -->
+          <div class="panier-items mb-4">
+            <div *ngFor="let ligne of panier.lignesPanier; let i = index" 
+                 class="card product-card border-0 shadow-sm rounded-lg mb-3 overflow-hidden transition-hover">
+              <div class="card-body p-3">
+                <div class="row align-items-center g-3">
+                  <!-- Image produit -->
+                  <div class="col-auto">
+                    <div class="product-img-container rounded-3 shadow-sm overflow-hidden bg-light">
+                      <img [src]="ligne.article.photos[0]?.url || 'assets/no-image.png'" 
+                           class="img-fluid" 
+                           style="width: 80px; height: 80px; object-fit: cover;">
+                    </div>
+                  </div>
+                  
+                  <!-- Infos produit -->
+                  <div class="col">
+                    <h6 class="fw-bold mb-1 product-name">{{ ligne.article.name }}</h6>
+                    <div class="d-flex align-items-center">
+                      <span class="badge text-bg-light shadow-sm me-2">
+                        <i class="fas fa-tag text-primary me-1"></i>{{ ligne.article.prixVente }} DT
+                      </span>
+                      <p>Couleur: {{ ligne.couleur.nom }}</p>
+                      <!-- Couleur -->
+                      <span class="badge rounded-pill me-2 px-3 py-1 text-white" 
+                            [style.background-color]="ligne.couleur.nom">
+                            {{ getNomCouleur(ligne.couleur.nom) }}                          </span>
+                      
+                      <!-- Pointure -->
+                      <span class="badge text-bg-light shadow-sm">
+                        <i class="fas fa-shoe-prints text-secondary me-1"></i>{{ ligne.pointure.taille }}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <!-- Contrôles quantité -->
+                  <div class="col-auto">
+                    <div class="quantity-control d-flex align-items-center bg-light rounded-pill px-2 py-1 shadow-sm">
+                      <button class="btn btn-sm btn-icon text-primary" 
+                              (click)="modifierQuantite(i, -1, ligne)"
+                              [disabled]="ligne.quantite <= 1">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <span class="fw-bold mx-2 quantity-value">{{ ligne.quantite }}</span>
+                      <button class="btn btn-sm btn-icon text-primary" 
+                              (click)="modifierQuantite(i, 1, ligne)"
+                              [disabled]="ligne.quantite >= (stockDisponible.get(ligne.article.id + '-' + ligne.couleur.id + '-' + ligne.pointure.id) ?? 0)">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <!-- Bouton supprimer -->
+                  <div class="col-auto">
+                    <button class="btn btn-sm btn-icon btn-outline-danger rounded-circle" 
+                            (click)="supprimerLigne(i)" 
+                            aria-label="Supprimer l'article">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
                   </div>
                 </div>
-
-                <div class="col-auto">
-                  <button class="btn btn-sm btn-outline-danger" (click)="supprimerLigne(i)" aria-label="Supprimer l'article">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-
               </div>
             </div>
           </div>
-
-          <div class="text-end mt-3">
-            <h4>Total: <span class="text-success">{{ panier.total.toFixed(2) }} DT</span></h4>
+          
+          <!-- Récapitulatif -->
+          <div class="card bg-light border-0 rounded-lg shadow-sm mb-4">
+            <div class="card-body p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-bold">Sous-total:</span>
+                <span>{{ (panier.total).toFixed(2) }} DT</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <span class="fw-bold">Livraison:</span>
+                <span>Gratuite</span>
+              </div>
+              <hr class="my-2">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-bold fs-5">Total:</span>
+                <span class="fs-5 fw-bold text-success">{{ panier.total.toFixed(2) }} DT</span>
+              </div>
+            </div>
           </div>
-
-          <div class="form-group mb-3">
-            <label for="adresseLivraison" class="fw-bold">Adresse de Livraison</label>
-            <input type="text" class="form-control border border-secondary rounded" 
-                   id="adresseLivraison" [(ngModel)]="adresseLivraison" 
-                   placeholder="Entrez votre adresse de livraison" required />
+          
+          <!-- Adresse de livraison -->
+          <div class="form-floating mb-4">
+            <input type="text" 
+                   class="form-control border shadow-sm" 
+                   id="adresseLivraison" 
+                   [(ngModel)]="adresseLivraison" 
+                   placeholder="Entrez votre adresse de livraison" 
+                   required />
+            <label for="adresseLivraison">
+              <i class="fas fa-map-marker-alt me-1 text-primary"></i>Adresse de livraison
+            </label>
           </div>
-
-          <div class="d-flex justify-content-between mt-3">
-            <button class="btn btn-outline-danger" (click)="viderPanier()">🗑️ Vider le Panier</button>
-            <button class="btn btn-success" (click)="createPanier()" [disabled]="!adresseLivraison">✅ Passer commande</button>
+          
+          <!-- Actions -->
+          <div class="d-flex gap-3 mt-4">
+            <button class="btn btn-outline-secondary flex-grow-1" (click)="viderPanier()">
+              <i class="fas fa-trash-alt me-2"></i>Vider le panier
+            </button>
+            <button class="btn btn-primary flex-grow-1" 
+                    [class.btn-success]="adresseLivraison"
+                    (click)="createPanier()" 
+                    [disabled]="!adresseLivraison">
+              <i class="fas fa-check-circle me-2"></i>Passer commande
+            </button>
           </div>
+        </div>
+      </div>
+      
+      <!-- Suggestions -->
+      <div class="card border-0 shadow-sm rounded-lg mt-4">
+        <div class="card-body p-3">
+          <p class="text-center mb-0">
+            <i class="fas fa-info-circle text-primary me-2"></i>
+            <span class="text-muted">Livraison gratuite pour toute commande supérieure à 100 DT</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
+<!-- Message panier vide -->
+<div *ngIf="panier.lignesPanier.length === 0" class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+      <div class="card border-0 shadow-lg rounded-lg p-5">
+        <div class="card-body">
+          <i class="fas fa-shopping-cart mb-4 animated-icon"></i>
+          <h4 class="fw-bold mb-3">Votre panier est vide</h4>
+          <p class="text-muted">Découvrez nos produits et ajoutez-les à votre panier</p>
+          <button class="btn btn-primary mt-3" (click)="redirectToListCommande()" >
+            <i class="fas fa-store me-2"></i>Continuer mes achats
+          </button>
         </div>
       </div>
     </div>

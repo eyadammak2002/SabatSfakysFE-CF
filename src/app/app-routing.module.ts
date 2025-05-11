@@ -43,6 +43,7 @@ import { ListReclamationComponent } from './fournisseur-dashboard/list-reclamati
 import { FournisseurDashboardComponent } from './fournisseur-dashboard/fournisseur-dashboard.component';
 import { AvisListComponent } from './fournisseur-dashboard/avis-list/avis-list.component';
 import { DetailArticleAvisComponent } from './fournisseur-dashboard/detail-article-avis/detail-article-avis.component';
+import { ListFournisseurComponent } from './article-personaliser/list-fournisseur/list-fournisseur.component';
 
 const routes: Routes = [
   { path: '', component: ListArticleComponent },
@@ -51,7 +52,6 @@ const routes: Routes = [
   { path: 'photo', component: PhotoComponent },
   { path: 'createPhoto', component: CreatePhotoComponent },
   { path: 'profile', component: ProfileComponent },
-  { path: 'profileFR', component: ProfileFournisseurComponent },
   { path: 'favoris', component: FavorisComponent },
 
   {
@@ -90,7 +90,7 @@ const routes: Routes = [
   { path: 'panier', component: PanierComponent },
   { path: 'commande', component: CommandeComponent },
   { path: 'listCommande', component: ListCommandeComponent },
-
+  { path: 'listFournisseur', component:   ListFournisseurComponent  },
 
    // Routes pour le filtrage par catégorie
    { path: 'chaussures', component: FiltredArticlesComponent },
@@ -126,7 +126,9 @@ const routes: Routes = [
       { path: 'fournisseur/listAvis', component: AvisListComponent }, 
       { path: 'fournisseur/articles-personalises',  component: FournisseurArticlesPersonalisesComponent },
       { path: 'categories', component: CategoriesComponent },
-      { path: 'settings', component: ProfileComponent }
+      { path: 'settings', component: ProfileComponent },
+      { path: 'profileFR', component: ProfileFournisseurComponent },
+
       // Ajoutez d'autres routes enfants selon besoin
     ]
   },

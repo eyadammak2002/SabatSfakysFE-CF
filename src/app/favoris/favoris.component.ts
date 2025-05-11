@@ -3,6 +3,7 @@ import { FavorisService } from '../services/favoris.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterModule } from '@angular/router';
+import { Article } from '../article/article';
 
 @Component({
   selector: 'app-favoris',
@@ -16,7 +17,8 @@ export class FavorisComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
 
-  constructor(private favorisService: FavorisService) { }
+  constructor(private favorisService: FavorisService,    private router: Router,
+  ) { }
 
   ngOnInit(): void {
     this.loadFavoris();
@@ -48,5 +50,10 @@ export class FavorisComponent implements OnInit {
         console.error('Erreur:', error);
       }
     );
+  }
+
+
+  voirDetailsArticle(article: Article): void {
+    this.router.navigate(['/detailArticle', article.id]);
   }
 }

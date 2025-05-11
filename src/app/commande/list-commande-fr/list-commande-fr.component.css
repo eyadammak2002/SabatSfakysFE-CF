@@ -256,27 +256,27 @@
 }
 
 .status-livree {
-  background-color: #198754;
+  background-color: #1987549d;
   color: white;
 }
 
 .status-commandee {
-  background-color: #ffc107;
+  background-color: #f1bf2a99;
   color: #212529;
 }
 
 .status-validee {
-  background-color: #0d6efd;
+  background-color: #275395b0;
   color: white;
 }
 
 .status-payee {
-  background-color: #0dcaf0;
+  background-color: #47a6b995;
   color: #212529;
 }
 
 .status-annulee {
-  background-color: #dc3545;
+  background-color: #b44c56b5;
   color: white;
 }
 

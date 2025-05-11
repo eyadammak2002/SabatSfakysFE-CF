@@ -27,21 +27,27 @@ export class AppComponent implements OnInit {
 
         // ✅ Cacher le footer pour toutes les routes enfants du fournisseur dashboard
         this.hideFooter = this.isFournisseurDashboardRoute(url);
+        //this.hideFooter = !url.includes('/accueil') && this.isFournisseurDashboardRoute(url);
+
       }
     });
   }
 
   // Méthode pour vérifier si on est dans les routes enfants de FournisseurDashboard
   private isFournisseurDashboardRoute(url: string): boolean {
-    return url === '/' ||
-           url.includes('/articles') ||
-           url.includes('/createArticle') ||
-           url.includes('/editArticle') ||
-           url.includes('/listCommandeFR') ||
-           url.includes('/fournisseur/listReclamation') ||
-           url.includes('/fournisseur/listAvis') ||
-           url.includes('/fournisseur/articles-personalises') ||
-           url.includes('/categories') ||
-           url.includes('/settings');
+    // Extrait le chemin de base sans les paramètres de requête
+    const basePath = url.split('?')[0];
+    
+    return basePath === '/' ||
+           basePath.includes('/articles') ||
+           basePath.includes('/createArticle') ||
+           basePath.includes('/editArticle') ||
+           basePath.includes('/listCommandeFR') ||
+           basePath.includes('/fournisseur/listReclamation') ||
+           basePath.includes('/fournisseur/listAvis') ||
+           basePath.includes('/fournisseur/articles-personalises') ||
+           basePath.includes('/categories') ||
+           basePath.includes('/settings') ||
+           basePath.includes('/profileFR'); // Ajouté ici pour gérer la route de profil
   }
 }

@@ -362,3 +362,8 @@
       padding: 50px 20px;
     }
   }
+
+.bg-marron{
+  background-color: rgba(76, 43, 23, 0.15);
+  color: #3c2313;
+}

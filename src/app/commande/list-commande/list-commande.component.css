@@ -10,3 +10,30 @@
     .bgPerso{
         background-color: #63a50a;
     }  
+
+
+    .bg-succ{
+      background-color: #1987549d;
+      color: white;
+    }
+    
+    .bg-warn{
+      background-color: #f1bf2a99;
+      color: white;
+    }
+    
+    .bg-prim {
+      background-color: #275395a4;
+      color: white;
+    }
+    
+    .bg-inf {
+      background-color: #47a6b995;
+      color: white;
+    }
+    
+    .bg-dang {
+      background-color: #b44c56b5;
+      color: white;
+    }
+    

@@ -212,4 +212,32 @@ export class PanierComponent implements OnInit {
       }
     });
   }
+
+
+  redirectToListCommande(): void {
+    // Vérifier si l'utilisateur est connecté
+    const user = this.tokenStorage.getUser();
+    
+    if (!user || !user.id) {
+      // L'utilisateur n'est pas connecté, rediriger vers la page de login
+      this.router.navigate(['/auth/client/login'], { 
+        queryParams: { returnUrl: '/listCommande' } 
+      });
+    } else {
+      // L'utilisateur est connecté, rediriger vers la liste des commandes
+      this.router.navigate(['/listCommande']);
+    }
+  }
+
+
+  getNomCouleur(couleurCode: string): string {
+    const mapCouleurs: { [key: string]: string } = {
+      '#3c2313': 'marron',
+      '#ffffff': 'blanc',
+      '#000000': 'noir',
+      // ajoute d'autres couleurs si nécessaire
+    };
+    return mapCouleurs[couleurCode] || couleurCode;
+  }
+  
 }

@@ -1,0 +1,93 @@
+<div class="fournisseurs-container">
+    <!-- En-tête -->
+    <div class="fournisseurs-header">
+      <h2 class="fournisseurs-title">Liste des fournisseurs</h2>
+      <p class="fournisseurs-subtitle">Sélectionnez un fournisseur pour voir ses détails</p>
+    </div>
+    
+    <!-- Sélecteur de fournisseur -->
+    <div class="fournisseur-select-container">
+      <select class="fournisseur-select" (change)="onFournisseurSelect($event)">
+        <option value="" disabled selected>Choisissez un fournisseur</option>
+        <option *ngFor="let f of fournisseurs" [value]="f.id">
+          {{ f.nom }}
+        </option>
+      </select>
+      <div class="select-icon">
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    </div>
+    
+    <!-- Message quand aucun fournisseur n'est sélectionné -->
+    <div *ngIf="!selectedFournisseur" class="select-placeholder">
+      <div class="placeholder-icon">
+        <i class="fas fa-industry"></i>
+      </div>
+      <p class="placeholder-text">Aucun fournisseur sélectionné</p>
+      <p class="placeholder-subtext">Veuillez choisir un fournisseur dans la liste pour voir ses détails</p>
+    </div>
+    
+    <!-- Carte du fournisseur sélectionné -->
+    <div *ngIf="selectedFournisseur" class="fournisseur-card">
+      <div class="fournisseur-card-header">
+        <h4 class="fournisseur-card-title">
+          <i class="fas fa-info-circle"></i> Détails du fournisseur
+        </h4>
+      </div>
+      <div class="fournisseur-card-body">
+        <!-- Logo/Image du fournisseur -->
+        <div class="fournisseur-logo-container">
+          <img *ngIf="selectedFournisseur.logo" 
+               [src]="'http://localhost:8080/uploads/' + selectedFournisseur.logo.name" 
+               class="fournisseur-logo" 
+               alt="{{ selectedFournisseur.nom }}">
+          <div *ngIf="!selectedFournisseur.logo" class="no-logo">
+            <i class="fas fa-building"></i>
+          </div>
+        </div>
+        
+        <!-- Informations du fournisseur -->
+        <div class="fournisseur-info">
+          <div class="info-group">
+            <div class="info-icon">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Nom</div>
+              <div class="info-value">{{ selectedFournisseur.nom }}</div>
+            </div>
+          </div>
+          
+          <div class="info-group">
+            <div class="info-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Email</div>
+              <div class="info-value">{{ selectedFournisseur.email }}</div>
+            </div>
+          </div>
+          
+          <div class="info-group">
+            <div class="info-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Téléphone</div>
+              <div class="info-value">{{ selectedFournisseur.telephone }}</div>
+            </div>
+          </div>
+          
+          <div *ngIf="selectedFournisseur.adresse" class="info-group">
+            <div class="info-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Adresse</div>
+              <div class="info-value">{{ selectedFournisseur.adresse }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

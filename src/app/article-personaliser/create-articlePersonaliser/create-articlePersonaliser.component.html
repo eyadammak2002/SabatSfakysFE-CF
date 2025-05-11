@@ -1,258 +1,937 @@
-<div class="container mt-4">
-  <div class="card shadow-lg" style="border-radius: 15px; border: none; overflow: hidden;">
-    <!-- En-tête avec dégradé -->
-    <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%);">
-      <div class="text-center">
-        <i class="fas fa-shoe-prints fa-3x"></i>
-        <h4 class="mt-2 font-weight-bold">Créer un Article Personnalisé</h4>
-        <p class="mb-0">Ajoutez un nouveau produit personnalisé à votre catalogue</p>
+<!-- TEMPLATE HTML -->
+ <style>
+  /* Structure de base du stepper */
+.stepper-container {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  margin: 30px auto;
+  min-height: 500px;
+}
+
+/* Timeline verticale */
+.vertical-timeline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  width: 150px;
+  position: relative;
+}
+
+/* Conteneur de chaque étape */
+.step-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 15px;
+  cursor: pointer;
+  width: 100%;
+  padding: 10px 0;
+  transition: all 0.3s ease;
+}
+
+/* Cercle de l'étape */
+.step-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #999;
+  border: 2px solid #ddd;
+  transition: all 0.3s ease;
+  margin-bottom: 8px;
+  font-size: 18px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Ligne verticale entre les cercles */
+.timeline-line {
+  height: 30px;
+  width: 3px;
+  background-color: #ddd;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+/* Label de l'étape */
+.step-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  text-align: center;
+  transition: all 0.3s ease;
+  margin-top: 5px;
+}
+
+/* Étape active */
+.step-wrapper.active .step-circle {
+  background-color: #63a50a;
+  color: white;
+  border-color: #63a50a;
+  transform: scale(1.1);
+  box-shadow: 0 0 0 5px rgba(99, 165, 10, 0.2);
+}
+
+.step-wrapper.active .step-label {
+  color: #63a50a;
+  font-weight: 600;
+}
+
+/* Étape complétée */
+.step-wrapper.completed .step-circle {
+  background-color: #3c2313;
+  color: white;
+  border-color: #3c2313;
+}
+
+.step-wrapper.completed .step-label {
+  color: #3c2313;
+}
+
+/* Ligne active (entre deux étapes actives/complétées) */
+.step-wrapper.active + .timeline-line,
+.step-wrapper.completed + .timeline-line {
+  background-color: #63a50a;
+}
+
+/* Étape désactivée */
+.step-wrapper.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Conteneur du contenu de l'étape */
+.step-content-wrapper {
+  flex: 1;
+  padding: 0 20px;
+  margin-top: 120px;
+}
+
+/* Contenu de l'étape */
+.step-content {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: fadeIn 0.4s ease-out;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Animation pour l'apparition de l'étape */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* En-tête de l'étape */
+.step-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eee;
+  padding: 15px 20px;
+}
+
+.step-header h3 {
+  margin: 0;
+  color: #3c2313;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Corps de l'étape */
+.step-body {
+  padding: 20px;
+  flex: 1;
+}
+
+/* Pied de l'étape */
+.step-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #eee;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Formulaires et champs */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-control,
+select {
+  border-radius: 5px;
+  font-size: 14px;
+  padding: 8px;
+}
+
+/* Zone d'upload */
+.upload-zone {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 30px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-zone:hover {
+  border-color: #63a50a;
+  background-color: #f0f7e6;
+}
+
+/* Liste des fichiers sélectionnés */
+.selected-files-list {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.selected-file-item {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+}
+
+.selected-file-item:last-child {
+  border-bottom: none;
+}
+
+.file-name {
+  flex-grow: 1;
+  font-size: 13px;
+  margin-right: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-size {
+  color: #777;
+  font-size: 12px;
+}
+
+/* Badge compteur de photos */
+.selected-count-badge {
+  display: inline-block;
+  background-color: #e6f4d7;
+  color: #548e09;
+  border-radius: 20px;
+  padding: 5px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #c3e6a1;
+}
+
+/* Grille de photos */
+.photo-grid {
+  margin-top: 15px;
+}
+
+/* Carte photo */
+.photo-card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  height: 100%;
+  background-color: white;
+  border: 2px solid transparent;
+}
+
+.photo-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.photo-card.border-success {
+  border-color: #63a50a;
+  box-shadow: 0 4px 10px rgba(99, 165, 10, 0.2);
+}
+
+/* Image photo */
+.photo-image {
+  height: 120px;
+  overflow: hidden;
+  position: relative;
+}
+
+.photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.photo-card:hover .photo-img {
+  transform: scale(1.1);
+}
+
+/* Overlay au survol */
+.photo-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(60, 35, 19, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.photo-card:hover .photo-overlay {
+  opacity: 1;
+}
+
+/* Badge de sélection */
+.photo-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #63a50a;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s ease;
+}
+
+.photo-card.border-success .photo-badge {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Actions photo */
+.photo-actions {
+  padding: 10px;
+  background-color: #f8f9fa;
+}
+
+/* Styles des boutons */
+.btn {
+  padding: 8px 20px;
+  font-size: 14px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #3c2313;
+  border-color: #3c2313;
+}
+
+.btn-primary:hover {
+  background-color: #2b180f;
+  border-color: #2b180f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-success {
+  background-color: #63a50a;
+  border-color: #63a50a;
+}
+
+.btn-success:hover {
+  background-color: #548e09;
+  border-color: #548e09;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-outline-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Carte récapitulative */
+.summary-card {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid #eee;
+}
+
+.summary-card h5 {
+  margin-bottom: 15px;
+  color: #3c2313;
+  font-weight: 600;
+  border-bottom: 2px solid #63a50a;
+  padding-bottom: 10px;
+  display: inline-block;
+}
+
+.summary-item {
+  margin-bottom: 10px;
+}
+
+.summary-label {
+  font-weight: 600;
+  color: #666;
+  margin-right: 5px;
+}
+
+.summary-value {
+  color: #333;
+}
+
+.summary-description {
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #eee;
+  margin-top: 5px;
+}
+
+/* Galerie de photos sélectionnées */
+.selected-photos-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.selected-photo-item {
+  width: 80px;
+  height: 80px;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.selected-photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Adaptation mobile */
+@media (max-width: 768px) {
+  .stepper-container {
+    flex-direction: column;
+  }
+  
+  .vertical-timeline {
+    flex-direction: row;
+    width: 100%;
+    padding: 10px;
+    order: 1;
+    overflow-x: auto;
+    margin-bottom: 20px;
+  }
+  
+  .step-wrapper {
+    margin-bottom: 0;
+    margin-right: 10px;
+  }
+  
+  .timeline-line {
+    height: 3px;
+    width: 30px;
+    margin: 0 5px;
+  }
+  
+  .step-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .step-label {
+    font-size: 12px;
+  }
+  
+  .step-content-wrapper {
+    order: 2;
+    padding: 0;
+  }
+}
+
+/* En-tête animé */
+.header-section {
+  background: linear-gradient(to right, #f8f9fa, #f8f9fa);
+  border-radius: 12px;
+  padding: 20px 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 10px rgba(60, 35, 19, 0.2);
+  transform: translateY(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.header-section:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.header-content {
+  max-width: 650px;
+  margin: 0 auto;
+}
+ </style>
+
+
+ <!-- En-tête avec animation -->
+<!-- En-tête avec animation -->
+<div class="header-section mt-5 mx-auto" style="width: 80%;">
+  <div class="header-content text-center">
+    <h2 class="main-title">Demande d'Article Personnalisé</h2>
+    <p class="subtitle" style="background-color: #3c2313; color: #fffdfd; height: 50px; border-radius: 30px; padding-top: 15px;">
+      Créez, consultez et gérez vos demandes d'articles sur mesure
+    </p>
+  </div>
+</div>
+
+
+
+<div class="stepper-container">
+  
+  
+  <!-- Stepper vertical -->
+  <div class="vertical-timeline">
+     
+    <div class="step-wrapper" [ngClass]="{'active': currentStep === 1, 'completed': currentStep > 1}" (click)="goToStep(1)">
+      <div class="step-circle">
+        <i *ngIf="currentStep <= 1 || !stepCompleted[1]" class="fas fa-info-circle"></i>
+        <i *ngIf="currentStep > 1 && stepCompleted[1]" class="fas fa-check"></i>
       </div>
+      <div class="step-label">Informations</div>
     </div>
+    <div class="timeline-line"></div>
+    
+    <div class="step-wrapper" [ngClass]="{'active': currentStep === 2, 'completed': currentStep > 2, 'disabled': !stepCompleted[1]}" (click)="goToStep(2)">
+      <div class="step-circle">
+        <i *ngIf="currentStep <= 2 || !stepCompleted[2]" class="fas fa-list-alt"></i>
+        <i *ngIf="currentStep > 2 && stepCompleted[2]" class="fas fa-check"></i>
+      </div>
+      <div class="step-label">Caractéristiques</div>
+    </div>
+    <div class="timeline-line"></div>
+    
+    <div class="step-wrapper" [ngClass]="{'active': currentStep === 3, 'completed': currentStep > 3, 'disabled': !stepCompleted[2]}" (click)="goToStep(3)">
+      <div class="step-circle">
+        <i *ngIf="currentStep <= 3 || !stepCompleted[3]" class="fas fa-cloud-upload-alt"></i>
+        <i *ngIf="currentStep > 3 && stepCompleted[3]" class="fas fa-check"></i>
+      </div>
+      <div class="step-label">Upload</div>
+    </div>
+    <div class="timeline-line"></div>
+    
+    <div class="step-wrapper" [ngClass]="{'active': currentStep === 4, 'completed': currentStep > 4, 'disabled': !stepCompleted[3]}" (click)="goToStep(4)">
+      <div class="step-circle">
+        <i *ngIf="currentStep <= 4 || !stepCompleted[4]" class="fas fa-images"></i>
+        <i *ngIf="currentStep > 4 && stepCompleted[4]" class="fas fa-check"></i>
+      </div>
+      <div class="step-label">Sélection</div>
+    </div>
+    <div class="timeline-line"></div>
+    
+    <div class="step-wrapper" [ngClass]="{'active': currentStep === 5, 'disabled': !stepCompleted[4]}" (click)="goToStep(5)">
+      <div class="step-circle">
+        <i class="fas fa-tasks"></i>
+      </div>
+      <div class="step-label">Statut demande</div>
+    </div>
+  </div>
 
-    <div class="card-body p-4">
-      <form #userForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
-        <!-- Section infos principales -->
-        <div class="card mb-4" style="border-left: 4px solid #63a50a; background-color: #f9f9f9;">
-          <div class="card-body">
-            <h5 class="mb-3" style="color: #3c2313; border-bottom: 2px solid #63a50a; padding-bottom: 8px;">
-              <i class="fas fa-info-circle me-2"></i> Informations Générales
-            </h5>
-            
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group mb-4">
-                  <label class="fw-bold" style="color: #3c2313;">Référence</label>
-                  <div class="input-group">
-                    <span class="input-group-text" style="background-color: #3c2313; color: white;">
-                      <i class="fas fa-barcode"></i>
-                    </span>
-                    <input type="text" class="form-control" [(ngModel)]="articleForm.ref" name="ref" required />
-                  </div>
-                  <div *ngIf="userForm.submitted && !articleForm.ref" class="text-danger mt-1">
-                    <small><i class="fas fa-exclamation-circle"></i> Référence requise</small>
-                  </div>
+  <!-- Zone de contenu principal -->
+  <div class="step-content-wrapper ">
+    <form #userForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+      
+      <!-- Étape 1: Informations Générales -->
+      <div class="step-content" *ngIf="currentStep === 1" [@fadeAnimation]>
+        <div class="step-header">
+          <h3><i class="fas fa-info-circle me-2"></i> Informations Générales</h3>
+        </div>
+        
+        <div class="step-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="fw-bold">Référence <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fas fa-barcode"></i>
+                  </span>
+                  <input type="text" class="form-control" [(ngModel)]="articleForm.ref" name="ref" required placeholder="Ex: SH-2025-001" />
                 </div>
-              </div>
-
-              <div class="col-md-6">
-                <div class="form-group mb-4">
-                  <label class="fw-bold" style="color: #3c2313;">Nom</label>
-                  <div class="input-group">
-                    <span class="input-group-text" style="background-color: #3c2313; color: white;">
-                      <i class="fas fa-tag"></i>
-                    </span>
-                    <input type="text" class="form-control" [(ngModel)]="articleForm.name" name="name" required />
-                  </div>
-                  <div *ngIf="userForm.submitted && !articleForm.name" class="text-danger mt-1">
-                    <small><i class="fas fa-exclamation-circle"></i> Nom requis</small>
-                  </div>
+                <div *ngIf="stepFormSubmitted && !articleForm.ref" class="text-danger mt-1">
+                  <small><i class="fas fa-exclamation-circle"></i> Référence requise</small>
                 </div>
               </div>
             </div>
 
-            <div class="form-group mb-4">
-              <label class="fw-bold" style="color: #3c2313;">Description</label>
-              <textarea class="form-control" [(ngModel)]="articleForm.description" name="description" rows="4" required></textarea>
-              <div *ngIf="userForm.submitted && !articleForm.description" class="text-danger mt-1">
-                <small><i class="fas fa-exclamation-circle"></i> Description requise</small>
-              </div>
-            </div>
-            
-            <!-- Nouveau champ pour sélectionner un fournisseur -->
-            <div class="form-group mb-4">
-              <label class="fw-bold" style="color: #3c2313;">Fournisseur <span class="text-danger">*</span></label>
-              <div class="input-group">
-                <span class="input-group-text" style="background-color: #3c2313; color: white;">
-                  <i class="fas fa-industry"></i>
-                </span>
-                <select class="form-select" name="fournisseur" (change)="onFournisseurChange($event)" required>
-                  <option value="" disabled selected>Sélectionner un fournisseur</option>
-                  <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.id">
-                    {{ fournisseur.nom }} ({{ fournisseur.email }})
-                  </option>
-                </select>
-              </div>
-              <div *ngIf="userForm.submitted && selectedFournisseurId <= 0" class="text-danger mt-1">
-                <small><i class="fas fa-exclamation-circle"></i> Fournisseur requis</small>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="fw-bold">Nom <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fas fa-tag"></i>
+                  </span>
+                  <input type="text" class="form-control" [(ngModel)]="articleForm.name" name="name" required placeholder="Nom de l'article" />
+                </div>
+                <div *ngIf="stepFormSubmitted && !articleForm.name" class="text-danger mt-1">
+                  <small><i class="fas fa-exclamation-circle"></i> Nom requis</small>
+                </div>
               </div>
             </div>
           </div>
+
+          <div class="form-group mb-3">
+            <label class="fw-bold">Description <span class="text-danger">*</span></label>
+            <textarea class="form-control" [(ngModel)]="articleForm.description" name="description" rows="4" placeholder="Décrivez votre article en détail..." required></textarea>
+            <div *ngIf="stepFormSubmitted && !articleForm.description" class="text-danger mt-1">
+              <small><i class="fas fa-exclamation-circle"></i> Description requise</small>
+            </div>
+          </div>
+          
+          <div class="form-group mb-3">
+            <label class="fw-bold">Fournisseur <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-industry"></i>
+              </span>
+              <select class="form-select" name="fournisseur" (change)="onFournisseurChange($event)" required>
+                <option value="" disabled selected>Sélectionner un fournisseur</option>
+                <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.id">
+                  NOM:{{ fournisseur.nom }}, EMAIL:{{ fournisseur.email }}, TÉLÉPHONE:{{ fournisseur.telephone }} 
+                </option>
+              </select>
+            </div>
+            <div *ngIf="stepFormSubmitted && selectedFournisseurId <= 0" class="text-danger mt-1">
+              <small><i class="fas fa-exclamation-circle"></i> Fournisseur requis</small>
+            </div>
+          </div>
+
         </div>
+        
+        <div class="step-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="redirectToArticles()">
+            <i class="fas fa-arrow-left me-2"></i> Retour
+          </button>
+          <button type="button" class="btn btn-primary" (click)="validateAndProceed(1, 2)">
+            Suivant <i class="fas fa-arrow-right ms-2"></i>
+          </button>
+        </div>
+      </div>
 
-        <!-- Section prix et détails -->
-        <div class="card mb-4" style="border-left: 4px solid #63a50a; background-color: #f9f9f9;">
-          <div class="card-body">
-            <h5 class="mb-3" style="color: #3c2313; border-bottom: 2px solid #63a50a; padding-bottom: 8px;">
-              <i class="fas fa-euro-sign me-2"></i>  Détails
-            </h5>
-            
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group mb-4">
-                  <label class="fw-bold" style="color: #3c2313;">Genre</label>
-                  <div class="d-flex">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" id="genreHomme" name="genre" value="HOMME" [(ngModel)]="articleForm.genre">
-                      <label class="form-check-label" for="genreHomme">
-                        <i class="fas fa-male me-1"></i> Homme
-                      </label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" id="genreFemme" name="genre" value="FEMME" [(ngModel)]="articleForm.genre">
-                      <label class="form-check-label" for="genreFemme">
-                        <i class="fas fa-female me-1"></i> Femme
-                      </label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" id="genreEnfant" name="genre" value="Enfant" [(ngModel)]="articleForm.genre">
-                      <label class="form-check-label" for="genreEnfant">
-                        <i class="fas fa-male me-1"></i> Enfant
-                      </label>
-                    </div>
+      <!-- Étape 2: Caractéristiques -->
+      <div class="step-content" *ngIf="currentStep === 2" [@fadeAnimation]>
+        <div class="step-header">
+          <h3><i class="fas fa-list-alt me-2"></i> Caractéristiques</h3>
+        </div>
+        
+        <div class="step-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="fw-bold">Genre <span class="text-danger">*</span></label>
+                <div class="d-flex mt-2">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="genreHomme" name="genre" value="HOMME" [(ngModel)]="articleForm.genre">
+                    <label class="form-check-label" for="genreHomme">
+                      <i class="fas fa-male me-1"></i> Homme
+                    </label>
                   </div>
-                </div>
-              </div>
-
-              <div class="col-md-6">
-                <div class="form-group mb-4">
-                  <label class="fw-bold" style="color: #3c2313;">Tissu</label>
-                  <div class="d-flex">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" id="tissuCuir" name="tissu" value="CUIR" [(ngModel)]="articleForm.tissu">
-                      <label class="form-check-label" for="tissuCuir">Cuir</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" id="tissuDain" name="tissu" value="DAIN" [(ngModel)]="articleForm.tissu">
-                      <label class="form-check-label" for="tissuDain">Daim</label>
-                    </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="genreFemme" name="genre" value="FEMME" [(ngModel)]="articleForm.genre">
+                    <label class="form-check-label" for="genreFemme">
+                      <i class="fas fa-female me-1"></i> Femme
+                    </label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="genreEnfant" name="genre" value="Enfant" [(ngModel)]="articleForm.genre">
+                    <label class="form-check-label" for="genreEnfant">
+                      <i class="fas fa-child me-1"></i> Enfant
+                    </label>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="category" style="color: #3c2313; font-weight: bold;">Catégorie</label>
-              <select class="form-select" id="category" [(ngModel)]="articleForm.category" name="category" required style="border-color: #ddd;">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="fw-bold">Tissu <span class="text-danger">*</span></label>
+                <div class="d-flex mt-2">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="tissuCuir" name="tissu" value="CUIR" [(ngModel)]="articleForm.tissu">
+                    <label class="form-check-label" for="tissuCuir">Cuir</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="tissuDain" name="tissu" value="DAIN" [(ngModel)]="articleForm.tissu">
+                    <label class="form-check-label" for="tissuDain">Daim</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="category" class="fw-bold">Catégorie <span class="text-danger">*</span></label>
+            <div class="input-group mt-2">
+              <span class="input-group-text">
+                <i class="fas fa-sitemap"></i>
+              </span>
+              <select class="form-select" id="category" [(ngModel)]="articleForm.category" name="category" required>
                 <option value="" disabled selected>Sélectionner une catégorie</option>
                 <option *ngFor="let cat of allCategory" [ngValue]="cat">{{ cat.name }}</option>
               </select>
             </div>
+            <div *ngIf="stepFormSubmitted && !articleForm.category.id" class="text-danger mt-1">
+              <small><i class="fas fa-exclamation-circle"></i> Catégorie requise</small>
+            </div>
           </div>
         </div>
+        
+        <div class="step-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="prevStep()">
+            <i class="fas fa-arrow-left me-2"></i> Précédent
+          </button>
+          <button type="button" class="btn btn-primary" (click)="validateAndProceed(2, 3)">
+            Suivant <i class="fas fa-arrow-right ms-2"></i>
+          </button>
+        </div>
+      </div>
 
-        <!-- Section photos -->
-        <div class="card mb-4" style="border-left: 4px solid #63a50a; background-color: #f9f9f9;">
-          <div class="card-body">
-            <h5 class="mb-3" style="color: #3c2313; border-bottom: 2px solid #63a50a; padding-bottom: 8px;">
-              <i class="fas fa-images me-2"></i> Photos
-            </h5>
-            
-            <!-- Upload des photos -->
-            <div class="card mb-4 bg-white">
-              <div class="card-header" style="background-color: #3c2313; color: white;">
-                <h6 class="mb-0"><i class="fas fa-cloud-upload-alt me-2"></i> Uploader de nouvelles photos</h6>
+      <!-- Étape 3: Upload des photos -->
+      <div class="step-content" *ngIf="currentStep === 3" [@fadeAnimation]>
+        <div class="step-header">
+          <h3><i class="fas fa-cloud-upload-alt me-2"></i> Uploader des photos</h3>
+        </div>
+        
+        <div class="step-body">
+          <!-- Upload des photos -->
+          <div class="upload-zone p-4 text-center border rounded mb-4">
+            <label class="w-100 h-100 d-flex flex-column align-items-center justify-content-center cursor-pointer">
+              <input type="file" (change)="selectFiles($event)" multiple style="display: none;" />
+              <i class="fas fa-file-image fa-3x mb-3" style="color: #63a50a;"></i>
+              <div class="fw-bold mb-2">Glissez vos photos ici</div>
+              <div class="btn btn-sm btn-outline-secondary mt-2">
+                ou cliquez pour parcourir
               </div>
-              <div class="card-body">
-                <div class="row align-items-center">
-                  <div class="col-lg-8 mb-3 mb-lg-0">
-                    <label class="btn w-100" style="background-color: #f8f9fa; border: 2px dashed #ddd; cursor: pointer; padding: 15px; transition: all 0.3s;">
-                      <input type="file" (change)="selectFiles($event)" multiple style="display: none;" />
-                      <i class="fas fa-file-image fa-2x mb-2" style="color: #63a50a;"></i>
-                      <div>Sélectionner des photos</div>
-                      <small class="text-muted">Cliquez ou glissez des fichiers ici</small>
-                    </label>
-                  </div>
-                  <div class="col-lg-4">
-                    <button class="btn w-100" [disabled]="!selectedFiles" (click)="uploadPhotos()"
-                            style="background-color: #63a50a; color: white; height: 100%; transition: all 0.3s;">
-                      <i class="fas fa-upload me-2"></i> Uploader
-                    </button>
-                  </div>
-                </div>
+              <small class="text-muted d-block mt-2">
+                Formats acceptés: JPG, PNG, GIF
+              </small>
+            </label>
+          </div>
 
-                <!-- Message d'upload -->
-                <div *ngIf="uploadMessage" class="alert mt-3" [ngClass]="{'alert-success': uploadSuccess, 'alert-danger': uploadError}" role="alert">
-                  <i class="fas" [ngClass]="{'fa-check-circle': uploadSuccess, 'fa-exclamation-triangle': uploadError}"></i>
-                  {{ uploadMessage }}
-                </div>
+          <!-- Liste des fichiers sélectionnés -->
+          <div *ngIf="currentFiles.length > 0" class="mb-4">
+            <h6 class="fw-bold" style="color: #3c2313;">Fichiers sélectionnés</h6>
+            <div class="selected-files-list">
+              <div *ngFor="let file of currentFiles; let i = index" class="selected-file-item">
+                <i class="fas fa-file-image me-2" style="color: #63a50a;"></i>
+                <span class="file-name">{{ file.name }}</span>
+                <span class="file-size">({{ (file.size / 1024).toFixed(1) }} KB)</span>
+              </div>
+            </div>
+          </div>
 
-                <!-- Barre de progression -->
-                <div *ngIf="progressInfos.length > 0" class="mt-3">
-                  <h6 style="color: #3c2313;">Progression de l'upload</h6>
-                  <div *ngFor="let progressInfo of progressInfos" class="mb-2">
-                    <small class="d-block mb-1">{{ progressInfo.fileName }}</small>
-                    <div class="progress" style="height: 10px;">
-                      <div
-                        class="progress-bar"
-                        role="progressbar"
-                        [style.width.%]="progressInfo.value"
-                        [style.background-color]="'#63a50a'"
-                        [attr.aria-valuenow]="progressInfo.value"
-                        aria-valuemin="0"
-                        aria-valuemax="100">
-                      </div>
-                    </div>
-                  </div>
+          <!-- Message d'upload -->
+          <div *ngIf="uploadMessage" class="alert mb-3" [ngClass]="{'alert-success': uploadSuccess, 'alert-danger': uploadError}" role="alert">
+            <i class="fas" [ngClass]="{'fa-check-circle': uploadSuccess, 'fa-exclamation-triangle': uploadError}"></i>
+            {{ uploadMessage }}
+          </div>
+
+          <!-- Barre de progression -->
+          <div *ngIf="progressInfos.length > 0" class="mb-3">
+            <h6 class="fw-bold" style="color: #3c2313;">Progression de l'upload</h6>
+            <div *ngFor="let progressInfo of progressInfos" class="mb-2">
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="d-block mb-1">{{ progressInfo.fileName }}</small>
+                <small>{{ progressInfo.value }}%</small>
+              </div>
+              <div class="progress" style="height: 10px;">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  [style.width.%]="progressInfo.value"
+                  [attr.aria-valuenow]="progressInfo.value"
+                  aria-valuemin="0"
+                  aria-valuemax="100">
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Photos disponibles -->
-          <div class="photo-gallery-container mt-4">
-            <h6 class="photo-gallery-title"><i class="fas fa-images me-2"></i> Photos disponibles</h6>
-            <p class="photo-gallery-description">Sélectionnez parmi les photos existantes ou uploadez-en de nouvelles.</p>
-            <div class="photo-grid">
-              <div class="row">
-              <div *ngFor="let photo of allPhoto" class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
-                <!-- Use ngIf in a wrapper div -->
+          <button 
+            type="button" 
+            class="btn w-100 py-2 mb-3" 
+            [disabled]="!selectedFiles" 
+            (click)="uploadPhotos()"
+            [ngClass]="{'btn-primary': selectedFiles, 'btn-secondary': !selectedFiles}">
+            <i class="fas fa-upload me-2"></i> Uploader les photos
+          </button>
+        </div>
+        
+        <div class="step-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="prevStep()">
+            <i class="fas fa-arrow-left me-2"></i> Précédent
+          </button>
+          <button type="button" class="btn btn-primary" (click)="validateAndProceed(3, 4)">
+            Suivant <i class="fas fa-arrow-right ms-2"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Étape 4: Sélection des photos -->
+      <div class="step-content" *ngIf="currentStep === 4" [@fadeAnimation]>
+        <div class="step-header">
+          <h3><i class="fas fa-images me-2"></i> Sélection des photos</h3>
+        </div>
+        
+        <div class="step-body">
+          <p class="text-muted mb-3">Choisissez les photos pour votre article personnalisé.</p>
+          
+          <div class="selected-count-badge mb-3" *ngIf="selectedPhotos.length > 0">
+            <i class="fas fa-check-circle me-2"></i> {{ selectedPhotos.length }} photo(s) sélectionnée(s)
+          </div>
+          
+          <div class="photo-grid">
+            <div class="row">
+              <div *ngFor="let photo of allPhoto" class="col-lg-4 col-md-6 col-6 mb-3">
                 <div *ngIf="!photosToHide.includes(photo.id)">
                   <div class="photo-card" [ngClass]="{'border-success': isPhotoSelected(photo.id)}">
-                    <img [src]="'http://localhost:8080/uploads/' + photo.name" class="photo-img" alt="{{ photo.name }}">
-                    <div class="photo-card-body">
+                    <div class="photo-image">
+                      <img [src]="'http://localhost:8080/uploads/' + photo.name" class="photo-img" alt="{{ photo.name }}">
+                      <div class="photo-overlay">
+                        <button type="button" class="btn btn-sm btn-light rounded-circle">
+                          <i class="fas" [ngClass]="{'fa-plus': !isPhotoSelected(photo.id), 'fa-check': isPhotoSelected(photo.id)}"></i>
+                        </button>
+                      </div>
+                      <div class="photo-badge" *ngIf="isPhotoSelected(photo.id)">
+                        <i class="fas fa-check"></i>
+                      </div>
+                    </div>
+                    <div class="photo-actions p-2 text-center">
                       <button 
-                      type="button" 
-                      class="photo-btn-small w-100"
-                      [ngClass]="{
-                        'select-btn': !isPhotoSelected(photo.id), 
-                        'remove-btn': isPhotoSelected(photo.id)
-                      }"
-                      style="
-                        border-radius: 20px;
-                        font-size: 0.85rem;
-                        transition: all 0.3s;
-                        padding: 6px 12px;
-                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                        border: none;
-                      "
-                      (click)="togglePhotoSelection(photo)">
-                      <span *ngIf="!isPhotoSelected(photo.id)" style="display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-plus me-1"></i> Sélectionner
-                      </span>
-                      <span *ngIf="isPhotoSelected(photo.id)" style="display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-times me-1"></i> Retirer
-                      </span>
-                    </button>
+                        type="button" 
+                        class="btn btn-sm w-100"
+                        [ngClass]="{'btn-success': !isPhotoSelected(photo.id), 'btn-outline-danger': isPhotoSelected(photo.id)}"
+                        (click)="togglePhotoSelection(photo)">
+                        <span *ngIf="!isPhotoSelected(photo.id)">
+                          <i class="fas fa-plus me-1"></i> Sélectionner
+                        </span>
+                        <span *ngIf="isPhotoSelected(photo.id)">
+                          <i class="fas fa-times me-1"></i> Retirer
+                        </span>
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+        
+        <div class="step-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="prevStep()">
+            <i class="fas fa-arrow-left me-2"></i> Précédent
+          </button>
+          <button type="button" class="btn btn-primary" (click)="validateAndProceed(4, 5)">
+            Suivant <i class="fas fa-arrow-right ms-2"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Étape 5: Statut de la demande -->
+      <div class="step-content" *ngIf="currentStep === 5" [@fadeAnimation]>
+        <div class="step-header">
+          <h3><i class="fas fa-tasks me-2"></i> Statut de la demande</h3>
+        </div>
+        
+        <div class="step-body">
+          <div class="summary-card mb-4">
+            <h5>Récapitulatif de votre demande</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="summary-item">
+                  <span class="summary-label">Référence:</span>
+                  <span class="summary-value">{{ articleForm.ref }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Nom:</span>
+                  <span class="summary-value">{{ articleForm.name }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Genre:</span>
+                  <span class="summary-value">{{ articleForm.genre }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Tissu:</span>
+                  <span class="summary-value">{{ articleForm.tissu }}</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="summary-item">
+                  <span class="summary-label">Catégorie:</span>
+                  <span class="summary-value">{{ articleForm.category.name }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Fournisseur:</span>
+                  <span class="summary-value">{{ articleForm.fournisseur!.nom }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Photos:</span>
+                  <span class="summary-value">{{ selectedPhotos.length }} sélectionnée(s)</span>
+                </div>
+              </div>
+            </div>
+            <div class="summary-item mt-3">
+              <span class="summary-label">Description:</span>
+              <p class="summary-value summary-description">{{ articleForm.description }}</p>
+            </div>
+          </div>
+          
+          <div class="selected-photos-preview mb-4" *ngIf="selectedPhotos.length > 0">
+            <h5>Photos sélectionnées</h5>
+            <div class="selected-photos-gallery">
+              <div *ngFor="let photo of selectedPhotos" class="selected-photo-item">
+                <img [src]="'http://localhost:8080/uploads/' + photo.name" alt="Photo" />
+              </div>
+            </div>
+          </div>
+          
+          <div class="alert"style="background-color: rgba(60, 35, 19, 0.1); border-left: 4px solid #3c2313; color: #3c2313;">
+
+            <i class="fas fa-info-circle me-2"></i> Votre demande sera examinée par le fournisseur sélectionné. Vous recevrez une notification lorsque le statut de votre demande sera mis à jour.
           </div>
         </div>
-   
-
-      <!-- Boutons d'action -->
-      <div class="d-flex justify-content-between gap-3 mt-4">
-        <button type="button" (click)="redirectToArticles()" class="btn btn-lg" style="background-color: #e9ecef; color: #333; width: 180px; border-radius: 30px;">
-          <i class="fas fa-arrow-left me-2"></i> Retour
-        </button>
-        <button type="submit" class="btn btn-lg" style="background-color: #3c2313; color: white; width: 180px; border-radius: 30px;">
-          <i class="fas fa-save me-2"></i> Créer
-        </button>
+        
+        <div class="step-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="prevStep()">
+            <i class="fas fa-arrow-left me-2"></i> Précédent
+          </button>
+          <button type="submit" class="btn btn-success">
+            <i class="fas fa-save me-2"></i> Envoyer La Commnade
+          </button>
+        </div>
       </div>
     </form>
   </div>
-</div>
 </div>

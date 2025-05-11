@@ -1377,7 +1377,6 @@
 
 .btn-details:hover {
   background-color: rgba(60, 35, 19, 0.1);
-  transform: translateY(-3px);
 }
 
 /* Badges */

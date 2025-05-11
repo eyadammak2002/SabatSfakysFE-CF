@@ -504,5 +504,16 @@ get Math() {
     });
   }
     
+
+  getNomCouleur(couleurCode: string): string {
+    const mapCouleurs: { [key: string]: string } = {
+      '#3c2313': 'marron',
+      '#ffffff': 'blanc',
+      '#000000': 'noir',
+      // ajoute d'autres couleurs si nécessaire
+    };
+    return mapCouleurs[couleurCode] || couleurCode;
+  }
+  
   
 }

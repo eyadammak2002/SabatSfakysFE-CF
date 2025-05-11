@@ -2,11 +2,12 @@ import { GoogleLoginProvider, GoogleSigninButtonModule, SocialAuthService } from
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, ActivatedRoute, RouterModule } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule, NavigationStart } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/Authentication.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { PanierService } from 'src/app/services/panier.service';
 import { TokenRequest } from '../TokenRequest';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -28,6 +29,7 @@ export class LoginComponent implements OnInit {
   isLoggedIn = false;
   errorMessage = '';
   returnUrl: string = '/accueil';
+  previousUrl: string = '/accueil';
 
   constructor(
     private authServiceGoogle: SocialAuthService,
@@ -36,9 +38,22 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private panierService: PanierService
-  ) {}
+  ) {this.router.events
+    .pipe(filter(event => event instanceof NavigationStart))
+    .subscribe((event: any) => {
+      // Stocker l'URL précédente seulement si ce n'est pas la page de login elle-même
+      if (!event.url.includes('/auth/client/login')) {
+        this.previousUrl = event.url;
+        localStorage.setItem('previousUrl', this.previousUrl);
+      }
+    });}
 
   ngOnInit(): void {
+
+    const storedPreviousUrl = localStorage.getItem('previousUrl');
+    if (storedPreviousUrl) {
+      this.previousUrl = storedPreviousUrl;
+    }
     // Vérifier si l'utilisateur est déjà connecté
     if (this.tokenStorage.getToken()) {
       this.isLoggedIn = true;
@@ -171,6 +186,36 @@ export class LoginComponent implements OnInit {
   }
 
   goBack(): void {
+    // Méthode intelligente pour retourner à la page précédente
+    
+    // Première priorité : utiliser l'URL de retour spécifiée dans les paramètres de requête
+    if (this.returnUrl && this.returnUrl !== '/accueil') {
+      // Nettoyer le localStorage
+      localStorage.removeItem('returnUrl');
+      localStorage.removeItem('previousUrl');
+      
+      // Rediriger vers l'URL de retour
+      this.router.navigate([this.returnUrl]);
+      return;
+    }
+    
+    // Deuxième priorité : utiliser l'URL précédente stockée (si elle existe et n'est pas la page de login)
+    if (this.previousUrl && this.previousUrl !== '/auth/client/login' && this.previousUrl !== '/accueil') {
+      // Nettoyer le localStorage
+      localStorage.removeItem('previousUrl');
+      
+      // Rediriger vers l'URL précédente
+      this.router.navigate([this.previousUrl]);
+      return;
+    }
+    
+    // Troisième priorité : utiliser l'historique du navigateur si disponible
+    if (window.history.length > 1) {
+      window.history.back();
+      return;
+    }
+    
+    // Dernière option : rediriger vers la page d'accueil
     this.router.navigate(['/accueil']);
   }
 
