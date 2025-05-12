@@ -65,6 +65,19 @@
           <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Avis</span>
         </a>
       </div>
+      <div class="nav-section" *ngIf="isSidebarExpanded">
+        <div class="section-title">REVENUS</div>
+      </div>
+      
+     <!-- Dans votre template HTML (header.component.html ou sidebar.component.html) -->
+    <div class="nav-item">
+      <a class="nav-link" [class.active]="isActive('/revenus')" (click)="navigateToRevenus($event)">
+        <i class="fas fa-money-bill-wave"></i>
+        <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Revenus</span>
+      </a>
+    </div>
+      
+
 
       <!-- Section Paramètres -->
       <div class="nav-section" *ngIf="isSidebarExpanded">

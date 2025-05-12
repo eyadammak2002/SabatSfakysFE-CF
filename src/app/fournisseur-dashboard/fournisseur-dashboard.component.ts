@@ -7,7 +7,7 @@ import { filter } from 'rxjs/operators';
 @Component({
   selector: 'app-fournisseur-dashboard',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule,],
   templateUrl: './fournisseur-dashboard.component.html',
   styleUrls: ['./fournisseur-dashboard.component.css']
 })
@@ -16,7 +16,7 @@ export class FournisseurDashboardComponent implements OnInit {
   currentRoute: string = '';
   email: string = ''; // Définir la propriété email
 
-  
+
   constructor(
     private router: Router,
     private tokenStorage: TokenStorageService
@@ -66,4 +66,41 @@ export class FournisseurDashboardComponent implements OnInit {
     this.tokenStorage.signOut();
     this.router.navigate(['/auth/fournisseur/login']);
   }
+
+
+   // Fonction pour naviguer vers la page des revenus
+   navigateToRevenus(event: Event): void {
+    event.preventDefault(); // Empêche le comportement par défaut du lien
+    
+    // Vous pouvez ajouter une logique ici avant la navigation
+    console.log('Navigation vers la page des revenus...');
+    
+    // Vérifier si les modules nécessaires sont chargés
+    this.checkAndLoadModules()
+      .then(() => {
+        // Naviguer vers la page des revenus
+        this.router.navigate(['/revenus']);
+      })
+      .catch((error) => {
+        console.error('Erreur lors du chargement des modules:', error);
+        // Gérer l'erreur (par exemple, afficher un message à l'utilisateur)
+      });
+  }
+
+  // Méthode pour vérifier et charger les modules nécessaires
+  private checkAndLoadModules(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      // Ici, vous pourriez vérifier si certains modules sont déjà chargés
+      // ou effectuer d'autres vérifications avant la navigation
+      
+      // Par exemple, vous pourriez vérifier si l'utilisateur a les droits nécessaires
+      // ou si certaines données sont déjà chargées
+      
+      // Pour l'exemple, on résout simplement la promesse après un court délai
+      setTimeout(() => {
+        resolve();
+      }, 100);
+    });
+  }
+
 }

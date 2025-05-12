@@ -1,0 +1,115 @@
+<div class="container-fluid">
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Tableau de bord des revenus</h4>
+          </div>
+          <div class="card-body">
+            <!-- Affichage des statistiques -->
+            <div *ngIf="revenuData" class="row stats-cards mb-4">
+              <div class="col-md-3 mb-3">
+                <div class="card bg-info text-white">
+                  <div class="card-body">
+                    <h5 class="card-title">Aujourd'hui</h5>
+                    <h3 class="card-text">{{ formatCurrency(revenuData.revenuJourCourant) }}</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card bg-success text-white">
+                  <div class="card-body">
+                    <h5 class="card-title">Cette semaine</h5>
+                    <h3 class="card-text">{{ formatCurrency(revenuData.revenuSemaineCourant) }}</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card bg-warning text-dark">
+                  <div class="card-body">
+                    <h5 class="card-title">Ce mois</h5>
+                    <h3 class="card-text">{{ formatCurrency(revenuData.revenuMoisCourant) }}</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card bg-danger text-white">
+                  <div class="card-body">
+                    <h5 class="card-title">Cette année</h5>
+                    <h3 class="card-text">{{ formatCurrency(revenuData.revenuAnneeCourante) }}</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Message de chargement -->
+            <div *ngIf="loading" class="text-center my-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <p class="mt-2">Chargement des données...</p>
+            </div>
+
+            <!-- Tableau des articles -->
+            <div class="table-container">
+              <div class="form-group mb-3">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fa fa-search"></i></span>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    placeholder="Rechercher un article..." 
+                    [(ngModel)]="searchTerm">
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th>Référence</th>
+                      <th>Article</th>
+                      <th>Prix Fournisseur</th>
+                      <th>Prix Vente (+10%)</th>
+                      <th>Quantité vendue</th>
+                      <th>Revenu Brut</th>
+                     <!-- <th>Revenu Net</th>-->
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let article of filteredArticles">
+                      <td>{{ article.refArticle }}</td>
+                      <td>{{ article.nomArticle }}</td>
+                      <td>{{ formatCurrency(article.prixFournisseur) }}</td>
+                      <td>{{ formatCurrency(article.prixVente) }}</td>
+                      <td>{{ article.quantite }}</td>
+                      <td>{{ formatCurrency(article.revenuBrut) }}</td>
+                      <!--<td>{{ formatCurrency(article.revenuNet10Pourcent) }}</td>-->
+                    </tr>
+                    <tr *ngIf="filteredArticles.length === 0">
+                      <td colspan="7" class="text-center">Aucun article trouvé</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Totaux -->
+              <div *ngIf="revenuData" class="card mt-3">
+                <div class="card-body bg-light">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h5>Revenu Total: <strong>{{ formatCurrency(revenuData.revenuTotal) }}</strong></h5>
+                    </div>
+                    <!--
+                    <div class="col-md-6 text-md-end">
+                      <h5>Revenu Net (10%): <strong>{{ formatCurrency(revenuData.revenuNet10Pourcent) }}</strong></h5>
+                    </div>-->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

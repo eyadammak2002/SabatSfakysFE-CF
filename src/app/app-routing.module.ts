@@ -44,8 +44,9 @@ import { FournisseurDashboardComponent } from './fournisseur-dashboard/fournisse
 import { AvisListComponent } from './fournisseur-dashboard/avis-list/avis-list.component';
 import { DetailArticleAvisComponent } from './fournisseur-dashboard/detail-article-avis/detail-article-avis.component';
 import { ListFournisseurComponent } from './article-personaliser/list-fournisseur/list-fournisseur.component';
+import { RevenusFournisseurComponent } from './fournisseur-dashboard/revenus-fournisseur/revenus-fournisseur.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: '', component: ListArticleComponent },
   { path: 'banner', component: BannerComponent },
   { path: 'about', component: AboutComponent },
@@ -128,7 +129,9 @@ const routes: Routes = [
       { path: 'categories', component: CategoriesComponent },
       { path: 'settings', component: ProfileComponent },
       { path: 'profileFR', component: ProfileFournisseurComponent },
+      { path: 'revenus', component: RevenusFournisseurComponent },
 
+      
       // Ajoutez d'autres routes enfants selon besoin
     ]
   },

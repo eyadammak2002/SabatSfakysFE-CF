@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { FruitsModule } from './fruits/fruits.module';
 import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { CategoryModule } from './category/category.module';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -61,30 +60,29 @@ import { ListReclamationComponent } from './fournisseur-dashboard/list-reclamati
 import { AvisListComponent } from './fournisseur-dashboard/avis-list/avis-list.component';
 import { DetailArticleAvisComponent } from './fournisseur-dashboard/detail-article-avis/detail-article-avis.component';
 import { ListFournisseurComponent } from './article-personaliser/list-fournisseur/list-fournisseur.component';
+import { RevenusFournisseurComponent } from './fournisseur-dashboard/revenus-fournisseur/revenus-fournisseur.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { ToastrModule } from 'ngx-toastr';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    FooterComponent,
-    
-    ListArticleComponent,
-   
+    FooterComponent,   
+    ListArticleComponent,   
     ConfirmDialogComponent,
     ArticleDetailComponent,
     ErrorDialogComponent,
-    ArticleVueComponent,
-    
-    ProfileFournisseurComponent,
-    
+    ArticleVueComponent,    
+    ProfileFournisseurComponent,  
     FiltredArticlesComponent,
     ChatbotComponent,
     ChatComponent,
     ResetPasswordComponent,
     IntelligentSearchComponent,
-   
-    DetailArticleAvisComponent,
-        ListFournisseurComponent,
+    ListFournisseurComponent,
+    
 
     
     
@@ -94,7 +92,6 @@ import { ListFournisseurComponent } from './article-personaliser/list-fournisseu
     FormsModule,
     BrowserModule,
     AppRoutingModule,
-    FruitsModule,
     HttpClientModule,
     CategoryModule,
     MatToolbarModule,
@@ -141,6 +138,10 @@ import { ListFournisseurComponent } from './article-personaliser/list-fournisseu
     ListCommandeFRComponent,
     ListReclamationComponent,
     AvisListComponent,
+    DetailArticleAvisComponent,
+
+    
+    
 
   ],
   exports: [

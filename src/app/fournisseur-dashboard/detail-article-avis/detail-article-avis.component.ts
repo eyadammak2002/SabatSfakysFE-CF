@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { catchError, forkJoin, of } from 'rxjs';
 
@@ -15,10 +15,13 @@ import { FavorisService } from 'src/app/services/favoris.service';
 import { StockService } from 'src/app/panier/stock.service';
 import { Article, Couleur, Pointure } from 'src/app/article/article';
 import { ArticleService } from 'src/app/article/article.service';
+import { CommonModule } from '@angular/common';
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-detail-article-avis',
+  standalone:true,
+  imports:[FormsModule,CommonModule],
   templateUrl: './detail-article-avis.component.html',
   styleUrls: ['./detail-article-avis.component.css']
 })
@@ -687,24 +690,24 @@ soumettreAvis(): void {
     this.cdr.detectChanges();
   }
 
-  // Ajouter une méthode pour récupérer les infos utilisateur pour un avis spécifique
-  loadUserForAvis(avisId: number): void {
-    this.avisService.getUserFromAvis(avisId).subscribe({
-      next: (userData) => {
-        // Trouver l'avis dans le tableau et mettre à jour les informations utilisateur
-        const avisIndex = this.avis.findIndex(a => a.id === avisId);
-        if (avisIndex !== -1) {
-          this.avis[avisIndex].user = userData;
-          this.cdr.detectChanges();
-        }
-        console.log(`Informations utilisateur chargées pour l'avis ${avisId}:`, userData);
-      },
-      error: (err) => {
-        console.error(`Erreur lors du chargement des informations utilisateur pour l'avis ${avisId}:`, err);
+  
+// Méthode pour charger les informations utilisateur pour un avis
+loadUserForAvis(avisId: number): void {
+  this.avisService.getUserFromAvis(avisId).subscribe({
+    next: (userData) => {
+      // Trouver l'avis dans le tableau et mettre à jour les informations utilisateur
+      const avisIndex = this.avis.findIndex(a => a.id === avisId);
+      if (avisIndex !== -1) {
+        this.avis[avisIndex].user = userData;
+        this.cdr.detectChanges();
       }
-    });
-  }
-
+      console.log(`Informations utilisateur chargées pour l'avis ${avisId}:`, userData);
+    },
+    error: (err) => {
+      console.error(`Erreur lors du chargement des informations utilisateur pour l'avis ${avisId}:`, err);
+    }
+  });
+}
 
   checkFavori(articleId: number): void {
     this.favorisService.isFavori(articleId).subscribe(

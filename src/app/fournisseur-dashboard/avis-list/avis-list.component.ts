@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { Article } from 'src/app/article/article';
@@ -26,11 +26,14 @@ export class AvisListComponent implements OnInit {
   isLoading = true;
   isLoadingAvis: { [articleId: number]: boolean } = {}; // Pour suivre le chargement des avis
   
+
   constructor(
     private articleService: ArticleService,
     private avisService: AvisService,
     private tokenStorage: TokenStorageService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef // Ajouter le ChangeDetectorRef
+
   ) {}
   
   ngOnInit(): void {
@@ -60,7 +63,8 @@ export class AvisListComponent implements OnInit {
     });
   }
   
-  // Méthode pour charger les avis d'un article spécifique
+
+
   loadArticleAvis(articleId: number): void {
     this.isLoadingAvis[articleId] = true;
     
@@ -69,6 +73,15 @@ export class AvisListComponent implements OnInit {
         this.articlesAvis[articleId] = data;
         this.isLoadingAvis[articleId] = false;
         console.log(`💬 Avis chargés pour l'article #${articleId}:`, data);
+        
+        // Charger les informations utilisateur pour chaque avis
+        if (this.articlesAvis[articleId] && this.articlesAvis[articleId].length > 0) {
+          this.articlesAvis[articleId].forEach(avis => {
+            if (!avis.user || !avis.user.username) {
+              this.loadUserForAvis(avis.id, articleId);
+            }
+          });
+        }
       },
       error: (err) => {
         console.error(`❌ Erreur lors du chargement des avis pour l'article #${articleId}:`, err);
@@ -77,6 +90,25 @@ export class AvisListComponent implements OnInit {
     });
   }
   
+  // Nouvelle méthode pour charger les informations utilisateur pour un avis
+  loadUserForAvis(avisId: number, articleId: number): void {
+    this.avisService.getUserFromAvis(avisId).subscribe({
+      next: (clientData) => {
+        console.log("clientData", clientData);
+        // Trouver l'avis dans le tableau correspondant à l'article
+        const avisIndex = this.articlesAvis[articleId].findIndex(a => a.id === avisId);
+        if (avisIndex !== -1) {
+          // Assigner directement les données client à l'avis
+          this.articlesAvis[articleId][avisIndex].client = clientData;
+          console.log(`Informations client mises à jour pour l'avis ${avisId}:`, this.articlesAvis[articleId][avisIndex].client);
+          this.cdr.detectChanges(); // Forcer la mise à jour de l'affichage
+        }
+      },
+      error: (err) => {
+        console.error(`Erreur lors du chargement des informations client pour l'avis ${avisId}:`, err);
+      }
+    });
+  }
   // Méthode pour récupérer les avis d'un article
   getAvis(articleId: number): any[] {
     return this.articlesAvis[articleId] || [];

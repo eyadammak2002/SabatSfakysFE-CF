@@ -79,74 +79,51 @@
               <hr>
               
               <!-- Sélection d'options -->
-              <div class="options-selection">
-                <!-- Sélection des couleurs -->
-                <div *ngIf="article.stocks?.length" class="mb-3">
-                  <label class="form-label fw-bold">Couleur :</label>
-                  <div class="d-flex flex-wrap">
-                    <button *ngFor="let couleur of getUniqueColors(article.stocks)" 
-                            class="btn m-1"
-                            [class.btn-primary]="selectedCouleur?.id === couleur.id"
-                            [class.btn-outline-primary]="selectedCouleur?.id !== couleur.id"
-                            (click)="selectCouleur(couleur)">
-                      {{ couleur.nom }}
-                    </button>
+            <div class="options-selection">
+              <!-- Sélection des couleurs -->
+              <div *ngIf="article.stocks?.length" class="mb-3">
+                <label class="form-label fw-bold">Couleur :</label>
+                <div class="d-flex flex-wrap">
+                  <div *ngFor="let couleur of getUniqueColors(article.stocks)"
+                       class="m-1"
+                       [ngStyle]="{
+                         'background-color': couleur.nom,
+                         'border': selectedCouleur?.id === couleur.id ? '3px solid black' : '1px solid #ccc'
+                       }"
+                       (click)="selectCouleur(couleur)"
+                       style="
+                         width: 30px;
+                         height: 30px;
+                         border-radius: 50%;
+                         cursor: pointer;
+                       ">
                   </div>
                 </div>
-                
-                <!-- Sélection des pointures avec indication de disponibilité -->
-                <div *ngIf="selectedCouleur && selectedPointures.length > 0" class="mb-3">
-                  <label class="form-label fw-bold">Pointure :</label>
-                  <div class="d-flex flex-wrap">
-                    <button *ngFor="let pointure of selectedPointures"
-                            class="btn m-1 position-relative"
-                            [class.btn-success]="selectedPointure?.id === pointure.id"
-                            [class.btn-outline-success]="selectedPointure?.id !== pointure.id && !pointureOutOfStock[pointure.id]"
-                            [class.btn-outline-secondary]="pointureOutOfStock[pointure.id]"
-                            [class.disabled]="pointureOutOfStock[pointure.id]"
-                            [style.opacity]="pointureOutOfStock[pointure.id] ? '0.6' : '1'"
-                            (click)="!pointureOutOfStock[pointure.id] && selectPointure(pointure)">
-                      {{ pointure.taille }}
-                      <div *ngIf="pointureOutOfStock[pointure.id]" 
-                           class="position-absolute" 
-                           style="top: 0; right: 0; left: 0; bottom: 0; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-times text-danger" style="font-size: 0.9rem; position: absolute;"></i>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-                
-                <!-- Message d'information sur le stock -->
-                <div *ngIf="selectedPointure">
-                  <div *ngIf="!stockInsuffisant" class="alert alert-success mt-2 mb-3">
-                    <i class="fas fa-check-circle me-2"></i> En stock
-                  </div>
-                  
-                  <div *ngIf="stockInsuffisant" class="alert alert-danger mt-2 mb-3">
-                    <i class="fas fa-times-circle me-2"></i> Épuisé
-                  </div>
-                </div>
-                
-                <!-- Bouton d'ajout au panier et favoris -->
-                <div class="d-flex gap-2 mt-4">
-                  <!-- Nouveau bouton favoris avec juste un cœur -->
-                  <button class="btn btn-lg position-relative" 
-                          [ngClass]="{'btn-danger': isFavori, 'btn-outline-danger': !isFavori}"
-                          style="min-width: 60px; transition: all 0.3s ease;">
-                    <i class="fas fa-heart" style="font-size: 1.5rem;"></i>
-                    <span *ngIf="favorisCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
-                      {{ favorisCount }}
-                      <span class="visually-hidden">favoris</span>
-                    </span>
+              </div>
+              
+              <label class="form-label fw-bold">Pointure :</label>
+
+              <!-- Sélection des pointures avec indication de disponibilité -->
+              <div *ngIf="selectedCouleur && selectedPointures.length > 0" class="mb-3">
+                <div class="d-flex flex-wrap">
+                  <button *ngFor="let pointure of selectedPointures"
+                          class="btn m-1 position-relative"
+                          [class.btn-success]="selectedPointure?.id === pointure.id"
+                          [class.btn-outline-success]="selectedPointure?.id !== pointure.id && !pointureOutOfStock[pointure.id]"
+                          [class.btn-outline-secondary]="pointureOutOfStock[pointure.id]"
+                          [class.disabled]="pointureOutOfStock[pointure.id]"
+                          [style.opacity]="pointureOutOfStock[pointure.id] ? '0.6' : '1'"
+                          (click)="!pointureOutOfStock[pointure.id] && selectPointure(pointure)">
+                    {{ pointure.taille }}
+                    <div *ngIf="pointureOutOfStock[pointure.id]" 
+                         class="position-absolute" 
+                         style="top: 0; right: 0; left: 0; bottom: 0; display: flex; align-items: center; justify-content: center;">
+                      <i class="fas fa-times text-danger" style="font-size: 0.9rem; position: absolute;"></i>
+                    </div>
                   </button>
+                </div>
+              </div>
   
-                  <!-- Bouton d'ajout au panier -->
-                  <button class="btn btn-lg btn-success flex-grow-1" 
-                          [disabled]="!selectedCouleur || !selectedPointure || stockInsuffisant || (selectedPointure && pointureOutOfStock[selectedPointure.id])"
-                          >
-                    <i class="fas fa-shopping-cart me-2"></i> Ajouter au panier
-                  </button>
-                </div>
               </div>
             </div>
           </div>
@@ -195,7 +172,7 @@
                      style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #63a50a; background-color: #f9f9f9;">
                   <div class="d-flex justify-content-between align-items-center mb-2">
                     <div class="client-info">
-                      <strong style="color: #3c2313;">{{ avisItem.user?.username || 'Utilisateur #' + avisItem.user?.id }}</strong>
+                      <strong style="color: #3c2313;">{{ avisItem.user?.nom }}</strong>
                     </div>
                     <div class="d-flex align-items-center">
                       <small class="text-muted me-3">{{ avisItem.dateAjout | date:'dd/MM/yyyy' }}</small>
