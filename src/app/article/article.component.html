@@ -3,7 +3,7 @@
   <!-- En-tête moderne et élégant -->
   <div class="dashboard-header">
     <div class="header-content">
-     
+      
       <div class="header-left">
         <div class="brand-logo">
           <i class="fas fa-shoe-prints"></i>
@@ -18,10 +18,6 @@
           <button class="btn-create" (click)="redirectToCreateArticle()">
             <span class="btn-icon"><i class="fas fa-plus"></i></span>
             <span class="btn-text">Nouvel Article</span>
-          </button>
-          <button class="btn-create" (click)="loadArticles(email)">
-            <span class="btn-icon"><i class="fas fa-sync-alt"></i></span>
-            <span class="btn-text">Actualiser</span>
           </button>
         </div>
       </div>
@@ -72,6 +68,7 @@
     </div>
   </div>
 
+  
   <!-- Tableau des articles -->
   <div class="card shadow-lg border-0 overflow-hidden">
     <div class="card-body p-0">
@@ -183,6 +180,13 @@
                 </div>
               </td>
             </tr>
+            <tr *ngIf="allArticle.length === 0">
+              <td colspan="13" class="text-center p-4">
+                <div class="alert " style="background-color: rgba(60, 35, 19, 0.1); border-left: 4px solid #3c2313; color: #3c2313;">
+                  Aucun Article trouvé avec ce statut
+                </div>
+              </td>
+              </tr>
           </tbody>
         </table>
       </div>

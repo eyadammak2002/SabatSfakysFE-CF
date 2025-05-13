@@ -57,7 +57,7 @@
   
     <!-- Liste des articles avec leurs avis -->
     <div *ngIf="!isLoading">
-      <div *ngIf="articles.length === 0" class="alert alert-info text-center">
+      <div *ngIf="articles.length === 0" class="alert" style="background-color: rgba(60, 35, 19, 0.1); border-left: 4px solid #3c2313; color: #3c2313;">
         <i class="fas fa-info-circle me-2"></i>
         Aucun article trouvé. Ajoutez des articles pour recevoir des avis clients.
       </div>

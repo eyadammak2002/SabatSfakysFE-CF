@@ -141,11 +141,14 @@ export class NotificationService implements OnDestroy {
 
     // Marquer toutes les notifications comme lues
     markAllAsRead(): Observable<any> {
-      return this.http.put(`${this.apiUrl1}/markAllRead/unUser`, {});
+      return this.http.put(`${this.apiUrl1}/markAllRead`, {});
     }
 
+   
+   
+   
     markAsRead(ids: number[]): Observable<any> {
-      return this.http.put(`${this.apiUrl}/markAsRead/unUser`, ids);
+      return this.http.put(`${this.apiUrl}/markAsRead`, ids);
     }
     
     

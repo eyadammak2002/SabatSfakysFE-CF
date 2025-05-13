@@ -48,6 +48,7 @@ export class AppComponent implements OnInit {
            basePath.includes('/fournisseur/articles-personalises') ||
            basePath.includes('/categories') ||
            basePath.includes('/settings') ||
-           basePath.includes('/profileFR'); // Ajouté ici pour gérer la route de profil
+           basePath.includes('/profileFR')|| 
+           basePath.includes('/createArticle'); 
   }
 }

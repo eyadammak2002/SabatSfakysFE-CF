@@ -344,7 +344,7 @@ checkUserRole(): void {
       
       // If dropdown was open and now it's being closed, refresh the page
       if (wasOpen) {
-        window.location.reload();
+        this.loadNotifications();
       }
     }
   }

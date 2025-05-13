@@ -108,7 +108,6 @@ export const routes: Routes = [
    { path: 'femme/:category', component: FiltredArticlesComponent },
    { path: 'enfant', component: FiltredArticlesComponent },
    { path: 'enfant/:category', component: FiltredArticlesComponent },
-
    { path: 'chatbot', component: ChatbotComponent },
    { path: 'chat', component: ChatComponent },
    { path: 'search', component: IntelligentSearchComponent },

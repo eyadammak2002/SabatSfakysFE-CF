@@ -122,9 +122,17 @@ export class CommandeComponent implements OnInit, AfterViewInit {
       },
       onClientAuthorization: (data) => {
         console.log('Paiement finalisé côté client', data);
-        this.snackBar.open('Paiement réussi !', 'Fermer', { duration: 3000 });
-        // Définir le mode de paiement
+        
+        // Fixer explicitement le mode de paiement sur PayPal
+        this.modePaiement = 'PAYPAL';
         this.panier.modePaiement = 'PAYPAL';
+        
+        // Journalisation de débogage
+        console.log('Mode de paiement explicitement défini sur PAYPAL avant validation');
+        
+        this.snackBar.open('Paiement réussi !', 'Fermer', { duration: 3000 });
+        
+        // Valider la commande avec le nouveau mode défini
         this.validerCommande();
       },
       onCancel: (data) => {
@@ -154,11 +162,22 @@ export class CommandeComponent implements OnInit, AfterViewInit {
 
   // Affichage du bouton PayPal après sélection du paiement
   payement() {
+    // Appliquer explicitement le mode de paiement sélectionné au panier
+    this.panier.modePaiement = this.modePaiement;
+    
     if (this.modePaiement === 'PAYPAL') {
+      // Assurez-vous que la configuration PayPal est initialisée avec le bon montant
+      // et que le bouton PayPal sera affiché
       this.payer = true;
+      
+      // Important: Réinitialiser la configuration PayPal avec les données actuelles
+      this.initPayPalConfig();
+      
+      console.log('Mode PayPal activé, bouton PayPal affiché');
     } else if (this.modePaiement === 'LIVRAISON') {
-      // Enregistrer le mode de paiement et valider directement
+      // Pour être absolument certain que le mode est correctement défini
       this.panier.modePaiement = 'LIVRAISON';
+      console.log('Mode Livraison sélectionné, validation directe');
       this.validerCommande();
     }
   }
@@ -280,12 +299,24 @@ export class CommandeComponent implements OnInit, AfterViewInit {
       this.panier.id = this.panierIdCMD;
     }
     
+    // MODIFICATION ICI: Assurez-vous que le mode de paiement est correctement appliqué
+    // Définir explicitement le mode de paiement selon la sélection actuelle
+    this.panier.modePaiement = this.modePaiement;
+    
     console.log("Validation du panier avec ID:", this.panier.id);
     console.log("Mode de paiement:", this.panier.modePaiement);
     
     this.panierService.validerPanier(this.panier).subscribe({
       next: (panierValide) => {
+        // IMPORTANT: Préserver le mode de paiement lors de la mise à jour de l'objet panier
+        const modePaiementSelectionne = this.panier.modePaiement;
         this.panier = panierValide;
+        
+        // Réappliquer le mode de paiement si le serveur ne l'a pas conservé
+        if (this.panier.modePaiement !== modePaiementSelectionne) {
+          this.panier.modePaiement = modePaiementSelectionne;
+        }
+        
         this.panierIdCMD = this.panier.id;
         
         // Sauvegarder l'ID du panier dans localStorage avant le rechargement
@@ -299,6 +330,8 @@ export class CommandeComponent implements OnInit, AfterViewInit {
         }
         
         this.snackBar.open(message, 'Fermer', { duration: 3000 });
+        
+        // IMPORTANT: Assurez-vous que le mode de paiement est correctement sauvegardé
         this.panierService.sauvegarderPanierDansLocalStorage();
         console.log("Panier validé:", this.panier);
         

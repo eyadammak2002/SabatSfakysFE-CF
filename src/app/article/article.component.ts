@@ -20,7 +20,7 @@ import { TokenStorageService } from '../services/token-storage.service';
 export class ArticleComponent implements OnInit {
   allArticle: Article[] = [];
   feedback: any = {};
-  email:any="";
+
   constructor(
     private articleService: ArticleService, 
     private tokenStorage: TokenStorageService,
@@ -31,8 +31,15 @@ export class ArticleComponent implements OnInit {
     const user = this.tokenStorage.getUser();
     const email = user.email;
   
-    this.loadArticles(email);
-
+    this.articleService.getArticlesByFournisseur(email).subscribe({
+      next: (data: Article[]) => {
+        this.allArticle = data;
+        console.log("✅ Articles récupérés :", this.allArticle);
+      },
+      error: (err) => {
+        console.error("Erreur lors de la récupération des articles :", err);
+      }
+    });
   }
 
   delete(article: Article): void {
@@ -105,17 +112,5 @@ export class ArticleComponent implements OnInit {
     }
 
     return article.stocks.reduce((sum: number, stock: Stock) => sum + (stock.quantite || 0), 0);
-  }
-
-  loadArticles(email: string): void {
-    this.articleService.getArticlesByFournisseur(email).subscribe({
-      next: (data: Article[]) => {
-        this.allArticle = data;
-        console.log("✅ Articles récupérés :", this.allArticle);
-      },
-      error: (err) => {
-        console.error("Erreur lors de la récupération des articles :", err);
-      }
-    });
   }
 }

@@ -49,13 +49,60 @@
         </div>
       </div>
 
-      <!-- Notification pour utilisateur connecté -->
-      <div *ngIf="isLoggedIn" class="notification-icon" (click)="toggleNotifications($event)" title="Notifications">
+     
+            <!-- Icône de notification avec compteur de notifications non lues -->
+      <div class="notification-icon" (click)="toggleNotifications($event)">
         <i class="fas fa-bell"></i>
         <span class="notification-badge" *ngIf="unreadNotifications.length > 0">
           {{ unreadNotifications.length }}
         </span>
       </div>
+
+      <!-- Dropdown des notifications -->
+      <div class="notification-dropdown" [class.show]="isNotificationDropdownOpen">
+        <div class="notification-header">
+          <h3>Notifications</h3>
+          <button class="clear-btn" (click)="clearNotifications()" *ngIf="unreadNotifications.length > 0 || readNotifications.length > 0">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+
+        <!-- Section des notifications non lues -->
+        <div class="notification-section" *ngIf="unreadNotifications.length > 0" >
+          <h4 class="section-title">Nouvelles ({{ unreadNotifications.length }})</h4>
+          <div class="notification-list">
+            <div class="notification-item unread" *ngFor="let notification of unreadNotifications" onclick="getCommandeById">
+              <div class="notification-content">
+                <div class="notification-message">{{ notification.message }}</div>
+                <div class="notification-time">{{ notification.createdAt | date:'short' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section des notifications lues -->
+        <div class="notification-section" *ngIf="readNotifications.length > 0">
+          <h4 class="section-title">Lues ({{ readNotifications.length }})</h4>
+          <div class="notification-list">
+            <div class="notification-item read" *ngFor="let notification of readNotifications">
+              <div class="notification-content">
+                <div class="notification-message">{{ notification.message }}</div>
+                <div class="notification-time">{{ notification.createdAt | date:'short' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message s'il n'y a pas de notifications -->
+        <div class="no-notifications" *ngIf="unreadNotifications.length === 0 && readNotifications.length === 0">
+          <p>Vous n'avez pas de notifications</p>
+        </div>
+      </div>
+
+
+
+
+
     </div>
 
     <!-- Dropdown Espace Fournisseur -->
@@ -71,16 +118,11 @@
         </a>
         <a (click)="redirectToProfileFR()" ngbDropdownItem>
           <i class="fas fa-id-card menu-icon"></i> Profil
-        </a>
+        </a><!--
         <a (click)="redirectToCreateArticle()" ngbDropdownItem>
           <i class="fas fa-plus-circle menu-icon"></i> Déposer Article
-        </a>
-        <a (click)="redirectToCreatePack()" ngbDropdownItem>
-          <i class="fas fa-box menu-icon"></i> Créer Pack
-        </a>
-        <a (click)="redirectToPack()" ngbDropdownItem>
-          <i class="fas fa-boxes menu-icon"></i> Tous les Packs
-        </a>   
+        </a>-->
+ 
         <a routerLink="/fournisseur/notifications" ngbDropdownItem>
           <i class="fas fa-bell menu-icon"></i> Notifications
         </a>

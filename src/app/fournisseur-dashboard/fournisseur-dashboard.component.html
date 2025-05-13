@@ -23,6 +23,14 @@
       <div class="nav-section" *ngIf="isSidebarExpanded">
         <div class="section-title">PRODUITS</div>
       </div>
+
+      <div class="nav-item">
+        <a class="nav-link" [class.active]="isActive('/createArticle')" routerLink="/createArticle">
+          <i class="fas fa-plus-circle menu-icon"></i>
+          <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}"> Déposer Article
+          </span>
+        </a>
+      </div>
       
       <div class="nav-item">
         <a class="nav-link" [class.active]="isActive('/articles')" routerLink="/articles">
