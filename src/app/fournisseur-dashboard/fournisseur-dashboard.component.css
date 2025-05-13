@@ -1,5 +1,4 @@
-/* fournisseur-dashboard.component.css - Avec espace en haut du menu */
-
+/* fournisseur-dashboard.component.css - Avec support de défilement amélioré */
 .dashboard-container {
   display: flex;
   min-height: 100vh;
@@ -13,11 +12,14 @@
   top: 0;
   height: 100%;
   width: 70px;
-  background-color: #3c2313;  color: #fff;
+  background-color: #3c2313;
+  color: #fff;
   z-index: 1000;
   transition: width 0.3s ease;
   overflow: hidden;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column; /* Structure en colonnes pour flex */
 }
 
 .sidebar.expanded {
@@ -29,6 +31,7 @@
   display: flex;
   justify-content: flex-end;
   padding: 10px;
+  flex-shrink: 0; /* Empêche la compression */
 }
 
 .toggle-btn {
@@ -50,12 +53,36 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Zone de contenu défilable */
+.sidebar-content-scrollable {
+  flex: 1; /* Prend toute la hauteur disponible */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Active le défilement vertical */
+  overflow-x: hidden; /* Désactive le défilement horizontal */
+  scrollbar-width: thin; /* Pour Firefox */
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent; /* Pour Firefox */
+  margin-bottom: 10px; /* Espace avant le footer */
+}
+
+/* Personnalisation de la barre de défilement pour Chrome/Safari/Edge */
+.sidebar-content-scrollable::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar-content-scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-content-scrollable::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
 /* Navigation dans la barre latérale */
 .sidebar-nav {
   padding: 0 10px;
-  overflow-y: auto;
-  max-height: calc(100vh - 150px); /* Hauteur pour le scrolling si nécessaire */
-  margin-top: 30px; /* Espace supplémentaire en haut du menu */
+  margin-top: 15px; /* Espace au-dessus du menu */
 }
 
 /* Sections du menu */
@@ -117,12 +144,10 @@
 
 /* Pied de la barre latérale */
 .sidebar-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
   padding: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   background-color: #3c2313;
+  flex-shrink: 0; /* Empêche la compression */
 }
 
 .user-profile {

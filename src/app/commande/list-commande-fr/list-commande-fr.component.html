@@ -87,12 +87,7 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Commande #{{ commande.id }}</h5>
         <div>
-          <button
-            *ngIf="!toutesLignesLivrees(commande)"
-            class="btn btn-success"
-            (click)="marquerToutesCommeLivrees(commande)">
-            <i class="fas fa-box-open me-1"></i> Marquer toutes comme livrées
-          </button>
+         
           <span *ngIf="toutesLignesLivrees(commande)" class="badge bg-success">
             <i class="fas fa-check-circle me-1"></i> Toutes livrées
           </span>
@@ -119,7 +114,7 @@
                 <th class="px-3 py-3 text-white">Prix Unitaire</th>
                 <th class="px-3 py-3 text-white">Total</th>
                 <th class="px-3 py-3 text-white">Statut</th>
-                <th class="px-3 py-3 text-white">Actions</th>
+              
               </tr>
             </thead>
             <tbody>
@@ -136,15 +131,18 @@
                       'status-commandee': ligne.statut === 'COMMANDEE',
                       'status-validee': ligne.statut === 'VALIDER',
                       'status-payee': ligne.statut === 'PAYER',
-                      'status-annulee': ligne.statut === 'ANNULER'
+                      'status-annulee': ligne.statut === 'ANNULER',
+                      'status-livrerAdmin': ligne.statut === 'LIVRER',
+                     
                     }">
                     <i class="fas" 
                       [ngClass]="{
-                        'fa-check-circle': ligne.statut === 'LIVRER_FR',
+                        'fa-check-circle': ligne.statut === 'LIVRER_FR' || ligne.statut === 'LIVRER',
                         'fa-clock': ligne.statut === 'COMMANDEE',
                         'fa-thumbs-up': ligne.statut === 'VALIDER',
                         'fa-credit-card': ligne.statut === 'PAYER',
-                        'fa-times-circle': ligne.statut === 'ANNULER'
+                        'fa-times-circle': ligne.statut === 'ANNULER',
+                      
                       }">
                     </i>
                     <span class="status-text">
@@ -152,22 +150,12 @@
                          ligne.statut === 'COMMANDEE' ? 'EN ATTENTE' : 
                          ligne.statut === 'VALIDER' ? 'VALIDÉE' : 
                          ligne.statut === 'PAYER' ? 'PAYÉE' : 
+                         ligne.statut === 'LIVRER' ? 'LIVRÉE AU CLIENT' :
                          ligne.statut === 'ANNULER' ? 'ANNULÉE' : ligne.statut }}
                     </span>
                   </span>
                 </td>
-                <td class="px-3 py-3">
-                  <button
-                    *ngIf="peutEtreMarqueeLivree(ligne)"
-                    class="btn btn-sm btn-livrer"
-                    title="Marquer comme livrée"
-                    (click)="marquerCommeLivree(ligne)">
-                    <i class="fas fa-truck me-1"></i> Livrer
-                  </button>
-                  <span *ngIf="!peutEtreMarqueeLivree(ligne)" class="badge status-badge status-livree">
-                    <i class="fas fa-check-circle me-1"></i> Livrée
-                  </span>
-                </td>
+           
               </tr>
             </tbody>
           </table>

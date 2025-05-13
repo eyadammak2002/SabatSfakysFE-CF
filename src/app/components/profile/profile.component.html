@@ -137,11 +137,11 @@
           </div>
           
           <div class="action-buttons">
-            <button type="submit" class="btn btn-create" [disabled]="profileForm.invalid || loading">
-              <i class="fa fa-save"></i> Sauvegarder
+            <button type="submit" class="btn btn-create edit-button" [disabled]="profileForm.invalid || loading">
+              Enregistrer
             </button>
-            <button type="button" class="btn btn-danger" (click)="toggleEdit()">
-              <i class="fa fa-times"></i> Annuler
+            <button type="button" class="btn btn-create edit-button" (click)="toggleEdit()">
+               Annuler
             </button>
           </div>
         </form>

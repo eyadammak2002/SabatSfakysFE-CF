@@ -29,10 +29,7 @@ export interface ChatMessage {
 // Interfaces pour les modèles
 export interface ArticlePersonaliser {
   id?: number;
-  ref: string;
-  name: string;
   description: string;
-  quantite?: number;
   genre?: string;
   tissu?: string;
   statut: string;
@@ -42,9 +39,11 @@ export interface ArticlePersonaliser {
   dateAjout?: Date;
   client: Client;
   fournisseur?: Fournisseur; // Ajout du fournisseur
-  couleurs?: Couleur[];
-  pointures?: Pointure[];
-  nom?: string; // Ajouté pour compatibilité avec le composant (name/nom)
+  pointure: number;
+  couleur: string;
+  typePied: string;
+  formePied: string;
+  typeSemelle: string;
 }
 
 @Injectable({

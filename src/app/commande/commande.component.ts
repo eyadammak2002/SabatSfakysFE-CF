@@ -22,7 +22,7 @@ export class CommandeComponent implements OnInit, AfterViewInit {
   payer: boolean = false;
   public payPalConfig?: IPayPalConfig;
   panierIdCMD: number | null = null;
-  modePaiement: string = 'LIVRAISON'; // Valeur par défaut
+  modePaiement: string = 'PAYPAL'; // Valeur par défaut
   
   // Étapes de suivi de commande avec icônes Material correctes
   etapesCommande = [

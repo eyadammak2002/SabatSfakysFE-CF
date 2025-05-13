@@ -256,10 +256,13 @@
 }
 
 .status-livree {
-  background-color: #1987549d;
+  background-color: #79bc9cdb;
   color: white;
 }
-
+.status-livrerAdmin {
+  background-color: #0141239d;
+  color: white;
+}
 .status-commandee {
   background-color: #f1bf2a99;
   color: #212529;
@@ -276,7 +279,7 @@
 }
 
 .status-annulee {
-  background-color: #b44c56b5;
+  background-color: #b12d3ab5;
   color: white;
 }
 

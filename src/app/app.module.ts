@@ -64,6 +64,7 @@ import { RevenusFournisseurComponent } from './fournisseur-dashboard/revenus-fou
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastrModule } from 'ngx-toastr';
 import { NgChartsModule } from 'ng2-charts';
+import { AttentLivraisonComponent } from './commande/attent-livraison/attent-livraison.component';
 
 @NgModule({
   declarations: [
@@ -82,6 +83,7 @@ import { NgChartsModule } from 'ng2-charts';
     ResetPasswordComponent,
     IntelligentSearchComponent,
     ListFournisseurComponent,
+    
     
 
     
@@ -139,7 +141,7 @@ import { NgChartsModule } from 'ng2-charts';
     ListReclamationComponent,
     AvisListComponent,
     DetailArticleAvisComponent,
-
+    AttentLivraisonComponent,
     
     
 

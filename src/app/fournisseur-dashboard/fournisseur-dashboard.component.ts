@@ -3,6 +3,7 @@ import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TokenStorageService } from '../services/token-storage.service';
 import { filter } from 'rxjs/operators';
+import { PanierService } from '../services/panier.service';
 
 @Component({
   selector: 'app-fournisseur-dashboard',
@@ -15,11 +16,13 @@ export class FournisseurDashboardComponent implements OnInit {
   isSidebarExpanded = false;
   currentRoute: string = '';
   email: string = ''; // Définir la propriété email
-
+  fournisseur: any = null; 
 
   constructor(
     private router: Router,
-    private tokenStorage: TokenStorageService
+    private tokenStorage: TokenStorageService,
+    private fournisseurService: PanierService 
+
   ) {
     console.log("✅ FournisseurDashboardComponent chargé !");
     
@@ -46,6 +49,13 @@ export class FournisseurDashboardComponent implements OnInit {
       // Stocker l'email de l'utilisateur
       const user = this.tokenStorage.getUser();
       this.email = user.email; // Assignez l'email à la propriété du composant
+
+
+      this.fournisseurService.getFournisseurByEmail(this.email)
+      .subscribe({
+        next: fr => this.fournisseur = fr,
+        error: err => console.error('Erreur fournisseur:', err)
+      });
     }
   }
 

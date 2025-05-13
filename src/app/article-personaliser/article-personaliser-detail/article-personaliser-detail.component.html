@@ -29,7 +29,7 @@
                        class="carousel-item" [ngClass]="{'active': i === 0}">
                     <img [src]="'http://localhost:8080/uploads/' + photo.name" 
                          class="d-block w-100" 
-                         alt="{{ article.name }}"
+                         alt="{{ article.id }}"
                          style="height: 300px; object-fit: contain;">
                   </div>
                 </div>
@@ -46,7 +46,6 @@
             
             <!-- Informations principales -->
             <div class="article-info">
-              <h4 class="mb-3">{{ article.name }}</h4>
               
               <div class="mb-3">
                 <span class="badge" 
@@ -70,7 +69,7 @@
               </div>
               
               <p class="text-muted mb-4">
-                <i class="fas fa-barcode me-2"></i> Référence: <strong>{{ article.ref }}</strong>
+                <i class="fas fa-barcode me-2"></i> Référence: <strong>{{ article.id }}</strong>
               </p>
               
               <!-- Description -->

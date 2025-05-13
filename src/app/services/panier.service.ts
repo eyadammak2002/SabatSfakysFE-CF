@@ -418,6 +418,11 @@ viderPanier(): void {
   getCommandesByFournisseur(userId: number): Observable<Panier[]> {
     return this.http.get<Panier[]>(`${this.apiUrl2}/commandes/fournisseur/${userId}`);
   }
+  getCommandesByFournisseurCOMMANDEE(userId: number): Observable<Panier[]> {
+    return this.http.get<Panier[]>(`${this.apiUrl2}/commandes/COMMANDEE/fournisseur/${userId}`);
+  }
+
+  
   getArticleFromLignePanier(lignePanierId: number): Observable<Article> {
     return this.http.get<Article>(`${this.apiUrl3}/${lignePanierId}/article`);
   }
@@ -476,7 +481,7 @@ viderPanier(): void {
   }
 
   // Dans panier.service.ts, ajoutez cette fonction
-updateModePaiement(panierId: number, modePaiement: string): Observable<Panier> {
-  return this.http.put<Panier>(`${this.apiUrl2}/${panierId}/mode-paiement?modePaiement=${modePaiement}`, {});
-}
+  updateModePaiement(panierId: number, modePaiement: string): Observable<Panier> {
+    return this.http.put<Panier>(`${this.apiUrl2}/${panierId}/mode-paiement?modePaiement=${modePaiement}`, {});
+  }
 }

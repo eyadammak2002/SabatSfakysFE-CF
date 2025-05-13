@@ -45,6 +45,7 @@ import { AvisListComponent } from './fournisseur-dashboard/avis-list/avis-list.c
 import { DetailArticleAvisComponent } from './fournisseur-dashboard/detail-article-avis/detail-article-avis.component';
 import { ListFournisseurComponent } from './article-personaliser/list-fournisseur/list-fournisseur.component';
 import { RevenusFournisseurComponent } from './fournisseur-dashboard/revenus-fournisseur/revenus-fournisseur.component';
+import { AttentLivraisonComponent } from './commande/attent-livraison/attent-livraison.component';
 
 export const routes: Routes = [
   { path: '', component: ListArticleComponent },
@@ -122,6 +123,7 @@ export const routes: Routes = [
       { path: 'createArticle', component: CreateArticleComponent },
       { path: 'editArticle/:id', component: EditArticleComponent },
       { path: 'listCommandeFR', component: ListCommandeFRComponent },
+      { path: 'attentLivraison', component: AttentLivraisonComponent },
       { path: 'fournisseur/listReclamation', component: ListReclamationComponent },
       { path: 'fournisseur/listAvis', component: AvisListComponent }, 
       { path: 'fournisseur/articles-personalises',  component: FournisseurArticlesPersonalisesComponent },

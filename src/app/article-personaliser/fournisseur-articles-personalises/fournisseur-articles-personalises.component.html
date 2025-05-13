@@ -108,8 +108,7 @@
         <table class="table table-hover custom-table mb-0">
           <thead>
             <tr style="background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%);">
-              <th class="px-3 py-3 text-white">Réf</th>
-              <th class="px-3 py-3 text-white">Nom</th>
+              <th class="px-3 py-3 text-white">ID</th>
               <th class="px-3 py-3 text-white">Client</th>
               <th class="px-3 py-3 text-white">Date</th>
               <th class="px-3 py-3 text-white">Statut</th>
@@ -118,8 +117,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let article of filteredArticles" class="align-middle">
-              <td class="px-3 py-3 fw-bold">{{ article.ref }}</td>
-              <td class="px-3 py-3 fw-bold">{{ article.name }}</td>
+              <td class="px-3 py-3 fw-bold">{{ article.id }}</td>
               <td class="px-3 py-3">{{ article.client?.username || article.client?.email }}</td>
               <td class="px-3 py-3">{{ article.dateAjout | date:'dd/MM/yyyy' }}</td>
               <td class="px-3 py-3">

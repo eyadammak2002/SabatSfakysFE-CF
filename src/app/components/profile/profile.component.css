@@ -190,12 +190,13 @@
         }
         
         &.btn-danger {
-          background-color: #fdedee;
+          background-color: #fdcbce;
           color: #c0392b;
           box-shadow: 0 4px 6px rgba(183, 65, 14, 0.3);
           
           &:hover {
-            background-color: #a13b0c;
+            background-color: #fdedee;
+            color: #c0392b;
             transform: translateY(-2px);
             box-shadow: 0 6px 8px rgba(183, 65, 14, 0.4);
           }

@@ -67,8 +67,11 @@ export class CreateArticlePersonaliserComponent {
   
   articleForm: ArticlePersonaliser = {
     id: 0,
-    ref: '',
-    name: '',
+    couleur: '',
+    pointure: 0,
+    formePied: '',
+    typeSemelle: '',
+    typePied: '',
     description: '',
     genre: 'FEMME',
     tissu: 'CUIR',
@@ -162,14 +165,14 @@ export class CreateArticlePersonaliserComponent {
 
     // Validation de l'étape 1
     if (currentStepNum === 1) {
-      if (!this.articleForm.ref || !this.articleForm.name || !this.articleForm.description || this.selectedFournisseurId <= 0) {
+      if ( !this.articleForm.description || this.selectedFournisseurId <= 0) {
         isValid = false;
       }
     }
     
     // Validation de l'étape 2
     else if (currentStepNum === 2) {
-      if (!this.articleForm.category || !this.articleForm.category.id) {
+      if (!this.articleForm.category || !this.articleForm.category.id||!this.articleForm.pointure||!this.articleForm.couleur||!this.articleForm.typePied||!this.articleForm.formePied||!this.articleForm.typeSemelle ) {
         isValid = false;
       }
     }
@@ -342,7 +345,7 @@ export class CreateArticlePersonaliserComponent {
   }
 
   onSubmit() {
-    if (this.articleForm.ref && this.articleForm.name && this.selectedFournisseurId > 0) {
+    if ( this.articleForm.description && this.selectedFournisseurId > 0) {
       const emailClient = this.articleForm.client.email;
       
       this.articlePersonaliserService.createArticlePersonaliser(

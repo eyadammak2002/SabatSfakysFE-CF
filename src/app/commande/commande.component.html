@@ -45,7 +45,6 @@
       <mat-icon>local_shipping</mat-icon>
     </div>
     <!-- Mettre à jour cette partie dans votre HTML -->
-    <div class="payment-mode-card">
       <div class="payment-mode-card" *ngIf="panier.statut === 'COMMANDEE' || panier.statut === 'EN_ATTENTE_LIVRAISON' || panier.statut === 'LIVRER'">
         <div class="payment-mode-header">
           <h2>Mode de paiement</h2>
@@ -62,10 +61,10 @@
           </div>
         </div>
       </div>
-    </div>
+ 
     <div class="info-content ">
       <p class="info-item"><span>Adresse de livraison:</span> {{ panier.adresseLivraison }}</p>
-      <p class="info-item"><span>Montant total:</span> <strong>{{ panier.total | number:'1.2-2' }} €</strong></p>
+      <p class="info-item"><span>Montant total:</span> <strong>{{ panier.total | number:'1.2-2' }} DT</strong></p>
       <p class="info-item"><span>Statut:</span> 
         <span class="status-badge" [ngClass]="{'annulee': panier.statut === 'ANNULER', 'livree': panier.statut === 'LIVRER'}">{{ panier.statut }}</span>
       </p>
@@ -98,7 +97,7 @@
               <p *ngIf="ligne.couleur"><span>Couleur:</span> {{ ligne.couleur?.id }}</p>
             </div>
             <div class="price-group">
-              <p class="total-price"><span>Total:</span> {{ ligne.total | number:'1.2-2' }} €</p>
+              <p class="total-price"><span>Total:</span> {{ ligne.total | number:'1.2-2' }} DT</p>
             </div>
           </div>
         </div>

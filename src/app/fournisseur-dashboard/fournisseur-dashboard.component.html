@@ -1,4 +1,4 @@
-<!-- fournisseur-dashboard.component.html - Menu réorganisé -->
+<!-- fournisseur-dashboard.component.html avec structure de défilement améliorée -->
 <div class="dashboard-container">
   <!-- Menu latéral à gauche -->
   <div class="sidebar" [ngClass]="{'expanded': isSidebarExpanded}">
@@ -8,97 +8,107 @@
         <i class="fas" [ngClass]="{'fa-chevron-right': !isSidebarExpanded, 'fa-chevron-left': isSidebarExpanded}"></i>
       </button>
     </div>
-    
-    <!-- Liens de navigation -->
-    <nav class="sidebar-nav">
-      <!-- Tableau de bord -->
-      <div class="nav-item">
-        <a class="nav-link" [class.active]="isActive('/dashboard')" routerLink="/dashboard">
-          <i class="fas fa-tachometer-alt"></i>
-          <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Tableau de bord</span>
-        </a>
-      </div>
 
-      <!-- Section Produits -->
-      <div class="nav-section" *ngIf="isSidebarExpanded">
-        <div class="section-title">PRODUITS</div>
-      </div>
-
-      <div class="nav-item">
-        <a class="nav-link" [class.active]="isActive('/createArticle')" routerLink="/createArticle">
-          <i class="fas fa-plus-circle menu-icon"></i>
-          <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}"> Déposer Article
-          </span>
-        </a>
-      </div>
-      
-      <div class="nav-item">
-        <a class="nav-link" [class.active]="isActive('/articles')" routerLink="/articles">
-          <i class="fas fa-box"></i>
-          <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Tous les Articles</span>
-        </a>
-      </div>
-      
-      <div class="nav-item">
-        <a class="nav-link" [class.active]="isActive('/fournisseur/articles-personalises')" routerLink="/fournisseur/articles-personalises">
-          <i class="fas fa-shoe-prints"></i>
-          <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Articles Personnalisés</span>
-        </a>
-      </div>
-      
-  
-
-      <!-- Section Commandes -->
-      <div class="nav-section" *ngIf="isSidebarExpanded">
-        <div class="section-title">COMMANDES</div>
-      </div>
-      
-      <div class="nav-item">
-        <a class="nav-link" [class.active]="isActive('/listCommandeFR')" routerLink="/listCommandeFR">
-          <i class="fas fa-shopping-cart"></i>
-          <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Commandes</span>
-        </a>
-      </div>
-      
-      <div class="nav-item">
-        <a class="nav-link" [class.active]="isActive('/fournisseur/listReclamation')" routerLink="/fournisseur/listReclamation">
-          <i class="fas fa-exclamation-triangle"></i>
-          <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Réclamations</span>
-        </a>
-      </div>
-
-      <div class="nav-item">
-        <a class="nav-link" [class.active]="isActive('/fournisseur/listAvis')" routerLink="/fournisseur/listAvis">
-          <i class="fas fa-comment-dots"></i>
-          <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Avis</span>
-        </a>
-      </div>
-      <div class="nav-section" *ngIf="isSidebarExpanded">
-        <div class="section-title">REVENUS</div>
-      </div>
-      
-     <!-- Dans votre template HTML (header.component.html ou sidebar.component.html) -->
-    <div class="nav-item">
-      <a class="nav-link" [class.active]="isActive('/revenus')" (click)="navigateToRevenus($event)">
-        <i class="fas fa-money-bill-wave"></i>
-        <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Revenus</span>
-      </a>
+    <div class="text-center mb-3" *ngIf="isSidebarExpanded">
+      <img 
+        [src]="fournisseur.logo?.url || 'assets/no-image.png'" 
+        class="rounded-circle" 
+        style="width: 80px; height: 80px; object-fit: cover;">
     </div>
-      
+    
+    <!-- Contenu défilable -->
+    <div class="sidebar-content-scrollable">
+      <!-- Liens de navigation -->
+      <nav class="sidebar-nav">
+        <!-- Tableau de bord -->
+        <div class="nav-item">
+          <a class="nav-link" [class.active]="isActive('/dashboard')" routerLink="/dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Tableau de bord</span>
+          </a>
+        </div>
 
+        <!-- Section Produits -->
+        <div class="nav-section" *ngIf="isSidebarExpanded">
+          <div class="section-title">PRODUITS</div>
+        </div>
 
-      <!-- Section Paramètres -->
-      <div class="nav-section" *ngIf="isSidebarExpanded">
-        <div class="section-title">PARAMÈTRES</div>
-      </div>
-      
-      <div class="nav-item">
-        <a class="nav-link" [class.active]="isActive('/profileFR')" [routerLink]="['/profileFR']" [queryParams]="{email: this.email}">
-          <i class="fas fa-cog"></i>
-          <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Profile</span>
-        </a>
-      </div>
-    </nav>
+        <div class="nav-item">
+          <a class="nav-link" [class.active]="isActive('/createArticle')" routerLink="/createArticle">
+            <i class="fas fa-plus-circle menu-icon"></i>
+            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}"> Déposer Article</span>
+          </a>
+        </div>
+        
+        <div class="nav-item">
+          <a class="nav-link" [class.active]="isActive('/articles')" routerLink="/articles">
+            <i class="fas fa-box"></i>
+            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Tous les Articles</span>
+          </a>
+        </div>
+        
+        <div class="nav-item">
+          <a class="nav-link" [class.active]="isActive('/fournisseur/articles-personalises')" routerLink="/fournisseur/articles-personalises">
+            <i class="fas fa-shoe-prints"></i>
+            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Articles Personnalisés</span>
+          </a>
+        </div>
+        
+        <!-- Section Commandes -->
+        <div class="nav-section" *ngIf="isSidebarExpanded">
+          <div class="section-title">COMMANDES</div>
+        </div>
+        <div class="nav-item">
+          <a class="nav-link" [class.active]="isActive('/attentLivraison')" routerLink="/attentLivraison">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">À LIVRER</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a class="nav-link" [class.active]="isActive('/listCommandeFR')" routerLink="/listCommandeFR">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Commandes</span>
+          </a>
+        </div>
+        
+        <div class="nav-item">
+          <a class="nav-link" [class.active]="isActive('/fournisseur/listReclamation')" routerLink="/fournisseur/listReclamation">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Réclamations</span>
+          </a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" [class.active]="isActive('/fournisseur/listAvis')" routerLink="/fournisseur/listAvis">
+            <i class="fas fa-comment-dots"></i>
+            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Avis</span>
+          </a>
+        </div>
+        
+        <div class="nav-section" *ngIf="isSidebarExpanded">
+          <div class="section-title">REVENUS</div>
+        </div>
+        
+        <div class="nav-item">
+          <a class="nav-link" [class.active]="isActive('/revenus')" (click)="navigateToRevenus($event)">
+            <i class="fas fa-money-bill-wave"></i>
+            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Revenus</span>
+          </a>
+        </div>
+
+        <!-- Section Paramètres -->
+        <div class="nav-section" *ngIf="isSidebarExpanded">
+          <div class="section-title">PARAMÈTRES</div>
+        </div>
+        
+        <div class="nav-item">
+          <a class="nav-link" [class.active]="isActive('/profileFR')" [routerLink]="['/profileFR']" [queryParams]="{email: this.email}">
+            <i class="fas fa-cog"></i>
+            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Profile</span>
+          </a>
+        </div>
+      </nav>
+    </div>
     
     <!-- Profil utilisateur en bas du menu -->
     <div class="sidebar-footer">
