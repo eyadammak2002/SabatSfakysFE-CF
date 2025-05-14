@@ -121,7 +121,10 @@ export class AvisListComponent implements OnInit {
   
   // Méthode pour rediriger vers la page détail de l'article avec les avis
   voirAvis(articleId: number): void {
+    localStorage.setItem('previousUrl', this.router.url);
+
     this.router.navigate(['/detailArticleFR', articleId]);
+
   }
   
   // Méthode pour obtenir le nombre d'avis pour un article

@@ -1,0 +1,153 @@
+<!-- favoris-list.component.html -->
+<div class="content-wrapper">
+    <!-- En-tête moderne et élégant -->
+    <div class="dashboard-header">
+      <div class="header-content">
+        <div class="header-left">
+          <div class="brand-logo">
+            <i class="fas fa-heart"></i>
+          </div>
+          <div class="header-title">
+            <h2>Articles Favoris</h2>
+            <p>Consultez les articles préférés de vos clients</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mini statistiques -->
+      <div class="stats-overview">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-heart"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ getTotalFavoris() }}</span>
+            <span class="stat-label">Total Favoris</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-box"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ articles.length }}</span>
+            <span class="stat-label">Articles Disponibles</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ getArticlesWithFavoris() }}</span>
+            <span class="stat-label">Articles en favoris</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Affichage pendant le chargement -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Chargement des articles et favoris...</p>
+    </div>
+  
+    <!-- Liste des articles avec leurs favoris -->
+    <div *ngIf="!isLoading">
+      <div *ngIf="articles.length === 0" class="alert" style="background-color: rgba(60, 35, 19, 0.1); border-left: 4px solid #3c2313; color: #3c2313;">
+        <i class="fas fa-info-circle me-2"></i>
+        Vous n'avez pas encore d'articles. Créez-en un pour commencer à vendre.
+      </div>
+  
+      <!-- Cartes des articles -->
+      <div *ngFor="let article of articles" class="card article-card mb-4">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{{ article.name }}</h5>
+            <div class="favoris-summary" >
+                <div class="favoris-count">
+                  <i class="fas fa-heart"></i>
+                  <span class="favoris-text">{{ getFavorisCount(article.id) }} favoris</span>
+                </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <!-- Informations de l'article -->
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <div class="article-image">
+                <img *ngIf="article.photos && article.photos.length > 0" 
+                     [src]="'http://localhost:8080/uploads/' + article.photos[0].name" 
+                     alt="{{ article.name }}"
+                     class="img-thumbnail">
+                <div *ngIf="!article.photos || article.photos.length === 0" class="no-image">
+                  <i class="fas fa-image"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-9">
+              <h6 class="mb-2">{{ article.name }}</h6>
+              <p class="description">{{ article.description }}</p>
+              <div class="article-details">
+                <p><strong>Référence:</strong> {{ article.ref }}</p>
+                <p><strong>Prix:</strong> {{ article.prixVente }} DT</p>
+                <p>
+                  <strong>Stock:</strong> 
+                  <span [ngClass]="{
+                    'text-danger': getTotalStockForArticle(article) === 0,
+                    'text-warning': getTotalStockForArticle(article) < 5 && getTotalStockForArticle(article) > 0,
+                    'text-success': getTotalStockForArticle(article) >= 5
+                  }">
+                    {{ getTotalStockForArticle(article) }}
+                  </span>
+                </p>
+                <p><strong>Catégorie:</strong> {{ article.category?.name || 'Non classé' }}</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Informations sur les favoris -->
+          <div class="favoris-container">
+            <div *ngIf="getFavorisCount(article.id) === 0" class="no-favoris">
+              <i class="fas fa-heart-broken"></i>
+              <p>Cet article n'a pas encore été ajouté aux favoris</p>
+            </div>
+            <div class="favoris-summ favoris-info mb-3" *ngIf="getFavorisCount(article.id) >0" style="background-color: transparent;" >
+                <div class="favoris-count">
+                  <i class="fas fa-heart"></i>
+                  <span class="favoris-text">{{ getFavorisCount(article.id) }} favoris</span>
+                </div>
+            </div>
+            <div *ngIf="getFavorisCount(article.id) > 0" class="favoris-info">
+              <div class="favoris-header">
+                <h6><i class="fas fa-heart"></i> Aimé par {{ getFavorisCount(article.id) }} clients</h6>
+              </div>
+              
+
+              <div class="stats-item">
+                <div class="stats-icon">
+                  <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="stats-content">
+                  <span class="stats-label">Dernier ajout</span>
+                  <span class="stats-value">{{ getLastFavorisDate(article.id) | date:'dd/MM/yyyy' }}</span>
+                </div>
+              </div>
+      
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-footer">
+          <button class="btn-view-article" (click)="voirDetailsArticle(article)">
+            <i class="fas fa-eye me-2"></i>Voir détails
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

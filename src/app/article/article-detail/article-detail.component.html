@@ -10,7 +10,7 @@
   <!-- Message d'erreur -->
   <div *ngIf="errorMessage" class="alert alert-danger">
     {{ errorMessage }}
-    <button class="btn btn-outline-primary ms-3" (click)="retourListe()">Retour à la liste des articles</button>
+    <button class="btn btn-outline-primary ms-3" (click)="goBack()">Retour à la liste des articles</button>
   </div>
 
   <!-- Détails de l'article -->
@@ -18,7 +18,7 @@
     <div class="row">
       <!-- Bouton retour -->
       <div class="col-12 mb-3">
-        <button class="btn btn-outline-secondary" (click)="retourListe()">
+        <button class="btn btn-outline-secondary" (click)="goBack()">
           <i class="fas fa-arrow-left"></i> Retour aux articles
         </button>
       </div>

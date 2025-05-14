@@ -1,150 +1,154 @@
+
+
 <!-- profile.component.html -->
 <div class="profile-container">
-    <h1 class="profile-title">Mon Profil</h1>
-    
-    <div *ngIf="loading && !client" class="loading-spinner">
-        <div class="spinner-border text-primary" role="status">
-          <span class="sr-only">Chargement...</span>
-        </div>
-        <p class="loading-text">Chargement de votre profil...</p>
-    </div>
-    
-    <div *ngIf="errorMessage" class="alert alert-danger">
-      {{ errorMessage }}
-    </div>
-    
-    <div *ngIf="successMessage" class="alert alert-success">
-      {{ successMessage }}
-    </div>
-    
-    <div *ngIf="client" class="profile-card">
-      <!-- Mode affichage -->
-      <div *ngIf="!isEditing" class="profile-view">
-        <div class="profile-info">
-          <div class="info-group">
-            <div class="info-icon">
-              <i class="fas fa-envelope"></i>
-            </div>
-            <div class="info-content">
-              <div class="info-label">Email</div>
-              <div class="info-value">{{ client.email }}</div>
-            </div>
+  <h1 class="profile-title">Mon Profil</h1>
+  
+  <div *ngIf="loading && !client" class="loading-spinner">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Chargement...</span>
+      </div>
+      <p class="loading-text">Chargement de votre profil...</p>
+  </div>
+  
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+  
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+  
+  <div *ngIf="client" class="profile-card">
+    <!-- Mode affichage -->
+    <div *ngIf="!isEditing" class="profile-view">
+      <div class="profile-info">
+        <div class="info-group">
+          <div class="info-icon">
+            <i class="fas fa-envelope"></i>
           </div>
-          
-          <div class="info-group">
-            <div class="info-icon">
-              <i class="fas fa-map-marker-alt"></i>
-            </div>
-            <div class="info-content">
-              <div class="info-label">Adresse</div>
-              <div class="info-value">{{ client.adresse || 'Non spécifiée' }}</div>
-            </div>
-          </div>
-          
-          <div class="info-group">
-            <div class="info-icon">
-              <i class="fas fa-phone"></i>
-            </div>
-            <div class="info-content">
-              <div class="info-label">Téléphone</div>
-              <div class="info-value">{{ client.telephone || 'Non spécifié' }}</div>
-            </div>
-          </div>
-          <div class="info-group">
-            <div class="info-icon">
-              <i class="fas fa-phone"></i>
-            </div>
-            <div class="info-content">
-              <div class="info-label">Genre</div>
-              <div class="info-value">{{ client.sexe || 'Non spécifié' }}</div>
-            </div>
+          <div class="info-content">
+            <div class="info-label">Email</div>
+            <div class="info-value">{{ client.email }}</div>
           </div>
         </div>
+        
+        <div class="info-group">
+          <div class="info-icon">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <div class="info-content">
+            <div class="info-label">Adresse</div>
+            <div class="info-value">{{ client.adresse || 'Non spécifiée' }}</div>
+          </div>
+        </div>
+        
+        <div class="info-group">
+          <div class="info-icon">
+            <i class="fas fa-phone"></i>
+          </div>
+          <div class="info-content">
+            <div class="info-label">Téléphone</div>
+            <div class="info-value">{{ client.telephone || 'Non spécifié' }}</div>
+          </div>
+        </div>
+        <div class="info-group">
+          <div class="info-icon">
+            <i class="fas fa-phone"></i>
+          </div>
+          <div class="info-content">
+            <div class="info-label">Genre</div>
+            <div class="info-value">{{ client.sexe || 'Non spécifié' }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="edit-button-container">
         <button (click)="toggleEdit()" class="btn btn-create edit-button">
           <i class="fa fa-edit"></i> Modifier 
         </button>
       </div>
-      
-      <!-- Mode édition -->
-      <div *ngIf="isEditing" class="profile-edit">
-        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-          <!-- Nom -->
+    </div>
+    
+    <!-- Mode édition -->
+    <div *ngIf="isEditing" class="profile-edit">
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+        <!-- Nom -->
 
-          
-            <div class="form-group">
-                <label for="nom">Nom</label>
-                <input 
-                type="text" 
-                id="nom" 
-                formControlName="nom" 
-                class="form-control"
-                [ngClass]="{'is-invalid': profileForm?.get('nom')?.invalid && profileForm?.get('nom')?.touched}" 
-                />
-                <div *ngIf="profileForm?.get('nom')?.invalid && profileForm?.get('nom')?.touched" class="invalid-feedback">
-                Le nom est requis
-                </div>
-            </div>
-            
-            <!-- Email -->
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input 
-                type="email" 
-                id="email" 
-                formControlName="email" 
-                class="form-control"
-                [ngClass]="{
-                    'is-invalid': profileForm?.get('email')?.invalid && profileForm?.get('email')?.touched
-                }" 
-                />
-                <div *ngIf="profileForm?.get('email')?.invalid && profileForm?.get('email')?.touched" class="invalid-feedback">
-                Email invalide
-                </div>
-            </div>
-  
-              
-          
+        
           <div class="form-group">
-            <label for="adresse">Adresse</label>
-            <input 
+              <label for="nom">Nom</label>
+              <input 
               type="text" 
-              id="adresse" 
-              formControlName="adresse" 
-              class="form-control" 
-            />
-          </div>
-          
-          <div class="form-group">
-            <label for="telephone">Téléphone</label>
-            <input 
-              type="tel" 
-              id="telephone" 
-              formControlName="telephone" 
-              class="form-control" 
-            />
-          </div>
-          
-          <div class="form-group">
-            <label for="sexe">Sexe</label>
-            <select 
-              id="sexe" 
-              formControlName="sexe" 
+              id="nom" 
+              formControlName="nom" 
               class="form-control"
-            >
-                <option value="HOMME">Homme</option>
-                <option value="FEMME">Femme</option>
-            </select>
+              [ngClass]="{'is-invalid': profileForm?.get('nom')?.invalid && profileForm?.get('nom')?.touched}" 
+              />
+              <div *ngIf="profileForm?.get('nom')?.invalid && profileForm?.get('nom')?.touched" class="invalid-feedback">
+              Le nom est requis
+              </div>
           </div>
           
-          <div class="action-buttons">
-            <button type="submit" class="btn btn-create edit-button" [disabled]="profileForm.invalid || loading">
-              Enregistrer
-            </button>
-            <button type="button" class="btn btn-create edit-button" (click)="toggleEdit()">
-               Annuler
-            </button>
+          <!-- Email -->
+          <div class="form-group">
+              <label for="email">Email</label>
+              <input 
+              type="email" 
+              id="email" 
+              formControlName="email" 
+              class="form-control"
+              [ngClass]="{
+                  'is-invalid': profileForm?.get('email')?.invalid && profileForm?.get('email')?.touched
+              }" 
+              />
+              <div *ngIf="profileForm?.get('email')?.invalid && profileForm?.get('email')?.touched" class="invalid-feedback">
+              Email invalide
+              </div>
           </div>
-        </form>
-      </div>
+
+            
+        
+        <div class="form-group">
+          <label for="adresse">Adresse</label>
+          <input 
+            type="text" 
+            id="adresse" 
+            formControlName="adresse" 
+            class="form-control" 
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="telephone">Téléphone</label>
+          <input 
+            type="tel" 
+            id="telephone" 
+            formControlName="telephone" 
+            class="form-control" 
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="sexe">Sexe</label>
+          <select 
+            id="sexe" 
+            formControlName="sexe" 
+            class="form-control"
+          >
+              <option value="HOMME">Homme</option>
+              <option value="FEMME">Femme</option>
+          </select>
+        </div>
+        
+        <div class="action-buttons">
+          <button type="submit" class="btn btn-success" [disabled]="profileForm.invalid || loading">
+            <i class="fas fa-save"></i> Enregistrer
+          </button>
+          <button type="button" class="btn btn-danger" (click)="toggleEdit()">
+            <i class="fas fa-times"></i> Annuler
+          </button>
+        </div>
+      </form>
     </div>
   </div>
+</div>

@@ -41,8 +41,10 @@ export class CreateArticleComponent {
   
   // Article temporaire ID (pour la création)
   tempArticleId: number = -1;
-
   articleStocks: Stock[] = [];
+  errorMessage: string = ''; 
+  stockErrorMessage: string = '';
+
 
   articleForm: Article = {
     id: 0,
@@ -149,22 +151,48 @@ export class CreateArticleComponent {
     });
   }
   
-  generateStocks(): void {
-    if (this.selectedCouleur && this.selectedPointure && this.quantite > 0) {
-      const stock: Stock = {
-        id: 0, 
-        couleur: this.selectedCouleur,
-        pointure: this.selectedPointure,
-        quantite: this.quantite
-      };
-      console.log('📌 Stock généré:', stock);
-      this.articleStocks.push(stock);
-      console.log('📦 Liste des stocks après ajout:', this.articleStocks);
-    } else {
-      console.error('❌ Veuillez sélectionner une couleur, une pointure et une quantité.');
-    }
-  }
+ // Vérifier si une combinaison couleur/pointure existe déjà
+ combinaisonExists(couleur: Couleur, pointure: Pointure): boolean {
+  return this.articleStocks.some(
+    stock => stock.couleur.id === couleur.id && stock.pointure.id === pointure.id
+  );
+}
 
+generateStocks(): void {
+  this.stockErrorMessage = '';
+  
+  if (this.selectedCouleur && this.selectedPointure && this.quantite > 0) {
+    // Vérifier si cette combinaison existe déjà
+    if (this.combinaisonExists(this.selectedCouleur, this.selectedPointure)) {
+      this.stockErrorMessage = 'Cette combinaison couleur/pointure existe déjà dans votre stock.';
+      return;
+    }
+    
+    const stock: Stock = {
+      id: 0, 
+      couleur: this.selectedCouleur,
+      pointure: this.selectedPointure,
+      quantite: this.quantite
+    };
+    console.log('📌 Stock généré:', stock);
+    this.articleStocks.push(stock);
+    console.log('📦 Liste des stocks après ajout:', this.articleStocks);
+    
+    // Réinitialiser les champs après ajout
+    this.selectedCouleur = null;
+    this.selectedPointure = null;
+    this.quantite = 0;
+  } else {
+    this.stockErrorMessage = 'Veuillez sélectionner une couleur, une pointure et indiquer une quantité valide.';
+    console.error('❌ Veuillez sélectionner une couleur, une pointure et une quantité.');
+  }
+}
+
+// Supprimer un stock de la liste
+removeStock(index: number): void {
+  this.articleStocks.splice(index, 1);
+  console.log('📦 Liste des stocks après suppression:', this.articleStocks);
+}
   // File upload methods
   selectFiles(event: any): void {
     this.selectedFiles = event.target.files;
@@ -318,9 +346,17 @@ uploadFile(file: File, index: number, articleId: number): any {
           this.router.navigate(['/articles']);
         },
         error: (err) => {
-          console.error('Erreur lors de la création de l\'article', err);
-          alert('Erreur lors de la création de l\'article');
+          console.error('Erreur brute:', err);
+        
+          const rawError = err.error?.message || err.error || '';
+        
+          if (typeof rawError === 'string' && rawError.includes('Duplicate entry')) {
+            this.errorMessage = 'Référence déjà utilisée. Veuillez en choisir une autre.';
+          } else {
+            this.errorMessage = 'Erreur lors de la création de l\'article.';
+          }
         }
+        
       });
     } else {
       console.error('Formulaire invalide. Vérifiez que tous les champs sont remplis:');

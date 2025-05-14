@@ -1,6 +1,6 @@
 <!-- profile-fournisseur.component.html avec le format d'informations amélioré -->
 <div class="profile-container">
-  <h1 class="profile-title">Mon Profil Fournisseur</h1>
+  <h1 class="profile-title">Mon Profil</h1>
   
   <!-- Affichage du chargement -->
   <div *ngIf="loading && !fournisseur" class="loading-spinner">
@@ -25,7 +25,16 @@
     <div *ngIf="!isEditing" class="profile-view">
       <div class="profile-info">
         <h2 class="profile-name">{{ fournisseur.nom }}</h2>
-        
+                <!-- Affichage du logo si disponible -->
+               
+                  <div class="info-content">
+                    
+                    <div class="logo-preview">
+                      <img [src]="'http://localhost:8080/uploads/' + fournisseur.logo.name" alt="Logo du fournisseur">
+                    </div>
+                  
+                </div>
+
         <div class="info-group">
           <div class="info-icon">
             <i class="fas fa-envelope"></i>
@@ -56,25 +65,15 @@
           </div>
         </div>
         
-        <!-- Affichage du logo si disponible -->
-        <div *ngIf="fournisseur.logo" class="info-group">
-          <div class="info-icon">
-            <i class="fas fa-image"></i>
-          </div>
-          <div class="info-content">
-            <div class="info-label">Logo</div>
-            <div class="logo-preview">
-              <img [src]="'http://localhost:8080/uploads/' + fournisseur.logo.name" alt="Logo du fournisseur">
-            </div>
-          </div>
-        </div>
+
       </div>
       
-      <div class="profile-actions">
-        <button (click)="toggleEdit()" class="edit-button">
-          <i class="fas fa-edit"></i> Modifier mon profil
+      <div class="edit-button-container">
+        <button (click)="toggleEdit()" class="btn btn-create edit-button">
+          <i class="fa fa-edit"></i> Modifier 
         </button>
       </div>
+      
     </div>
     
     <!-- Mode édition -->
@@ -160,7 +159,7 @@
         <!-- Boutons d'action -->
         <div class="action-buttons">
           <button type="submit" class="btn btn-success" [disabled]="profileForm.invalid || loading">
-            <i class="fas fa-save"></i> Sauvegarder
+            <i class="fas fa-save"></i> Enregistrer
           </button>
           <button type="button" class="btn btn-danger" (click)="toggleEdit()">
             <i class="fas fa-times"></i> Annuler

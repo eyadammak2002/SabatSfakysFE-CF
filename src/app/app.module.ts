@@ -65,6 +65,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastrModule } from 'ngx-toastr';
 import { NgChartsModule } from 'ng2-charts';
 import { AttentLivraisonComponent } from './commande/attent-livraison/attent-livraison.component';
+import { ListFavorisComponent } from './fournisseur-dashboard/list-favoris/list-favoris.component';
 
 @NgModule({
   declarations: [
@@ -142,7 +143,8 @@ import { AttentLivraisonComponent } from './commande/attent-livraison/attent-liv
     AvisListComponent,
     DetailArticleAvisComponent,
     AttentLivraisonComponent,
-    
+    ListFavorisComponent,
+
     
 
   ],

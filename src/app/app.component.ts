@@ -49,6 +49,9 @@ export class AppComponent implements OnInit {
            basePath.includes('/categories') ||
            basePath.includes('/settings') ||
            basePath.includes('/profileFR')|| 
+           basePath.includes('/attentLivraison')|| 
+           basePath.includes('/Listfavoris')|| 
            basePath.includes('/createArticle'); 
+           
   }
 }

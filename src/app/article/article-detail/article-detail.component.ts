@@ -1,8 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
-import { catchError, forkJoin, of } from 'rxjs';
+import { catchError, filter, forkJoin, of } from 'rxjs';
 
 import { AvisService } from 'src/app/services/avis.service';
 import { PanierService } from 'src/app/services/panier.service';
@@ -68,6 +68,9 @@ export class ArticleDetailComponent implements OnInit {
   stockDisponible: number | null = null;
   stockInsuffisant: boolean = false;
 
+  returnUrl: string = '/accueil';
+  previousUrl: string = '/accueil';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -89,9 +92,24 @@ export class ArticleDetailComponent implements OnInit {
       note: ['', Validators.required],
       description: ['', [Validators.required, Validators.minLength(10)]]
     });
+
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationStart))
+    .subscribe((event: any) => {
+      // Stocker l'URL précédente seulement si ce n'est pas la page de détail elle-même
+      if (!event.url.includes('/detailArticle/')) {
+        this.previousUrl = event.url;
+        localStorage.setItem('previousUrl', this.previousUrl);
+      }
+    });
   }
 
   ngOnInit(): void {
+    const storedPreviousUrl = localStorage.getItem('previousUrl');
+    if (storedPreviousUrl) {
+      this.previousUrl = storedPreviousUrl;
+    }
+
     this.getCurrentClientId().then(clientId => {
       this.currentClientId = clientId;
       console.log("currentClientId", this.currentClientId);
@@ -414,11 +432,51 @@ getCurrentClientId(): Promise<number | null> {
     }
   }
   
-  // Retour à la liste des articles
-  retourListe(): void {
+ goBack(): void {
+    // Méthode intelligente pour retourner à la page précédente
+    
+    // Première priorité : vérifier si on vient de la page des favoris
+    if (this.previousUrl && this.previousUrl.includes('/Listfavoris')) {
+      console.log("Retour à la page des favoris");
+      localStorage.removeItem('previousUrl');
+      this.router.navigate(['/Listfavoris']);
+      return;
+    }
+    
+    // Deuxième priorité : vérifier si on vient d'une page de catégorie
+    const categoryNames = ['chaussures', 'botte', 'mocassins'];
+    for (const category of categoryNames) {
+      if (this.previousUrl && this.previousUrl.includes(`/${category}`)) {
+        console.log(`Retour à la catégorie: ${category}`);
+        localStorage.removeItem('previousUrl');
+        this.router.navigate([`/${category}`]);
+        return;
+      }
+    }
+    
+    // Troisième priorité : utiliser l'URL précédente stockée 
+    // (si elle existe et n'est pas une page spéciale)
+    if (this.previousUrl && 
+        !this.previousUrl.includes('/detailArticle/') && 
+        !this.previousUrl.includes('/auth/client/') && 
+        this.previousUrl !== '/accueil') {
+      console.log(`Retour à l'URL précédente: ${this.previousUrl}`);
+      localStorage.removeItem('previousUrl');
+      this.router.navigate([this.previousUrl]);
+      return;
+    }
+    
+    // Quatrième priorité : utiliser l'historique du navigateur si disponible
+    if (window.history.length > 1) {
+      console.log("Utilisation de l'historique du navigateur");
+      window.history.back();
+      return;
+    }
+    
+    // Dernière option : rediriger vers la page d'accueil
+    console.log("Retour à l'accueil (par défaut)");
     this.router.navigate(['/accueil']);
   }
-  
   // Méthodes d'upload de photos
   selectFiles(event: any): void {
     this.selectedFiles = event.target.files;

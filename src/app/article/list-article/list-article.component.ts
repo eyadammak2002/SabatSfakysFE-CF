@@ -432,6 +432,10 @@ get Math() {
   }
   
   voirDetailsArticle(article: Article): void {
+    // Stocker l'URL actuelle comme URL précédente
+    localStorage.setItem('previousUrl', this.router.url);
+    
+    // Naviguer vers la page détaillée
     this.router.navigate(['/detailArticle', article.id]);
   }
  // Fonction utilitaire pour convertir le nom de catégorie en ID

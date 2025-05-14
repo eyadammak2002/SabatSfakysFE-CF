@@ -209,13 +209,13 @@
 /* CSS pour l'en-tête moderne */
 .dashboard-header {
   /*background: linear-gradient(135deg, #3c2313 0%, #5a3823cc 100%);*/
-  background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%);
+  background: linear-gradient(135deg, #fff 0%, #fff 100%);
 
   border-radius: 16px;
   padding: 30px;
   margin-bottom: 30px;
   box-shadow: 0 10px 30px rgba(60, 35, 19, 0.15);
-  color: white;
+  color: #5a3823;
   position: relative;
   overflow: hidden;
   box-shadow: 0 2px 6px rgba(106, 77, 53, 0.8); 
@@ -318,30 +318,31 @@
 }
 
 .stat-card {
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 20px;
+  flex: 1;
   display: flex;
   align-items: center;
-  transition: all 0.3s ease;
+  background: #f1efef;
+  padding: 15px;
+  border-radius: 8px;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .stat-card:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(0, 0, 0, 0.1);
   transform: translateY(-5px);
 }
 
 .stat-icon {
-  background-color: rgba(255, 255, 255, 0.15);
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 15px;
-  font-size: 20px;
+  color: white;
+  font-size: 18px;
 }
 
 .stat-info {

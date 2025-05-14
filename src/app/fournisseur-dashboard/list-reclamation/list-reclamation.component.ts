@@ -127,4 +127,9 @@ export class ListReclamationComponent implements OnInit {
     this.loading = true;
     this.loadReclamationsForFournisseur();
   }
+
+  // Méthode pour obtenir le total des réclamations
+getTotalReclamations(): number {
+  return this.nonResolvedReclamations.length + this.resolvedReclamations.length;
+}
 }

@@ -79,6 +79,14 @@
         </div>
 
         <div class="nav-item">
+          <a class="nav-link" [class.active]="isActive('Listfavoris')" routerLink="/Listfavoris">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Favoris</span>
+          </a>
+        </div>
+
+        
+        <div class="nav-item">
           <a class="nav-link" [class.active]="isActive('/fournisseur/listAvis')" routerLink="/fournisseur/listAvis">
             <i class="fas fa-comment-dots"></i>
             <span class="nav-text" [ngClass]="{'visible': isSidebarExpanded}">Avis</span>

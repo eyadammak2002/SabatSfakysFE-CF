@@ -47,7 +47,7 @@ export class ArticleService {
     console.log('Article envoyé au backend:', article);
 
     return this.http.post<number>(`${this.apiUrl}/create?emailFournisseur=${emailFournisseur}`, article);
-}
+  }
 
 
   // Mettre à jour un article avec l'email du fournisseur
