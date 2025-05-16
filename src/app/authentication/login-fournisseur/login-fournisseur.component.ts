@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/Authentication.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
   selector: 'app-login-fournisseur',
   standalone: true, 
-  imports: [CommonModule, FormsModule], 
+  imports: [CommonModule, FormsModule,RouterModule], 
   templateUrl: './login-fournisseur.component.html',
   styleUrls: ['./login-fournisseur.component.css']
 })
@@ -21,10 +21,14 @@ export class LoginFournisseurComponent {
   isLoggedIn = false;
   errorMessage = '';
 
+  showPassword: boolean = false;
+
+
   constructor(
     private authService: AuthenticationService,
     private tokenStorage: TokenStorageService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   onSubmit(): void {
@@ -74,5 +78,10 @@ export class LoginFournisseurComponent {
     this.router.navigate(['/accueil']);
   }
     
+  getQueryParams() {
+    return {
+      returnUrl: this.route.snapshot.queryParams['returnUrl']
+    };
+  }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, NgZone, OnInit } from '@angular/core';
 import { Article, Couleur, Pointure } from '../article';
 import { ArticleService } from '../article.service';
 import { PanierService } from 'src/app/services/panier.service';
@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
   templateUrl: './list-article.component.html',
   styleUrls: ['./list-article.component.css']
 })
-export class ListArticleComponent implements OnInit {
+export class ListArticleComponent implements OnInit ,AfterViewInit{
   allArticles: Article[] = []; // Liste des articles
   selectedArticle: Article | null = null;
   selectedCouleur: Couleur | null = null; 
@@ -45,6 +45,14 @@ export class ListArticleComponent implements OnInit {
   showSubtitle: boolean = false;
   showButtons: boolean = false;
 
+  activeSlideIndex: number = 0;
+
+  // Variables de pagination
+  currentPage: number = 0;
+  articleGroups: any[][] = [];
+  articlesPerPage: number = 10; // Nombre d'articles par page
+  animateIn: boolean = true;
+  animateOut: boolean = false;
   constructor(
     private articleService: ArticleService,
     private panierService: PanierService,
@@ -53,12 +61,27 @@ export class ListArticleComponent implements OnInit {
     private searchDataService: SearchDataService,
     private categoryService: CategoryService,
     private favorisService: FavorisService ,
-    private tokenStorage: TokenStorageService // Ajoutez cette ligne
+    private tokenStorage: TokenStorageService ,// Ajoutez cette ligne
+    private ngZone: NgZone  // Ajoutez cette ligne
 
 
     
   ) {}
-
+// Pour les effets d'animation entre pages
+prepareArticleGroups(): void {
+  const articles = this.isSearchMode ? this.searchResults : this.allArticles;
+  this.articleGroups = [];
+  
+  // Diviser les articles en groupes de taille articlesPerPage
+  for (let i = 0; i < articles.length; i += this.articlesPerPage) {
+    this.articleGroups.push(articles.slice(i, i + this.articlesPerPage));
+  }
+  
+  // S'assurer qu'il y a au moins un groupe même s'il est vide
+  if (this.articleGroups.length === 0) {
+    this.articleGroups = [[]];
+  }
+}
   ngOnInit(): void {
     this.startTextAnimations();
 
@@ -99,6 +122,125 @@ export class ListArticleComponent implements OnInit {
 
     this.allArticles.forEach(article => {
       this.activeIndexes[article.id] = 0;
+    });
+
+      // Préparation des groupes d'articles
+  setTimeout(() => {
+    this.prepareArticleGroups();
+  }, 500);
+  
+  // Surveillance des changements dans les résultats de recherche
+  this.searchDataService.searchResults$.subscribe(results => {
+    console.log('Résultats de recherche reçus dans le composant:', results);
+    this.searchResults = results;
+    this.prepareArticleGroups(); // Mettre à jour les groupes
+    this.currentPage = 0; // Revenir à la première page
+  });
+
+
+  }
+
+
+  // Mettre à jour les groupes lorsque les articles changent
+ngOnChanges(): void {
+  this.prepareArticleGroups();
+}
+// Mettez à jour ces trois méthodes dans votre composant (nextPage, previousPage et goToPage)
+// et ajoutez la nouvelle méthode getArticlesContainerTop
+
+// Navigation entre les pages avec défilement automatique
+nextPage(): void {
+  if (this.currentPage < this.articleGroups.length - 1) {
+    this.animateOut = true;
+    this.animateIn = false;
+    
+    setTimeout(() => {
+      this.currentPage++;
+      
+      // Faire défiler vers le haut pour voir les nouveaux articles
+      this.scrollToArticles();
+      
+      setTimeout(() => {
+        this.animateOut = false;
+        this.animateIn = true;
+      }, 50);
+    }, 300);
+  }
+}
+
+previousPage(): void {
+  if (this.currentPage > 0) {
+    this.animateOut = true;
+    this.animateIn = false;
+    
+    setTimeout(() => {
+      this.currentPage--;
+      
+      // Faire défiler vers le haut pour voir les nouveaux articles
+      this.scrollToArticles();
+      
+      setTimeout(() => {
+        this.animateOut = false;
+        this.animateIn = true;
+      }, 50);
+    }, 300);
+  }
+}
+
+// Aller directement à une page spécifique avec défilement
+goToPage(pageIndex: number): void {
+  if (pageIndex !== this.currentPage && pageIndex >= 0 && pageIndex < this.articleGroups.length) {
+    this.animateOut = true;
+    this.animateIn = false;
+    
+    setTimeout(() => {
+      this.currentPage = pageIndex;
+      
+      // Faire défiler vers le haut pour voir les nouveaux articles
+      this.scrollToArticles();
+      
+      setTimeout(() => {
+        this.animateOut = false;
+        this.animateIn = true;
+      }, 50);
+    }, 300);
+  }
+}
+
+// Méthode pour faire défiler vers les articles de manière fluide
+scrollToArticles(): void {
+  const container = document.querySelector('.articles-grid-container');
+  if (container) {
+    const topPosition = container.getBoundingClientRect().top + window.pageYOffset - 20;
+    window.scrollTo({ 
+      top: topPosition, 
+      behavior: 'smooth' 
+    });
+  }
+}
+
+  ngAfterViewInit(): void {
+    this.updateParallax(); // Initialiser
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll(): void {
+    this.ngZone.runOutsideAngular(() => {
+      this.updateParallax();
+    });  }
+  updateParallax(): void {
+    const parallaxBgs = document.querySelectorAll<HTMLElement>('.parallax-bg');
+    const windowHeight = window.innerHeight;
+  
+    parallaxBgs.forEach(bg => {
+      const section = bg.parentElement as HTMLElement;
+      const sectionTop = section.getBoundingClientRect().top;
+  
+      if (sectionTop < windowHeight && sectionTop > -windowHeight) {
+        // Limiter le déplacement vertical pour éviter l'écart croissant
+        const yOffset = Math.min(sectionTop * 0.3, 100); // Réduire le facteur et limiter la valeur maximale
+        bg.style.transform = `translateZ(-1px) scale(1) translateY(${yOffset}px)`;
+      }
     });
   }
 

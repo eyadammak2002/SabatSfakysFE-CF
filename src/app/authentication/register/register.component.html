@@ -12,67 +12,161 @@
       <i class="bi bi-person-circle" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
       <h3>Inscription</h3>
     </div>
-    <form *ngIf="!isSuccessful" (ngSubmit)="onSubmit()" class="mb-3 ">
+    <form *ngIf="!isSuccessful" #registerForm="ngForm"  (ngSubmit)="onSubmit()" class="mb-3 ">
       
       <!-- Nom d'utilisateur -->
-      <div class="mb-3 ">
+      <div class="mb-3">
         <label for="username" class="form-label">Nom</label>
         <div class="input-group">
           <span class="input-group-text"><i class="bi bi-person"></i></span>
-          <input id="username" [(ngModel)]="form.username" name="username" type="text" class="form-control" placeholder="Nom" required />
+          <input
+            id="username"
+            [(ngModel)]="form.username"
+            name="username"
+            type="text"
+            class="form-control"
+            placeholder="Nom"
+            required
+            #username="ngModel"
+            required
+            minlength="2"
+          />
+        </div>
+        <div *ngIf="username.invalid && (username.dirty || username.touched)" class="text-danger mt-1">
+          <small *ngIf="username.errors?.['required']">Le nom est requis.</small>
+          <small *ngIf="username.errors?.['minlength']">Le nom doit contenir au moins 2 caractères.</small>
+
         </div>
       </div>
+      
 
       <!-- Email -->
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
         <div class="input-group">
           <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-          <input id="email" [(ngModel)]="form.email" name="email" type="email" class="form-control" placeholder="Email" required />
+          <input id="email" [(ngModel)]="form.email" name="email" type="email" class="form-control" placeholder="Email" required email #email="ngModel" />
+        </div>
+        <div *ngIf="email.invalid && (email.dirty || email.touched)" class="text-danger">
+          <small *ngIf="email.errors?.['required']">L'email est requis.</small>
+          <small *ngIf="email.errors?.['email']">Format d'email invalide.</small>
         </div>
       </div>
 
       <!-- Adresse -->
-      <div class="mb-3 ">
-        <label for="adresse" class="form-label">Adresse</label>
-        <div class="input-group">
-          <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-          <input id="adresse" [(ngModel)]="form.adresse" name="adresse" type="text" class="form-control" placeholder="Adresse" required />
-        </div>
-      </div>
+<div class="mb-3">
+  <label for="adresse" class="form-label">Adresse</label>
+  <div class="input-group">
+    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+    <input
+      id="adresse"
+      [(ngModel)]="form.adresse"
+      name="adresse"
+      type="text"
+      class="form-control"
+      placeholder="Adresse"
+      required
+      minlength="5"
+      #adresse="ngModel"
+    />
+  </div>
+  <div *ngIf="adresse.invalid && (adresse.dirty || adresse.touched)" class="text-danger mt-1">
+    <small *ngIf="adresse.errors?.['required']">L'adresse est obligatoire</small>
+    <small *ngIf="adresse.errors?.['minlength']">L'adresse doit contenir au moins 5 caractères</small>
+  </div>
+</div>
 
-      <!-- Téléphone & Sexe sur la même ligne -->
-      <div class="row">
-        <div class="col-6 mb-3">
-          <label for="telephone" class="form-label">Téléphone</label>
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-            <input id="telephone" [(ngModel)]="form.telephone" name="telephone" type="text" class="form-control" placeholder="Téléphone" required />
-          </div>
-        </div>
+<!-- Téléphone & Sexe sur la même ligne -->
+<div class="row">
+  <div class="col-6 mb-3">
+    <label for="telephone" class="form-label">Téléphone</label>
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+      <input
+        id="telephone"
+        [(ngModel)]="form.telephone"
+        name="telephone"
+        type="tel"
+        class="form-control"
+        placeholder="Téléphone"
+        required
+        pattern="^[0-9]{8,15}$"
+        #telephone="ngModel"
+      />
+    </div>
+    <div *ngIf="telephone.invalid && (telephone.dirty || telephone.touched)" class="text-danger mt-1">
+      <small *ngIf="telephone.errors?.['required']">Le numéro est obligatoire</small>
+      <small *ngIf="telephone.errors?.['pattern']">Le numéro doit contenir entre 8 et 15 chiffres</small>
+    </div>
+  </div>
 
-        <div class="col-6 mb-3">
-          <label for="sexe" class="form-label">Sexe</label>
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-gender-ambiguous"></i></span>
-            <select id="sexe" [(ngModel)]="form.sexe" name="sexe" class="form-select" required>
-              <option value="HOMME">Homme</option>
-              <option value="FEMME">Femme</option>
-            </select>
-          </div>
-        </div>
-      </div>
+  <div class="col-6 mb-3">
+    <label for="sexe" class="form-label">Sexe</label>
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-gender-ambiguous"></i></span>
+      <select
+        id="sexe"
+        [(ngModel)]="form.sexe"
+        name="sexe"
+        class="form-select"
+        required
+        #sexe="ngModel"
+      >
+        <option value="" disabled selected>Choisir</option>
+        <option value="HOMME">Homme</option>
+        <option value="FEMME">Femme</option>
+      </select>
+    </div>
+    <div *ngIf="sexe.invalid && (sexe.dirty || sexe.touched)" class="text-danger mt-1">
+      <small *ngIf="sexe.errors?.['required']">Le sexe est obligatoire</small>
+    </div>
+  </div>
+</div>
+
 
       <!-- Mot de passe -->
-      <div class="mb-3 ">
-        <label for="password" class="form-label">Mot de passe</label>
-        <div class="input-group">
-          <span class="input-group-text"><i class="bi bi-lock"></i></span>
-          <input id="password" [(ngModel)]="form.password" name="password" type="password" class="form-control" placeholder="Mot de passe" required />
-        </div>
-      </div>
-      <button type="submit" class="btn btn-primary w-75 mb-3">S'inscrire</button>
+  <!-- Champ mot de passe -->
+  <div class="mb-3">
+    <label for="password" class="form-label">Mot de passe</label>
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-lock"></i></span>
+      
+      <input
+        id="password"
+        name="password"
+        [type]="showPassword ? 'text' : 'password'"
+        class="form-control"
+        placeholder="Mot de passe"
+        required
+        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$"
+        #password="ngModel"     
+        [(ngModel)]="form.password"
+      />
+  
+      <!-- Bouton pour voir/masquer le mot de passe -->
+      <button type="button" class="btn btn-outline-secondary" (click)="showPassword = !showPassword">
+        <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+      </button>
+    </div>
+  
+    <!-- Bloc d’erreurs -->
+    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="text-danger mt-1">
+      <small *ngIf="password.errors?.['required']">
+        Le mot de passe est obligatoire
+      </small>
+      <small *ngIf="password.errors?.['pattern']">
+        Il doit contenir au moins 6 caractères, dont une majuscule, une minuscule et un chiffre
+      </small>
+    </div>
+  </div>
+  
 
+
+      <button class="btn btn-primary w-100" [disabled]="registerForm.invalid">S'inscrire</button>
+      <div *ngIf="isRegisterFailed" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+      
     </form>
 <div>
    <!-- ✅ Bouton d'inscription -->

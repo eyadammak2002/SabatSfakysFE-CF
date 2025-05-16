@@ -107,7 +107,7 @@
 /* Dropdown */
 .dropdown {
   position: relative;
-  display: inline-block;
+
 }
 .dropdown-menu {
   display: none;
@@ -359,6 +359,397 @@
 /* ✅ Style pour le menu dropdown */
 .dropdown-menu {
   background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+}
+
+.dropdown-menu a {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #4c2b17;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+
+
+
+/* ✅ Style pour les icônes du menu */
+.menu-icon {
+  font-size: 18px;
+  margin-right: 12px;
+  color: #3c2313; /* ✅ Couleur verte */
+}
+
+/* ✅ Style pour l'icône de l'espace fournisseur */
+.store-icon {
+  font-size: 22px;
+  margin-right: 12px;
+  color: #3c2313; /* ✅ Couleur verte */
+}
+
+/* ✅ Style pour la section Profil dans le menu */
+.dropdown-profile {
+  padding: 12px;
+  border-top: 1px solid #4c2b17;
+  border-bottom: 1px solid #4c2b17;
+  text-align: center;
+ /* background: rgba(99, 165, 10, 0.2);*/
+}
+
+/* ✅ Style pour le bouton Déconnexion */
+.logout-link {
+  font-size: 16px;
+  font-weight: bold;
+  color: #c0392b;
+  padding: 12px;
+  display: block;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.logout-link:hover {
+  background: rgba(99, 165, 10, 0.2);
+  border-radius: 5px;
+}
+.custom-dropdown-menu {
+  width: 250px !important; /* Ajustez la largeur selon vos besoins */
+  background-color: rgb(255, 255, 255);
+}
+
+
+
+/* Styles pour les notifications */
+.notification-icon {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+.notification-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.no-notifications, .clear-all {
+  text-align: center;
+  padding: 10px;
+}
+
+.test-btn {
+  margin-left: 10px;
+  font-size: 12px;
+}
+/* Style pour l'icône de notification */
+.notification-icon {
+position: relative;
+cursor: pointer;
+margin-right: 15px;
+font-size: 1.2rem;
+color: #4c2b17; /* Couleur principale du site */
+transition: color 0.3s ease;
+}
+
+
+
+/* Badge pour le nombre de notifications non lues */
+.notification-badge {
+position: absolute;
+top: -8px;
+right: -8px;
+background-color: #c0392b; /* Rouge plus foncé qui s'harmonise avec le marron */
+color: white;
+border-radius: 50%;
+width: 18px;
+height: 18px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 0.7rem;
+font-weight: bold;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Style du dropdown de notifications */
+.notification-dropdown {
+position: absolute;
+top: 120px; /* Réduit la distance depuis le haut */
+right: -5px; /* Ajuste la position horizontale pour l'aligner avec l'icône */
+width: 320px;
+max-height: 400px;
+
+}
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background: #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  z-index: 1001;
+}
+.dropdown:hover .dropdown-menu {
+  display: block;
+  animation: fadeInUp 0.3s ease;
+}
+.dropdown-menu a {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #4c2b17;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(10px);
+  }
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+      height: auto;
+      flex-direction: column;
+  }
+
+  .nav-links {
+      position: relative;
+      bottom: unset;
+      padding-top: 10px;
+  }
+}
+
+
+.profile-icon {
+  display: none;  /* Masquer l'icône par défaut */
+}
+
+.affichageIcon {
+  display: block;  /* Afficher l'icône lorsque l'utilisateur est connecté */
+}
+
+
+
+
+
+
+/* Header principal */
+.header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 120px;
+  background: transparent; /* Vert avec transparence */
+  backdrop-filter: blur(10px);
+  padding: 15px 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Conteneur du haut */
+.header-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  padding-bottom: 40px; /* Assure que les liens ne soient pas chevauchés */
+}
+
+
+
+/* Barre de recherche */
+.search-bar {
+  flex: 1;
+  max-width: 500px;
+  max-height: 40px;
+  padding: 10px 15px;
+  border: 2px solid #4c2b17;
+  border-radius: 25px;
+  font-size: 18px;
+  color: #4c2b17;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  justify-content: center;
+}
+.search-bar input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 16px;
+  padding: 5px;
+  text-align: center;
+}
+.search-bar i {
+  margin-right: 10px;
+  color: #4c2b17;
+  font-size: 20px;
+}
+
+/* Icônes à droite */
+.icon-links {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 15px;
+}
+.icon-link {
+  font-size: 25px;
+  color: #4c2b17;
+  text-decoration: none;
+}
+
+/* Navigation en bas du header */
+.nav-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  padding: 10px 0;
+  position: absolute;
+  bottom: 0; /* Place les liens en bas */
+  left: 0;
+  background: transparent; /* Maintient la transparence */
+ /* backdrop-filter: blur(10px);*/
+}
+.nav-links a {
+  font-size: 15px;
+  color: #4c2b17;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 5px 10px;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+}
+/* Dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background-color: rgba(165, 147, 130, 0.22);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  min-width: 150px;
+  border-radius: 5px;
+  overflow: hidden;
+  padding: 5px 10px;
+  
+}
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+.dropdown-menu a {
+  color: #4c2b17;
+  padding: 10px 15px;
+  text-decoration: none;
+  display: block;
+}
+.dropdown-menu a:hover {
+  background-color: #f1f1f1e3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+      height: auto;
+      flex-direction: column;
+  }
+
+  .nav-links {
+      position: relative;
+      bottom: unset;
+      padding-top: 10px;
+  }
+}
+
+
+.profile-icon {
+  display: none;  /* Masquer l'icône par défaut */
+}
+
+.affichageIcon {
+  display: block;  /* Afficher l'icône lorsque l'utilisateur est connecté */
+}
+
+
+
+
+/* ✅ Style pour la Section Profil */
+.profile-section {
+  display: flex;
+  align-items: center;
+  background: rgba(99, 165, 10, 0.5); /* ✅ Couleur verte */
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+.profile-icon-container {
+  margin-right: 15px;
+}
+
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-name {
+  font-size: 15px;
+  font-weight: bold;
+  color: #3c2313;
+}
+
+.profile-email {
+  font-size: 14px;
+  color: #f3f3f3;
+}
+
+/* ✅ Style pour le menu dropdown */
+.dropdown-menu {
+  background: rgba(165, 147, 130, 0.22);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 12px;
@@ -763,3 +1154,74 @@ background: #f5f5f5;
 margin-right: 8px;
 color: #888;
 }
+
+
+/* Styles pour la barre d'annonce défilante */
+.announcement-bar {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  background-color: #62a50a; /* Couleur verte avec transparence */
+  color: white;
+  overflow: hidden;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+/*.announcement-bar {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  background-color: #ffffff; 
+  border-top: 2px solid #62a50a; 
+  border-bottom: 2px solid #62a50a;
+  color: #62a50a;
+  overflow: hidden;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}*/
+
+.announcement-content {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.announcement-marquee {
+  display: flex;
+  gap: 60px; /* Espacement entre les phrases */
+  width: max-content;
+  height: 100%;
+  animation: scroll 20s linear infinite;
+}
+
+.announcement-marquee span {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  white-space: nowrap;
+}
+
+.announcement-marquee i {
+  margin-right: 8px;
+  color: #3c2313; /* Icônes en marron */
+}
+
+/* Animation de défilement sans pause */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .announcement-bar {
+    height: 40px;
+    font-size: 12px;
+  }
+}
+

@@ -30,6 +30,9 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   returnUrl: string = '/accueil';
   previousUrl: string = '/accueil';
+  
+  showPassword: boolean = false;
+
 
   constructor(
     private authServiceGoogle: SocialAuthService,

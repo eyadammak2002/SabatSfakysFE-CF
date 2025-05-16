@@ -1,165 +1,312 @@
+<!-- register-fournisseur.component.html -->
 <div class="regis-container" style="background: url('assets/logo.png') no-repeat center center/cover;">
   <div class="card mx-auto">
     <div class="card-body position-relative">
 
-      <!-- ✅ Bouton Retour en haut à gauche -->
+      <!-- Bouton Retour en haut à gauche -->
       <button class="btn btn-outline-secondary position-absolute" style="top: 10px; left: 10px;" (click)="goBack()">
         <i class="bi bi-arrow-left"></i> Retour
       </button>
 
-      <!-- ✅ Titre avec icône de client centré -->
-      <div class="text-center mt-4">
+      <!-- Titre avec icône de client centré -->
+      <div class="text-center mt-4 mb-5">
         <i class="bi bi-shop" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
         <h3>Inscription</h3>
       </div>
 
+      <!-- Indicateur de progression -->
+      <div class="wizard-progress mb-4">
+        <div class="progress" style="height: 8px;">
+          <div class="progress-bar" role="progressbar" [style.width.%]="getProgressPercentage()" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <div class="d-flex justify-content-between mt-2">
+          <span [ngClass]="{'active-step': currentStep === 1, 'text-success': currentStep > 1, 'text-muted': currentStep < 1}">Informations</span>
+          <span [ngClass]="{'active-step': currentStep === 2, 'text-success': currentStep > 2, 'text-muted': currentStep < 2}">Logo</span>
+          <span [ngClass]="{'active-step': currentStep === 3, 'text-success': currentStep > 3, 'text-muted': currentStep < 3}">Écologie</span>
+          <span [ngClass]="{'active-step': currentStep === 4, 'text-success': currentStep > 4, 'text-muted': currentStep < 4}">Validation</span>
+        </div>
+      </div>
+
       <form *ngIf="!isSuccessful" (ngSubmit)="onSubmit()" class="mb-3">
-
-        <!-- Nom -->
-        <div class="mb-3">
-          <label for="username" class="form-label">Nom</label>
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-person"></i></span>
-            <input id="username" [(ngModel)]="form.username" name="username" type="text" class="form-control" placeholder="Nom" required />
+        <!-- Étape 1: Informations de base -->
+        <div *ngIf="currentStep === 1">
+          <h4 class="mb-3 text-primary"><i class="bi bi-person-vcard me-2"></i>Informations de base</h4>
+          
+          <!-- Nom -->
+          <div class="form-col mb-3 widh80">
+            <label for="username" class="form-label">Nom</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person"></i></span>
+              <input id="username" [(ngModel)]="form.username" name="username" type="text" class="form-control" placeholder="Nom" required />
+            </div>
           </div>
-        </div>
 
-        <!-- Email -->
-        <div class="mb-3">
-          <label for="email" class="form-label">Email</label>
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-            <input id="email" [(ngModel)]="form.email" name="email" type="email" class="form-control" placeholder="Email" required />
+          <!-- Email -->
+          <div class="form-col mb-3 widh80">
+            <label for="email" class="form-label">Email</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+              <input id="email" [(ngModel)]="form.email" name="email" type="email" class="form-control" placeholder="Email" required />
+            </div>
           </div>
-        </div>
 
-        <!-- Adresse -->
-        <div class="mb-3">
-          <label for="adresse" class="form-label">Adresse</label>
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-            <input id="adresse" [(ngModel)]="form.adresse" name="adresse" type="text" class="form-control" placeholder="Adresse" required />
+          <!-- Adresse -->
+          <div class="form-col mb-3 widh80">
+            <label for="adresse" class="form-label">Adresse</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+              <input id="adresse" [(ngModel)]="form.adresse" name="adresse" type="text" class="form-control" placeholder="Adresse" required />
+            </div>
           </div>
-        </div>
 
-        <!-- Numéro Identification Entreprise -->
-        <div class="mb-3">
-          <label for="numCin" class="form-label">Numéro Identification Entreprise</label>
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-building"></i></span>
-            <input id="numCin" [(ngModel)]="form.numeroIdentificationEntreprise" name="numCin" type="text" class="form-control" placeholder="Numéro Identification Entreprise" required />
+          <!-- Numéro Identification Entreprise -->
+          <div class="form-col mb-3 widh80">
+            <label for="numCin" class="form-label">Numéro Identification Entreprise</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-building"></i></span>
+              <input id="numCin" [(ngModel)]="form.numeroIdentificationEntreprise" name="numCin" type="text" class="form-control" placeholder="Numéro Identification Entreprise" required />
+            </div>
           </div>
-        </div>
 
-        <!-- Téléphone -->
-        <div class="mb-3">
-          <label for="telephone" class="form-label">Téléphone</label>
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-            <input id="telephone" [(ngModel)]="form.telephone" name="telephone" type="text" class="form-control" placeholder="Téléphone" required />
+          <!-- Téléphone -->
+          <div class="form-col mb-3 widh80">
+            <label for="telephone" class="form-label">Téléphone</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+              <input id="telephone" [(ngModel)]="form.telephone" name="telephone" type="text" class="form-control" placeholder="Téléphone" required />
+            </div>
           </div>
-        </div>
 
-         <!-- Logo -->
-        <div class="form-group">
-          <label>Logo</label>
-          <div class="photo-select">
-            <div *ngFor="let option of allPhoto" class="photo-option">
-              <input type="radio" [id]="option.id" [value]="option.id" name="logo" [(ngModel)]="form.logo.id">
-              <label [for]="option.id">
-                <img [src]="'http://localhost:8080/uploads/' + option.name" alt="{{option.name}}" class="societe-logo"/>
-              </label>
+          <!-- Mot de passe -->
+          <div class="form-col mb-3 widh80">
+            <label for="password" class="form-label">Mot de passe</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock"></i></span>
+              <input id="password" [(ngModel)]="form.password" name="password" [type]="showPassword ? 'text' : 'password'" class="form-control" placeholder="Mot de passe" required />
+              <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()">
+                <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- Mot de passe -->
-        <div class="mb-3">
-          <label for="password" class="form-label">Mot de passe</label>
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-lock"></i></span>
-            <input id="password" [(ngModel)]="form.password" name="password" type="password" class="form-control" placeholder="Mot de passe" required />
+        <!-- Étape 2: Logo de l'entreprise -->
+        <div *ngIf="currentStep === 2">
+          <h4 class="mb-3 text-primary"><i class="bi bi-image me-2"></i>Logo de l'entreprise</h4>
+          
+          <!-- Upload de photo -->
+          <div class="card mb-3 bg-white">
+            <div class="card-header bg-primary">
+              <h6 class="mb-0"><i class="bi bi-cloud-upload me-2"></i> Uploader un nouveau logo</h6>
+            </div>
+            <div class="card-body">
+              <div class="form-row align-items-center">
+                <!-- Sélection de fichier -->
+                <div class="form-col">
+                  <label class="btn w-100" style="background-color: #f8f9fa; border: 2px dashed #ddd; cursor: pointer;">
+                    <input type="file" (change)="selectFiles($event)" style="display: none;" />
+                    <i class="bi bi-file-image fs-4" style="color: #63a50a;"></i>
+                    <div>Sélectionner une image</div>
+                    <small class="text-muted">Cliquez ou glissez un fichier ici</small>
+                  </label>
+                </div>
+
+                <!-- Bouton upload -->
+                <div class="form-col">
+                  <button type="button" class="btn btn-success w-100" [disabled]="!selectedFiles" (click)="uploadPhotos()">
+                    <i class="bi bi-upload me-2"></i> Uploader
+                  </button>
+                </div>
+              </div>
+
+              <!-- Message d'upload -->
+              <div *ngIf="uploadMessage" class="alert mt-3" [ngClass]="{'alert-success': uploadSuccess, 'alert-danger': uploadError}">
+                <i class="bi" [ngClass]="{'bi-check-circle': uploadSuccess, 'bi-exclamation-triangle': uploadError}"></i>
+                {{ uploadMessage }}
+              </div>
+
+              <!-- Barre de progression -->
+              <div *ngIf="progressInfos.length > 0" class="mt-3">
+                <h6 style="color: #3c2313;">Progression de l'upload</h6>
+                <div *ngFor="let progressInfo of progressInfos" class="mb-2">
+                  <small class="d-block mb-1">{{ progressInfo.fileName }}</small>
+                  <div class="progress" style="height: 10px;">
+                    <div
+                      class="progress-bar bg-success"
+                      role="progressbar"
+                      [style.width.%]="progressInfo.value"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Galerie des logos -->
+          <div class="mt-4">
+            <h6 class="mb-2"><i class="bi bi-images me-2"></i> Logos disponibles</h6>
+            <p class="text-muted mb-3">Sélectionnez un logo parmi les images existantes ou uploadez-en un nouveau.</p>
+
+            <div class="photo-grid">
+              <div *ngFor="let photo of allPhoto">
+                <div *ngIf="!photosToHide.includes(photo.id)" class="photo-card" (click)="selectLogo(photo)" [ngClass]="{'border-success': isPhotoSelected(photo.id)}">
+                  <div class="position-relative">
+                    <img [src]="'http://localhost:8080/uploads/' + photo.name" class="photo-img" alt="{{ photo.name }}">
+                    <div *ngIf="isPhotoSelected(photo.id)" class="position-absolute" style="top: 5px; right: 5px;">
+                      <span class="badge bg-success"><i class="bi bi-check"></i></span>
+                    </div>
+                  </div>
+                  <div class="photo-card-body text-center">
+                    <small>{{ photo.name.slice(0, 20) }}{{ photo.name.length > 20 ? '...' : '' }}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Matériaux utilisés -->
-        <div class="mb-3">
-          <label for="materiaux" class="form-label">Matériaux utilisés</label>
-          <select id="materiaux" class="form-select" [(ngModel)]="form.materiauxUtilises" name="materiauxUtilises" required>
-            <option *ngFor="let materiau of materiauxOptions" [value]="materiau">{{ materiau }}</option>
-          </select>
-        </div>
+        <!-- Étape 3: Critères écologiques -->
+        <div *ngIf="currentStep === 3">
+          <h4 class="mb-3 text-primary"><i class="bi bi-leaf me-2"></i>Critères écologiques</h4>
+          
+          <!-- Matériaux utilisés -->
+          <div class="form-col mb-3 widh80">
+            <label for="materiaux" class="form-label">Matériaux utilisés</label>
+            <select id="materiaux" class="form-select" [(ngModel)]="form.materiauxUtilises" name="materiauxUtilises" required>
+              <option *ngFor="let materiau of materiauxOptions" [value]="materiau">{{ materiau }}</option>
+            </select>
+          </div>
 
-        <!-- Méthodes de production -->
-        <div class="mb-3">
-          <label for="methodes" class="form-label">Méthodes de production</label>
-          <select id="methodes" class="form-select" [(ngModel)]="form.methodesProduction" name="methodesProduction" required>
-            <option *ngFor="let methode of methodesProductionOptions" [value]="methode">{{ methode }}</option>
-          </select>
-        </div>
+          <!-- Méthodes de production -->
+          <div class="form-col mb-3 widh80">
+            <label for="methodes" class="form-label">Méthodes de production</label>
+            <select id="methodes" class="form-select" [(ngModel)]="form.methodesProduction" name="methodesProduction" required>
+              <option *ngFor="let methode of methodesProductionOptions" [value]="methode">{{ methode }}</option>
+            </select>
+          </div>
 
-        <!-- Programme de recyclage -->
-        <div class="mb-3">
-          <label for="recyclage" class="form-label">Programme de recyclage</label>
-          <select id="recyclage" class="form-select" [(ngModel)]="form.programmeRecyclage" name="programmeRecyclage" required>
-            <option *ngFor="let recyclage of programmeRecyclageOptions" [value]="recyclage">{{ recyclage }}</option>
-          </select>
-        </div>
+          <!-- Programme de recyclage -->
+          <div class="form-col mb-3 widh80">
+            <label for="recyclage" class="form-label">Programme de recyclage</label>
+            <select id="recyclage" class="form-select" [(ngModel)]="form.programmeRecyclage" name="programmeRecyclage" required>
+              <option *ngFor="let recyclage of programmeRecyclageOptions" [value]="recyclage">{{ recyclage }}</option>
+            </select>
+          </div>
 
-        <!-- Transport et logistique verte -->
-        <div class="mb-3">
-          <label for="transport" class="form-label">Transport & Logistique Verte</label>
-          <select id="transport" class="form-select" [(ngModel)]="form.transportLogistiqueVerte" name="transportLogistiqueVerte" required>
-            <option *ngFor="let transport of transportLogistiqueOptions" [value]="transport">{{ transport }}</option>
-          </select>
-        </div>
+          <!-- Transport et logistique verte -->
+          <div class="form-col mb-3 widh80">
+            <label for="transport" class="form-label">Transport & Logistique Verte</label>
+            <select id="transport" class="form-select" [(ngModel)]="form.transportLogistiqueVerte" name="transportLogistiqueVerte" required>
+              <option *ngFor="let transport of transportLogistiqueOptions" [value]="transport">{{ transport }}</option>
+            </select>
+          </div>
 
-        <!-- Initiatives sociales -->
-        <div class="mb-3">
-          <label for="initiatives" class="form-label">Initiatives Sociales</label>
-          <select id="initiatives" class="form-select" [(ngModel)]="form.initiativesSociales" name="initiativesSociales" required>
-            <option *ngFor="let initiative of initiativesSocialesOptions" [value]="initiative">{{ initiative }}</option>
-          </select>
-        </div>
+          <!-- Initiatives sociales -->
+          <div class="form-col mb-3 widh80">
+            <label for="initiatives" class="form-label">Initiatives Sociales</label>
+            <select id="initiatives" class="form-select" [(ngModel)]="form.initiativesSociales" name="initiativesSociales" required>
+              <option *ngFor="let initiative of initiativesSocialesOptions" [value]="initiative">{{ initiative }}</option>
+            </select>
+          </div>
 
-        <!-- Score Écologique -->
-        <div class="mb-3">
-          <label for="scoreEcologique" class="form-label">Score Écologique</label>
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-bar-chart"></i></span>
-            <input id="scoreEcologique" [(ngModel)]="form.scoreEcologique" name="scoreEcologique" type="number" class="form-control" min="0" step="0.1" placeholder="Entrez le score écologique" required />
+          <!-- Score Écologique -->
+          <div class="form-col mb-3 widh80">
+            <label for="scoreEcologique" class="form-label">Score Écologique</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-bar-chart"></i></span>
+              <input id="scoreEcologique" [(ngModel)]="form.scoreEcologique" name="scoreEcologique" type="number" class="form-control" min="0" step="0.1" placeholder="Entrez le score écologique" required />
+            </div>
           </div>
         </div>
 
-                <!-- Case à cocher avec lien vers la modal -->
-        <div class="form-check mb-3">
-          <input type="checkbox" class="form-check-input" id="reglementCheck" required>
-          <label class="form-check-label" for="reglementCheck">
-            J'accepte les <a href="#" data-bs-toggle="modal" data-bs-target="#reglementModal">règlements de la société</a>
-          </label>
+        <!-- Étape 4: Validation -->
+        <div *ngIf="currentStep === 4">
+          <h4 class="mb-3 text-primary"><i class="bi bi-check-circle me-2"></i>Validation</h4>
+          
+          <!-- Résumé des informations -->
+          <div class="card mb-4">
+            <div class="card-header bg-light">
+              <h5 class="mb-0">Résumé de votre inscription</h5>
+            </div>
+            <div class="card-body">
+              <div class="row mb-2">
+                <div class="col-md-6">
+                  <p><strong>Nom:</strong> {{ form.username }}</p>
+                  <p><strong>Email:</strong> {{ form.email }}</p>
+                  <p><strong>Téléphone:</strong> {{ form.telephone }}</p>
+                </div>
+                <div class="col-md-6">
+                  <p><strong>Adresse:</strong> {{ form.adresse }}</p>
+                  <p><strong>N° d'identification:</strong> {{ form.numeroIdentificationEntreprise }}</p>
+                  <p><strong>Score écologique:</strong> {{ form.scoreEcologique }}</p>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <h6 class="mb-2">Pratiques écologiques:</h6>
+                <ul class="list-group">
+                  <li class="list-group-item"><i class="bi bi-check-circle-fill text-success me-2"></i>Matériaux: {{ form.materiauxUtilises }}</li>
+                  <li class="list-group-item"><i class="bi bi-check-circle-fill text-success me-2"></i>Production: {{ form.methodesProduction }}</li>
+                  <li class="list-group-item"><i class="bi bi-check-circle-fill text-success me-2"></i>Recyclage: {{ form.programmeRecyclage }}</li>
+                  <li class="list-group-item"><i class="bi bi-check-circle-fill text-success me-2"></i>Transport: {{ form.transportLogistiqueVerte }}</li>
+                  <li class="list-group-item"><i class="bi bi-check-circle-fill text-success me-2"></i>Initiatives: {{ form.initiativesSociales }}</li>
+                </ul>
+              </div>
+              
+              <div class="text-center" *ngIf="form.logo && form.logo.id">
+                <h6>Logo sélectionné:</h6>
+                <img *ngIf="form.logo.name" [src]="'http://localhost:8080/uploads/' + form.logo.name" alt="Logo" class="img-thumbnail" style="max-height: 100px; max-width: 200px;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Case à cocher avec lien vers la modal -->
+          <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" id="reglementCheck" [(ngModel)]="acceptTerms" name="acceptTerms" required>
+            <label class="form-check-label" for="reglementCheck">
+              J'accepte les <a href="#" data-bs-toggle="modal" data-bs-target="#reglementModal">règlements de la société</a>
+            </label>
+          </div>
         </div>
 
-
-        <!-- ✅ Bouton d'inscription -->
-        <button type="submit" class="btn btn-primary w-75">S'inscrire</button>
+        <!-- Boutons de navigation -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="button" class="btn btn-outline-primary" (click)="prevStep()" *ngIf="currentStep > 1">
+            <i class="bi bi-arrow-left me-2"></i>Précédent
+          </button>
+          <div *ngIf="currentStep < 4">
+            <button type="button" class="btn btn-primary" (click)="nextStep()">
+              Suivant<i class="bi bi-arrow-right ms-2"></i>
+            </button>
+          </div>
+          <button type="submit" class="btn btn-success" *ngIf="currentStep === 4" [disabled]="!acceptTerms">
+            <i class="bi bi-check-circle me-2"></i>Finaliser l'inscription
+          </button>
+        </div>
       </form>
 
-      <!-- ✅ Lien pour se connecter -->
-      <p class="text-center mt-3">
+      <!-- Confirmation d'inscription réussie -->
+      <div *ngIf="isSuccessful" class="alert alert-success mt-3">
+        <i class="bi bi-check-circle-fill me-2"></i> Inscription réussie ! Bienvenue 🎉
+        <p class="mt-2">Votre demande d'inscription a été reçue et sera évaluée prochainement. Vous recevrez un email de confirmation.</p>
+        <div class="text-center mt-3">
+          <button class="btn btn-primary" (click)="goToLogin()">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Aller à la page de connexion
+          </button>
+        </div>
+      </div>
+
+      <!-- Message d'erreur -->
+      <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+      </div>
+
+      <!-- Lien pour se connecter -->
+      <p class="text-center mt-3" *ngIf="!isSuccessful">
         Vous avez déjà un compte ? <a href="/auth/fournisseur/login" class="text-primary">Connectez-vous ici</a>
       </p>
-
-     
-
-      
-
-      <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
-        {{ errorMessage }}
-      </div>
-
-      <div *ngIf="isSuccessful" class="alert alert-success mt-3">
-        Inscription réussie ! Bienvenue 🎉
-      </div>
     </div>
   </div>
 </div>
@@ -188,12 +335,12 @@
           </li>
           <li class="mb-2">
             <i class="bi bi-person-check text-warning me-2"></i>
-            Votre demande d’inscription sera <strong>évaluée</strong> selon vos critères environnementaux et éthiques.
+            Votre demande d'inscription sera <strong>évaluée</strong> selon vos critères environnementaux et éthiques.
             Vous recevrez un email de <strong>confirmation</strong> (acceptée ou rejetée).
           </li>
           <li class="mb-2">
             <i class="bi bi-box-seam text-info me-2"></i>
-            Lors du dépôt d’un article, une <strong>évaluation</strong> sera également effectuée et vous en serez informé.
+            Lors du dépôt d'un article, une <strong>évaluation</strong> sera également effectuée et vous en serez informé.
           </li>
           <li class="mb-2">
             <i class="bi bi-bell text-secondary me-2"></i>

@@ -80,9 +80,9 @@
     <div class="decorative-line mx-auto mt-3"></div>
   </div>
   <!-- Affichage des articles -->
-  <!-- Structure modifiée de la carte d'article -->
+  <!-- Structure modifiée de la carte d'article 
 <div class="articles-container">
-  <div class="row">
+  <div class="row ">
     <div *ngFor="let article of isSearchMode ? searchResults : allArticles; let i = index" 
          class="col-xl-2-4 col-lg-2-4 col-md-4 col-sm-6 col-6 mb-4">
       
@@ -95,7 +95,7 @@
                (slid.bs.carousel)="onSlide($event, article.id)">
             
             <div class="carousel-inner">
-              <!-- Boutons de favoris -->
+            
               <button *ngIf="isFavorite(article.id)" 
                       (click)="toggleFavoris(article)" 
                       class="favorite-btn position-relative border-0 bg-transparent">
@@ -108,7 +108,6 @@
                 <i class="far fa-heart text-dark" style="font-size: 1.5rem;"></i>
               </button>
         
-              <!-- Images du carousel -->
               <div *ngFor="let photo of article.photos; let i = index" 
                    class="carousel-item"
                    [class.active]="i === 0">
@@ -117,7 +116,6 @@
               </div>
             </div>
         
-            <!-- Contrôles du carousel -->
             <button class="carousel-control-prev" type="button" 
                     [attr.data-bs-target]="'#carousel' + article.id" 
                     data-bs-slide="prev">
@@ -141,9 +139,7 @@
                [attr.data-bs-slide-to]="i">
           </div>
         </div>
-        <!-- Corps de la carte -->
         <div class="elegant-card-content">
-          <!-- En-tête avec catégorie et nom -->
           <div class="elegant-card-header mb-1">
             <div *ngIf="article.category" class="elegant-category">
               {{ article.category.name }}
@@ -156,10 +152,8 @@
             
           </div>
           
-          <!-- Méta-informations de la carte -->
           <div class="card-meta mt-1">
             <span>{{ article.prixVente }} <span style="font-weight: bold;">DT</span></span>
-             <!-- Bouton détails repositionné en dehors de la carte -->
           <button class="btn-details" (click)="voirDetailsArticle(article)" title="Voir détails">
             Détails
           </button>
@@ -167,7 +161,6 @@
                     
          
           
-          <!-- Pied de carte avec le bouton panier centré -->
           <div class="card-footer">
             <div class="card-actions">
               <button class="btn-cart" (click)="ouvrirModal(article)" title="Ajouter au panier">
@@ -179,7 +172,149 @@
       </div>
     </div>
   </div>
+</div>-->
 </div>
+
+<div class="articles-container">
+  <!-- Conteneur principal avec animation de transition -->
+  <div class="articles-grid-container">
+    <div class="articles-grid" 
+         [class.animate-in]="animateIn" 
+         [class.animate-out]="animateOut">
+      
+      <!-- Articles en grille pour la page actuelle -->
+      <ng-container *ngIf="articleGroups && articleGroups.length > 0">
+        <div *ngFor="let article of articleGroups[currentPage]; let i = index"
+             class="article-item"
+             [style.animation-delay]="i * 50 + 'ms'">
+          
+          <div class="article-card">
+            <!-- Contenu de la carte (images et carousel) -->
+            <div class="card-img-container position-relative">
+              <div class="carousel slide card-carousel"
+                   [attr.id]="'carousel' + article.id"
+                   data-bs-interval="false"
+                   (slid.bs.carousel)="onSlide($event, article.id)">
+                
+                <div class="carousel-inner">
+                  <!-- Boutons de favoris -->
+                  <button *ngIf="isFavorite(article.id)" 
+                          (click)="toggleFavoris(article)" 
+                          class="favorite-btn position-relative border-0 bg-transparent">
+                    <i class="fas fa-heart text-danger" style="font-size: 1.5rem;"></i>
+                  </button>
+            
+                  <button *ngIf="!isFavorite(article.id)" 
+                          (click)="toggleFavoris(article)" 
+                          class="favorite-btn position-relative border-0 bg-transparent">
+                    <i class="far fa-heart text-dark" style="font-size: 1.5rem;"></i>
+                  </button>
+            
+                  <!-- Images du carousel -->
+                  <div *ngFor="let photo of article.photos; let i = index" 
+                       class="carousel-item"
+                       [class.active]="i === 0">
+                    <img [src]="photo.url" class="article-img"
+                         alt="{{ article.name }}" loading="lazy">
+                  </div>
+                </div>
+            
+                <!-- Contrôles du carousel -->
+                <button class="carousel-control-prev" type="button" 
+                        [attr.data-bs-target]="'#carousel' + article.id" 
+                        data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Précédent</span>
+                </button>
+                <button class="carousel-control-next" type="button" 
+                        [attr.data-bs-target]="'#carousel' + article.id" 
+                        data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Suivant</span>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Indicateurs du carousel -->
+            <div class="article-indicators d-flex justify-content-center mt-2">
+              <div *ngFor="let photo of article.photos; let i = index" 
+                   class="indicator-dot" 
+                   [class.active]="activeIndexes[article.id] === i"
+                   [attr.data-bs-target]="'#carousel' + article.id"
+                   [attr.data-bs-slide-to]="i">
+              </div>
+            </div>
+            
+            <!-- Corps de la carte -->
+            <div class="elegant-card-content">
+              <!-- En-tête avec catégorie et nom -->
+              <div class="elegant-card-header mb-1">
+                <div *ngIf="article.category" class="elegant-category">
+                  {{ article.category.name }}
+                </div>
+                <div>
+                  <h4 class="card-title mb-0">{{ article.name }}</h4>
+                  <p class="card-description mt-0">{{ article.description | slice:0:80 }}{{ article.description.length > 80 ? '...' : '' }}</p>
+                </div>
+              </div>
+              
+              <!-- Méta-informations de la carte -->
+              <div class="card-meta mt-1">
+                <span>{{ article.prixVente }} <span style="font-weight: bold;">DT</span></span>
+                <!-- Bouton détails -->
+                <button class="btn-details" (click)="voirDetailsArticle(article)" title="Voir détails">
+                  Détails
+                </button>
+              </div>
+              
+              <!-- Pied de carte avec le bouton panier -->
+              <div class="card-footer">
+                <div class="card-actions">
+                  <button class="btn-cart" (click)="ouvrirModal(article)" title="Ajouter au panier">
+                    <i class="fas fa-shopping-cart"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      
+      <!-- Message si aucun article n'est disponible -->
+      <div *ngIf="!articleGroups || articleGroups.length === 0" class="no-articles-message">
+        Aucun article disponible pour le moment.
+      </div>
+    </div>
+  </div>
+  
+  <!-- Navigation avec boutons précédent/suivant DÉPLACÉE EN BAS -->
+  <div class="navigation-container mt-4">
+    <div class="navigation-bg"></div>
+    <div class="articles-navigation">
+      <button class="btn-nav btn-prev" 
+              [disabled]="currentPage === 0" 
+              (click)="previousPage()">
+        <i class="fas fa-chevron-left"></i> Précédent
+      </button>
+      
+      <div class="page-indicator">
+        <span>Page</span>
+        <div class="page-dots">
+          <div *ngFor="let group of articleGroups; let j = index" 
+               class="page-dot"
+               [class.active]="j === currentPage"
+               (click)="goToPage(j)"></div>
+        </div>
+        <span>{{ currentPage + 1 }} / {{ articleGroups.length || 1 }}</span>
+      </div>
+      
+      <button class="btn-nav btn-next" 
+              [disabled]="currentPage >= articleGroups.length - 1" 
+              (click)="nextPage()">
+        Suivant <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- Le modal reste inchangé comme demandé -->
@@ -335,3 +470,107 @@
       </div>
   </div>
 </div>
+
+
+<div class="announcement-bar">
+  <div class="announcement-content">
+    <div class="announcement-marquee">
+      <span><i class="bi bi-truck"></i> LIVRAISON GRATUITE SUR TOUTES LES COMMANDES</span>
+      <span><i class="bi bi-leaf"></i> PRODUITS ÉCO-RESPONSABLES - SOUTENEZ L'ARTISANAT LOCAL</span>
+      <span><i class="bi bi-recycle"></i> EMBALLAGES 100% RECYCLABLES</span>
+      <span><i class="bi bi-calendar-check"></i> LIVRAISON GARANTIE EN 2-3 JOURS OUVRABLES</span>
+      <!-- Répétition des éléments pour assurer un défilement continu -->
+      <span><i class="bi bi-truck"></i> LIVRAISON GRATUITE SUR TOUTES LES COMMANDES</span>
+      <span><i class="bi bi-leaf"></i> PRODUITS ÉCO-RESPONSABLES - SOUTENEZ L'ARTISANAT LOCAL</span>
+      <span><i class="bi bi-recycle"></i> EMBALLAGES 100% RECYCLABLES</span>
+      <span><i class="bi bi-calendar-check"></i> LIVRAISON GARANTIE EN 2-3 JOURS OUVRABLES</span>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<!-- Effet de parallaxe section par section pour un site d'artisanat écologique -->
+<div class="parallax-wrapper"  >
+
+  <!-- SECTION 3 : PRODUITS AVEC PARALLAXE -->
+  <section class="parallax-section" id="products">
+    <!-- filter: blur(1px);-->
+    <div class="parallax-bg " style="background-image: url('./assets/enf2.jpg'); "></div>
+    <div class="content dark fixed-img">
+      <h2 style="color: white;">Nos Artisants</h2>
+      <p style="color: white;">Découvrez l'alliance parfaite entre tradition et innovation</p>
+      <a href="/accueil" class="btn outline">Voir la boutique</a>
+    </div>
+  </section>
+
+ 
+</div>
+
+ <!-- SECTION 2 : NOS VALEURS -->
+ <section class="standard-section">
+  <div class="container">
+    <h2 class="section-title">Nos valeurs</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="icon">
+          <i class="bi bi-leaf"></i>
+        </div>
+        <h3>Matériaux durables</h3>
+        <p>Uniquement des matières premières écologiques et renouvelables</p>
+      </div>
+      <div class="value-card">
+        <div class="icon">
+          <i class="bi bi-recycle"></i>
+        </div>
+        <h3>Zéro déchet</h3>
+        <p>Processus de fabrication optimisé pour éviter le gaspillage</p>
+      </div>
+      <div class="value-card">
+        <div class="icon">
+          <i class="bi bi-people"></i>
+        </div>
+        <h3>Artisanat local</h3>
+        <p>Soutien aux artisans locaux et aux techniques traditionnelles</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Version alternative plus simple -->
+<div class="layout-container">
+  <!-- Colonne 1/3 à gauche -->
+  <div class="col-one-third">
+    <img src="assets/enf1.jpg" alt="Chaussures enfant">
+  </div>
+  
+  <!-- Colonne 2/3 à droite -->
+  <div class="col-two-thirds">
+   
+    
+    <!-- Deuxième rangée: divisée en 2 colonnes égales -->
+    <div class="row-bottom">
+       <!-- Texte à droite -->
+       <div class="subcol text-content">
+        <p style="margin-bottom: 2px;">entre</p><h2>Tradition</h2>
+        <p>et<span class="h2"> Innovation</span> </p>
+      </div>
+      <!-- Image à gauche -->
+      <div class="subcol">
+        <img src="assets/enf3.jpg" alt="Chaussures avec collants">
+      </div>
+      
+     
+    </div>
+     <!-- Première rangée: image pleine largeur -->
+     <div class="row-top">
+      <img src="assets/enf2.jpg" alt="Bottines blanches">
+    </div>
+  </div>
+</div>
+
+

@@ -1,40 +1,169 @@
-.btnC{background-color: #63a50a;}
-.icon-links {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-
-    gap: 15px;
-}
-.icon-link {
-    font-size: 40px;
-    color: #4c2b17;
-    text-decoration: none;
+/* Animations de transition */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.photo-option img{
-    height: 200px;
-    width: 200px;
-}
-
+[class^="form-step"] {
+  animation: fadeIn 0.5s ease-out;
+}/* register-fournisseur.component.css */
 .regis-container {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-      align-items: flex-start; /* Modifié de center à flex-start */
-    padding: 70px 20px; /* Ajoute du padding pour l'espace en haut */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 70px 20px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card {
+  width: 100%;
+  max-width: 800px;
+  padding: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px);
+}
+
+.widh80 {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Styles pour la progression en étapes */
+.wizard-progress {
+  margin-bottom: 2rem;
+}
+
+.progress {
+  height: 8px;
+  border-radius: 4px;
+  background-color: #e9ecef;
+  overflow: hidden;
+}
+
+.progress-bar {
+  transition: width 0.4s ease;
+  background-color: #63a50a !important; /* Vert personnalisé */
+}
+
+/* Variables de couleurs personnalisées */
+:root {
+  --primary-color: #3c2313; /* Marron */
+  --secondary-color: #63a50a; /* Vert */
+}
+
+/* Styles pour la sélection de photos/logo */
+.photo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.photo-card {
+  border: 2px solid #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  width: 150px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.photo-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.photo-card.border-success {
+  border-color: #63a50a;
+  box-shadow: 0 4px 15px rgba(99, 165, 10, 0.3);
+}
+
+.photo-img {
+  width: 100%;
+  height: 120px;
+  object-fit: contain;
+  padding: 10px;
+  background-color: #fff;
+}
+
+.photo-card-body {
+  padding: 10px;
+  background-color: #f8f9fa;
+}
+
+/* Responsive form */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.form-col {
+  flex: 1 1 calc(50% - 0.5rem);
+}
+
+@media (max-width: 768px) {
+  .form-col {
+    flex: 1 1 100%;
   }
   
   .card {
-    width: 600px;
-    padding: 50px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(5px);
-
+    padding: 20px;
   }
   
-  .position-relative {
-    position: relative;
+  .widh80 {
+    width: 100%;
   }
+}
+
+.card-header {
+  background-color: #3c2313 !important;
+  color: white !important;
+}
+
+/* Boutons avec couleurs personnalisées */
+.btn-primary {
+  background-color: #3c2313 !important;
+  border-color: #3c2313 !important;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #523020 !important;
+  border-color: #523020 !important;
+}
+
+.btn-success {
+  background-color: #63a50a !important;
+  border-color: #63a50a !important;
+}
+
+.btn-success:hover, .btn-success:focus {
+  background-color: #548c09 !important;
+  border-color: #548c09 !important;
+}
+
+.text-primary {
+  color: #3c2313 !important;
+}
+
+.text-success {
+  color: #63a50a !important;
+}
+
+/* Animation de pulsation pour l'étape active */
+@keyframes pulse {
+  0% { color: #3c2313; }
+  50% { color: #63a50a; }
+  100% { color: #3c2313; }
+}
+
+.active-step {
+  animation: pulse 2s infinite;
+  font-weight: bold;
+}

@@ -20,6 +20,7 @@ export class RegisterComponent implements OnInit {
   private tokenRequest:TokenRequest=new TokenRequest();
   user:any;
   isLoggedIn: boolean = false;  // Par défaut, l'utilisateur n'est pas connecté
+  showPassword: boolean = false;
 
   form: any = {
     username: null,
@@ -157,42 +158,61 @@ signinGoogle():void{
 
 
 
-  onSubmit(): void {
-    // Vérification des champs
-    if (!this.form.username || !this.form.email || !this.form.password || !this.form.telephone|| !this.form.adresse|| !this.form.sexe) {
-      this.errorMessage = "Tous les champs obligatoires doivent être remplis.";
-      this.isRegisterFailed = true;
-      return;
-    }
-
-    const userData = {
-      username:this.form.username,
-      email: this.form.email,
-      telephone:this.form.telephone,
-      adresse:this.form.adresse,
-      password: this.form.password,
-      sexe:this.form.sexe,
-    
-    };
-
-    this.authService.register(userData.username, userData.email, userData.password,userData.adresse,userData.telephone ,userData.sexe).subscribe(
-      data => {
-        console.log('Inscription réussie :', data);
-        this.isSuccessful = true;
-        this.isRegisterFailed = false;
-
-        // Sauvegarde utilisateur (sans token car API ne le retourne pas)
-        this.tokenStorage.saveUser(data);
-
-        this.reloadPage();
-      },
-      err => {
-        console.error('Erreur lors de l’enregistrement :', err);
-        this.errorMessage = err.error.message || 'Enregistrement échoué';
-        this.isRegisterFailed = true;
-      }
-    );
-  }
+        onSubmit(): void {
+          const { username, email, password, telephone, adresse, sexe } = this.form;
+        
+          // Vérification des champs vides
+          if (!username || !email || !password || !telephone || !adresse || !sexe) {
+            this.errorMessage = "Tous les champs sont obligatoires.";
+            this.isRegisterFailed = true;
+            return;
+          }
+        
+          // Validation Email simple
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+          if (!emailRegex.test(email)) {
+            this.errorMessage = "Adresse email invalide.";
+            this.isRegisterFailed = true;
+            return;
+          }
+        
+          // Validation téléphone (8 à 15 chiffres)
+          if (!/^[0-9]{8,15}$/.test(telephone)) {
+            this.errorMessage = "Numéro de téléphone invalide.";
+            this.isRegisterFailed = true;
+            return;
+          }
+        
+          // Validation mot de passe
+          const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+          if (!passwordRegex.test(password)) {
+            this.errorMessage = "Le mot de passe doit contenir au moins 6 caractères, une majuscule, une minuscule et un chiffre.";
+            this.isRegisterFailed = true;
+            return;
+          }
+        
+          // Si tout est bon, on continue
+          const userData = { username, email, password, telephone, adresse, sexe };
+        
+          this.authService.register(
+            userData.username, userData.email, userData.password,
+            userData.adresse, userData.telephone, userData.sexe
+          ).subscribe(
+            data => {
+              console.log('Inscription réussie :', data);
+              this.isSuccessful = true;
+              this.isRegisterFailed = false;
+              this.tokenStorage.saveUser(data);
+              this.reloadPage();
+            },
+            err => {
+              console.error('Erreur lors de l’enregistrement :', err);
+              this.errorMessage = err.error.message || 'Enregistrement échoué';
+              this.isRegisterFailed = true;
+            }
+          );
+        }
+        
 
   reloadPage(): void {
     this.route.queryParams.subscribe(params => {

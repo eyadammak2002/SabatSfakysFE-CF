@@ -9,50 +9,88 @@
 
       <!-- ✅ Titre avec icône de client centré -->
       <div class="text-center mt-4">
-        <i class="bi bi-person-circle" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
-        <h3>Se Connecter</h3>
+        <i class="bi bi-person-circle" style="font-size: 2rem; display: block; margin-bottom: 10px;color: #3c2313;"></i>
+        <h3 style="color: #3c2313;">Se Connecter</h3>
       </div>
       
       <form (ngSubmit)="onSubmit()" class="mb-3">
         <div class="mb-3">
-          <label for="username" class="form-label">Nom</label>
+          <label for="username" class="form-label" style="color: #3c2313;font-size: medium;">Nom</label>
           <div class="input-group">
             <span class="input-group-text">
-              <i class="bi bi-person"></i>
+              <i class="bi bi-envelope"></i>
             </span>
-            <input
-               id="username"
-               [(ngModel)]="form.username"
-               name="username"
-               type="text"
-               class="form-control"
-               placeholder="Nom"
-               required />
+            <input 
+              id="username" 
+              [(ngModel)]="form.username" 
+              name="username" 
+              type="text" 
+              class="form-control" 
+              placeholder="Nom" 
+              required 
+              #username="ngModel" />
+          </div>
+          <!-- Message d’erreur -->
+          <div *ngIf="username.invalid && (username.dirty || username.touched)" class="text-danger mt-1">
+            <small *ngIf="username.errors?.['required']">Le nom ne peut pas être vide.</small>
           </div>
         </div>
 
         <div class="mb-3">
-          <label for="password" class="form-label">Mot de passe</label>
+          <label for="password" class="form-label" style="color: #3c2313;font-size: medium;">Mot de passe</label>
           <div class="input-group">
             <span class="input-group-text">
               <i class="bi bi-lock"></i>
             </span>
+        
             <input
-               id="password"
-               [(ngModel)]="form.password"
-               name="motDePasse"
-               type="password"
-               class="form-control"
-               placeholder="Mot de passe"
-               required />
+              id="password"
+              [(ngModel)]="form.password"
+              name="motDePasse"
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-control"
+              placeholder="Mot de passe"
+              required
+              #password="ngModel"
+            />
+        
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              (click)="showPassword = !showPassword"
+              tabindex="-1"
+            >
+              <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+            </button>
+          </div>
+        
+          <!-- Message d’erreur -->
+          <div *ngIf="password.invalid && (password.dirty || password.touched)" class="text-danger mt-1">
+            <small *ngIf="password.errors?.['required']">Le mot de passe ne peut pas être vide.</small>
           </div>
         </div>
+        
+        
 
-        <button type="submit" class="btn btn-primary w-100 mb-3">Se connecter</button>
+        <button type="submit" class="btn btn-marron w-100 mb-3 mt-4">Se connecter</button>
+        <!-- <button type="submit" class="btn btn-marron w-80 mb-3 mt-4 d-block mx-auto">Se connecter</button>
+                        <button type="submit" class="btn btn-marron w-80 mb-3 mt-4 float-end">Se connecter</button>
+                      -->
       </form>
 
       <!-- Bouton Google Sign-In -->
-      <div class="text-center">
+      <div style="display: flex; justify-content: center;">
+        <asl-google-signin-button
+          type="standard"
+          shape="pill"
+          text="signin_with"
+          size="large"
+          logo_alignment="left"
+          width="300">
+        </asl-google-signin-button>
+      </div>
+
+      <!-- <div class="text-center">
         <asl-google-signin-button
           type="standard"
           shape="pill"
@@ -62,15 +100,29 @@
           logo_alignment="left"
           width="300">
         </asl-google-signin-button>
-      </div>
-
-      <p class="text-center mt-4">
-        Vous n'avez pas de compte ? <a [routerLink]="['/auth/client/register']" [queryParams]="getQueryParams()" class="text-primary">Créez-en un ici</a>
+      </div>-->
+      <p class="text-center mt-4 text-muted fs-6">
+        Vous n'avez pas de compte ?
+        <a
+          [routerLink]="['/auth/client/register']"
+          [queryParams]="getQueryParams()"
+          class="fw-semibold text-marron text-decoration-underline"
+        >
+          Créez-en un ici
+        </a>
       </p>
-      <p class="text-center mt-4">
-        Forget Password? <a [routerLink]="['/auth/forgetPassword']" class="text-primary">Forget Password</a>
+      
+      <p class="text-center mt-2 text-muted fs-6">
+        Mot de passe oublié ?
+        <a
+          [routerLink]="['/auth/forgetPassword']"
+          class="fw-semibold text-marron text-decoration-underline"
+        >
+          Réinitialiser ici
+        </a>
       </p>
-
+      
+      
       <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
         {{ errorMessage }}
       </div>
