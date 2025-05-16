@@ -1,39 +1,191 @@
+body {
+  font-family: 'Raleway', sans-serif;
+  background-color: #fff;
+  color: #333;
+  line-height: 1.6;
+}
+
+h2, h6, strong {
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 0.5px;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+h2:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #918070,#918070);
+}
+
+h6 {
+  font-size: 1.1rem;
+  color: #34495e;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Container et cartes */
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+}
+
 .card {
-    border-radius: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-bottom: 2rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05) !important;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.card-header {
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, rgba(116, 99, 83, 0.22)0%, rgba(116, 99, 83, 0.22)100%) !important;
+  border-bottom: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header strong {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 0.8rem 1.5rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+/* Tableau */
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+.table-bordered {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.table th {
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  padding: 12px 15px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+  vertical-align: middle;
+}
+
+.table td {
+  padding: 12px 15px;
+  vertical-align: middle;
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Statuts et badges */
+.badge {
+  padding: 0.5rem 0.8rem;
+  font-weight: 400;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.bg-succ {
+  background-color: #62a50aaa !important;
+  color: white;
+  border-radius: 20px;
+}
+
+.bg-warn {
+background-color: #62a50aaa !important;
+  color: white;
+  border-radius: 20px;
+
+}
+
+.bg-prim {
+  background-color: #3498db !important;
+  color: white;
+  border-radius: 20px;
+}
+
+.bg-inf {
+  background-color: #1abc9c !important;
+  color: white;
+  border-radius: 20px;
+}
+
+.bg-dang {
+  background-color: #e74c3c !important;
+  color: white;
+  border-radius: 20px;
+}
+
+/* Alerte de commande vide */
+.alert {
+  background-color: rgba(142, 68, 173, 0.05) !important;
+  border-left: 4px solid rgba(165, 147, 130, 0.22) !important;
+  color: black !important;
+  padding: 1.5rem;
+  border-radius: 5px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.alert:before {
+  content: '\f07a';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  margin-right: 15px;
+  font-size: 1.2rem;
+  color: rgba(165, 147, 130, 0.22);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
   }
   
-  .badge {
-    font-size: 0.9rem;
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
-
-
-    .bgPerso{
-        background-color: #63a50a;
-    }  
-
-
-    .bg-succ{
-      background-color: #1987549d;
-      color: white;
-    }
-    
-    .bg-warn{
-      background-color: #f1bf2a99;
-      color: white;
-    }
-    
-    .bg-prim {
-      background-color: #275395a4;
-      color: white;
-    }
-    
-    .bg-inf {
-      background-color: #47a6b995;
-      color: white;
-    }
-    
-    .bg-dang {
-      background-color: #b44c56b5;
-      color: white;
-    }
-    
+  
+  .card-header span {
+    margin-top: 0.5rem;
+  }
+}

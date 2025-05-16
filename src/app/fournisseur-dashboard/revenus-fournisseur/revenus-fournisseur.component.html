@@ -1,6 +1,6 @@
 
 <!-- revenue.component.html -->
-<div class="content-wrapper">
+<div class="content-wrapper" id="revenus-fournisseur-content">
   <!-- En-tête moderne et élégant -->
   <div class="dashboard-header">
     <div class="header-content">
@@ -12,13 +12,13 @@
         <div class="header-title">
           <h2>Tableau de Bord des Revenus</h2>
           <p>Suivez vos revenus et analysez vos performances</p>
+          
         </div>
       </div>
       <div class="header-actions">
         <div class="action-buttons">
-          <button class="btn-create">
-            <span class="btn-icon"><i class="fas fa-download"></i></span>
-            <span class="btn-text">Exporter</span>
+          <button class="btn" style="color: #fff; background: #5a4030; border-color:#fff;" (click)="exportToPdf()">
+            <i class="bi bi-file-pdf me-1"></i> Télécharger PDF
           </button>
         </div>
       </div>

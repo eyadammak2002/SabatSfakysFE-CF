@@ -321,17 +321,16 @@
   flex: 1;
   display: flex;
   align-items: center;
-  background: #f1efef;
+  background: #ececec;
   padding: 15px;
   border-radius: 8px;
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .stat-card:hover {
-  background-color: rgba(0, 0, 0, 0.1);
   transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
-
 .stat-icon {
   width: 40px;
   height: 40px;

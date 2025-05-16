@@ -1,9 +1,6 @@
 
-
 <!-- profile.component.html -->
 <div class="profile-container">
-  <h1 class="profile-title">Mon Profil</h1>
-  
   <div *ngIf="loading && !client" class="loading-spinner">
       <div class="spinner-border text-primary" role="status">
         <span class="sr-only">Chargement...</span>
@@ -19,136 +16,146 @@
     {{ successMessage }}
   </div>
   
-  <div *ngIf="client" class="profile-card">
-    <!-- Mode affichage -->
-    <div *ngIf="!isEditing" class="profile-view">
-      <div class="profile-info">
-        <div class="info-group">
-          <div class="info-icon">
-            <i class="fas fa-envelope"></i>
-          </div>
-          <div class="info-content">
-            <div class="info-label">Email</div>
-            <div class="info-value">{{ client.email }}</div>
-          </div>
-        </div>
-        
-        <div class="info-group">
-          <div class="info-icon">
-            <i class="fas fa-map-marker-alt"></i>
-          </div>
-          <div class="info-content">
-            <div class="info-label">Adresse</div>
-            <div class="info-value">{{ client.adresse || 'Non spécifiée' }}</div>
-          </div>
-        </div>
-        
-        <div class="info-group">
-          <div class="info-icon">
-            <i class="fas fa-phone"></i>
-          </div>
-          <div class="info-content">
-            <div class="info-label">Téléphone</div>
-            <div class="info-value">{{ client.telephone || 'Non spécifié' }}</div>
-          </div>
-        </div>
-        <div class="info-group">
-          <div class="info-icon">
-            <i class="fas fa-phone"></i>
-          </div>
-          <div class="info-content">
-            <div class="info-label">Genre</div>
-            <div class="info-value">{{ client.sexe || 'Non spécifié' }}</div>
-          </div>
-        </div>
+  <!-- Mode affichage -->
+  <div *ngIf="!isEditing && client" class="profile-card">
+      <div class="profile-header">
+          <h2 class="profile-title">{{ client.nom || 'Profil utilisateur' }}</h2>
+          <p class="profile-subtitle">Informations personnelles</p>
       </div>
-      <div class="edit-button-container">
-        <button (click)="toggleEdit()" class="btn btn-create edit-button">
-          <i class="fa fa-edit"></i> Modifier 
-        </button>
-      </div>
-    </div>
-    
-    <!-- Mode édition -->
-    <div *ngIf="isEditing" class="profile-edit">
-      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-        <!-- Nom -->
-
-        
-          <div class="form-group">
-              <label for="nom">Nom</label>
-              <input 
-              type="text" 
-              id="nom" 
-              formControlName="nom" 
-              class="form-control"
-              [ngClass]="{'is-invalid': profileForm?.get('nom')?.invalid && profileForm?.get('nom')?.touched}" 
-              />
-              <div *ngIf="profileForm?.get('nom')?.invalid && profileForm?.get('nom')?.touched" class="invalid-feedback">
-              Le nom est requis
+      
+      <div class="profile-view">
+          <div class="profile-info">
+              <div class="info-group">
+                  <div class="info-icon">
+                      <i class="fas fa-envelope"></i>
+                  </div>
+                  <div class="info-content">
+                      <div class="info-label">Email</div>
+                      <div class="info-value">{{ client.email }}</div>
+                  </div>
+              </div>
+              
+              <div class="info-group">
+                  <div class="info-icon">
+                      <i class="fas fa-map-marker-alt"></i>
+                  </div>
+                  <div class="info-content">
+                      <div class="info-label">Adresse</div>
+                      <div class="info-value">{{ client.adresse || 'Non spécifiée' }}</div>
+                  </div>
+              </div>
+              
+              <div class="info-group">
+                  <div class="info-icon">
+                      <i class="fas fa-phone"></i>
+                  </div>
+                  <div class="info-content">
+                      <div class="info-label">Téléphone</div>
+                      <div class="info-value">{{ client.telephone || 'Non spécifié' }}</div>
+                  </div>
+              </div>
+              
+              <div class="info-group">
+                  <div class="info-icon">
+                      <i class="fas fa-user"></i>
+                  </div>
+                  <div class="info-content">
+                      <div class="info-label">Genre</div>
+                      <div class="info-value">{{ client.sexe === 'Homme' ? 'Homme' : (client.sexe === 'Femme' ? 'Femme' : 'Non spécifié') }}</div>
+                  </div>
               </div>
           </div>
           
-          <!-- Email -->
-          <div class="form-group">
-              <label for="email">Email</label>
-              <input 
-              type="email" 
-              id="email" 
-              formControlName="email" 
-              class="form-control"
-              [ngClass]="{
-                  'is-invalid': profileForm?.get('email')?.invalid && profileForm?.get('email')?.touched
-              }" 
-              />
-              <div *ngIf="profileForm?.get('email')?.invalid && profileForm?.get('email')?.touched" class="invalid-feedback">
-              Email invalide
-              </div>
-          </div>
-
+          <div class="edit-button-container">
+             <button (click)="toggleEdit()" class="brown-button cancel">
+                  <span class="btn-icon"><i class="fas fa-edit"></i></span>
+                  <span class="btn-text">Modifier</span>
+              </button>
             
-        
-        <div class="form-group">
-          <label for="adresse">Adresse</label>
-          <input 
-            type="text" 
-            id="adresse" 
-            formControlName="adresse" 
-            class="form-control" 
-          />
-        </div>
-        
-        <div class="form-group">
-          <label for="telephone">Téléphone</label>
-          <input 
-            type="tel" 
-            id="telephone" 
-            formControlName="telephone" 
-            class="form-control" 
-          />
-        </div>
-        
-        <div class="form-group">
-          <label for="sexe">Sexe</label>
-          <select 
-            id="sexe" 
-            formControlName="sexe" 
-            class="form-control"
-          >
-              <option value="HOMME">Homme</option>
-              <option value="FEMME">Femme</option>
-          </select>
-        </div>
-        
-        <div class="action-buttons">
-          <button type="submit" class="btn btn-success" [disabled]="profileForm.invalid || loading">
-            <i class="fas fa-save"></i> Enregistrer
-          </button>
-          <button type="button" class="btn btn-danger" (click)="toggleEdit()">
-            <i class="fas fa-times"></i> Annuler
-          </button>
-        </div>
-      </form>
-    </div>
+          </div>
+      </div>
+  </div>
+  
+  <!-- Mode édition -->
+  <div *ngIf="isEditing && client" class="profile-card">
+      <div class="profile-header">
+          <h2 class="profile-title">Éditer le profil</h2>
+          <p class="profile-subtitle">Modifier vos informations</p>
+      </div>
+      
+      <div class="profile-edit">
+          <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+              <div class="form-group">
+                  <label for="nom">Nom</label>
+                  <input 
+                      type="text" 
+                      id="nom" 
+                      formControlName="nom" 
+                      class="form-control"
+                      [ngClass]="{'is-invalid': profileForm?.get('nom')?.invalid && profileForm?.get('nom')?.touched}" 
+                  />
+                  <div *ngIf="profileForm?.get('nom')?.invalid && profileForm?.get('nom')?.touched" class="invalid-feedback">
+                      Le nom est requis
+                  </div>
+              </div>
+              
+              <div class="form-group">
+                  <label for="email">Email</label>
+                  <input 
+                      type="email" 
+                      id="email" 
+                      formControlName="email" 
+                      class="form-control"
+                      [ngClass]="{'is-invalid': profileForm?.get('email')?.invalid && profileForm?.get('email')?.touched}" 
+                  />
+                  <div *ngIf="profileForm?.get('email')?.invalid && profileForm?.get('email')?.touched" class="invalid-feedback">
+                      Email invalide
+                  </div>
+              </div>
+              
+              <div class="form-group">
+                  <label for="adresse">Adresse</label>
+                  <input 
+                      type="text" 
+                      id="adresse" 
+                      formControlName="adresse" 
+                      class="form-control" 
+                  />
+              </div>
+              
+              <div class="form-group">
+                  <label for="telephone">Téléphone</label>
+                  <input 
+                      type="tel" 
+                      id="telephone" 
+                      formControlName="telephone" 
+                      class="form-control" 
+                  />
+              </div>
+              
+              <div class="form-group">
+                  <label for="sexe">Genre</label>
+                  <select 
+                      id="sexe" 
+                      formControlName="sexe" 
+                      class="form-control"
+                  >
+                      <option value="HOMME">Homme</option>
+                      <option value="FEMME">Femme</option>
+                  </select>
+              </div>
+              
+              <div class="buttons-container">
+                  <button type="submit" class="brown-button" [disabled]="profileForm.invalid || loading">
+                      <span class="btn-icon"><i class="fas fa-save"></i></span>
+                      <span class="btn-text">Enregistrer</span>
+                  </button>
+                  <button type="button" class="brown-button cancel" (click)="toggleEdit()">
+                      <span class="btn-icon"><i class="fas fa-times"></i></span>
+                      <span class="btn-text">Annuler</span>
+                  </button>
+              </div>
+          </form>
+      </div>
   </div>
 </div>

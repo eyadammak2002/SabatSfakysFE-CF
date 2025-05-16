@@ -1,22 +1,22 @@
 <div class="container my-4">
-  <h2 class="mb-4">Mes commandes </h2>
+  <h2 class="mb-4">Mes commandes</h2>
 
   <div *ngIf="commandes.length > 0; else noCommande">
     <div class="row" *ngFor="let commande of commandes">
       <div class="col-12 mb-4">
         <div class="card shadow-sm border-0">
-          <div class="card-header bgPerso text-white d-flex justify-content-between">
-            <strong>Code Commande {{ commande.id }}</strong>
+          <div class="card-header text-black d-flex justify-content-between">
+            <strong><i class="fas fa-shopping-bag me-2"></i>Code Commande {{ commande.id }}</strong>
             <span>Total : {{ commande.total }} TND</span>
           </div>
 
           <div class="card-body">
-            <p><strong>Adresse de livraison :</strong> {{ commande.adresseLivraison }}</p>
+            <p><strong><i class="fas fa-map-marker-alt me-2"></i>Adresse de livraison :</strong> {{ commande.adresseLivraison }}</p>
 
-            <h6 class="mt-3">Lignes du panier :</h6>
+           
             <div class="table-responsive">
               <table class="table table-bordered table-sm align-middle">
-                <thead class="table-light">
+                <thead>
                   <tr>
                     <th>Article</th>
                     <th>Quantité</th>
@@ -51,7 +51,7 @@
           </div>
 
           <div class="card-footer text-muted">
-            Date : {{ commande.dateCommande | date: 'medium' }}
+            <i class="far fa-calendar-alt me-2"></i>Date : {{ commande.dateCommande | date: 'medium' }}
           </div>
         </div>
       </div>
@@ -59,9 +59,8 @@
   </div>
 
   <ng-template #noCommande>
-    <div class="alert "         style="background-color: rgba(60, 35, 19, 0.1); border-left: 4px solid #3c2313; color: #3c2313;">
-
-      Aucune commande validée pour l’instant.
+    <div class="alert">
+      Aucune commande validée pour l'instant.
     </div>
   </ng-template>
 </div>
