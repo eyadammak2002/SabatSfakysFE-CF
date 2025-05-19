@@ -30,6 +30,7 @@ export class EditArticleComponent implements OnInit {
   selectedCouleur: Couleur | null = null;
   selectedPointure: Pointure | null = null;
   quantite: number = 0;
+  stockErrorMessage: string = ''; // Ajouté pour les messages d'erreur de stock
 
   // Upload properties
   selectedFiles?: FileList;
@@ -120,6 +121,61 @@ export class EditArticleComponent implements OnInit {
       console.error('ID de l\'article manquant');
     }
   }
+// Ajouter cette méthode pour modifier la quantité d'un stock
+editStockQuantity(index: number): void {
+  const newQuantity = prompt('Entrez la nouvelle quantité', this.articleStocks[index].quantite.toString());
+  if (newQuantity !== null && !isNaN(+newQuantity) && +newQuantity > 0) {
+    this.articleStocks[index].quantite = +newQuantity;
+    console.log('Quantité mise à jour:', this.articleStocks[index]);
+  } else {
+    alert('Quantité invalide');
+  }
+}
+  // Méthode pour comparer les catégories par ID
+  compareCategories(c1: Category, c2: Category): boolean {
+    return c1 && c2 ? c1.id === c2.id : c1 === c2;
+  }
+
+  // Vérifier si une combinaison couleur/pointure existe déjà
+  combinaisonExists(couleur: Couleur, pointure: Pointure): boolean {
+    return this.articleStocks.some(
+      stock => stock.couleur.id === couleur.id && stock.pointure.id === pointure.id
+    );
+  }
+
+  // Version modifiée pour vérifier les doublons
+  generateStocks(): void {
+    this.stockErrorMessage = '';
+    
+    if (this.selectedCouleur && this.selectedPointure && this.quantite > 0) {
+      // Vérifier si cette combinaison existe déjà
+      if (this.combinaisonExists(this.selectedCouleur, this.selectedPointure)) {
+        this.stockErrorMessage = 'Cette combinaison couleur/pointure existe déjà dans votre stock.';
+        return;
+      }
+      
+      const stock: Stock = {
+        id: 0, 
+        couleur: this.selectedCouleur,
+        pointure: this.selectedPointure,
+        quantite: this.quantite
+      };
+      console.log('📌 Stock généré:', stock);
+      this.articleStocks.push(stock);
+      console.log('📦 Liste des stocks après ajout:', this.articleStocks);
+      
+      // Réinitialiser les champs après ajout
+      this.selectedCouleur = null;
+      this.selectedPointure = null;
+      this.quantite = 0;
+    } else {
+      this.stockErrorMessage = 'Veuillez sélectionner une couleur, une pointure et indiquer une quantité valide.';
+      console.error('❌ Veuillez sélectionner une couleur, une pointure et une quantité.');
+    }
+  }
+
+  // Le reste de votre code reste inchangé...
+
 
   // File upload methods
   selectFiles(event: any): void {
@@ -249,22 +305,7 @@ export class EditArticleComponent implements OnInit {
     });
   }
 
-  generateStocks(): void {
-    if (this.selectedCouleur && this.selectedPointure && this.quantite > 0) {
-      const stock: Stock = {
-        id: 0, 
-        couleur: this.selectedCouleur,
-        pointure: this.selectedPointure,
-        quantite: this.quantite
-      };
-      console.log('📌 Stock généré:', stock);
-      this.articleStocks.push(stock);
-      console.log('📦 Liste des stocks après ajout:', this.articleStocks);
-    } else {
-      console.error('❌ Veuillez sélectionner une couleur, une pointure et une quantité.');
-    }
-  }
-
+ 
   // Helper method to check if a photo is selected (used in template)
   isPhotoSelected(photoId: number): boolean {
     return this.selectedPhotos.some(p => p.id === photoId);
@@ -353,14 +394,7 @@ export class EditArticleComponent implements OnInit {
     }
   }
   
-  editStockQuantity(index: number): void {
-    const newQuantity = prompt('Entrez la nouvelle quantité', this.articleStocks[index].quantite.toString());
-    if (newQuantity !== null && !isNaN(+newQuantity) && +newQuantity > 0) {
-      this.updateStockQuantity(index, +newQuantity);
-    } else {
-      alert('Quantité invalide');
-    }
-  }
+  
   
   // Version améliorée de deletePhoto qui met à jour toutes les listes
   deletePhoto(photo: any): void {
@@ -405,4 +439,5 @@ export class EditArticleComponent implements OnInit {
       });
     }
   }
+  
 }

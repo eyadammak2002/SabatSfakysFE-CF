@@ -236,3 +236,67 @@ border-radius: 20px;
     
   }
 }                                                                         
+
+
+/* Styles pour le bouton supprimer */
+.brown-button.delete {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  margin-left: 10px;
+}
+
+.brown-button.delete:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* Styles pour la boîte de dialogue de confirmation */
+.delete-confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.delete-confirmation-modal {
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.confirmation-title {
+  color: #dc3545;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.confirmation-message {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.confirmation-warning {
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* Disposition des boutons dans le modal */
+.delete-confirmation-modal .buttons-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Style spécifique pour le bouton de confirmation */
+.delete-confirmation-modal .brown-button.delete {
+  margin-left: 0;
+}

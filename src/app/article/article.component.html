@@ -1,3 +1,4 @@
+
 <!-- article.component.html -->
 <div class="content-wrapper">
   <!-- En-tête moderne et élégant -->
@@ -13,14 +14,15 @@
           <p>Gérez votre inventaire et suivez vos produits</p>
         </div>
       </div>
-      <div class="header-actions">
-        <div class="action-buttons">
-          <button class="btn-create" (click)="redirectToCreateArticle()">
-            <span class="btn-icon"><i class="fas fa-plus"></i></span>
-            <span class="btn-text">Nouvel Article</span>
+     
+<!-- fournisseur-articles-personalises.component.html (extrait modifié) -->
+        <div class="header-actions">
+          <button class="btn-refresh" (click)="loadArticles()">
+            <span class="btn-icon"><i class="fas fa-sync-alt"></i></span>
+            <span class="btn-text">Actualiser</span>
           </button>
         </div>
-      </div>
+       
     </div>
     
     <!-- Mini statistiques -->
@@ -68,7 +70,29 @@
     </div>
   </div>
 
-  
+  <div class="card shadow-lg border-0 overflow-hidden mb-3">
+    <div class="card-body p-0">
+      <div class="search-container p-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-search"></i></span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Rechercher un article..."
+            [(ngModel)]="searchTerm">
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--message d'erreur ou de succes de suppression 
+<div *ngIf="feedback" class="alert mb-3 mx-2" 
+[ngClass]="{'alert-success': feedback.type === 'success', 
+           'alert-danger': feedback.type === 'warning'}">
+<i *ngIf="feedback.type === 'success'" class="fas fa-check-circle me-2"></i>
+<i *ngIf="feedback.type === 'warning'" class="fas fa-exclamation-triangle me-2"></i>
+{{ feedback.message }}
+</div>-->
   <!-- Tableau des articles -->
   <div class="card shadow-lg border-0 overflow-hidden">
     <div class="card-body p-0">
@@ -179,11 +203,12 @@
                   </button>
                 </div>
               </td>
+              
             </tr>
             <tr *ngIf="allArticle.length === 0">
               <td colspan="13" class="text-center p-4">
                 <div class="alert " style="background-color: rgba(60, 35, 19, 0.1); border-left: 4px solid #3c2313; color: #3c2313;">
-                  Aucun Article trouvé avec ce statut
+                  Aucun Article trouvé pour l'instant
                 </div>
               </td>
               </tr>

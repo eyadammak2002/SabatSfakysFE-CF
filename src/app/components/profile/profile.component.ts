@@ -5,6 +5,7 @@ import { Client, ProfileService } from './profile.service';
 import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AppRoutingModule } from 'src/app/app-routing.module';
+import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
   selector: 'app-profile',
@@ -28,11 +29,17 @@ export class ProfileComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
+// Dans ProfileComponent, ajoutez ces propriétés
+  showDeleteConfirmation = false;
+  deletePassword = '';
+
 
   constructor(
     private fb: FormBuilder,
     private clientService: ProfileService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private tokenStorageService: TokenStorageService
+
   ) {
     // Initialiser le formulaire
     this.profileForm = this.fb.group({
@@ -110,4 +117,51 @@ export class ProfileComponent implements OnInit {
       }
     );
   }
+
+  // Ajoutez ces méthodes
+toggleDeleteConfirmation(): void {
+  this.showDeleteConfirmation = !this.showDeleteConfirmation;
+  this.errorMessage = '';
+  this.successMessage = '';
+}
+
+confirmDeleteAccount(): void {
+  if (!this.deletePassword) {
+    this.errorMessage = 'Veuillez entrer votre mot de passe';
+    return;
+  }
+
+  this.loading = true;
+  this.clientService.deleteAccount(this.deletePassword).subscribe(
+    response => {
+      this.successMessage = 'Votre compte a été supprimé avec succès';
+      this.loading = false;
+      this.tokenStorageService.signOut(); // Méthode pour effacer le token et autres données de session
+
+      setTimeout(() => {
+        // Supposons que vous ayez un service d'authentification avec une méthode logout
+        // this.authService.logout(); 
+        window.location.href = '/accueil'; // Redirection simple
+      }, 2000);
+    },
+    error => {
+      if (error.error && error.error.message && error.error.message.includes("User Not Found")) {
+        this.successMessage = 'Votre compte a été supprimé avec succès';
+        this.tokenStorageService.signOut();
+        setTimeout(() => {
+          window.location.href = '/accueil';
+        }, 2000);
+      } else {
+        // Autres types d'erreurs
+        if (error.status === 401) {
+          this.errorMessage = 'Mot de passe incorrect';
+        } else {
+          this.errorMessage = 'Une erreur s\'est produite lors de la suppression du compte';
+        }
+      }
+      console.error(error);
+      this.loading = false;
+    }
+  );
+}
 }

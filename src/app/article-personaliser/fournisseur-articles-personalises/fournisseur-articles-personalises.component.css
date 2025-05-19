@@ -51,7 +51,6 @@
   align-items: center;
 }
 
-/* Bouton d'actualisation */
 .btn-refresh {
   display: flex;
   align-items: center;
@@ -251,12 +250,12 @@
 }
 
 .btn-production {
-  background-color: #17a2b8;
+  background-color: #70a0a7c8;
   color: white;
 }
 
 .btn-termine {
-  background-color: #007bff;
+  background-color: #a4ccf7cd;
   color: white;
 }
 
@@ -365,4 +364,131 @@ line-height: 1.2;
 .header-title p {
   margin: 5px 0 0;
   color: #666;
+}
+
+/* Styles pour les nouveaux boutons d'action, identiques aux existants */
+.btn-view {
+  background-color: rgba(60, 35, 19, 0.1);
+  color: #3c2313;
+}
+
+.btn-view:hover {
+  background-color: #3c2313;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-accept {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+}
+
+.btn-accept:hover {
+  background-color: #28a745;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.25);
+}
+
+.btn-refuse {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.btn-refuse:hover {
+  background-color: #dc3545;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.25);
+}
+
+.btn-production {
+  background-color: rgba(23, 162, 184, 0.1);
+  color: #17a2b8;
+}
+
+.btn-production:hover {
+  background-color: #17a2b8;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(23, 162, 184, 0.25);
+}
+
+.btn-termine {
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #007bff;
+}
+
+.btn-termine:hover {
+  background-color: #007bff;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.25);
+}
+
+/* Style pour le groupe d'actions */
+.action-group {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-action {
+  width: 80px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.btn-act {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+.btn-edit {
+  background-color: rgba(23, 122, 184, 0.442);
+  color: #15495c;
+}
+
+.btn-edit:hover {
+  background-color: #15495c;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(23, 122, 184, 0.442);
+}
+.btn-delete {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.btn-delete:hover {
+  background-color: #dc3545;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.25);
+}
+
+.btn-voir {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #3c2313;
+}
+
+.btn-voir:hover {
+  background-color: #3c2313;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

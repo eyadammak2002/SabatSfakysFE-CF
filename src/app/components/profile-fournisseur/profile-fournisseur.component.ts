@@ -19,6 +19,9 @@ export class ProfileFournisseurComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
+// Dans ProfileComponent, ajoutez ces propriétés
+  showDeleteConfirmation = false;
+  deletePassword = '';
 
   constructor(
     private fb: FormBuilder,
@@ -109,4 +112,41 @@ export class ProfileFournisseurComponent implements OnInit {
       }
     );
   }
+
+  // Ajoutez ces méthodes
+toggleDeleteConfirmation(): void {
+  this.showDeleteConfirmation = !this.showDeleteConfirmation;
+  this.errorMessage = '';
+  this.successMessage = '';
+}
+
+confirmDeleteAccount(): void {
+  if (!this.deletePassword) {
+    this.errorMessage = 'Veuillez entrer votre mot de passe';
+    return;
+  }
+
+  this.loading = true;
+  this.fournisseurService.deleteAccount(this.deletePassword).subscribe(
+    response => {
+      this.successMessage = 'Votre compte a été supprimé avec succès';
+      this.loading = false;
+      // Rediriger vers la page de connexion après 2 secondes
+      setTimeout(() => {
+        // Supposons que vous ayez un service d'authentification avec une méthode logout
+        // this.authService.logout(); 
+        window.location.href = '/login'; // Redirection simple
+      }, 2000);
+    },
+    error => {
+      if (error.status === 401) {
+        this.errorMessage = 'Mot de passe incorrect. Suppression du compte annulée.';
+      } else {
+        this.errorMessage = 'Une erreur s\'est produite lors de la suppression du compte';
+      }
+      console.error(error);
+      this.loading = false;
+    }
+  );
+}
 }

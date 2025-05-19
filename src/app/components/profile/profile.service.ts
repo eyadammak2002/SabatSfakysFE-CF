@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Fournisseur } from 'src/app/pack/Fournisseur';
+import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 
 export interface Client {
@@ -21,7 +22,8 @@ export interface Client {
 export class ProfileService {
   private apiUrl = 'http://localhost:8080'; // Ajustez selon votre configuration
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,    private tokenStorageService: TokenStorageService
+  ) { }
 
   // Récupérer tous les clients
   getAllClients(): Observable<Client[]> {
@@ -85,4 +87,24 @@ export class ProfileService {
     deleteFournisseur(id: number): Observable<void> {
       return this.http.delete<void>(`${this.apiUrl}/fournisseur/${id}`);
     }
+
+    // Dans ProfileService
+// Dans ProfileService
+deleteAccount(password: string): Observable<any> {
+  const token = this.tokenStorageService.getToken(); // Utiliser votre service de token
+  
+  // Créer les en-têtes manuellement pour cette requête spécifique
+  const httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    })
+  };
+  
+  return this.http.post<any>(
+    `${this.apiUrl}/api/auth/deleteAccount`, 
+    { password: password },
+    httpOptions
+  );
+}
 }

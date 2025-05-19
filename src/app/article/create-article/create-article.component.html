@@ -3,8 +3,8 @@
     <!-- En-tête avec dégradé -->
     <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #3c2313 0%, #5a3823 100%);">
       <div class="text-center">
-        <i class="fas fa-shoe-prints fa-3x"></i>
-        <h4 class="mt-2 font-weight-bold">Créer un Article</h4>
+        <!--<i class="fas fa-shoe-prints fa-3x"></i>-->
+        <h1 class="mt-2 font-weight-bold " style="font-family: 'Georgia', serif; ">Déposer un Article</h1>
         <p class="mb-0">Ajoutez un nouveau produit à votre catalogue</p>
       </div>
     </div>
@@ -111,9 +111,14 @@
                   <span class="badge me-2" style="background-color: #63a50a;">Pointure {{ stock.pointure.taille }}</span>
                   <span class="badge" style="background-color: #666;">Qté: {{ stock.quantite }}</span>
                 </div>
-                <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeStock(i)">
-                  <i class="fas fa-times"></i>
-                </button>
+                <div class="action-buttons">
+                  <button type="button" class="btn-action btn-edit me-2" title="Modifier quantité" (click)="editStockQuantity(i)">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button type="button" class="btn-action btn-delete" title="Supprimer" (click)="removeStock(i)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
               </div>
             </div>
             <div *ngIf="stockErrorMessage" class="alert alert-danger mt-2">

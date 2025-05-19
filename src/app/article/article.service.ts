@@ -65,11 +65,10 @@ export class ArticleService {
     );
   }
 
-  // Supprimer un article
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
-
+// Supprimer un article
+delete(id: number): Observable<string> {
+  return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
+}
     // Récupérer toutes les couleurs
     getCouleurs(): Observable<Couleur[]> {
       return this.http.get<Couleur[]>(`${this.apiUrl}/couleurs`);

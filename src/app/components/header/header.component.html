@@ -72,7 +72,7 @@
 
      
             <!-- Icône de notification avec compteur de notifications non lues -->
-      <div *ngIf="isLoading" class="notification-icon" (click)="toggleNotifications($event)">
+      <div  class="notification-icon" (click)="toggleNotifications($event)">
         <i class="fas fa-bell"></i>
         <span class="notification-badge" *ngIf="unreadNotifications.length > 0">
           {{ unreadNotifications.length }}

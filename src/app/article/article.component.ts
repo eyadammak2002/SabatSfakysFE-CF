@@ -20,7 +20,8 @@ import { TokenStorageService } from '../services/token-storage.service';
 export class ArticleComponent implements OnInit {
   allArticle: Article[] = [];
   feedback: any = {};
-
+  searchTerm:string="";
+  
   constructor(
     private articleService: ArticleService, 
     private tokenStorage: TokenStorageService,
@@ -41,17 +42,41 @@ export class ArticleComponent implements OnInit {
       }
     });
   }
-
+  // Nouvelle fonction pour charger/actualiser les articles
+  loadArticles(): void {
+    const user = this.tokenStorage.getUser();
+    const email = user.email;
+    
+    this.articleService.getArticlesByFournisseur(email).subscribe({
+      next: (data: Article[]) => {
+        this.allArticle = data;
+        console.log("✅ Articles récupérés :", this.allArticle);
+      },
+      error: (err) => {
+        console.error("Erreur lors de la récupération des articles :", err);
+        this.feedback = { type: 'warning', message: 'Erreur lors du chargement des articles.' };
+        setTimeout(() => { this.feedback = null; }, 3000);
+      }
+    });
+  }
   delete(article: Article): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
       this.articleService.delete(article.id).subscribe({
-        next: () => {
+        next: (response) => {
           this.allArticle = this.allArticle.filter(a => a.id !== article.id);
-          this.feedback = { type: 'success', message: 'Article supprimé avec succès !' };
-          setTimeout(() => { this.feedback = null; }, 3000);
+          alert(response); // Affiche "✅ Article supprimé avec succès."
         },
         error: (err) => {
-          this.feedback = { type: 'warning', message: 'Erreur lors de la suppression.' };
+          let errorMessage = 'Erreur lors de la suppression.';
+          
+          // Si c'est une erreur avec un message du backend
+          if (err.error && typeof err.error === 'string') {
+            errorMessage = err.error;
+          } else if (err.error?.message) {
+            errorMessage = err.error.message;
+          }
+          
+          alert(errorMessage);
           console.error('Erreur lors de la suppression de l\'article:', err);
         }
       });
@@ -113,4 +138,20 @@ export class ArticleComponent implements OnInit {
 
     return article.stocks.reduce((sum: number, stock: Stock) => sum + (stock.quantite || 0), 0);
   }
+
+  get filteredArticles(): Article[] {
+    if (!this.searchTerm?.trim()) {
+      return this.allArticle;
+    }
+        
+    const term = this.searchTerm.toLowerCase().trim();
+    return this.allArticle.filter(article => 
+      (article.name && article.name.toLowerCase().includes(term)) ||
+      (article.ref && article.ref.toLowerCase().includes(term)) ||
+      (article.description && article.description.toLowerCase().includes(term)) ||
+      (article.tissu && article.tissu.toLowerCase().includes(term)) ||
+      (article.genre && article.genre.toLowerCase().includes(term))
+    );
+  }
+
 }

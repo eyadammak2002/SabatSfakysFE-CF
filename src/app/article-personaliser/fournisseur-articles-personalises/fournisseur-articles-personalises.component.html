@@ -112,6 +112,7 @@
               <th class="px-3 py-3 text-white">Client</th>
               <th class="px-3 py-3 text-white">Date</th>
               <th class="px-3 py-3 text-white">Statut</th>
+              <th class="px-3 py-3 text-white">Décision</th>
               <th class="px-3 py-3 text-white">Actions</th>
             </tr>
           </thead>
@@ -149,27 +150,32 @@
               </td>
               <td class="px-3 py-3">
                 <div class="action-buttons">
-                  <button class="btn btn-view" title="Voir détails" (click)="viewArticleDetails(article.id)">
-                    <i class="fas fa-eye"></i>
-                  </button>
-                  
+                 
                   <!-- Boutons conditionnels selon le statut -->
                   <div *ngIf="article.statut === 'EN_ATTENTE'" class="action-group">
-                    <button class="btn btn-accept" title="Accepter" (click)="changeArticleStatus(article.id, 'ACCEPTE')">
-                      <i class="fas fa-check"></i>
+                    <button class="btn-action btn-edit" title="Accepter" (click)="changeArticleStatus(article.id, 'ACCEPTE')">
+                      <i class="fas fa-check"></i>accepter
                     </button>
-                    <button class="btn btn-refuse" title="Refuser" (click)="changeArticleStatus(article.id, 'REFUSE')">
-                      <i class="fas fa-times"></i>
+                    <button class="btn-action btn-delete" title="Refuser" (click)="changeArticleStatus(article.id, 'REFUSE')">
+                      <i class="fas fa-times"></i>refuser
                     </button>
                   </div>
                   
-                  <button *ngIf="article.statut === 'ACCEPTE'" class="btn btn-production" title="Marquer en production" (click)="changeArticleStatus(article.id, 'EN_PRODUCTION')">
+                  <button *ngIf="article.statut === 'ACCEPTE'" class="btn-action btn-production" title="Marquer en production" (click)="changeArticleStatus(article.id, 'EN_PRODUCTION')">
                     <i class="fas fa-cogs"></i>
                   </button>
                   
-                  <button *ngIf="article.statut === 'EN_PRODUCTION'" class="btn btn-termine" title="Terminer" (click)="changeArticleStatus(article.id, 'TERMINE')">
+                  <button *ngIf="article.statut === 'EN_PRODUCTION'" class="btn-action btn-termine" title="Terminer" (click)="changeArticleStatus(article.id, 'TERMINE')">
                     <i class="fas fa-flag-checkered"></i>
                   </button>
+                </div>
+              </td>
+              <td class="px-3 py-3">
+                <div class="action-buttons">
+                  <button class="btn-action btn-voir" title="Voir détails" (click)="viewArticleDetails(article.id)">
+                    Voir détail
+                  </button>
+                  
                 </div>
               </td>
             </tr>

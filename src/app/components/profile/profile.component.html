@@ -71,6 +71,11 @@
                   <span class="btn-icon"><i class="fas fa-edit"></i></span>
                   <span class="btn-text">Modifier</span>
               </button>
+                 <!-- Ajouter ce bouton de suppression -->
+                <button (click)="toggleDeleteConfirmation()" class="brown-button delete">
+                    <span class="btn-icon"><i class="fas fa-trash"></i></span>
+                    <span class="btn-text">Supprimer mon compte</span>
+                </button>
             
           </div>
       </div>
@@ -159,3 +164,36 @@
       </div>
   </div>
 </div>
+<!-- Ajouter cette boîte de dialogue de confirmation à la fin de la div profile-container -->
+<div *ngIf="showDeleteConfirmation" class="delete-confirmation-overlay">
+    <div class="delete-confirmation-modal">
+      <h3 class="confirmation-title">Supprimer votre compte</h3>
+      <p class="confirmation-message">Cette action est définitive. Toutes vos données seront supprimées.</p>
+      <p class="confirmation-warning">Pour confirmer, veuillez entrer votre mot de passe:</p>
+      
+      <div class="form-group">
+        <input 
+          type="password" 
+          [(ngModel)]="deletePassword" 
+          class="form-control" 
+          placeholder="Votre mot de passe" 
+        />
+      </div>
+      
+      <div class="buttons-container">
+        <button 
+          (click)="confirmDeleteAccount()" 
+          class="brown-button delete" 
+          [disabled]="loading || !deletePassword">
+          <span class="btn-icon"><i class="fas fa-trash"></i></span>
+          <span class="btn-text">Confirmer la suppression</span>
+        </button>
+        <button 
+          (click)="toggleDeleteConfirmation()" 
+          class="brown-button cancel">
+          <span class="btn-icon"><i class="fas fa-times"></i></span>
+          <span class="btn-text">Annuler</span>
+        </button>
+      </div>
+    </div>
+  </div>

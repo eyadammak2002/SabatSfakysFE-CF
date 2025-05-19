@@ -323,12 +323,12 @@
           </button>
           
           <div class="action-btn-group">
-            <button class="action-btn edit-btn" 
+            <button class="btn-action btn-edit" 
                     (click)="modifierArticlePersonalise(article.id!)" 
                     [disabled]="article.statut === 'EN_PRODUCTION' || article.statut === 'LIVRE'">
               <i class="fas fa-edit me-1"></i> Modifier
             </button>
-            <button class="action-btn delete-btn" 
+            <button class="btn-action btn-delete" 
                     (click)="supprimerArticlePersonalise(article.id!)"
                     [disabled]="article.statut === 'EN_PRODUCTION' || article.statut === 'LIVRE'">
               <i class="fas fa-trash-alt me-1"></i> Supprimer

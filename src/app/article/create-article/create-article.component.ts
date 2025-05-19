@@ -385,4 +385,15 @@ uploadFile(file: File, index: number, articleId: number): any {
     
     this.cdr.detectChanges();
   }
+
+  // Ajouter cette méthode pour modifier la quantité d'un stock
+editStockQuantity(index: number): void {
+  const newQuantity = prompt('Entrez la nouvelle quantité', this.articleStocks[index].quantite.toString());
+  if (newQuantity !== null && !isNaN(+newQuantity) && +newQuantity > 0) {
+    this.articleStocks[index].quantite = +newQuantity;
+    console.log('Quantité mise à jour:', this.articleStocks[index]);
+  } else {
+    alert('Quantité invalide');
+  }
+}
 }
