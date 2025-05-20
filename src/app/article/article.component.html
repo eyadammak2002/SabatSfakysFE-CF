@@ -144,7 +144,9 @@
               <td class="px-3 py-3">
                 <div *ngIf="article.stocks && article.stocks.length > 0; else noStock" class="stock-container">
                   <div *ngFor="let stock of article.stocks" class="stock-item mb-1">
-                    <span class="badge bg-prim me-1">{{ stock.couleur.nom }}</span>
+                    <span class="badge me-1" style=" border-color: #3c2313;" [ngStyle]="{ 'background-color': stock.couleur.nom , 'border': '1px solid #3c2313',}">
+                      {{ stock.couleur.nom }}
+                    </span>
                     <span class="badge bg-secondary me-1">P{{ stock.pointure.taille }}</span>
                     <span class="badge bg-dark">Qté: {{ stock.quantite }}</span>
                   </div>

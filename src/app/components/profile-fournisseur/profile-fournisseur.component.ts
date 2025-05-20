@@ -28,6 +28,8 @@ export class ProfileFournisseurComponent implements OnInit {
     private fournisseurService: ProfileService,
     private route: ActivatedRoute,
     private tokenStorage: TokenStorageService,
+    private tokenStorageService: TokenStorageService
+
 
   ) {
     // Initialiser le formulaire
@@ -123,6 +125,7 @@ toggleDeleteConfirmation(): void {
 confirmDeleteAccount(): void {
   if (!this.deletePassword) {
     this.errorMessage = 'Veuillez entrer votre mot de passe';
+    window.alert('Veuillez entrer votre mot de passe');
     return;
   }
 
@@ -130,22 +133,66 @@ confirmDeleteAccount(): void {
   this.fournisseurService.deleteAccount(this.deletePassword).subscribe(
     response => {
       this.successMessage = 'Votre compte a été supprimé avec succès';
+      window.alert('Votre compte a été supprimé avec succès');
       this.loading = false;
-      // Rediriger vers la page de connexion après 2 secondes
+      this.tokenStorageService.signOut(); // Méthode pour effacer le token et autres données de session
+      
       setTimeout(() => {
-        // Supposons que vous ayez un service d'authentification avec une méthode logout
-        // this.authService.logout(); 
-        window.location.href = '/login'; // Redirection simple
+        window.location.href = '/accueil'; // Redirection simple
       }, 2000);
     },
     error => {
-      if (error.status === 401) {
-        this.errorMessage = 'Mot de passe incorrect. Suppression du compte annulée.';
+      this.loading = false;
+      
+      // Message pour l'alerte native (texte brut)
+      let alertMessage = '';
+      
+      // Récupérer et afficher le message d'erreur détaillé du backend
+      if (error.error && error.error.message) {
+        // Message pour l'alerte native
+        alertMessage = error.error.message;
+        
+        // Pour l'affichage dans la page
+        if (error.error.message.includes("\n")) {
+          // Convertir les sauts de ligne en balises <br> pour l'affichage HTML
+          this.errorMessage = error.error.message.replace(/\n/g, '<br>');
+          // Marquer ce message comme HTML pour éviter l'échappement par Angular
+          setTimeout(() => {
+            const errorElement = document.querySelector('.alert.alert-danger');
+            if (errorElement) {
+              errorElement.innerHTML = this.errorMessage;
+            }
+          }, 0);
+        } else {
+          // Message simple sans formatage
+          this.errorMessage = error.error.message;
+        }
+      } else if (error.status === 401) {
+        this.errorMessage = 'Mot de passe incorrect';
+        alertMessage = 'Mot de passe incorrect';
+      } else if (error.status === 409) {
+        // Conflit - généralement utilisé pour les contraintes métier
+        this.errorMessage = 'Impossible de supprimer le compte en raison de contraintes liées à vos données';
+        alertMessage = 'Impossible de supprimer le compte en raison de contraintes liées à vos données';
       } else {
         this.errorMessage = 'Une erreur s\'est produite lors de la suppression du compte';
       }
-      console.error(error);
-      this.loading = false;
+      
+      // Gérer le cas particulier où l'utilisateur est supprimé mais une erreur se produit après
+      if (error.error && error.error.message && error.error.message.includes("User Not Found")) {
+        this.successMessage = 'Votre compte a été supprimé avec succès';
+        alertMessage = 'Votre compte a été supprimé avec succès';
+        this.errorMessage = '';
+        this.tokenStorageService.signOut();
+        setTimeout(() => {
+          window.location.href = '/accueil';
+        }, 2000);
+      } else {
+        // Afficher l'alerte native avec le message d'erreur
+        window.alert(alertMessage);
+      }
+      
+      console.error('Erreur:', error);
     }
   );
 }

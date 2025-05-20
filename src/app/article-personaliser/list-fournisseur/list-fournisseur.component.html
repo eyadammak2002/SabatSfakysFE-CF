@@ -92,76 +92,115 @@
     </div>
   </div>
 
-  <!-- DÉBUT DE LA PARTIE ARTICLES -->
-  <!-- Titre de la section articles -->
-  <div *ngIf="selectedFournisseur && articlesDuFournisseur.length > 0" class="articles-section">
-    <div class="articles-header">
+  <!-- Section des articles -->
+  <div *ngIf="selectedFournisseur && articlesDuFournisseur.length > 0" class="articles-section mt-4">
+    <div class="articles-header text-center mb-4">
       <h3 class="articles-title">
         <i class="fas fa-box-open"></i> Articles de {{ selectedFournisseur.nom }}
       </h3>
       <p class="articles-subtitle">{{ articlesDuFournisseur.length }} article(s) trouvé(s)</p>
     </div>
-    
-    <!-- Grille d'articles -->
-    <div class="articles-grid">
-      <div *ngFor="let article of articlesDuFournisseur" class="article-card">
-        <!-- Image de l'article si disponible -->
-        <div class="article-image-container">
-          <img *ngIf="article.photos && article.photos.length > 0" 
-               [src]="'http://localhost:8080/uploads/' + article.photos[0].url" 
-               class="article-image" 
-               alt="{{ article.name }}">
-          <div *ngIf="!article.photos || article.photos.length === 0" class="no-image">
-            <i class="fas fa-image"></i>
-          </div>
+
+    <div class="row">
+      <div *ngFor="let article of articlesDuFournisseur" class="col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="card mb-4 shadow h-100 position-relative">
           
-          <!-- Badge statut -->
-          <div class="article-status" [ngClass]="{'status-accepted': article.statut === 'ACCEPTE', 
-                                              'status-pending': article.statut === 'EN_ATTENTE',
-                                              'status-rejected': article.statut === 'REFUSE'}">
-            {{ article.statut }}
-          </div>
-        </div>
+          <!-- Bouton favoris (position absolute en haut à droite) -->
+          <button 
+            class="btn position-absolute top-0 end-0 m-2 p-0 bg-transparent z-index-1" 
+            style="z-index: 10;"
+            (click)="toggleFavoris(article)">
+            <i class="fas fa-heart" [ngClass]="isFavorite(article.id) ? 'text-danger' : 'text-muted'" 
+               style="font-size: 1.5rem; filter: drop-shadow(0px 0px 1px rgba(0,0,0,0.3));"></i>
+          </button>
+          
         
-        <!-- Informations sur l'article -->
-        <div class="article-content">
-          <h4 class="article-title">{{ article.name }}</h4>
-          <p class="article-reference">Réf: {{ article.ref }}</p>
           
-          <div class="article-details">
-            <div class="article-detail">
-              <span class="detail-label">Prix:</span>
-              <span class="detail-value">{{ article.prixVente }} DT</span>
-            </div>
-            
-            <div class="article-detail" *ngIf="article.category">
-              <span class="detail-label">Catégorie:</span>
-              <span class="detail-value">{{ article.category.name }}</span>
-            </div>
-            
-            <!-- Couleurs disponibles -->
-            <div class="article-colors" *ngIf="article.stocks && article.stocks.length > 0">
-              <span class="colors-label">Couleurs:</span>
-              <div class="color-dots">
-                <ng-container *ngFor="let stock of getUniqueColors(article.stocks)">
-                  <div class="color-dot" [style.background-color]="stock.couleur.nom" 
-                       [title]="stock.couleur.nom"></div>
-                </ng-container>
+          <!-- Galerie d'images Bootstrap -->
+          <div class="carousel slide" 
+               [attr.id]="'carousel' + article.id" 
+               data-bs-interval="false"
+               (slid.bs.carousel)="onSlide($event, article.id)">
+            <div class="carousel-inner">
+              <div *ngFor="let photo of article.photos; let i = index" 
+                   class="carousel-item"
+                   [class.active]="i === 0">
+                <img [src]="photo.url" class="d-block w-100"
+                     alt="{{ article.name }}" 
+                     style="height: 200px; object-fit: cover; background-color: #f8f9fa;">
+              </div>
+              
+              <!-- Image par défaut si aucune photo -->
+              <div *ngIf="!article.photos || article.photos.length === 0" class="carousel-item active">
+                <div class="d-flex justify-content-center align-items-center bg-light" 
+                     style="height: 200px;">
+                  <i class="fas fa-image fa-3x text-muted"></i>
+                </div>
               </div>
             </div>
             
-            <!-- Stock total -->
-            <div class="article-stock">
-              <span class="stock-label">Stock total:</span>
-              <span class="stock-value">{{ calculateTotalStock(article.stocks) }}</span>
+            <!-- Mini-cercles indicateurs -->
+            <div class="carousel-indicators position-relative mt-2">
+              <button *ngFor="let photo of article.photos; let i = index" 
+                     type="button"
+                     [attr.data-bs-target]="'#carousel' + article.id"
+                     [attr.data-bs-slide-to]="i"
+                     [class.active]="activeIndexes[article.id] === i || (activeIndexes[article.id] === undefined && i === 0)"
+                     aria-current="true"
+                     class="bg-dark rounded-circle"
+                     style="width: 7px; height: 7px; margin: 0 3px; border: none; opacity: 0.8;">
+              </button>
             </div>
-          </div>
-          
-          <!-- Boutons d'action -->
-          <div class="article-actions">
-            <button class="btn-view" (click)="viewArticleDetails(article)">
-              <i class="fas fa-eye"></i> Détails
+            
+            <!-- Boutons de navigation -->
+            <button class="carousel-control-prev" type="button" 
+                    [attr.data-bs-target]="'#carousel' + article.id" 
+                    data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Précédent</span>
             </button>
+            <button class="carousel-control-next" type="button" 
+                    [attr.data-bs-target]="'#carousel' + article.id" 
+                    data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Suivant</span>
+            </button>
+          </div>
+
+          <div class="card-body d-flex flex-column">
+            <!-- Titre et description -->
+            <h5 class="card-title fw-bold">{{ article.name }}</h5>
+            <p class="card-text text-muted small mb-2">{{ article.description | slice:0:60 }}</p>
+            
+            <!-- Couleurs disponibles -->
+            <div *ngIf="article.stocks && article.stocks.length > 0" class="d-flex align-items-center mb-2">
+              <small class="text-muted me-2">Couleurs:</small>
+              <div class="d-flex">
+                <div *ngFor="let couleur of getUniqueColors(article.stocks)"
+                     class="rounded-circle me-1"
+                     [style.background-color]="couleur.nom"
+                     [title]="getNomCouleur(couleur.nom)"
+                     style="width: 15px; height: 15px; border: 1px solid rgba(0,0,0,0.1);"></div>
+              </div>
+            </div>
+            
+            <!-- Prix et stock -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="fw-bold text-primary">{{ article.prixVente }} DT</span>
+              <span class="badge bg-secondary">Stock: {{ calculateTotalStock(article.stocks) }}</span>
+            </div>
+            
+            <!-- Boutons d'action -->
+            <div class="mt-auto d-flex justify-content-between gap-2">
+              <button class="btn btn-outline-primary btn-sm flex-grow-1" 
+                      (click)="viewArticleDetails(article)">
+                <i class="fas fa-eye"></i> Détails
+              </button>
+              <button class="btn btn-primary btn-sm flex-grow-1" 
+                      (click)="addToCart(article)">
+                <i class="fas fa-cart-plus"></i> Ajouter
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -176,5 +215,91 @@
     <p class="no-articles-text">Aucun article trouvé pour ce fournisseur.</p>
     <p class="no-articles-subtext">Ce fournisseur n'a pas encore d'articles enregistrés dans le système.</p>
   </div>
-  <!-- FIN DE LA PARTIE ARTICLES -->
+</div>
+
+<!-- Modal pour sélectionner couleur et pointure avant d'ajouter au panier -->
+<div *ngIf="selectedArticle" class="modal d-block" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-shopping-cart me-2"></i>Ajouter au Panier
+        </h5>
+        <button type="button" class="btn-close" (click)="cancelAddToCart()"></button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <!-- Image principale -->
+            <img *ngIf="selectedArticle.photos && selectedArticle.photos.length > 0"
+                 [src]="selectedArticle.photos[activePhotoIndex || 0].url" 
+                 class="img-fluid rounded mb-2"
+                 alt="{{ selectedArticle.name }}">
+            <div *ngIf="!selectedArticle.photos || selectedArticle.photos.length === 0" 
+                 class="d-flex justify-content-center align-items-center bg-light rounded" 
+                 style="height: 150px;">
+              <i class="fas fa-image fa-3x text-muted"></i>
+            </div>
+          </div>
+          
+          <div class="col-md-8">
+            <h5>{{ selectedArticle.name }}</h5>
+            <p class="text-primary fw-bold">{{ selectedArticle.prixVente }} DT</p>
+            
+            <!-- Sélection des couleurs -->
+            <div *ngIf="selectedArticle.stocks && selectedArticle.stocks.length > 0" class="mb-3">
+              <label class="form-label">Couleur:</label>
+              <div class="d-flex flex-wrap gap-2">
+                <div *ngFor="let couleur of getUniqueColors(selectedArticle.stocks)" 
+                     class="color-option"
+                     (click)="selectCouleur(couleur)">
+                  <div class="rounded-circle border"
+                       [style.background-color]="couleur.nom"
+                       [class.border-primary]="selectedCouleur?.id === couleur.id"
+                       [style.border-width]="selectedCouleur?.id === couleur.id ? '3px' : '1px'"
+                       style="width: 30px; height: 30px; cursor: pointer;"></div>
+                  <small [class.text-primary]="selectedCouleur?.id === couleur.id">
+                    {{ getNomCouleur(couleur.nom) }}
+                  </small>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Sélection des pointures -->
+            <div *ngIf="selectedPointures.length > 0" class="mb-3">
+              <label class="form-label">Pointure:</label>
+              <div class="d-flex flex-wrap gap-2">
+                <button *ngFor="let pointure of selectedPointures"
+                        type="button"
+                        class="btn btn-sm"
+                        [class.btn-primary]="selectedPointure?.id === pointure.id"
+                        [class.btn-outline-secondary]="selectedPointure?.id !== pointure.id"
+                        [class.disabled]="pointureOutOfStock[pointure.id]"
+                        [disabled]="pointureOutOfStock[pointure.id]"
+                        (click)="selectPointure(pointure)">
+                  {{ pointure.taille }}
+                </button>
+              </div>
+              <div *ngIf="selectedStockInfo" class="mt-2 small">
+                <span class="text-success" *ngIf="selectedStockInfo > 0">Stock disponible: {{ selectedStockInfo }}</span>
+                <span class="text-danger" *ngIf="selectedStockInfo <= 0">Rupture de stock</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="cancelAddToCart()">
+          Annuler
+        </button>
+        <button type="button" class="btn btn-primary" 
+                [disabled]="!selectedCouleur || !selectedPointure || stockInsuffisant"
+                (click)="confirmerAjoutAuPanier()">
+          <i class="fas fa-shopping-cart me-1"></i> Ajouter au panier
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

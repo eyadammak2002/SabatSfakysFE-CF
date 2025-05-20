@@ -344,4 +344,5 @@ export class RegisterFournisseurComponent implements OnInit {
   goBack(): void {
     this.router.navigate(['/accueil']);
   }
+  
 }

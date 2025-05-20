@@ -8,9 +8,8 @@
       <p class="loading-text">Chargement de votre profil...</p>
   </div>
   
-  <div *ngIf="errorMessage" class="alert alert-danger">
-    {{ errorMessage }}
-  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger" [innerHTML]="errorMessage"></div>
+
   
   <div *ngIf="successMessage" class="alert alert-success">
     {{ successMessage }}
@@ -72,7 +71,7 @@
                   <span class="btn-text">Modifier</span>
               </button>
                  <!-- Ajouter ce bouton de suppression -->
-                <button (click)="toggleDeleteConfirmation()" class="brown-button delete">
+                <button (click)="toggleDeleteConfirmation()" class="brown-button delete mt-3">
                     <span class="btn-icon"><i class="fas fa-trash"></i></span>
                     <span class="btn-text">Supprimer mon compte</span>
                 </button>
