@@ -6,6 +6,7 @@
           <h5 class="fw-bold text-center mb-0">
             <i class="fas fa-shopping-cart me-2"></i>Mon Panier
           </h5>
+          <h4>Livraison gratuite pour toute commande</h4>
         </div>
         <div class="card-body p-4">
           <!-- Liste des articles -->
@@ -30,7 +31,6 @@
                       <span class="badge text-bg-light shadow-sm me-2">
                         <i class="fas fa-tag text-primary me-1"></i>{{ ligne.article.prixVente }} DT
                       </span>
-                      <p>Couleur: {{ ligne.couleur.nom }}</p>
                       <!-- Couleur -->
                       <span class="badge rounded-pill me-2 px-3 py-1 text-white" 
                             [style.background-color]="ligne.couleur.nom">
@@ -76,10 +76,7 @@
           <!-- Récapitulatif -->
           <div class="card bg-light border-0 rounded-lg shadow-sm mb-4">
             <div class="card-body p-3">
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="fw-bold">Sous-total:</span>
-                <span>{{ (panier.total).toFixed(2) }} DT</span>
-              </div>
+              
               <div class="d-flex justify-content-between align-items-center mt-2">
                 <span class="fw-bold">Livraison:</span>
                 <span>Gratuite</span>
@@ -120,15 +117,7 @@
         </div>
       </div>
       
-      <!-- Suggestions -->
-      <div class="card border-0 shadow-sm rounded-lg mt-4">
-        <div class="card-body p-3">
-          <p class="text-center mb-0">
-            <i class="fas fa-info-circle text-primary me-2"></i>
-            <span class="text-muted">Livraison gratuite pour toute commande supérieure à 100 DT</span>
-          </p>
-        </div>
-      </div>
+   
     </div>
   </div>
 </div>

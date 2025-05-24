@@ -3,6 +3,7 @@ import { User } from './user';
 import { FormsModule } from '@angular/forms';
 import { ForgetpasswordService } from '../forgetpassword.service';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-forget-password',
@@ -18,7 +19,10 @@ export class ForgetPasswordComponent {
   errorMessage: string = '';
   successMessage: string = '';
   
-  constructor(private forgetPasswordService: ForgetpasswordService) {}
+  constructor(private forgetPasswordService: ForgetpasswordService,
+        private router: Router
+    
+  ) {}
   
   findByEmail(email: string) {
     if (!email) return;
@@ -42,4 +46,9 @@ export class ForgetPasswordComponent {
       this.successMessage=response;
     })
   }
+
+  goToLogin() {
+    this.router.navigate(['auth/client/login']);
+  }
+  
 }

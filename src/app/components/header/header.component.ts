@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, Renderer2 } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 import { Article } from 'src/app/article/article';
@@ -17,7 +17,11 @@ declare var global: any;
   styleUrls: ['./header.component.css'],
 })
 
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit , OnDestroy, AfterViewInit {
+  private timer: any;
+  private currentIndex = 0;
+  private images!: HTMLCollectionOf<Element>;
+  
   showFournisseurDashboard = false;
   showClientDashboard = false;
   isLoggedIn: boolean = false;
@@ -62,6 +66,18 @@ export class HeaderComponent implements OnInit {
     private searchService: SearchService,
     private searchDataService: SearchDataService,
   ) {}
+
+  ngAfterViewInit() {
+    // Récupérer toutes les images du diaporama
+    this.images = document.getElementsByClassName('banner-image');
+    if (this.images.length > 0) {
+      // Configurer le diaporama initial
+      this.setupSlideshow();
+      // Démarrer le diaporama
+      this.startSlideshow();
+    }
+  }
+
 
   ngOnInit(): void {
     this.searchTerms.pipe(
@@ -289,6 +305,9 @@ checkUserRole(): void {
   }
 
   ngOnDestroy(): void {
+
+    this.stopSlideshow();
+
     // Clean up subscription to prevent memory leaks
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
@@ -654,6 +673,48 @@ filterByCategory(categoryName: string, event?: Event): void {
           this.isLoading = false;
         }
       });
+  }
+
+  private setupSlideshow() {
+    // Masquer toutes les images sauf la première
+    for (let i = 0; i < this.images.length; i++) {
+      const img = this.images[i] as HTMLElement;
+      if (i === 0) {
+        img.style.display = 'block';
+        img.style.opacity = '1';
+      } else {
+        img.style.display = 'none';
+        img.style.opacity = '0';
+      }
+    }
+  }
+
+  private startSlideshow() {
+    this.timer = setInterval(() => {
+      this.showNextImage();
+    }, 2000);
+  }
+
+  private stopSlideshow() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+  }
+
+  private showNextImage() {
+    const currentImg = this.images[this.currentIndex] as HTMLElement;
+    currentImg.style.display = 'none';
+    
+    // Avancer à l'image suivante
+    this.currentIndex = (this.currentIndex + 1) % this.images.length;
+    
+    const nextImg = this.images[this.currentIndex] as HTMLElement;
+    nextImg.style.display = 'block';
+    
+    // Animation de fondu
+    setTimeout(() => {
+      nextImg.style.opacity = '1';
+    }, 50);
   }
 
 }

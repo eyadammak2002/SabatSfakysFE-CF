@@ -47,6 +47,7 @@ import { ListFournisseurComponent } from './article-personaliser/list-fournisseu
 import { RevenusFournisseurComponent } from './fournisseur-dashboard/revenus-fournisseur/revenus-fournisseur.component';
 import { AttentLivraisonComponent } from './commande/attent-livraison/attent-livraison.component';
 import { ListFavorisComponent } from './fournisseur-dashboard/list-favoris/list-favoris.component';
+import { ContactComponent } from './contact/contact.component';
 
 export const routes: Routes = [
   { path: '', component: ListArticleComponent },
@@ -56,6 +57,8 @@ export const routes: Routes = [
   { path: 'createPhoto', component: CreatePhotoComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'favoris', component: FavorisComponent },
+  { path: 'contact', component: ContactComponent },
+  
 
   {
     path: 'mes-reclamations',

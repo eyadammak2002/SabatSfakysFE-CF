@@ -1,33 +1,16 @@
-<div class="container mt-4">
+<div class="container ">
     <!-- En-tête de la page avec titre dynamique -->
     <div class="row mb-4">
-      <div class="col-12">
-        <!-- Titre basé sur le type de filtre -->
-        <h2 *ngIf="filterType === 'categoryAndGenre'">
-          {{ categoryName | titlecase }} pour {{ genre }}
-        </h2>
-        <h2 *ngIf="filterType === 'genreAndCategory'">
-          {{ genre }} - {{ categoryName | titlecase }}
-        </h2>
-        <h2 *ngIf="filterType === 'category' && !genre">
-          {{ categoryName | titlecase }}
-        </h2>
-        <h2 *ngIf="filterType === 'genre' && !categoryName">
-          Articles pour {{ genre }}
-        </h2>
-        <h2 *ngIf="!filterType && !categoryName && !genre">
-          Tous nos articles
-        </h2>
-        
-        <!-- Fil d'Ariane (Breadcrumb) -->
+      
+        <!-- Fil d'Ariane (Breadcrumb)
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a [routerLink]="['/accueil']">Accueil</a></li>
+            <li class="breadcrumb-item"><a [routerLink]="['/accueil']"><i class="feather icon-home"></i>Accueil</a></li>
             <li *ngIf="categoryName" class="breadcrumb-item"><a [routerLink]="['/' + categoryName.toLowerCase()]">{{ categoryName | titlecase }}</a></li>
             <li *ngIf="genre" class="breadcrumb-item"><a [routerLink]="['/' + genre.toLowerCase()]">{{ genre }}</a></li>
             <li class="breadcrumb-item active" aria-current="page">Résultats</li>
           </ol>
-        </nav>
+        </nav> -->
       </div>
     </div>
     
@@ -40,27 +23,167 @@
         <p class="mt-2">Chargement des articles...</p>
       </div>
     </div>
+
+    <div class="col-12 section-heading text-center my-5 ">
+      <!-- Titre basé sur le type de filtre -->
+      <h2  class="text-muted mt-3 heading-subtitle"*ngIf="filterType === 'categoryAndGenre'">
+        {{ categoryName | titlecase }} pour {{ genre }}
+      </h2>
+      <h2  class="text-muted mt-3 heading-subtitle"*ngIf="filterType === 'genreAndCategory'">
+        {{ genre }} - {{ categoryName | titlecase }}
+      </h2>
+      <h2 class="text-muted mt-3 heading-subtitle" *ngIf="filterType === 'category' && !genre">
+        {{ categoryName | titlecase }}
+      </h2>
+      <h2 class="text-muted mt-3 heading-subtitle" *ngIf="filterType === 'genre' && !categoryName">
+        Articles pour {{ genre }}
+      </h2>
+      <h2 class="text-muted mt-3 heading-subtitle" *ngIf="!filterType && !categoryName && !genre">
+        Tous nos articles
+      </h2>
+      <div class="decorative-line mx-auto mt-3 mb-5"></div>
+
     
-    <!-- Message si aucun résultat -->
-    <div *ngIf="!isLoading && articles.length === 0" class="row">
-      <div class="col-12 text-center py-5">
-        <div class="alert alert-info">
-          <i class="fas fa-info-circle me-2"></i>
-          <span *ngIf="filterType === 'categoryAndGenre'">
-            Aucun article de {{ categoryName | titlecase }} pour {{ genre }} n'a été trouvé.
-          </span>
-          <span *ngIf="filterType === 'category'">
-            Aucun article dans la catégorie {{ categoryName | titlecase }} n'a été trouvé.
-          </span>
-          <span *ngIf="filterType === 'genre'">
-            Aucun article pour {{ genre }} n'a été trouvé.
-          </span>
-          <span *ngIf="!filterType">
-            Aucun article disponible pour le moment.
-          </span>
+<div class="articles-container">
+  <!-- Conteneur principal avec animation de transition -->
+  <div class="articles-grid-container">
+    <div class="articles-grid" 
+         [class.animate-in]="animateIn" 
+         [class.animate-out]="animateOut">
+      
+      <!-- Articles en grille pour la page actuelle -->
+      <ng-container *ngIf="articleGroups && articleGroups.length > 0">
+        <div *ngFor="let article of articleGroups[currentPage]; let i = index"
+             class="article-item mb-5"
+             [style.animation-delay]="i * 50 + 'ms'">
+          
+          <div class="article-card">
+            <!-- Contenu de la carte (images et carousel) -->
+            <div class="card-img-container position-relative">
+              <div class="carousel slide card-carousel"
+                   [attr.id]="'carousel' + article.id"
+                   data-bs-interval="false"
+                   (slid.bs.carousel)="onSlide($event, article.id)">
+                
+                <div class="carousel-inner">
+                  <!-- Boutons de favoris -->
+                  <button *ngIf="isFavorite(article.id)" 
+                          (click)="toggleFavoris(article)" 
+                          class="favorite-btn position-relative border-0 bg-transparent">
+                    <i class="fas fa-heart text-danger" style="font-size: 1.5rem;"></i>
+                  </button>
+            
+                  <button *ngIf="!isFavorite(article.id)" 
+                          (click)="toggleFavoris(article)" 
+                          class="favorite-btn position-relative border-0 bg-transparent">
+                    <i class="far fa-heart text-dark" style="font-size: 1.5rem;"></i>
+                  </button>
+            
+                  <!-- Images du carousel -->
+                  <div *ngFor="let photo of article.photos; let i = index" 
+                       class="carousel-item"
+                       [class.active]="i === 0">
+                    <img [src]="photo.url" class="article-img"
+                         alt="{{ article.name }}" loading="lazy">
+                  </div>
+                </div>
+            
+                <!-- Contrôles du carousel -->
+                <button class="carousel-control-prev" type="button" 
+                        [attr.data-bs-target]="'#carousel' + article.id" 
+                        data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Précédent</span>
+                </button>
+                <button class="carousel-control-next" type="button" 
+                        [attr.data-bs-target]="'#carousel' + article.id" 
+                        data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Suivant</span>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Indicateurs du carousel -->
+            <div class="article-indicators d-flex justify-content-center mt-2">
+              <div *ngFor="let photo of article.photos; let i = index" 
+                   class="indicator-dot" 
+                   [class.active]="activeIndexes[article.id] === i"
+                   [attr.data-bs-target]="'#carousel' + article.id"
+                   [attr.data-bs-slide-to]="i">
+              </div>
+            </div>
+            
+            <!-- Corps de la carte -->
+            <div class="elegant-card-content">
+              <!-- En-tête avec catégorie et nom -->
+              <div class="elegant-card-header mb-1">
+                <div *ngIf="article.category" class="elegant-category">
+                  {{ article.category.name }}
+                </div>
+                <div>
+                  <h4 class="card-title mb-0">{{ article.name }}</h4>
+                  <p class="card-description mt-0">{{ article.description | slice:0:80 }}{{ article.description.length > 80 ? '...' : '' }}</p>
+                </div>
+              </div>
+              
+              <!-- Méta-informations de la carte -->
+              <div class="card-meta mt-1">
+                <span>{{ article.prixVente }} <span style="font-weight: bold;">DT</span></span>
+                <!-- Bouton détails -->
+                <button class="btn-details" (click)="voirDetailsArticle(article)" title="Voir détails">
+                  Détails
+                </button>
+              </div>
+              
+              <!-- Pied de carte avec le bouton panier -->
+              <div class="card-footer">
+                <div class="card-actions">
+                  <button class="btn-cart" (click)="ouvrirModal(article)" title="Ajouter au panier">
+                    <i class="fas fa-shopping-cart"></i>
+                  </button>
+                </div>
+              </div>
+              
+            </div>
+          </div>
         </div>
-      </div>
+      </ng-container>
+      
+  
     </div>
+  </div>
+  
+  <!-- Navigation avec boutons précédent/suivant DÉPLACÉE EN BAS -->
+  <div class="navigation-container mt-0">
+    <div class="navigation-bg"></div>
+    <div class="articles-navigation">
+      <button class="btn-nav btn-prev" 
+              [disabled]="currentPage === 0" 
+              (click)="previousPage()">
+        <i class="fas fa-chevron-left"></i> Précédent
+      </button>
+      
+      <div class="page-indicator">
+        <span>Page</span>
+        <div class="page-dots">
+          <div *ngFor="let group of articleGroups; let j = index" 
+               class="page-dot"
+               [class.active]="j === currentPage"
+               (click)="goToPage(j)"></div>
+        </div>
+        <span>{{ currentPage + 1 }} / {{ articleGroups.length || 1 }}</span>
+      </div>
+      
+      <button class="btn-nav btn-next" 
+              [disabled]="currentPage >= articleGroups.length - 1" 
+              (click)="nextPage()">
+        Suivant <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+  
   
     
     <!-- Grille d'articles -->
@@ -135,82 +258,156 @@
   </div>
 
 
-  <!-- Modal pour l'ajout au panier -->
+<!-- Le modal reste inchangé comme demandé -->
 <div *ngIf="selectedArticle" class="modal d-block" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #3c2313; color: white;">
-                <h5 class="modal-title">Ajouter au Panier</h5>
-                <button type="button" class="btn-close btn-close-white" (click)="selectedArticle = null"></button>
-            </div>
-            <div class="modal-body text-center">
-                
-                <!-- Modal Carousel -->
-                <div id="carouselArticle" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <div *ngFor="let photo of selectedArticle.photos; let i = index" 
-                             class="carousel-item" 
-                             [class.active]="i === 0">
-                            <img [src]="photo.url" class="d-block w-100 rounded" alt="Image article"
-                                 style="max-height: 300px; object-fit: cover;">
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselArticle" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselArticle" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    </button>
-                </div>
-  
-                <h4 class="mt-3 mb-3">{{ selectedArticle.name }}</h4>
-                <h5 class="text-danger mb-4">{{ selectedArticle.prixVente }} DT</h5>
-                
-                <!-- Sélection des couleurs avec cercles de couleur -->
-                <div *ngIf="selectedArticle?.stocks?.length" class="mb-4">
-                    <h6 class="text-start mb-2">Couleur :</h6>
-                    <div class="d-flex flex-wrap justify-content-start color-selection">
-                        <div *ngFor="let couleur of getUniqueColors(selectedArticle.stocks)" 
-                             class="color-option me-3 mb-2" 
-                             (click)="selectCouleur(couleur)">
-                            <div class="color-circle"
-                                 [style.background-color]="couleur.nom"
-                                 [class.selected]="selectedCouleur?.id === couleur.id">
+  <div class="modal-dialog modal-dialog-centered modal-xlg" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">
+                  <i class="fas fa-shopping-bag me-2"></i>Ajouter au Panier
+              </h5>
+              <button type="button" class="btn-close btn-close-white" (click)="selectedArticle = null"></button>
+          </div>
+          
+          <div class="modal-body">
+              <div class="row">
+                  <!-- Colonne de gauche pour l'image -->
+                  <div class="col-md-6">
+                      <!-- Carousel amélioré -->
+                      <div id="carouselArticle" class="carousel slide carousel-fade shadow" data-bs-ride="carousel">
+                          <div class="carousel-inner rounded-3">
+                              <div *ngFor="let photo of selectedArticle.photos; let i = index" 
+                                   class="carousel-item" 
+                                   [class.active]="i === activePhotoIndex || (activePhotoIndex === undefined && i === 0)">
+                                  <img [src]="photo.url" class="d-block w-100" alt="Image article"
+                                       style="height: 320px; object-fit: cover;">
+                              </div>
+                          </div>
+                          <button class="carousel-control-prev" type="button" data-bs-target="#carouselArticle" data-bs-slide="prev">
+                              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          </button>
+                          <button class="carousel-control-next" type="button" data-bs-target="#carouselArticle" data-bs-slide="next">
+                              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          </button>
+                      </div>
+                      
+                      <!-- Miniatures sous l'image principale -->
+                      <div class="thumbnails-container mt-3">
+                          <div class="row g-2">
+                            <ng-container *ngFor="let photo of selectedArticle.photos; let i = index">
+                              <div *ngIf="i < 3" class="col-4">
+                                <div class="thumbnail"
+                                     [class.active]="i === activePhotoIndex || (activePhotoIndex === undefined && i === 0)"
+                                     (click)="setActivePhoto(i)">
+                                  <img [src]="photo.url" class="img-fluid rounded" alt="Miniature">
+                                </div>
+                              </div>
+                            </ng-container>
+                            
+                              <div *ngIf="selectedArticle.photos.length > 3" class="col-4">
+                                  <div class="thumbnail more-photos" (click)="showAllPhotos()">
+                                      <span>+{{ selectedArticle.photos.length - 3 }}</span>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  <!-- Colonne de droite pour les détails -->
+                  <div class="col-md-6">
+                      <div class="product-details">
+                          <!-- En-tête produit plus raffiné -->
+                          <div class="product-header">
+                              <h4 class="product-title">{{ selectedArticle.name }}</h4>
+                              <div class="price-tag">
+                                  <span class="price">{{ selectedArticle.prixVente }} DT</span>
+                                  <span *ngIf="selectedArticle.prixVente < selectedArticle.prixVente" class="original-price">
+                                      {{ selectedArticle.prixVente }} DT
+                                  </span>
+                                  <span *ngIf="selectedArticle.prixVente < selectedArticle.prixVente" class="discount-badge">
+                                      -{{ Math.round((1 - selectedArticle.prixVente/selectedArticle.prixVente) * 100) }}%
+                                  </span>
+                              </div>
+                          </div>
+                          
+                          <!-- Description -->
+                          <div class="product-short-desc" *ngIf="selectedArticle.description">
+                            <h6 class="description-title">Description</h6>
+                            <div class="description-content">
+                                <p>{{ selectedArticle.description | slice:0:150 }}{{ selectedArticle.description.length > 150 ? '...' : '' }}</p>
+                                <button *ngIf="selectedArticle.description.length > 150" 
+                                        class="btn btn-link btn-sm read-more-btn"
+                                        (click)="toggleFullDescription()">
+                                    {{ showFullDescription ? 'Voir moins' : 'Voir plus' }}
+                                </button>
+                                <div *ngIf="showFullDescription" class="full-description">
+                                    <p>{{ selectedArticle.description }}</p>
+                                </div>
                             </div>
-                            <div class="color-name" [class.selected]="selectedCouleur?.id === couleur.id">
-                                {{ couleur.nom }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sélection des pointures avec indication de stock -->
-                <div *ngIf="selectedCouleur && selectedPointures.length > 0" class="mb-4">
-                    <h6 class="text-start mb-2">Pointure :</h6>
-                    <div class="d-flex flex-wrap justify-content-start">
-                        <div *ngFor="let pointure of selectedPointures"
-                             class="size-option me-2 mb-2"
-                             [class.selected]="selectedPointure?.id === pointure.id"
-                             [class.out-of-stock]="pointureOutOfStock[pointure.id]"
-                             (click)="selectPointure(pointure)">
-                            {{ pointure.taille }}
-                            <div *ngIf="pointureOutOfStock[pointure.id]" class="out-of-stock-indicator">
-                                <i class="fas fa-times"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" (click)="selectedArticle = null">
-                    Annuler
-                </button>
-                <button type="button" class="btn btn-primary" 
-                        [disabled]="!selectedCouleur || !selectedPointure || stockInsuffisant"
-                        (click)="confirmerAjoutAuPanier()">
-                    <i class="fas fa-shopping-cart me-2"></i> Ajouter au panier
-                </button>
-            </div>
-        </div>
-    </div>
+                          </div>
+                          
+                          <!-- Ligne de séparation décorative -->
+                          <div class="divider">
+                              <span></span>
+                          </div>
+                          
+                          <!-- Options de personnalisation -->
+                          <div class="product-options">
+                              <!-- Sélection des couleurs -->
+                              <div *ngIf="selectedArticle?.stocks?.length" class="selection-section">
+                                  <h6 class="selection-title">
+                                     Couleur
+                                  </h6>
+                                  <div class="color-selection">
+                                      <div *ngFor="let couleur of getUniqueColors(selectedArticle.stocks)" 
+                                           class="color-option"
+                                           (click)="selectCouleur(couleur)">
+                                          <div class="color-circle"
+                                               [style.background-color]="couleur.nom"
+                                               [class.selected]="selectedCouleur?.id === couleur.id">
+                                              <i *ngIf="selectedCouleur?.id === couleur.id" class="fas fa-check color-check"></i>
+                                          </div>
+                                          <div class="color-name" [class.selected]="selectedCouleur?.id === couleur.id">
+                                            {{ getNomCouleur(couleur.nom) }}
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                              <h6 class="selection-title">
+                                Pointure
+                            </h6>
+                              <!-- Sélection des pointures -->
+                              <div *ngIf="selectedCouleur && selectedPointures.length > 0" class="selection-section">
+                                  
+                                  <div class="size-selection">
+                                      <div *ngFor="let pointure of selectedPointures"
+                                           class="size-option"
+                                           [class.selected]="selectedPointure?.id === pointure.id"
+                                           [class.out-of-stock]="pointureOutOfStock[pointure.id]"
+                                           (click)="selectPointure(pointure)">
+                                          {{ pointure.taille }}
+                                          <div *ngIf="pointureOutOfStock[pointure.id]" class="out-of-stock-indicator">
+                                              <i class="fas fa-times"></i>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
+          <div class="modal-footer">
+              <button type="button" class="btn btn-outline" (click)="selectedArticle = null">
+                  Annuler
+              </button>
+              <button type="button" class="btn btn-primary" 
+                      [disabled]="!selectedCouleur || !selectedPointure || stockInsuffisant"
+                      (click)="confirmerAjoutAuPanier()">
+                  <i class="fas fa-shopping-cart me-2"></i> Ajouter au panier
+              </button>
+          </div>
+      </div>
+  </div>
 </div>

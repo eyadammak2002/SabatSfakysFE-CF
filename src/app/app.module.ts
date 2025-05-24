@@ -66,6 +66,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { NgChartsModule } from 'ng2-charts';
 import { AttentLivraisonComponent } from './commande/attent-livraison/attent-livraison.component';
 import { ListFavorisComponent } from './fournisseur-dashboard/list-favoris/list-favoris.component';
+import { ContactComponent } from './contact/contact.component';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { ListFavorisComponent } from './fournisseur-dashboard/list-favoris/list-
     ResetPasswordComponent,
     IntelligentSearchComponent,
     ListFournisseurComponent,
+    ContactComponent,
     
     
 

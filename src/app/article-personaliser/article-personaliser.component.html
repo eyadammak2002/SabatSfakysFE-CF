@@ -1,207 +1,246 @@
 <style>
-/* Styles généraux */
 .personaliser-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: 'Roboto', sans-serif;
+  padding: 2rem;
+
+  .header-section {
+    margin-bottom: 2rem;
+
+    .main-title {
+      color: #3c2313;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: #3c2313aa;
+      font-size: 1rem;
+    }
+
+    .create-btn {
+      background-color: #63a50a;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      margin-top: 1rem;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: darken(#63a50a, 10%);
+      }
+    }
+  }
+
+  .loading-container {
+    text-align: center;
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #ccc;
+      border-top: 4px solid #63a50a;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+
+    .loading-text {
+      margin-top: 1rem;
+      color: #3c2313;
+    }
+  }
+
+  .error-message {
+    color: #3c2313;
+    background-color: #f8d7da;
+    padding: 1rem;
+    border-left: 5px solid #3c2313;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    color: #3c2313;
+
+    .empty-icon {
+      font-size: 3rem;
+      color: #63a50a;
+    }
+
+    .empty-title {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    .empty-description {
+      color: #3c2313aa;
+    }
+  }
+
+  .articles-container {
+    .articles-header {
+      background-color: #3c2313;
+      color: white;
+      border-radius: 0.5rem;
+     
+    }
+
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .article-card {
+      border-radius: 1rem;
+      overflow: hidden;
+      background-color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      .article-image-container {
+        position: relative;
+
+        .article-image img {
+          width: 100%;
+          height: 180px;
+          object-fit: cover;
+        }
+
+        .status-badge {
+          position: absolute;
+          bottom: 0.5rem;
+          left: 0.5rem;
+          padding: 0.3rem 0.6rem;
+          background-color: #63a50a;
+          color: white;
+          font-size: 0.75rem;
+          border-radius: 0.3rem;
+        }
+
+        .article-no-image {
+          height: 180px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #f2f2f2;
+          color: #ccc;
+        }
+      }
+
+      .article-content {
+        padding: 1rem;
+        color: #3c2313;
+
+        .article-meta {
+          display: flex;
+          flex-direction: column;
+          gap: 0.3rem;
+          font-size: 0.85rem;
+        }
+
+        .article-description {
+          margin: 0.5rem 0;
+        }
+
+        .article-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+
+          .article-tag {
+            background-color: #9d9692;
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.3rem;
+            font-size: 0.75rem;
+
+            i {
+              margin-right: 0.2rem;
+            }
+          }
+        }
+      }
+
+      .article-actions {
+        padding: 0.5rem 1rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .action-btn {
+          background-color: #63a50a;
+          color: white;
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 0.4rem;
+          font-size: 0.85rem;
+          transition: background-color 0.3s ease;
+
+          &:hover {
+            background-color: darken(#63a50a, 10%);
+          }
+        }
+
+        .action-btn-group {
+          display: flex;
+          gap: 0.5rem;
+
+          .btn-action {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            border-radius: 0.4rem;
+            border: none;
+            color: white;
+            transition: background-color 0.3s ease;
+
+            &.btn-edit {
+              background-color: #3c2313;
+
+              &:hover {
+                background-color: lighten(#3c2313, 10%);
+              }
+
+              &:disabled {
+                background-color: #999;
+                cursor: not-allowed;
+              }
+            }
+
+            &.btn-delete {
+              background-color: #a50a0a;
+
+              &:hover {
+                background-color: darken(#a50a0a, 10%);
+              }
+
+              &:disabled {
+                background-color: #999;
+                cursor: not-allowed;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
-/* En-tête animé */
-.header-section {
-  background: linear-gradient(to right, #f8f9fa, #f8f9fa);
-  border-radius: 12px;
-  padding: 20px 15px;
-  margin-bottom: 20px;
-  box-shadow: 0 3px 10px rgba(60, 35, 19, 0.2);
-  transform: translateY(0);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
-
-.header-section:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-}
-
-.header-content {
-  max-width: 650px;
-  margin: 0 auto;
-}
-
-.main-title {
-  color: #3c2313;
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  position: relative;
-  display: inline-block;
-}
-
-.main-title:after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 2px;
-  background: #63a50a;
-  border-radius: 3px;
-}
-
-.subtitle {
-  color: #6c757d;
-  font-size: 14px;
-  margin-bottom: 20px;
-  margin-top: 15px;
-}
-
-/* Bouton de création d'article */
-.create-btn {
-  background: #3c2313;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 50px;
-  font-weight: 500;
-  font-size: 13px;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 8px rgba(60, 35, 19, 0.2);
-}
-
-.create-btn:hover {
-  background: #63a50a;
-  transform: translateY(-1px);
-  box-shadow: 0 5px 12px rgba(99, 165, 10, 0.3);
-}
-
-.create-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(60, 35, 19, 0.2);
-}
-
-/* État de chargement */
-.loading-container {
-  padding: 40px 0;
-}
-
-.spinner-container {
-  width: 50px;
-  height: 50px;
-}
-
-.spinner {
-  border: 3px solid #e9ecef;
-  border-top-color: #3c2313;
-  animation: spinner 1s linear infinite;
-}
-
-@keyframes spinner {
-  to { transform: rotate(360deg); }
-}
-
-.loading-text {
-  font-size: 14px;
-}
-
-/* Message d'erreur */
-.error-message {
-  font-size: 14px;
-  padding: 12px;
-  margin-bottom: 15px;
-}
-
-/* État vide */
-.empty-state {
-  padding: 30px 15px;
-}
-
-.empty-icon-container {
-  width: 60px;
-  height: 60px;
-}
-
-.empty-icon {
-  font-size: 28px;
-}
-
-.empty-title {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
-.empty-description {
-  font-size: 14px;
-}
-
-/* Liste des articles */
-.articles-title {
-  font-size: 18px;
-}
-
-.articles-count {
-  font-size: 12px;
-}
-
-.articles-grid {
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 15px;
-  padding: 15px;
-}
-
-/* Carte d'article */
-.article-card {
-  border-radius: 8px;
-}
-
-.article-image-container {
-  height: 150px;
-}
-
-.article-no-image i {
-  font-size: 28px;
-}
-
-.status-badge {
-  font-size: 11px;
-  padding: 4px 8px;
-}
-
-.article-content {
-  padding: 15px;
-}
-
-.article-title {
-  font-size: 16px;
-}
-
-.article-meta {
-  font-size: 12px;
-}
-
-.article-description {
-  font-size: 13px;
-}
-
-.article-tag {
-  font-size: 11px;
-  padding: 3px 6px;
-}
-
-.article-actions {
-  padding: 10px;
-}
-
-.action-btn {
-  font-size: 13px;
-  padding: 8px;
-}
-
 
 </style>
 <div class="personaliser-container mt-5" >
   <!-- En-tête avec animation -->
-  <div class="header-section mt-5" >
+  <div class="header-section mt-5" style="background-color: #eaeaea;">
     <div class="header-content text-center" >
       <h2 class="main-title">Mes Articles Personnalisés</h2>
       <p class="subtitle">Consultez et gérez vos demandes d'articles sur mesure</p>
@@ -241,9 +280,9 @@
 
   <!-- Liste des articles personnalisés -->
   <div *ngIf="!isLoading && articlesPersonalises.length > 0" class="articles-container">
-    <div class="articles-header"  style="height: 60px;" >
-      <h3 class="">
-        <i class="fas fa-tshirt me-2"></i> Vos articles personnalisés
+    <div class="articles-header"  style="height: 40px;" >
+      <h3 class="mt-0">
+        <i class="fas fa-tshirt me-2 ms-5"></i> Vos articles personnalisés
         <span class="articles-count">{{ articlesPersonalises.length }}</span>
       </h3>
     </div>
@@ -267,7 +306,6 @@
         </div>
         
         <div class="article-content">
-          <h4 class="article-title">{{ article.id }}</h4>
           
           <div class="article-meta">
             <div class="article-date">
@@ -298,19 +336,19 @@
               <i class="fas fa-tshirt me-1"></i> {{ article.tissu }}
             </span>
             <span class="article-tag reference" *ngIf="article.pointure">
-              <i class="fas fa-hashtag me-1"></i> {{ article.pointure }}
+              Pointure : {{ article.pointure }}
             </span>
             <span class="article-tag reference" *ngIf="article.couleur">
-              <i class="fas fa-hashtag me-1"></i> {{ article.couleur }}
+              Couleur : {{ article.couleur }}
             </span>
             <span class="article-tag reference" *ngIf="article.typePied">
-              <i class="fas fa-hashtag me-1"></i> {{ article.typePied }}
+              Type De Pied : {{ article.typePied }}
             </span>
             <span class="article-tag reference" *ngIf="article.formePied">
-              <i class="fas fa-hashtag me-1"></i> {{ article.formePied }}
+              Forme De Pied : {{ article.formePied }}
             </span>
             <span class="article-tag reference" *ngIf="article.typeSemelle">
-              <i class="fas fa-hashtag me-1"></i> {{ article.typeSemelle }}
+              Type De Semelle {{ article.typeSemelle }}
             </span>
             
           </div>

@@ -10,7 +10,10 @@ import { SearchDataService } from 'src/app/services/search-data.service';
 import { CategoryService } from 'src/app/category/category.service';
 import { FavorisService } from 'src/app/services/favoris.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
-
+export interface FeaturedImage {
+  url: string;
+  alt?: string;
+}
 @Component({
   selector: 'app-list-article',
   templateUrl: './list-article.component.html',
@@ -47,12 +50,28 @@ export class ListArticleComponent implements OnInit ,AfterViewInit{
 
   activeSlideIndex: number = 0;
 
+  
+
   // Variables de pagination
   currentPage: number = 0;
   articleGroups: any[][] = [];
-  articlesPerPage: number = 10; // Nombre d'articles par page
+  articlesPerPage: number = 19; // Nombre d'articles par page
   animateIn: boolean = true;
   animateOut: boolean = false;
+
+  // Nouvelle propriété pour l'image featured
+  featuredImage: FeaturedImage = {
+    url: 'assets/botte1.jpg', // Votre image comme dans l'exemple
+    alt: 'Chaussures enfant'
+  };
+
+  // Position où afficher l'image featured (0 = première position, 1 = deuxième position, etc.)
+  featuredImagePosition: number = 5; // Deuxième carte
+
+  // Page où afficher l'image featured
+  featuredImagePage: number = 0; // Première page
+
+
   constructor(
     private articleService: ArticleService,
     private panierService: PanierService,
@@ -661,5 +680,41 @@ get Math() {
     return mapCouleurs[couleurCode] || couleurCode;
   }
   
+
+  shouldShowFeaturedImage(index: number): boolean {
+    return (
+      this.currentPage === this.featuredImagePage && 
+      index === this.featuredImagePosition
+    );
+  }
+
+  /**
+   * Met à jour l'image featured
+   */
+  updateFeaturedImage(imageUrl: string, alt?: string): void {
+    this.featuredImage = {
+      url: imageUrl,
+      alt: alt || 'Image mise en avant'
+    };
+  }
+
+  /**
+   * Change la position de l'image featured
+   */
+  setFeaturedImagePosition(position: number, page: number = 0): void {
+    this.featuredImagePosition = position;
+    this.featuredImagePage = page;
+  }
+
+  /**
+   * Active/désactive l'affichage de l'image featured
+   */
+  toggleFeaturedImage(show: boolean): void {
+    if (show) {
+      this.featuredImagePosition = 1; // Position par défaut
+    } else {
+      this.featuredImagePosition = -1; // Position invalide pour cacher
+    }
+  }
   
 }

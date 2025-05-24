@@ -143,8 +143,9 @@ export class ArticlePersonaliserService {
   }
 
   deleteArticlePersonaliser(id: number): Observable<string> {
-    return this.http.delete<string>(`${this.apiUrl}/${id}`);
+    return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
   }
+  
 
   getPhotoByName(name: string): Observable<any> {
     return this.http.get<any>(`${API_CONFIG.apiBaseUrl}/photos/name/${name}`);

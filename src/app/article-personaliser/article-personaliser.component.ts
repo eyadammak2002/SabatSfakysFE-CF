@@ -62,21 +62,27 @@ export class ArticlePersonaliserComponent implements OnInit {
     });
   }
 
-  // Supprimer un article personnalisé
   supprimerArticlePersonalise(id: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer cet article personnalisé ?')) {
       this.articlePersonaliserService.deleteArticlePersonaliser(id).subscribe({
-        next: () => {
+        next: (responseMessage: string) => {
+          // Mise à jour locale
           this.articlesPersonalises = this.articlesPersonalises.filter(article => article.id !== id);
-          alert('Article personnalisé supprimé avec succès.');
+          
+          // Affiche le message renvoyé par le backend
+          alert(responseMessage);
         },
         error: (err) => {
           console.error('Erreur lors de la suppression de l\'article personnalisé:', err);
-          alert('Erreur lors de la suppression de l\'article personnalisé. Veuillez réessayer.');
+  
+          const message = err?.error || '❌ Erreur inconnue lors de la suppression.';
+          alert(message);
         }
       });
     }
   }
+  
+  
 
   // Modifier un article personnalisé
   modifierArticlePersonalise(id: number): void {
@@ -85,7 +91,7 @@ export class ArticlePersonaliserComponent implements OnInit {
 
   // Créer un nouvel article personnalisé
   creerArticlePersonalise(): void {
-    this.router.navigate(['/article-personaliser/create']);
+    this.router.navigate(['/createArticlePersonaliser']);
   }
 
   // Formater la date pour l'affichage

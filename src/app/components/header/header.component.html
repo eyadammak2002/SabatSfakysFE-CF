@@ -56,11 +56,11 @@
       </a>
       
       <!-- Icône de profil avec dropdown -->
-      <div class="dropdown">
+      <div ngbDropdown class="dropdown category-dropdown">
         <a routerLink="/profil" class="icon-link profile-icon updateProfileIcon" title="Mon profil">
           <i class="fas fa-user"></i>
         </a>
-        <div class="dropdown-menu" *ngIf="!isLoggedIn">
+        <div ngbDropdownMenu class="dropdown-menu" *ngIf="!isLoggedIn">
           <a routerLink="/auth/client/login">
             <i class="fas fa-user menu-icon"></i> Espace Client
           </a>
@@ -119,21 +119,16 @@
           <p>Vous n'avez pas de notifications</p>
         </div>
       </div>
-
-
-
-
-
-    </div>
+</div>
 
     <!-- Dropdown Espace Fournisseur -->
-    <div ngbDropdown class="dropdown" *ngIf="showFournisseurDashboard">
+    <div ngbDropdown class="dropdown category-dropdown" *ngIf="showFournisseurDashboard">
       <a routerLink="/fournisseur" ngbDropdownToggle class="nav-link d-flex align-items-center">
         <i class="fas fa-store store-icon"></i>
         <span class="text-bold">Espace Fournisseur</span>
       </a>
 
-      <div ngbDropdownMenu class="dropdown-menu custom-dropdown-menu">
+      <div ngbDropdownMenu class="dropdown-menu ">
         <a (click)="redirectToClient()" ngbDropdownItem>
           <i class="fas fa-user menu-icon"></i>Navigate to Espace Client
         </a>
@@ -161,157 +156,241 @@
       </div>
     </div>
 
-    <!-- Dropdown Espace Client -->
-    <div ngbDropdown class="dropdown" *ngIf="showClientDashboard">
-      <a routerLink="/client" ngbDropdownToggle class="nav-link d-flex align-items-center">
-        <i class="fas fa-user store-icon"></i>
-        <span class="text-bold">Espace Client</span>
-      </a>
-
-      <div ngbDropdownMenu class="dropdown-menu custom-dropdown-menu">
-        <a *ngIf="role === 'ROLE_CLIENT' && role2 === 'ROLE_FOURNISSEUR'" (click)="redirectToFR()" ngbDropdownItem>
-          <i class="fas fa-store menu-icon"></i> Revenir à l'Espace Fournisseur
-        </a>
-        <a ngbDropdownItem routerLink="/panier">
-          <i class="fas fa-shopping-cart menu-icon"></i> Mon Panier
-        </a>
-        <a ngbDropdownItem routerLink="/favoris">
-          <i class="far fa-heart menu-icon"></i> Mes Favoris
-        </a>
-        <a (click)="redirectToProfile()" ngbDropdownItem>
-          <i class="fas fa-id-card menu-icon"></i> Mon Profil
-        </a>
-        <a (click)="redirectToCommande()" ngbDropdownItem>
-          <i class="fas fa-clipboard-list menu-icon"></i> Ma Commande
-        </a>
-        <a (click)="redirectToListReclamation()" ngbDropdownItem>
-          <i class="fas fa-exclamation-circle menu-icon"></i> Mes Réclamations
-        </a>
-        <a (click)="redirectToListCommande()" ngbDropdownItem>
-          <i class="fas fa-history menu-icon"></i> Historique Commandes
-        </a>
-        
-        <!-- Profil dans le menu -->
-        <div class="dropdown-profile">
-          <span class="profile-name">{{ username }}</span><br><br>
-          <span class="profile-name">{{ email }}</span>
-        </div>
-        
-        <!-- Bouton déconnexion -->
-        <a href="javascript:void(0);" *ngIf="isLoggedIn" (click)="logout()" class="logout-link">
-          <i class="fas fa-sign-out-alt"></i> Déconnexion
-        </a>
-      </div>
+  <!-- Dropdown Espace Client -->
+<div class="dropdown-hover" *ngIf="showClientDashboard">
+  <a routerLink="/client" class="nav-link">
+    <i class="fas fa-user store-icon"></i>
+    <span class="text-bold">Espace Client</span>
+  </a>
+  
+  <div class="dropdown-menu-hover">
+    <a *ngIf="role === 'ROLE_CLIENT' && role2 === 'ROLE_FOURNISSEUR'" 
+       (click)="redirectToFR()" 
+       class="dropdown-item-hover supplier-return">
+      <i class="fas fa-store menu-icon"></i> 
+      Revenir à l'Espace Fournisseur
+    </a>
+    
+    <a routerLink="/panier" class="dropdown-item-hover">
+      <i class="fas fa-shopping-cart menu-icon"></i> 
+      Mon Panier
+    </a>
+    
+    <a routerLink="/favoris" class="dropdown-item-hover">
+      <i class="far fa-heart menu-icon"></i> 
+      Mes Favoris
+    </a>
+    
+    <a (click)="redirectToProfile()" class="dropdown-item-hover">
+      <i class="fas fa-id-card menu-icon"></i> 
+      Mon Profil
+    </a>
+    
+    <a (click)="redirectToCommande()" class="dropdown-item-hover">
+      <i class="fas fa-clipboard-list menu-icon"></i> 
+      Ma Commande
+    </a>
+    
+    <a (click)="redirectToListReclamation()" class="dropdown-item-hover">
+      <i class="fas fa-exclamation-circle menu-icon"></i> 
+      Mes Réclamations
+    </a>
+    
+    <a (click)="redirectToListCommande()" class="dropdown-item-hover">
+      <i class="fas fa-history menu-icon"></i> 
+      Historique Commandes
+    </a>
+    
+    <!-- Profil dans le menu -->
+    <div class="dropdown-profile">
+      <span class="profile-name">{{ username }}</span>
+      <span class="profile-name">{{ email }}</span>
     </div>
+    
+    <!-- Bouton déconnexion -->
+    <a href="javascript:void(0);" 
+       *ngIf="isLoggedIn" 
+       (click)="logout()" 
+       class="logout-link">
+      <i class="fas fa-sign-out-alt"></i> 
+      Déconnexion
+    </a>
   </div>
-
-  <!-- Dropdown des notifications -->
-  <div class="notification-dropdown" [class.show]="isNotificationDropdownOpen">
-    <div class="notification-header">
-      <h3>Notifications</h3>
-      <button class="clear-btn" (click)="clearNotifications()" *ngIf="unreadNotifications.length > 0 || readNotifications.length > 0">
-        <i class="fas fa-trash"></i>
-      </button>
-    </div>
-    
-    <div class="notification-section" *ngIf="unreadNotifications.length > 0" >
-      <h4 class="section-title">Nouvelles ({{ unreadNotifications.length }})</h4>
-      <div class="notification-list">
-        <div class="notification-item unread" *ngFor="let notification of unreadNotifications" onclick="getCommandeById">
-          <div class="notification-content">
-            <div class="notification-message">{{ notification.message }}</div>
-            <div class="notification-time">{{ notification.createdAt | date:'short' }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Section des notifications lues -->
-    <div class="notification-section" *ngIf="readNotifications.length > 0">
-      <h4 class="section-title">Lues ({{ readNotifications.length }})</h4>
-      <div class="notification-list">
-        <div class="notification-item read" *ngFor="let notification of readNotifications">
-          <div class="notification-content">
-            <div class="notification-message">{{ notification.message }}</div>
-            <div class="notification-time">{{ notification.createdAt | date:'short' }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    
-    <!-- Message s'il n'y a pas de notifications -->
-    <div class="no-notifications" *ngIf="unreadNotifications.length === 0 && readNotifications.length === 0">
-      <p>Vous n'avez pas de notifications</p>
-    </div>
-  </div>
-
+</div>
+</div>
   <!-- Menu de navigation principal -->
-  <nav *ngIf="!showFournisseurDashboard" class="nav-links" style="background-color: rgba(165, 147, 130, 0.22);height: 50px;">
-    <div ngbDropdown class="dropdown">
-      <a  href="#" (click)="filterByCategory('chaussures', $event)" ngbDropdownToggle>
-         Chaussures Classiques
-      </a>
-      <div ngbDropdownMenu class="dropdown-menu">
-        <a href="#" (click)="filterByCategoryAndGenre('chaussures', 'FEMME', $event)" ngbDropdownItem>
-         FEMME
-        </a>
-        <a href="#" (click)="filterByCategoryAndGenre('chaussures', 'HOMME', $event)" ngbDropdownItem>
-           HOMME
-        </a>
-        <a href="#" (click)="filterByCategoryAndGenre('chaussures', 'ENFANT', $event)" ngbDropdownItem>
-         ENFANT
-        </a>
+  <!-- Menu de navigation principal modifié -->
+<!-- Voici le code modifié pour votre navigation avec des images dans les dropdowns -->
+<!-- Navigation avec mega menu et grandes images, style SACE -->
+<!-- HTML corrigé pour mega menu pleine largeur -->
+<nav *ngIf="!showFournisseurDashboard" class="nav-links">
+  <!-- Chaussures Classiques -->
+  <div ngbDropdown class="dropdown category-dropdown" container="body">
+    <a href="#" (click)="filterByCategory('chaussures', $event)" ngbDropdownToggle>
+      Chaussures Classiques
+    </a>
+    <div ngbDropdownMenu class="mega-menu">
+      <div class="mega-menu-container">
+        <!-- Image principale à gauche -->
+        <div class="mega-menu-banner">
+          <img src="assets/enf1.jpg" alt="Collection Femme 1" class="banner-image">
+          <img src="assets/enf2.jpg" alt="Collection Femme 2" class="banner-image">
+          <img src="assets/enf3.jpg" alt="Collection Femme 3" class="banner-image">
+        </div>
+        
+        
+        <!-- Catégories au centre -->
+        <div class="mega-menu-categories">
+          <h3>CATÉGORIES</h3>
+          <ul>
+            <li><a href="#" (click)="filterByCategoryAndGenre('chaussures', 'FEMME', $event)">Chaussures Femme</a></li>
+            <li><a href="#" (click)="filterByCategoryAndGenre('chaussures', 'HOMME', $event)">Chaussures Homme</a></li>
+            <li><a href="#" (click)="filterByCategoryAndGenre('chaussures', 'ENFANT', $event)">Chaussures Enfant</a></li>
+          </ul>
+             <!-- Notre sélection en bas -->
+      <div class="mega-menu-selection">
+        <h3>NOTRE SÉLECTION</h3>
+        <div class="selection-products">
+          <div class="selection-product">
+            <div class="product-image">
+              <img src="/assets/enf2.jpg" alt="Modèle Exclusif">
+            </div>
+            <span class="product-name">Escarpins Élégance</span>
+            <span class="product-price">139.990 TND</span>
+          </div>
+          <div class="selection-product">
+            <div class="product-image">
+              <img src="/assets/enf1.jpg" alt="Modèle Tendance">
+            </div>
+            <span class="product-name">Ballerines Confort</span>
+            <span class="product-price">89.990 TND</span>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div ngbDropdown class="dropdown">
-      <a  href="#" (click)="filterByCategory('botte', $event)" ngbDropdownToggle>
-        Bottes
-      </a>
-      <div ngbDropdownMenu class="dropdown-menu">
-        <a href="#" (click)="filterByCategoryAndGenre('botte', 'FEMME', $event)" ngbDropdownItem>
-         FEMME
-        </a>
-        <a href="#" (click)="filterByCategoryAndGenre('botte', 'HOMME', $event)" ngbDropdownItem>
-          HOMME
-        </a>
-        <a href="#" (click)="filterByCategoryAndGenre('botte', 'ENFANT', $event)" ngbDropdownItem>
-        ENFANT
-        </a>
+        </div>
       </div>
+      
+   
     </div>
+  </div>
 
-    <div ngbDropdown class="dropdown" display="dynamic" placement="bottom">
-      <a   href="#" (click)="filterByCategory('mocassins', $event)" ngbDropdownToggle>
-       Mocassins
-      </a>
-      <div ngbDropdownMenu class="dropdown-menu">
-        <a href="#" (click)="filterByCategoryAndGenre('mocassins', 'FEMME', $event)" ngbDropdownItem>
-          FEMME
-        </a>
-        <a href="#" (click)="filterByCategoryAndGenre('mocassins', 'HOMME', $event)" ngbDropdownItem>
-          HOMME
-        </a>
-        <a href="#" (click)="filterByCategoryAndGenre('mocassins', 'ENFANT', $event)" ngbDropdownItem>
-          ENFANT
-        </a>
+  <!-- Bottes -->
+  <div ngbDropdown class="dropdown category-dropdown" container="body">
+    <a href="#" (click)="filterByCategory('botte', $event)" ngbDropdownToggle>
+      Bottes
+    </a>
+    <div ngbDropdownMenu class="mega-menu">
+      <div class="mega-menu-container">
+        <!-- Image principale à gauche -->
+        <div class="mega-menu-banner">
+          <img src="/assets/botte1.jpg" alt="Collection Bottes">
+        </div>
+        
+        <!-- Catégories au centre -->
+        <div class="mega-menu-categories">
+          <h3>CATÉGORIES</h3>
+          <ul>
+            <li><a href="#" (click)="filterByCategoryAndGenre('botte', 'FEMME', $event)">Bottes Femme</a></li>
+            <li><a href="#" (click)="filterByCategoryAndGenre('botte', 'HOMME', $event)">Bottes Homme</a></li>
+            <li><a href="#" (click)="filterByCategoryAndGenre('botte', 'ENFANT', $event)">Bottes Enfant</a></li>
+          </ul>
+           <!-- Notre sélection en bas -->
+      <div class="mega-menu-selection">
+        <h3>NOTRE SÉLECTION</h3>
+        <div class="selection-products">
+          <div class="selection-product">
+            <div class="product-image">
+              <img src="/assets/enf3.jpg" alt="Bottes Tendance">
+            </div>
+            <span class="product-name">Bottes Cuir Premium</span>
+            <span class="product-price">249.990 TND</span>
+          </div>
+          <div class="selection-product">
+            <div class="product-image">
+              <img src="/assets/enf3.jpg" alt="Bottines Élégantes">
+            </div>
+            <span class="product-name">Bottines Chelsea</span>
+            <span class="product-price">179.990 TND</span>
+          </div>
+        </div>
       </div>
+        </div>
+      </div>
+      
+     
     </div>
+  </div>
 
-    <div *ngIf="isLoggedIn" ngbDropdown class="dropdown" display="dynamic" placement="bottom">
-      <a routerLink="/personnaliser" ngbDropdownToggle>
-       Chaussures Personnalisées
-      </a>
-      <div ngbDropdownMenu class="dropdown-menu">
-        <a class="dropdown-item" routerLink="/createArticlePersonaliser">
+  <!-- Mocassins -->
+  <div ngbDropdown class="dropdown category-dropdown" container="body">
+    <a href="#" (click)="filterByCategory('mocassins', $event)" ngbDropdownToggle>
+      Mocassins
+    </a>
+    <div ngbDropdownMenu class="mega-menu">
+      <div class="mega-menu-container">
+        <!-- Image principale à gauche -->
+        <div class="mega-menu-banner">
+          <img src="/assets/enf2.jpg" alt="Collection Mocassins">
+        </div>
+        
+        <!-- Catégories au centre -->
+        <div class="mega-menu-categories">
+          <h3>CATÉGORIES</h3>
+          <ul>
+            <li><a href="#" (click)="filterByCategoryAndGenre('mocassins', 'FEMME', $event)">Mocassins Femme</a></li>
+            <li><a href="#" (click)="filterByCategoryAndGenre('mocassins', 'HOMME', $event)">Mocassins Homme</a></li>
+            <li><a href="#" (click)="filterByCategoryAndGenre('mocassins', 'ENFANT', $event)">Mocassins Enfant</a></li>
+            <li><a href="#" (click)="filterByCategory('cuir')">En Cuir</a></li>
+            <li><a href="#" (click)="filterByCategory('mocassins')">Mocassins</a></li>
+          </ul>
+               <!-- Notre sélection en bas -->
+      <div class="mega-menu-selection">
+        <h3>NOTRE SÉLECTION</h3>
+        <div class="selection-products">
+          <div class="selection-product">
+            <div class="product-image">
+              <img src="/assets/enf1.jpg" alt="Mocassins Premium">
+            </div>
+            <span class="product-name">Mocassins Tradition</span>
+            <span class="product-price">159.990 TND</span>
+          </div>
+          <div class="selection-product">
+            <div class="product-image">
+              <img src="/assets/enf3.jpg" alt="Mocassins Élégants">
+            </div>
+            <span class="product-name">Mocassins Daim</span>
+            <span class="product-price">129.990 TND</span>
+          </div>
+        </div>
+      </div>
+        </div>
+      </div>
+      
+ 
+    </div>
+  </div>
+
+  <!-- Chaussures Personnalisées -->
+  <div *ngIf="isLoggedIn" ngbDropdown class="dropdown category-dropdown">
+    <a routerLink="/personnaliser" ngbDropdownToggle>
+      Chaussures Personnalisées
+    </a>
+    <div ngbDropdownMenu class="dropdown-menu">
+      <a class="dropdown-item" routerLink="/createArticlePersonaliser">
         Commander personnalisée
-        </a>
-        <a class="dropdown-item" routerLink="/articlePersonaliser">
+      </a>
+      <a class="dropdown-item" routerLink="/articlePersonaliser">
         Mes commandes personnalisées
-        </a>
-      </div>
+      </a>
     </div>
-  </nav>
+  </div>
+
+  <!-- Contact -->
+  <div *ngIf="isLoggedIn" ngbDropdown class="dropdown category-dropdown">
+    <a routerLink="/contact" ngbDropdownToggle>
+      Contact
+    </a>
+  </div>
+</nav>
 </header>
  
