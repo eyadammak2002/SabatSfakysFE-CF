@@ -19,8 +19,8 @@ import { animate, style, transition, trigger } from '@angular/animations';
   selector: 'app-create-article-personaliser',
   standalone: true,
   imports: [FormsModule, CommonModule],
-  templateUrl: './create-articlepersonaliser.component.html',
-  styleUrls: ['./create-articlepersonaliser.component.css'],
+  templateUrl: './create-articlePersonaliser.component.html',
+  styleUrls: ['./create-articlePersonaliser.component.css'],
   animations: [
     trigger('fadeAnimation', [
       transition(':enter', [

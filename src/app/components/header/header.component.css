@@ -252,6 +252,8 @@
 .dropdown-item-hover:hover .menu-icon {
   transform: scale(1.2);
 }/* Dropdown Container */
+
+
 .dropdown-hover {
   position: relative;
   display: inline-block;

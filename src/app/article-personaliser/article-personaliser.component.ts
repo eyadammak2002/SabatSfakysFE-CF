@@ -16,8 +16,8 @@ import { Couleur, Pointure } from '../article/article';
     CommonModule,
     RouterModule,
   ],
-  templateUrl: './article-Personaliser.component.html',
-  styleUrls: ['./article-Personaliser.component.css']
+  templateUrl: './article-personaliser.component.html',
+  styleUrls: ['./article-personaliser.component.css']
 })
 export class ArticlePersonaliserComponent implements OnInit {
   articlesPersonalises: ArticlePersonaliser[] = [];
