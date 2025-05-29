@@ -188,17 +188,15 @@
 
 /* Menu dropdown */
 .dropdown-menu-hover {
-  transform: translateY(-15px) translateX(20px) scale(0.95);
+  transform: translateX(20px) scale(0.95);
   position: absolute;
   top: 100%;
   min-width: 320px;
   background: white;
   border: 1px solid #e9ecef;
-  border-radius: 12px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.15);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-15px) scale(0.95);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1050;
   overflow: hidden;
@@ -226,7 +224,6 @@
   text-decoration: none;
   color: #495057;
   transition: all 0.2s ease;
-  border-bottom: 1px solid #f8f9fa;
   font-size: 15px;
   cursor: pointer;
 }
@@ -236,8 +233,8 @@
 }
 
 .dropdown-item-hover:hover {
-  background: linear-gradient(135deg, #007bff, #0056b3);
-  color: white;
+  background: linear-gradient(135deg, #aa9f9461, #aa9f9461);
+  color: black;
   transform: translateX(5px);
 }
 
@@ -524,7 +521,7 @@
 }
 
 .logout-link:hover {
-  background: rgba(99, 165, 10, 0.2);
+  background: linear-gradient(135deg, #aa9f9461, #aa9f9461);
   border-radius: 5px;
 }
 

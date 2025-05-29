@@ -252,47 +252,25 @@ export class PanierComponent implements OnInit {
       adresseLivraison: this.adresseLivraison,
       statut: "VALIDER"
     };
-
+  
     console.log("🛒 Envoi du panier avec adresse au backend", panierAvecAdresse);
-
-    // PREMIÈRE ÉTAPE : Créer le panier avec l'ID de l'utilisateur
-    console.log("🔥 Création du panier avec user.id :", user.id);
-    
-    this.panierService.creerPanier(user.id, panierAvecAdresse).subscribe({
+  
+    // Récupérer l'ID de l'utilisateur (maintenant on utilise l'ID du client récupéré)
+    const userId = this.clientData && this.clientData.id ? this.clientData.id : user.id;
+  
+    // Appeler la méthode creerPanier pour créer le panier avec l'adresse
+    this.panierService.creerPanier(userId, panierAvecAdresse).subscribe({
       next: (data) => {
-        console.log("✅ Panier créé avec user.id :", data);
-        
-        // DEUXIÈME ÉTAPE : Maintenant changer avec l'ID du client si disponible
-        if (this.clientData && this.clientData.id && this.clientData.id !== user.id) {
-          console.log("🔄 Mise à jour du panier avec client.id :", this.clientData.id);
-          
-          // Mettre à jour le panier avec l'ID du client
-          const panierAvecClientId = { 
-            ...data,
-            clientId: this.clientData.id
-          };
-          
-          // Ici vous pourriez avoir une méthode pour mettre à jour le panier
-          // Par exemple : this.panierService.updatePanierClientId(data.id, this.clientData.id)
-          // Ou directement utiliser les données avec le nouvel ID client
-          
-          console.log("📝 Panier final avec client.id :", panierAvecClientId);
-          
-          alert("Panier créé avec succès avec l'adresse de livraison et l'ID client !");
-        } else {
-          console.log("ℹ️ Utilisation de l'user.id comme client.id");
-          alert("Panier créé avec succès avec l'adresse de livraison !");
-        }
-        
+        console.log("✅ Panier créé avec adresse de livraison :", data);
+        alert("Panier créé avec succès avec l'adresse de livraison !");
         console.log('Panier créé avec ID:', data.id);
         localStorage.setItem('panierIdCMD', data.id);
         console.log('🆔 ID du panier sauvegardé dans localStorage :', localStorage.getItem('panierIdCMD'));
 
         // Mettre à jour le panier dans localStorage
         this.panierService.sauvegarderPanierDansLocalStorage();
-        console.log('Panier créé après sauvegarde:', this.panierService);
-        
-        // Nettoyer le localStorage
+        console.log('Panier créé aprés sauvgarde:', this.panierService);
+          // Nettoyer le localStorage (AJOUTEZ CETTE LIGNE)
         localStorage.removeItem('adresseLivraison');
 
         // Redirection vers la page de commande
@@ -347,6 +325,7 @@ export class PanierComponent implements OnInit {
     return mapCouleurs[couleurCode] || couleurCode;
   }
 
+
   redirectToaccueil(): void {
     // Vérifier si l'utilisateur est connecté
     const user = this.tokenStorage.getUser();
@@ -361,4 +340,5 @@ export class PanierComponent implements OnInit {
       this.router.navigate(['/accueil']);
     }
   }
+
 }

@@ -342,4 +342,8 @@ export class ListFournisseurComponent implements OnInit {
     
     this.selectedArticle = null;
   }
+
+  goBack() {
+    this.router.navigate(['/createArticlePersonaliser']);
+  }
 }

@@ -19,36 +19,59 @@ export class ForgetPasswordComponent {
   errorMessage: string = '';
   successMessage: string = '';
   
-  constructor(private forgetPasswordService: ForgetpasswordService,
-        private router: Router
-    
+  constructor(
+    private forgetPasswordService: ForgetpasswordService,
+    private router: Router
   ) {}
-  
-  findByEmail(email: string) {
-    if (!email) return;
-    
+
+  reinitialisation() {
+    // Vérifier si l'email est valide
+    if (!this.user.email || !this.isValidEmail(this.user.email)) {
+      this.errorMessage = 'Veuillez saisir une adresse email valide.';
+      this.successMessage = '';
+      return;
+    }
+
     this.isLoading = true;
-    this.emailExists = null;
     this.errorMessage = '';
     this.successMessage = '';
-    
-    this.forgetPasswordService.findByEmail(email).subscribe((response: string) => {
-      this.isLoading = false;
 
-      this.successMessage=response;
+    // D'abord vérifier si l'email existe
+    this.forgetPasswordService.findByEmail(this.user.email).subscribe({
+      next: (response: string) => {
+        // Si l'email existe, envoyer le lien de réinitialisation
+        this.forgetPasswordService.reinitialisation(this.user.email).subscribe({
+          next: (resetResponse: string) => {
+            this.isLoading = false;
+            this.successMessage = resetResponse;
+            
+            // Redirection vers la page reset password après 2 secondes
+            setTimeout(() => {
+              this.router.navigate(['auth/client/reset-password']);
+            }, 2000);
+          },
+          error: (error) => {
+            this.isLoading = false;
+            this.errorMessage = 'Erreur lors de l\'envoi du lien de réinitialisation.';
+            console.error('Erreur reinitialisation:', error);
+          }
+        });
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = 'Cette adresse email n\'existe pas dans notre système.';
+        console.error('Erreur vérification email:', error);
+      }
     });
   }
 
-  reinitialisation(){
-    this.forgetPasswordService.reinitialisation(this.user.email).subscribe((response: string) => {
-      this.isLoading = false;
-
-      this.successMessage=response;
-    })
+  // Méthode pour valider le format de l'email
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 
   goToLogin() {
     this.router.navigate(['auth/client/login']);
   }
-  
 }

@@ -9,6 +9,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ConfirmDialogComponent } from '../components/confirm-dialog.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatStepperModule } from '@angular/material/stepper';
+import { forkJoin, map } from 'rxjs';
 
 @Component({
   selector: 'app-commande',
@@ -36,41 +37,58 @@ export class CommandeComponent implements OnInit, AfterViewInit {
   constructor(private panierService: PanierService, private router: Router, private snackBar: MatSnackBar,
     private dialog: MatDialog) {}
 
-  ngOnInit(): void {
-    const clientId = this.panierService.getClientId(); // récupère le client connecté
+    ngOnInit(): void {
+      const clientId = this.panierService.getClientId();
+      
+      if (clientId) {
+        this.panierService.getDernierPanierClient(clientId).subscribe({
+          next: (panier) => {
+            this.panier = panier;
+            
+            if (!this.panier.modePaiement) {
+              this.panier.modePaiement = 'LIVRAISON';
+            }
+            this.modePaiement = this.panier.modePaiement;
     
-    if (clientId) {
-      this.panierService.getDernierPanierClient(clientId).subscribe({
-        next: (panier) => {
-          this.panier = panier;
-          // Définir le mode de paiement par défaut si pas déjà défini
-          if (!this.panier.modePaiement) {
-            this.panier.modePaiement = 'LIVRAISON';
-          }
-          this.modePaiement = this.panier.modePaiement;
+            // Utiliser forkJoin comme dans le premier composant pour charger tous les détails
+            const observables = this.panier.lignesPanier.map((ligne: any) => {
+              return forkJoin({
+                article: this.panierService.getArticleFromLignePanier(ligne.id),
+                details: this.panierService.getCouleurAndPointureFromLigne(ligne.id)
+              }).pipe(
+                map(results => {
+                  ligne.article = results.article;
+                  ligne.couleur = results.details.couleur;
+                  ligne.pointure = results.details.pointure;
+                  return ligne;
+                })
+              );
+            });
     
-          // Charger les articles
-          this.panier.lignesPanier.forEach((ligne) => {
-            console.log("ligne", ligne);
-            this.panierService.getArticleFromLignePanier(ligne.id).subscribe({
-              next: (article) => {
-                ligne.article = article;
+            // Si le panier n'a pas de lignes, initialiser PayPal immédiatement
+            if (observables.length === 0) {
+              this.initPayPalConfig();
+              return;
+            }
+    
+            // Attendre que toutes les requêtes soient terminées
+            forkJoin(observables).subscribe({
+              next: (lignesCompletes) => {
+                this.panier.lignesPanier = lignesCompletes;
+                this.initPayPalConfig();
               },
               error: (err) => {
-                console.error(`Erreur lors de la récupération de l'article pour la ligne ${ligne.id}`, err);
+                console.error('Erreur lors du chargement des détails des articles:', err);
+                this.initPayPalConfig(); // Initialiser quand même PayPal
               }
             });
-          });
-    
-          this.initPayPalConfig();
-        },
-        error: (err) => {
-          console.error('Erreur lors de la récupération du dernier panier', err);
-        }
-      });
+          },
+          error: (err) => {
+            console.error('Erreur lors de la récupération du dernier panier', err);
+          }
+        });
+      }
     }
-  }
-
   ngAfterViewInit(): void {}
 
   // Initialisation de la configuration PayPal

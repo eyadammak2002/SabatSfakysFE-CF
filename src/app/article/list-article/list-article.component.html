@@ -268,6 +268,16 @@
                 <h4 class="card-title mb-0">{{ article.name }}</h4>
                 <p class="card-description mt-0">{{ article.description | slice:0:80 }}{{ article.description.length > 80 ? '...' : '' }}</p>
               </div>
+              <div *ngIf="article.stocks && article.stocks.length > 0" class="d-flex align-items-center mb-2">
+                <small class="text-muted me-2">Couleurs:</small>
+                <div class="d-flex">
+                  <div *ngFor="let couleur of getUniqueColors(article.stocks)"
+                       class="rounded-circle me-1"
+                       [style.background-color]="couleur.nom"
+                       [title]="getNomCouleur(couleur.nom)"
+                       style="width: 15px; height: 15px; border: 1px solid rgba(0,0,0,0.1);"></div>
+                </div>
+              </div>
             </div>
             
             <!-- Méta-informations de la carte -->
@@ -484,21 +494,7 @@
 </div>
 
 
-<div class="announcement-bar">
-  <div class="announcement-content">
-    <div class="announcement-marquee">
-      <span><i class="bi bi-truck"></i> LIVRAISON GRATUITE SUR TOUTES LES COMMANDES</span>
-      <span><i class="bi bi-leaf"></i> PRODUITS ÉCO-RESPONSABLES - SOUTENEZ L'ARTISANAT LOCAL</span>
-      <span><i class="bi bi-recycle"></i> EMBALLAGES 100% RECYCLABLES</span>
-      <span><i class="bi bi-calendar-check"></i> LIVRAISON GARANTIE EN 2-3 JOURS OUVRABLES</span>
-      <!-- Répétition des éléments pour assurer un défilement continu -->
-      <span><i class="bi bi-truck"></i> LIVRAISON GRATUITE SUR TOUTES LES COMMANDES</span>
-      <span><i class="bi bi-leaf"></i> PRODUITS ÉCO-RESPONSABLES - SOUTENEZ L'ARTISANAT LOCAL</span>
-      <span><i class="bi bi-recycle"></i> EMBALLAGES 100% RECYCLABLES</span>
-      <span><i class="bi bi-calendar-check"></i> LIVRAISON GARANTIE EN 2-3 JOURS OUVRABLES</span>
-    </div>
-  </div>
-</div>
+
 
 
 
@@ -506,10 +502,10 @@
 
 
 <!-- Effet de parallaxe section par section pour un site d'artisanat écologique -->
-<div class="parallax-wrapper mt-0"  >
+<div class="parallax-wrapper mt-0">
 
   <!-- SECTION 3 : PRODUITS AVEC PARALLAXE -->
-  <section class="parallax-section" id="products">
+  <section class="parallax-section mb-0" id="products">
     <!-- filter: blur(1px);-->
     <div class="parallax-bg " style="background-image: url('./assets/1.jpeg'); "></div>
     <div class="content dark fixed-img">
@@ -517,15 +513,148 @@
       <p style="color: white;">Découvrez l'alliance parfaite entre tradition et innovation</p>
       <a href="/accueil" class="btn outline">Voir la boutique</a>
     </div>
-  </section>
+    
+  </section > 
 
  
-</div>
+  <div class="announcementRouge-bar mt-5">
+    <div class="announcement-content">
+      <div class="announcement-marquee">
+        <span> NOUVEAU </span>
+        <span><i class="bi bi-star-fill me-1" style="color: #ffffff;"></i>Notre nouvelle collection </span>
+        <span> NOUVEAU </span>
+        <span><i class="bi bi-star-fill me-1" style="color: #ffffff;"></i> Notre nouvelle collection </span>
+        <span> NOUVEAU </span>
+        <span><i class="bi bi-star-fill me-1" style="color: #ffffff;"></i>Notre nouvelle collection </span>
+
+        <!-- Répétition des éléments pour assurer un défilement continu -->
+        <span><i class="bi bi-star-fill me-1" style="color: #ffffff;"></i> Notre nouvelle collection </span>
+        <span> NOUVEAU </span>
+        <span><i class="bi bi-star-fill me-1" style="color: #ffffff;"></i> Notre nouvelle collection </span>
+        <span> NOUVEAU </span>
+        <span><i class="bi bi-star-fill me-1" style="color: #ffffff;"></i>Notre nouvelle collection </span>
+
+      </div>
+    </div>
+  </div>
+  
+
+  <div class="articles-container">
+    
+    <div class="row animated-articles-container" 
+         [class.fade-out]="isAnimating" 
+         [class.fade-in]="!isAnimating">
+      
+      <div class="col-xl-2-4 col-lg-2-4 col-md-4 col-sm-6 col-6 mb-4" 
+           *ngFor="let article of displayedNewArticles; let i = index"
+           [style.animation-delay]="(i * 100) + 'ms'">
+        
+        <div class="article-card">
+          <div class="card-img-container position-relative">
+            <div class="nouveau-badge">
+              <i class="bi bi-star-fill me-1"></i> NOUVEAU
+            </div>
+  
+            <div class="carousel slide card-carousel"
+                 [attr.id]="'carousel' + article.id"
+                 data-bs-interval="false"
+                 (slid.bs.carousel)="onSlide($event, article.id)">
+              
+              <div class="carousel-inner">
+                <button *ngIf="isFavorite(article.id)"
+                        (click)="toggleFavoris(article)"
+                        class="favorite-btn position-relative border-0 bg-transparent">
+                  <i class="fas fa-heart text-danger" style="font-size: 1.5rem;"></i>
+                </button>
+                
+                <button *ngIf="!isFavorite(article.id)"
+                        (click)="toggleFavoris(article)"
+                        class="favorite-btn position-relative border-0 bg-transparent">
+                  <i class="far fa-heart text-dark" style="font-size: 1.5rem;"></i>
+                </button>
+                
+                <div *ngFor="let photo of article.photos; let photoIndex = index"
+                     class="carousel-item"
+                     [class.active]="photoIndex === 0">
+                  <img [src]="photo.url" class="article-img"
+                       alt="{{ article.name }}" loading="lazy">
+                </div>
+              </div>
+              
+              <button class="carousel-control-prev" type="button"
+                      [attr.data-bs-target]="'#carousel' + article.id"
+                      data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Précédent</span>
+              </button>
+              
+              <button class="carousel-control-next" type="button"
+                      [attr.data-bs-target]="'#carousel' + article.id"
+                      data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Suivant</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="article-indicators d-flex justify-content-center mt-2">
+            <div *ngFor="let photo of article.photos; let indicatorIndex = index"
+                 class="indicator-dot"
+                 [class.active]="activeIndexes[article.id] === indicatorIndex"
+                 [attr.data-bs-target]="'#carousel' + article.id"
+                 [attr.data-bs-slide-to]="indicatorIndex">
+            </div>
+          </div>
+          
+          <div class="elegant-card-content">
+            <div class="elegant-card-header mb-1">
+              <div *ngIf="article.category" class="elegant-category">
+                {{ article.category.name }}
+              </div>
+              <div>
+                <h4 class="card-title mb-0">{{ article.name }}</h4>
+                <p class="card-description mt-0">
+                  {{ article.description | slice:0:80 }}{{ article.description.length > 80 ? '...' : '' }}
+                </p>
+              </div>
+            </div>
+            
+            <div class="card-meta mt-1">
+              <span>{{ article.prixVente }} <span style="font-weight: bold;">DT</span></span>
+              <button class="btn-details" (click)="voirDetailsArticle(article)" title="Voir détails">
+                Détails
+              </button>
+            </div>
+            
+            <div class="card-footer">
+              <div class="card-actions">
+                <button class="btn-cart" (click)="ouvrirModal(article)" title="Ajouter au panier">
+                  <i class="fas fa-shopping-cart"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Indicateurs de groupe (optionnel) -->
+    <div class="group-indicators d-flex justify-content-center mt-3" 
+         *ngIf="top10NewArticles.length > 5">
+      <div class="group-indicator" 
+           [class.active-group]="showFirstGroup"
+           (click)="displayedNewArticles = top10NewArticles.slice(0, 5); showFirstGroup = true; restartNewArticlesAnimation()">
+      </div>
+      <div class="group-indicator ms-2" 
+           [class.active-group]="!showFirstGroup"
+           (click)="displayedNewArticles = top10NewArticles.slice(5, 10); showFirstGroup = false; restartNewArticlesAnimation()">
+      </div>
+    </div>
+  </div>
+  
 
 
-
-
-<section class="columns-section">
+<section class="columns-section mt-0">
   <div class="container">
       <h2 class="section-title">Nos Valeurs </h2>
       <div class="columns-grid">
@@ -555,6 +684,79 @@
       </div>
   </div>
 </section>
+
+
+
+
+<div class="fournisseurs-bar mt-0">
+
+  <div class="marquee-content" >
+
+  <!-- Première boucle fournisseurs -->
+  <div class="" *ngFor="let fournisseur of allFournisseurs" >
+    <div class="fournisseur-logo text-center mb-4">
+      <img *ngIf="fournisseur.logo; else placeholder" 
+           [src]="'http://localhost:8080/uploads/' + fournisseur.logo.name" 
+           [alt]="fournisseur.nom" 
+           class="logo-img" />
+      <ng-template #placeholder>
+        <i class="bi bi-shop logo-placeholder"></i>
+      </ng-template>
+    </div>
+    <div class="fournisseur-details fournisseur-item text-center">
+      <span><i class="bi bi-person-fill"></i> {{ fournisseur.nom }}</span>
+      <span><i class="bi bi-envelope-fill"></i> {{ fournisseur.email }}</span>
+      <!--<span><i class="bi bi-telephone-fill"></i> {{ fournisseur.telephone }}</span>
+      <span *ngIf="fournisseur.adresse"><i class="bi bi-geo-alt-fill"></i> {{ fournisseur.adresse }}</span>-->
+    </div>
+  </div>
+
+  <!-- 2éme boucle fournisseurs -->
+  <div class="" *ngFor="let fournisseur of allFournisseurs" >
+    <div class="fournisseur-logo text-center mb-4">
+      <img *ngIf="fournisseur.logo; else placeholder" 
+           [src]="'http://localhost:8080/uploads/' + fournisseur.logo.name" 
+           [alt]="fournisseur.nom" 
+           class="logo-img" />
+      <ng-template #placeholder>
+        <i class="bi bi-shop logo-placeholder"></i>
+      </ng-template>
+    </div>
+    <div class="fournisseur-details fournisseur-item text-center">
+      <span><i class="bi bi-person-fill"></i> {{ fournisseur.nom }}</span>
+      <span><i class="bi bi-envelope-fill"></i> {{ fournisseur.email }}</span>
+      <!--<span><i class="bi bi-telephone-fill"></i> {{ fournisseur.telephone }}</span>
+      <span *ngIf="fournisseur.adresse"><i class="bi bi-geo-alt-fill"></i> {{ fournisseur.adresse }}</span>-->
+    </div>
+  </div>
+
+  <div class="" *ngFor="let fournisseur of allFournisseurs" >
+    <div class="fournisseur-logo text-center mb-2">
+      <img *ngIf="fournisseur.logo; else placeholder" 
+           [src]="'http://localhost:8080/uploads/' + fournisseur.logo.name" 
+           [alt]="fournisseur.nom" 
+           class="logo-img" />
+      <ng-template #placeholder>
+        <i class="bi bi-shop logo-placeholder"></i>
+      </ng-template>
+    </div>
+    <div class="fournisseur-details fournisseur-item text-center">
+      <span><i class="bi bi-person-fill"></i> {{ fournisseur.nom }}</span>
+      <span><i class="bi bi-envelope-fill"></i> {{ fournisseur.email }}</span>
+      <!--<span><i class="bi bi-telephone-fill"></i> {{ fournisseur.telephone }}</span>
+      <span *ngIf="fournisseur.adresse"><i class="bi bi-geo-alt-fill"></i> {{ fournisseur.adresse }}</span>-->
+    </div>
+  </div>
+
+
+    <div *ngIf="allFournisseurs.length === 0" class="text-center py-4">
+      <i class="bi bi-shop fa-3x text-muted mb-3"></i>
+      <p class="text-muted">Aucun fournisseur disponible pour le moment</p>
+    </div>
+    </div>
+
+  </div>
+
 
 <!-- Version alternative plus simple -->
 <div class="layout-container mb-0">
@@ -588,6 +790,41 @@
   </div>
 </div>
 
+
+
+
+
+<div class="contact-container">
+  <!-- Map Section -->
+
+  <div class="map-section">
+      <div class="container">
+        <h2 class="map-title elegant-title">Visitez-nous artisants <span class="elegant-arabic">المدينة العتيقة</span></h2>
+        <div class="map-container">
+          <iframe src="https://internet-soft.tn/visite/v.html" 
+          width="100%" 
+          height="500px" 
+          frameborder="0">
+    </iframe>
+        </div>
+    
+      </div>
+    </div>
+  
+</div>
+<!--
+<div>
+  <h2 class="elegant-title">
+  Visitez-nous artisants <span class="elegant-arabic">المدينة العتيقة</span>
+  </h2>
+</div>
+
+<iframe src="https://internet-soft.tn/visite/v.html" 
+      width="100%" 
+      height="500px" 
+      frameborder="0">
+</iframe>
+-->
 
 
 

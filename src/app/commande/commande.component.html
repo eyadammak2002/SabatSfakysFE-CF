@@ -93,8 +93,15 @@
             </div>
             <div class="detail-group">
               <p><span>Quantité:</span> {{ ligne.quantite }}</p>
-              <p *ngIf="ligne.pointure"><span>Pointure:</span> {{ ligne.pointure?.id }}</p>
-              <p *ngIf="ligne.couleur"><span>Couleur:</span> {{ ligne.couleur?.id }}</p>
+              <!-- MODIFICATION ICI : Afficher les vraies valeurs -->
+              <p *ngIf="ligne.pointure"><span>Pointure:</span> {{ ligne.pointure.taille }}</p>
+              <p *ngIf="ligne.couleur">
+                <span>Couleur:</span> 
+                <span class="badge rounded-circle shadow-sm"
+                      [style.background]="ligne.couleur.nom"
+                      style="width: 18px; height: 18px; display: inline-block; margin-right: 5px;"></span>
+                {{ ligne.couleur.nom }}
+              </p>
             </div>
             <div class="price-group">
               <p class="total-price"><span>Total:</span> {{ ligne.total | number:'1.2-2' }} DT</p>
@@ -130,7 +137,7 @@
                [value]="'PAYPAL'" 
                [(ngModel)]="modePaiement">
         <label for="paiement-paypal">
-          <img src="assets/images/paypal-icon.png" alt="PayPal" class="payment-icon" 
+          <img src="assets/paypal.png" alt="PayPal" class="payment-icon" 
                onError="this.src='https://cdn.cdnlogo.com/logos/p/60/paypal.svg'; this.style.width='24px';">
           <span>Paiement par PayPal</span>
         </label>

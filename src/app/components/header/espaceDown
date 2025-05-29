@@ -119,104 +119,7 @@
           <p>Vous n'avez pas de notifications</p>
         </div>
       </div>
-</div>
-
-    <!-- Dropdown Espace Fournisseur -->
-    <div ngbDropdown class="dropdown category-dropdown" *ngIf="showFournisseurDashboard">
-      <a routerLink="/fournisseur" ngbDropdownToggle class="nav-link d-flex align-items-center">
-        <i class="fas fa-store store-icon"></i>
-        <span class="text-bold">Espace Fournisseur</span>
-      </a>
-
-      <div ngbDropdownMenu class="dropdown-menu ">
-        <a (click)="redirectToClient()" ngbDropdownItem>
-          <i class="fas fa-user menu-icon"></i>Navigate to Espace Client
-        </a>
-        <a (click)="redirectToProfileFR()" ngbDropdownItem>
-          <i class="fas fa-id-card menu-icon"></i> Profil
-        </a><!--
-        <a (click)="redirectToCreateArticle()" ngbDropdownItem>
-          <i class="fas fa-plus-circle menu-icon"></i> Déposer Article
-        </a>-->
- 
-        <a routerLink="/fournisseur/notifications" ngbDropdownItem>
-          <i class="fas fa-bell menu-icon"></i> Notifications
-        </a>
-        
-        <!-- Profil en bas du menu -->
-        <div class="dropdown-profile">
-          <span class="profile-name">{{ username }}</span><br><br>
-          <span class="profile-name">{{ email }}</span>
-        </div>
-
-        <!-- LogOut avec icône -->
-        <a href="javascript:void(0);" *ngIf="isLoggedIn" (click)="logout()" class="logout-link">
-          <i class="fas fa-sign-out-alt"></i> Déconnexion
-        </a>
-      </div>
-    </div>
-
-  <!-- Dropdown Espace Client -->
-<div class="dropdown-hover" *ngIf="showClientDashboard">
-  <a routerLink="/client" class="nav-link">
-    <i class="fas fa-user store-icon"></i>
-    <span class="text-bold">Espace Client</span>
-  </a>
-  
-  <div class="dropdown-menu-hover">
-    <a *ngIf="role === 'ROLE_CLIENT' && role2 === 'ROLE_FOURNISSEUR'" 
-       (click)="redirectToFR()" 
-       class="dropdown-item-hover supplier-return">
-      <i class="fas fa-store menu-icon"></i> 
-      Revenir à l'Espace Fournisseur
-    </a>
-    
-    <a routerLink="/panier" class="dropdown-item-hover">
-      <i class="fas fa-shopping-cart menu-icon"></i> 
-      Mon Panier
-    </a>
-    
-    <a routerLink="/favoris" class="dropdown-item-hover">
-      <i class="far fa-heart menu-icon"></i> 
-      Mes Favoris
-    </a>
-    
-    <a (click)="redirectToProfile()" class="dropdown-item-hover">
-      <i class="fas fa-id-card menu-icon"></i> 
-      Mon Profil
-    </a>
-    
-    <a (click)="redirectToCommande()" class="dropdown-item-hover">
-      <i class="fas fa-clipboard-list menu-icon"></i> 
-      Ma Commande
-    </a>
-    
-    <a (click)="redirectToListReclamation()" class="dropdown-item-hover">
-      <i class="fas fa-exclamation-circle menu-icon"></i> 
-      Mes Réclamations
-    </a>
-    
-    <a (click)="redirectToListCommande()" class="dropdown-item-hover">
-      <i class="fas fa-history menu-icon"></i> 
-      Historique Commandes
-    </a>
-    
-    <!-- Profil dans le menu -->
-    <div class="dropdown-profile">
-      <span class="profile-name">{{ username }}</span><br>
-      <span class="profile-name mt-4">{{ email }}</span>
-    </div>
-    
-    <!-- Bouton déconnexion -->
-    <a href="javascript:void(0);" 
-       *ngIf="isLoggedIn" 
-       (click)="logout()" 
-       class="logout-link">
-      <i class="fas fa-sign-out-alt"></i> 
-      Déconnexion
-    </a>
-  </div>
-</div>
+</div> 
 </div>
   <!-- Menu de navigation principal -->
   <!-- Menu de navigation principal modifié -->
@@ -391,6 +294,208 @@
       Contact
     </a>
   </div>
+  
+  <div ngbDropdown class="dropdown category-dropdown" *ngIf="showFournisseurDashboard">
+    <a routerLink="/fournisseur" ngbDropdownToggle class="nav-link d-flex align-items-center">
+      <i class="fas fa-store store-icon"></i>
+      <span class="text-bold">Espace Fournisseur</span>
+    </a>
+
+    <div ngbDropdownMenu class="dropdown-menu ">
+      <a (click)="redirectToClient()" ngbDropdownItem>
+        <i class="fas fa-user menu-icon"></i>Navigate to Espace Client
+      </a>
+      <a (click)="redirectToProfileFR()" ngbDropdownItem>
+        <i class="fas fa-id-card menu-icon"></i> Profil
+      </a><!--
+      <a (click)="redirectToCreateArticle()" ngbDropdownItem>
+        <i class="fas fa-plus-circle menu-icon"></i> Déposer Article
+      </a>-->
+
+      <a routerLink="/fournisseur/notifications" ngbDropdownItem>
+        <i class="fas fa-bell menu-icon"></i> Notifications
+      </a>
+      
+      <!-- Profil en bas du menu -->
+      <div class="dropdown-profile">
+        <span class="profile-name">{{ username }}</span><br><br>
+        <span class="profile-name">{{ email }}</span>
+      </div>
+
+      <!-- LogOut avec icône -->
+      <a href="javascript:void(0);" *ngIf="isLoggedIn" (click)="logout()" class="logout-link">
+        <i class="fas fa-sign-out-alt"></i> Déconnexion
+      </a>
+    </div>
+  </div>
+
+<!-- Dropdown Espace Client -->
+<div ngbDropdown class="dropdown category-dropdown" *ngIf="showClientDashboard">
+<a routerLink="/client" ngbDropdownToggle>
+  <i class="fas fa-user store-icon"></i>
+  <span class="text-bold">Espace Client</span>
+</a>
+
+<div ngbDropdownMenu class="dropdown-menu">
+  <a *ngIf="role === 'ROLE_CLIENT' && role2 === 'ROLE_FOURNISSEUR'" 
+     (click)="redirectToFR()" 
+     class="dropdown-item-hover supplier-return">
+    <i class="fas fa-store menu-icon"></i> 
+    Revenir à l'Espace Fournisseur
+  </a>
+  
+  <a routerLink="/panier" class="dropdown-item-hover">
+    <i class="fas fa-shopping-cart menu-icon"></i> 
+    Mon Panier
+  </a>
+  
+  <a routerLink="/favoris" class="dropdown-item-hover">
+    <i class="far fa-heart menu-icon"></i> 
+    Mes Favoris
+  </a>
+  
+  <a (click)="redirectToProfile()" class="dropdown-item-hover">
+    <i class="fas fa-id-card menu-icon"></i> 
+    Mon Profil
+  </a>
+  
+  <a (click)="redirectToCommande()" class="dropdown-item-hover">
+    <i class="fas fa-clipboard-list menu-icon"></i> 
+    Ma Commande
+  </a>
+  
+  <a (click)="redirectToListReclamation()" class="dropdown-item-hover">
+    <i class="fas fa-exclamation-circle menu-icon"></i> 
+    Mes Réclamations
+  </a>
+  
+  <a (click)="redirectToListCommande()" class="dropdown-item-hover">
+    <i class="fas fa-history menu-icon"></i> 
+    Historique Commandes
+  </a>
+  
+  <!-- Profil dans le menu -->
+  <div class="dropdown-profile">
+    <span class="profile-name">{{ username }}</span><br>
+    <span class="profile-name mt-4">{{ email }}</span>
+  </div>
+  
+  <!-- Bouton déconnexion -->
+  <a href="javascript:void(0);" 
+     *ngIf="isLoggedIn" 
+     (click)="logout()" 
+     class="logout-link">
+    <i class="fas fa-sign-out-alt"></i> 
+    Déconnexion
+  </a>
+</div>
+</div>
+</nav>
+
+
+
+<nav *ngIf="showFournisseurDashboard" class="nav-links">
+  <!-- Chaussures Classiques -->
+  
+  
+  <div ngbDropdown class="dropdown category-dropdown" *ngIf="showFournisseurDashboard">
+    <a routerLink="/fournisseur" ngbDropdownToggle class="nav-link d-flex align-items-center">
+      <i class="fas fa-store store-icon"></i>
+      <span class="text-bold">Espace Fournisseur</span>
+    </a>
+
+    <div ngbDropdownMenu class="dropdown-menu ">
+      <a (click)="redirectToClient()" ngbDropdownItem>
+        <i class="fas fa-user menu-icon"></i>Navigate to Espace Client
+      </a>
+      <a (click)="redirectToProfileFR()" ngbDropdownItem>
+        <i class="fas fa-id-card menu-icon"></i> Profil
+      </a><!--
+      <a (click)="redirectToCreateArticle()" ngbDropdownItem>
+        <i class="fas fa-plus-circle menu-icon"></i> Déposer Article
+      </a>-->
+
+      <a routerLink="/fournisseur/notifications" ngbDropdownItem>
+        <i class="fas fa-bell menu-icon"></i> Notifications
+      </a>
+      
+      <!-- Profil en bas du menu -->
+      <div class="dropdown-profile">
+        <span class="profile-name">{{ username }}</span><br><br>
+        <span class="profile-name">{{ email }}</span>
+      </div>
+
+      <!-- LogOut avec icône -->
+      <a href="javascript:void(0);" *ngIf="isLoggedIn" (click)="logout()" class="logout-link">
+        <i class="fas fa-sign-out-alt"></i> Déconnexion
+      </a>
+    </div>
+  </div>
+
+<!-- Dropdown Espace Client -->
+<div ngbDropdown class="dropdown category-dropdown" *ngIf="showClientDashboard">
+<a routerLink="/client" ngbDropdownToggle>
+  <i class="fas fa-user store-icon"></i>
+  <span class="text-bold">Espace Client</span>
+</a>
+
+<div ngbDropdownMenu class="dropdown-menu">
+  <a *ngIf="role === 'ROLE_CLIENT' && role2 === 'ROLE_FOURNISSEUR'" 
+     (click)="redirectToFR()" 
+     class="dropdown-item-hover supplier-return">
+    <i class="fas fa-store menu-icon"></i> 
+    Revenir à l'Espace Fournisseur
+  </a>
+  
+  <a routerLink="/panier" class="dropdown-item-hover">
+    <i class="fas fa-shopping-cart menu-icon"></i> 
+    Mon Panier
+  </a>
+  
+  <a routerLink="/favoris" class="dropdown-item-hover">
+    <i class="far fa-heart menu-icon"></i> 
+    Mes Favoris
+  </a>
+  
+  <a (click)="redirectToProfile()" class="dropdown-item-hover">
+    <i class="fas fa-id-card menu-icon"></i> 
+    Mon Profil
+  </a>
+  
+  <a (click)="redirectToCommande()" class="dropdown-item-hover">
+    <i class="fas fa-clipboard-list menu-icon"></i> 
+    Ma Commande
+  </a>
+  
+  <a (click)="redirectToListReclamation()" class="dropdown-item-hover">
+    <i class="fas fa-exclamation-circle menu-icon"></i> 
+    Mes Réclamations
+  </a>
+  
+  <a (click)="redirectToListCommande()" class="dropdown-item-hover">
+    <i class="fas fa-history menu-icon"></i> 
+    Historique Commandes
+  </a>
+  
+  <!-- Profil dans le menu -->
+  <div class="dropdown-profile">
+    <span class="profile-name">{{ username }}</span><br>
+    <span class="profile-name mt-4">{{ email }}</span>
+  </div>
+  
+  <!-- Bouton déconnexion -->
+  <a href="javascript:void(0);" 
+     *ngIf="isLoggedIn" 
+     (click)="logout()" 
+     class="logout-link">
+    <i class="fas fa-sign-out-alt"></i> 
+    Déconnexion
+  </a>
+</div>
+</div>
 </nav>
 </header>
  
+
+
+

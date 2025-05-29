@@ -129,6 +129,22 @@ getArticlesByCategorie(categoryId: number): Observable<Article[]> {
   return this.http.get<Article[]>(`${this.apiUrl}/category/${categoryId}`);
 }
 
+//Liste des 10 nouveaux articles acceptés
+// Méthode pour récupérer les 10 nouveaux articles acceptés
+getTop10NewAcceptedArticles(): Observable<Article[]> {
+  return this.http.get<Article[]>(`${this.apiUrl}/nouveaux-acceptes`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  }).pipe(
+    catchError(error => {
+      console.error('❌ Erreur lors de la récupération des nouveaux articles:', error);
+      return throwError(error);
+    })
+  );
+}
+
 
 
 }

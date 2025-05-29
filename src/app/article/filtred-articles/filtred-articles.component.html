@@ -125,6 +125,16 @@
                   <h4 class="card-title mb-0">{{ article.name }}</h4>
                   <p class="card-description mt-0">{{ article.description | slice:0:80 }}{{ article.description.length > 80 ? '...' : '' }}</p>
                 </div>
+                <div *ngIf="article.stocks && article.stocks.length > 0" class="d-flex align-items-center mb-2">
+                  <small class="text-muted me-2">Couleurs:</small>
+                  <div class="d-flex">
+                    <div *ngFor="let couleur of getUniqueColors(article.stocks)"
+                         class="rounded-circle me-1"
+                         [style.background-color]="couleur.nom"
+                         [title]="getNomCouleur(couleur.nom)"
+                         style="width: 15px; height: 15px; border: 1px solid rgba(0,0,0,0.1);"></div>
+                  </div>
+                </div>
               </div>
               
               <!-- Méta-informations de la carte -->

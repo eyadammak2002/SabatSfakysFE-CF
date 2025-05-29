@@ -484,4 +484,8 @@ viderPanier(): void {
   updateModePaiement(panierId: number, modePaiement: string): Observable<Panier> {
     return this.http.put<Panier>(`${this.apiUrl2}/${panierId}/mode-paiement?modePaiement=${modePaiement}`, {});
   }
+
+  getCouleurAndPointureFromLigne(ligneId: number): Observable<any> {
+    return this.http.get(`http://localhost:8080/lignePanier/bindCouleurPointureByLigne/${ligneId}`);
+  }
 }

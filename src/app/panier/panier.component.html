@@ -101,7 +101,60 @@
               <i class="fas fa-map-marker-alt me-1 text-primary"></i>Adresse de livraison
             </label>
           </div>
-          
+          <!-- Section Téléphone (à ajouter après l'adresse de livraison et avant les actions) -->
+<div *ngIf="panier.lignesPanier.length > 0" class="mb-4">
+  <div class="card bg-light border-0 rounded-lg shadow-sm">
+    <div class="card-header bg-primary text-white p-3">
+      <h6 class="fw-bold mb-0">
+        <i class="fas fa-phone me-2"></i>Numéro de téléphone
+      </h6>
+    </div>
+    <div class="card-body p-3">
+      <div class="form-floating mb-3">
+        <input 
+          type="tel" 
+          class="form-control border shadow-sm"
+          [class.is-invalid]="!telephoneValide && telephone.length > 0"
+          [class.is-valid]="telephoneValide && telephone.length > 0"
+          id="telephone" 
+          [(ngModel)]="telephone"
+          (ngModelChange)="validerTelephone()"
+          placeholder="Entrez votre numéro de téléphone" 
+          maxlength="8"
+          pattern="[0-9]{8}"
+          required />
+        <label for="telephone">
+          <i class="fas fa-phone me-1 text-primary"></i>Numéro de téléphone (8 chiffres)
+        </label>
+        
+        <!-- Messages de validation -->
+        <div *ngIf="!telephoneValide && telephone.length > 0" class="invalid-feedback">
+          <i class="fas fa-exclamation-triangle me-1"></i>
+          Le numéro de téléphone doit contenir exactement 8 chiffres.
+        </div>
+        <div *ngIf="telephoneValide && telephone.length > 0" class="valid-feedback">
+          <i class="fas fa-check-circle me-1"></i>
+          Numéro de téléphone valide.
+        </div>
+      </div>
+      
+      <!-- Bouton de sauvegarde du téléphone -->
+      <div *ngIf="telephoneModifie && telephoneValide" class="d-flex justify-content-end">
+        <button 
+          class="btn btn-primary  btn-sm" 
+          (click)="sauvegarderTelephone()">
+          <i class="fas fa-save me-2"></i>Sauvegarder le téléphone
+        </button>
+      </div>
+      
+      <!-- Indicateur si le téléphone n'a pas été modifié -->
+      <div *ngIf="!telephoneModifie && telephoneValide && telephone.length > 0" class="text-muted small">
+        <i class="fas fa-info-circle me-1"></i>
+        Téléphone actuel confirmé
+      </div>
+    </div>
+  </div>
+</div>
           <!-- Actions -->
           <div class="d-flex gap-3 mt-4">
             <button class="btn btn-outline-secondary flex-grow-1" (click)="viderPanier()">
@@ -131,8 +184,8 @@
           <i class="fas fa-shopping-cart mb-4 animated-icon"></i>
           <h4 class="fw-bold mb-3">Votre panier est vide</h4>
           <p class="text-muted">Découvrez nos produits et ajoutez-les à votre panier</p>
-          <button class="btn btn-primary mt-3" (click)="redirectToListCommande()" >
-            <i class="fas fa-store me-2"></i>Continuer mes achats
+          <button class="btn btn-primary mt-3" (click)="redirectToaccueil()" >
+            <i class="fas fa-store me-2"></i>Vous pouvez continuer votre sélection
           </button>
         </div>
       </div>

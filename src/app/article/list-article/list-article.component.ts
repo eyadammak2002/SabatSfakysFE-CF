@@ -10,6 +10,7 @@ import { SearchDataService } from 'src/app/services/search-data.service';
 import { CategoryService } from 'src/app/category/category.service';
 import { FavorisService } from 'src/app/services/favoris.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { FournisseurService } from 'src/app/services/fournisseur.service';
 export interface FeaturedImage {
   url: string;
   alt?: string;
@@ -50,8 +51,13 @@ export class ListArticleComponent implements OnInit ,AfterViewInit{
 
   activeSlideIndex: number = 0;
 
-  
+  allFournisseurs: any[] = []; // Liste des fournisseurs acceptés
 
+  top10NewArticles: Article[] = []; // Pour stocker les 10 nouveaux articles
+  displayedNewArticles: Article[] = [];
+  showFirstGroup: boolean = true;
+  isAnimating: boolean = false;
+  animationInterval: any;
   // Variables de pagination
   currentPage: number = 0;
   articleGroups: any[][] = [];
@@ -59,6 +65,7 @@ export class ListArticleComponent implements OnInit ,AfterViewInit{
   animateIn: boolean = true;
   animateOut: boolean = false;
 
+  
   // Nouvelle propriété pour l'image featured
   featuredImage: FeaturedImage = {
     url: 'assets/botte1.jpg', // Votre image comme dans l'exemple
@@ -81,7 +88,8 @@ export class ListArticleComponent implements OnInit ,AfterViewInit{
     private categoryService: CategoryService,
     private favorisService: FavorisService ,
     private tokenStorage: TokenStorageService ,// Ajoutez cette ligne
-    private ngZone: NgZone  // Ajoutez cette ligne
+    private ngZone: NgZone , // Ajoutez cette ligne,
+    private fournisseurService: FournisseurService
 
 
     
@@ -101,7 +109,7 @@ prepareArticleGroups(): void {
     this.articleGroups = [[]];
   }
 }
-  ngOnInit(): void {
+ngOnInit(): void {
     this.startTextAnimations();
 
     this.getArticlesWithStatut('ACCEPTE');
@@ -157,8 +165,30 @@ prepareArticleGroups(): void {
   });
 
 
-  }
+  this.getAllFournisseursAcceptes();
+  this.searchDataService.searchResults$.subscribe(results => {
+    console.log('Résultats de recherche reçus dans le composant:', results);
+    this.searchResults = results;
+  });
 
+  this.searchDataService.aiResponse$.subscribe(message => {
+    console.log('Message IA reçu :', message);
+    this.aiResponse = message;
+  });
+
+  this.searchDataService.searchActive$.subscribe(active => {
+    console.log('Mode recherche actif :', active);
+    this.isSearchMode = active;
+  });
+
+
+  this.getTop10NewArticles();
+    
+  // Démarrer l'animation après un délai initial
+  setTimeout(() => {
+    this.startNewArticlesAnimation();
+  }, 3000); // Attendre 3 secondes avant de commencer l'animation
+}
 
   // Mettre à jour les groupes lorsque les articles changent
 ngOnChanges(): void {
@@ -717,4 +747,102 @@ get Math() {
     }
   }
   
+
+  getAllFournisseursAcceptes(): void {
+    this.fournisseurService.getAllFournisseursAcceptes().subscribe({
+      next: (data) => {
+        this.allFournisseurs = data;
+        console.log('Fournisseurs acceptés récupérés:', this.allFournisseurs);
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération des fournisseurs acceptés:', err);
+      }
+    });
+  }
+  
+  // 4. Ajoutez cette méthode pour voir les détails d'un fournisseur
+  voirFournisseur(fournisseur: any): void {
+    // Vous pouvez naviguer vers une page de détail du fournisseur
+    // ou filtrer les articles par fournisseur
+    console.log('Voir fournisseur:', fournisseur);
+    // Exemple : this.router.navigate(['/fournisseur', fournisseur.id]);
+  }
+  
+  ngOnDestroy(): void {
+    // Nettoyer l'intervalle quand le composant est détruit
+    if (this.animationInterval) {
+      clearInterval(this.animationInterval);
+    }
+  }
+// Méthode pour récupérer les 10 nouveaux articles acceptés (modifiée)
+getTop10NewArticles(): void {
+  this.articleService.getTop10NewAcceptedArticles().subscribe({
+    next: (data) => {
+      this.top10NewArticles = data;
+      console.log('✅ 10 nouveaux articles récupérés:', data);
+      
+      // Initialiser avec les 5 premiers articles
+      if (data.length > 0) {
+        this.displayedNewArticles = data.slice(0, 5);
+        this.showFirstGroup = true;
+      }
+    },
+    error: (err) => {
+      console.error('❌ Erreur lors de la récupération des nouveaux articles:', err);
+    }
+  });
+}
+
+// Nouvelle méthode pour démarrer l'animation cyclique
+startNewArticlesAnimation(): void {
+  if (this.top10NewArticles.length <= 5) {
+    return; // Pas besoin d'animation s'il y a 5 articles ou moins
+  }
+
+  this.animationInterval = setInterval(() => {
+    this.switchArticleGroups();
+  }, 5000); // Changer toutes les 5 secondes
+}
+
+// Méthode pour alterner entre les groupes d'articles
+switchArticleGroups(): void {
+  if (this.isAnimating || this.top10NewArticles.length <= 5) {
+    return;
+  }
+
+  this.isAnimating = true;
+
+  // Animation de sortie (fade out)
+  setTimeout(() => {
+    // Changer le groupe d'articles
+    if (this.showFirstGroup) {
+      // Afficher les articles 6-10 (index 5-9)
+      this.displayedNewArticles = this.top10NewArticles.slice(5, 10);
+    } else {
+      // Afficher les articles 1-5 (index 0-4)
+      this.displayedNewArticles = this.top10NewArticles.slice(0, 5);
+    }
+    
+    this.showFirstGroup = !this.showFirstGroup;
+
+    // Animation d'entrée (fade in) après un court délai
+    setTimeout(() => {
+      this.isAnimating = false;
+    }, 100);
+  }, 300);
+}
+
+// Méthode pour arrêter l'animation (optionnelle, pour le contrôle utilisateur)
+stopNewArticlesAnimation(): void {
+  if (this.animationInterval) {
+    clearInterval(this.animationInterval);
+    this.animationInterval = null;
+  }
+}
+
+// Méthode pour redémarrer l'animation (optionnelle)
+restartNewArticlesAnimation(): void {
+  this.stopNewArticlesAnimation();
+  this.startNewArticlesAnimation();
+}
 }
