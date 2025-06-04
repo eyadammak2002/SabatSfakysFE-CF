@@ -509,7 +509,7 @@
     <!-- filter: blur(1px);-->
     <div class="parallax-bg " style="background-image: url('./assets/1.jpeg'); "></div>
     <div class="content dark fixed-img">
-      <h2 style="color: white;font-family: 'Times New Roman', serif; " >Nos Artisants</h2>
+      <h2 style="color: white;font-family: 'Times New Roman', serif; " >Nos Artisans</h2>
       <p style="color: white;">Découvrez l'alliance parfaite entre tradition et innovation</p>
       <a href="/accueil" class="btn outline">Voir la boutique</a>
     </div>
@@ -730,23 +730,6 @@
     </div>
   </div>
 
-  <div class="" *ngFor="let fournisseur of allFournisseurs" >
-    <div class="fournisseur-logo text-center mb-2">
-      <img *ngIf="fournisseur.logo; else placeholder" 
-           [src]="'http://localhost:8080/uploads/' + fournisseur.logo.name" 
-           [alt]="fournisseur.nom" 
-           class="logo-img" />
-      <ng-template #placeholder>
-        <i class="bi bi-shop logo-placeholder"></i>
-      </ng-template>
-    </div>
-    <div class="fournisseur-details fournisseur-item text-center">
-      <span><i class="bi bi-person-fill"></i> {{ fournisseur.nom }}</span>
-      <span><i class="bi bi-envelope-fill"></i> {{ fournisseur.email }}</span>
-      <!--<span><i class="bi bi-telephone-fill"></i> {{ fournisseur.telephone }}</span>
-      <span *ngIf="fournisseur.adresse"><i class="bi bi-geo-alt-fill"></i> {{ fournisseur.adresse }}</span>-->
-    </div>
-  </div>
 
 
     <div *ngIf="allFournisseurs.length === 0" class="text-center py-4">
@@ -755,7 +738,7 @@
     </div>
     </div>
 
-  </div>
+</div>
 
 
 <!-- Version alternative plus simple -->

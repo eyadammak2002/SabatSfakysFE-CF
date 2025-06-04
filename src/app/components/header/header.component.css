@@ -969,3 +969,93 @@ animation: highlight 1.5s ease-out;
     font-size: 12px;
   }
 }
+
+
+/* debut dropdown d'authentification */
+
+.profile-dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.auth-dropdown {
+  position: relative;
+}
+
+.auth-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  min-width: 180px;
+  padding: 8px 0;
+  margin: 2px 0 0;
+  background-color: #fff;
+  border: 1px solid rgba(0,0,0,.15);
+  border-radius: 0.375rem;
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,.175);
+}
+
+.auth-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  clear: both;
+  font-weight: 400;
+  font-weight: bold;
+  color: #212529;
+  text-align: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+.auth-dropdown-item:hover,
+.auth-dropdown-item:focus {
+  color: #212529;
+  background-color: rgba(76, 43, 23, 0.2);
+  text-decoration: none;
+}
+
+.auth-dropdown-item .menu-icon {
+  margin-right: 8px;
+  width: 18px;
+  text-align: center;
+}
+
+/* Hover sur le container pour maintenir le dropdown ouvert */
+.profile-dropdown-container:hover .auth-dropdown-menu {
+  display: block !important;
+}
+
+/* Animation douce */
+.auth-dropdown-menu {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(-10px);
+  transition: all 0.2s ease;
+}
+
+.profile-dropdown-container:hover .auth-dropdown-menu,
+.auth-dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Assurer la continuité du hover */
+.profile-dropdown-container::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  z-index: 9998;
+}
+
+/* fin dropdown d'authentification */

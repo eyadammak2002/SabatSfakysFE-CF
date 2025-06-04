@@ -90,13 +90,15 @@
         class="form-control"
         placeholder="Téléphone"
         required
-        pattern="^[0-9]{8,15}$"
+        pattern="^[0-9]{8}$"
         #telephone="ngModel"
+        minlength="8"
+        maxlength="8"
       />
     </div>
     <div *ngIf="telephone.invalid && (telephone.dirty || telephone.touched)" class="text-danger mt-1">
       <small *ngIf="telephone.errors?.['required']">Le numéro est obligatoire</small>
-      <small *ngIf="telephone.errors?.['pattern']">Le numéro doit contenir entre 8 et 15 chiffres</small>
+      <small *ngIf="telephone.errors?.['pattern']">Le numéro doit contenir entre contenir 8 chiffres</small>
     </div>
   </div>
 
@@ -162,27 +164,23 @@
   
 
 
-      <button class="btn btn-primary w-100" [disabled]="registerForm.invalid">S'inscrire</button>
+      <button class="btn btn-marron w-100" [disabled]="registerForm.invalid">S'inscrire</button>
       <div *ngIf="isRegisterFailed" class="alert alert-danger">
         {{ errorMessage }}
       </div>
       
     </form>
-<div>
-   <!-- ✅ Bouton d'inscription -->
-
-  <asl-google-signin-button  type="standard"  shape="pill"
-  theme="filled_blue"
-  text="signin_with"
-  size="large"
-  logo_alignment="left" 
-  width="300"
- 
-  >
-
-  </asl-google-signin-button>
-</div>
-     
+   <!-- Bouton Google Sign-In -->
+   <div style="display: flex; justify-content: center;">
+    <asl-google-signin-button
+      type="standard"
+      shape="pill"
+      text="signin_with"
+      size="large"
+      logo_alignment="left"
+      width="300">
+    </asl-google-signin-button>
+  </div>
    
 
 

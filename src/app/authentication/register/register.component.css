@@ -62,6 +62,12 @@
       border-color: #aaa;
     }
   }
+
+  .btn-marron {
+    background-color: #3c2313;
+    color: white;
+    animation: pulse 2s infinite;
+  }
   
 
   

@@ -49,7 +49,7 @@ export class HeaderComponent implements OnInit , OnDestroy, AfterViewInit {
   aiResponse: string = '';
   searchResults: any[] = [];
   showResults: boolean = false;
-  
+  isMenuOpen = false;
   private searchTerms = new Subject<string>();
 
 
@@ -367,6 +367,7 @@ checkUserRole(): void {
       }
     }
   }
+  
 
   // Méthodes de redirection existantes
   redirectToCreateArticle() { this.router.navigate(['createArticle']); }

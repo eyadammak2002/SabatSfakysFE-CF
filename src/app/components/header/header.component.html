@@ -55,24 +55,25 @@
         <i class="fas fa-shopping-cart"></i>
       </a>
       
-      <!-- Icône de profil avec dropdown -->
-      <div ngbDropdown class="dropdown category-dropdown">
-        <a routerLink="/profil" class="icon-link profile-icon updateProfileIcon" title="Mon profil">
+          <!-- Icône de profil avec dropdown - NOUVELLES CLASSES -->
+      <div ngbDropdown class="profile-dropdown-container auth-dropdown">
+        <a href="#" ngbDropdownToggle class="icon-link profile-icon updateProfileIcon" title="Mon profil">
           <i class="fas fa-user"></i>
         </a>
-        <div ngbDropdownMenu class="dropdown-menu" *ngIf="!isLoggedIn">
-          <a routerLink="/auth/client/login">
+        <div ngbDropdownMenu class="auth-dropdown-menu" *ngIf="!isLoggedIn">
+          <a routerLink="/auth/client/login" class="auth-dropdown-item">
             <i class="fas fa-user menu-icon"></i> Espace Client
           </a>
-          <a routerLink="/auth/fournisseur/login">
+          <a routerLink="/auth/fournisseur/login" class="auth-dropdown-item">
             <i class="fas fa-store menu-icon"></i> Espace Boutique
           </a>
         </div>
       </div>
+      
 
      
             <!-- Icône de notification avec compteur de notifications non lues -->
-      <div  class="notification-icon" (click)="toggleNotifications($event)">
+      <div  *ngIf="isLoading" class="notification-icon" (click)="toggleNotifications($event)">
         <i class="fas fa-bell"></i>
         <span class="notification-badge" *ngIf="unreadNotifications.length > 0">
           {{ unreadNotifications.length }}
@@ -340,8 +341,7 @@
             <li><a href="#" (click)="filterByCategoryAndGenre('mocassins', 'FEMME', $event)">Mocassins Femme</a></li>
             <li><a href="#" (click)="filterByCategoryAndGenre('mocassins', 'HOMME', $event)">Mocassins Homme</a></li>
             <li><a href="#" (click)="filterByCategoryAndGenre('mocassins', 'ENFANT', $event)">Mocassins Enfant</a></li>
-            <li><a href="#" (click)="filterByCategory('cuir')">En Cuir</a></li>
-            <li><a href="#" (click)="filterByCategory('mocassins')">Mocassins</a></li>
+           
           </ul>
                <!-- Notre sélection en bas -->
       <div class="mega-menu-selection">

@@ -34,62 +34,138 @@
           
           <!-- Nom -->
           <div class="form-col mb-3 widh80">
-            <label for="username" class="form-label">Nom</label>
+            <label for="username" class="form-label">Nom de l'entreprise</label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-person"></i></span>
-              <input id="username" [(ngModel)]="form.username" name="username" type="text" class="form-control" placeholder="Nom" required />
+              <input id="username" [(ngModel)]="form.username" #username="ngModel" name="username" type="text" class="form-control"       placeholder="Nom de l'entreprise"   minlength="2"    maxlength="50"     pattern="^[a-zA-ZÀ-ÿ\s\-'&.]+$" required />
+            </div>
+            <div *ngIf="username.invalid && (username.dirty || username.touched)" class="text-danger mt-1">
+              <small *ngIf="username.errors?.['required']">Le nom de l'entreprise est obligatoire</small>
+              <small *ngIf="username.errors?.['minlength']">Le nom doit contenir au moins 2 caractères</small>
+              <small *ngIf="username.errors?.['maxlength']">Le nom ne peut pas dépasser 50 caractères</small>
+              <small *ngIf="username.errors?.['pattern']">Le nom ne peut contenir que des lettres, espaces, tirets et apostrophes</small>
             </div>
           </div>
 
           <!-- Email -->
           <div class="form-col mb-3 widh80">
-            <label for="email" class="form-label">Email</label>
+            <label for="email" class="form-label">Email professionnel</label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-              <input id="email" [(ngModel)]="form.email" name="email" type="email" class="form-control" placeholder="Email" required />
+              <input id="email" [(ngModel)]="form.email" name="email" type="email" class="form-control" placeholder="Email" required email #email="ngModel" />
+            </div>
+            <div *ngIf="email.invalid && (email.dirty || email.touched)" class="text-danger">
+              <small *ngIf="email.errors?.['required']">L'email est requis.</small>
+              <small *ngIf="email.errors?.['email']">Format d'email invalide.</small>
             </div>
           </div>
 
           <!-- Adresse -->
           <div class="form-col mb-3 widh80">
-            <label for="adresse" class="form-label">Adresse</label>
+            <label for="adresse" class="form-label">Adresse Complète</label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-              <input id="adresse" [(ngModel)]="form.adresse" name="adresse" type="text" class="form-control" placeholder="Adresse" required />
+              <input
+                id="adresse"
+                [(ngModel)]="form.adresse"
+                name="adresse"
+                type="text"
+                class="form-control"
+                placeholder="Adresse"
+                required
+                minlength="5"
+                #adresse="ngModel"
+              />
+            </div>
+            <div *ngIf="adresse.invalid && (adresse.dirty || adresse.touched)" class="text-danger mt-1">
+              <small *ngIf="adresse.errors?.['required']">L'adresse est obligatoire</small>
+              <small *ngIf="adresse.errors?.['minlength']">L'adresse doit contenir au moins 5 caractères</small>
             </div>
           </div>
 
           <!-- Numéro Identification Entreprise -->
           <div class="form-col mb-3 widh80">
-            <label for="numCin" class="form-label">Numéro Identification Entreprise</label>
+            <label for="numCin" class="form-label">Numéro d'identification de l'entreprise</label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-building"></i></span>
-              <input id="numCin" [(ngModel)]="form.numeroIdentificationEntreprise" name="numCin" type="text" class="form-control" placeholder="Numéro Identification Entreprise" required />
+              <input 
+                id="numCin" 
+                [(ngModel)]="form.numeroIdentificationEntreprise" 
+                name="numCin" 
+                #numCin="ngModel"
+                type="text" 
+                class="form-control" 
+                placeholder="Ex: 123456789" 
+                required 
+                pattern="^[0-9]{8,10}$"
+                minlength="8"
+                maxlength="10"
+              />
+            </div>
+            <div *ngIf="numCin.invalid && (numCin.dirty || numCin.touched)" class="text-danger mt-1">
+              <small *ngIf="numCin.errors?.['required']">Le numéro d'identification est obligatoire</small>
+              <small *ngIf="numCin.errors?.['pattern']">Le numéro doit contenir uniquement des chiffres</small>
+              <small *ngIf="numCin.errors?.['minlength'] || numCin.errors?.['maxlength']">Le numéro doit contenir entre 8 et 10 chiffres</small>
             </div>
           </div>
 
           <!-- Téléphone -->
-          <div class="form-col mb-3 widh80">
-            <label for="telephone" class="form-label">Téléphone</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-              <input id="telephone" [(ngModel)]="form.telephone" name="telephone" type="text" class="form-control" placeholder="Téléphone" required />
-            </div>
-          </div>
+        <div class="form-col mb-3 widh80">
+        <label for="telephone" class="form-label">Téléphone</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+          <input
+          id="telephone"
+          [(ngModel)]="form.telephone"
+          name="telephone"
+          type="tel"
+          class="form-control"
+          placeholder="Téléphone"
+          required
+          pattern="^[0-9]{8}$"
+          #telephone="ngModel"
+          minlength="8"
+          maxlength="8"
+        />
+        </div>
+        <div *ngIf="telephone.invalid && (telephone.dirty || telephone.touched)" class="text-danger mt-1">
+          <small *ngIf="telephone.errors?.['required']">Le téléphone est obligatoire</small>
+          <small *ngIf="telephone.errors?.['pattern']">Le numéro doit contenir 8 chiffres</small>
+        </div>
+      </div>
 
           <!-- Mot de passe -->
           <div class="form-col mb-3 widh80">
             <label for="password" class="form-label">Mot de passe</label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-lock"></i></span>
-              <input id="password" [(ngModel)]="form.password" name="password" [type]="showPassword ? 'text' : 'password'" class="form-control" placeholder="Mot de passe" required />
+              <input 
+                id="password" 
+                [(ngModel)]="form.password" 
+                name="password" 
+                #password="ngModel"
+                [type]="showPassword ? 'text' : 'password'" 
+                class="form-control" 
+                placeholder="Mot de passe" 
+                required 
+                minlength="8"
+                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+              />
               <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()">
                 <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
               </button>
             </div>
+            <div *ngIf="password.invalid && (password.dirty || password.touched)" class="text-danger mt-1">
+              <small *ngIf="password.errors?.['required']">Le mot de passe est obligatoire</small>
+              <small *ngIf="password.errors?.['minlength']">Le mot de passe doit contenir au moins 8 caractères</small>
+              <small *ngIf="password.errors?.['pattern']">
+                Le mot de passe doit contenir au moins : 1 minuscule, 1 majuscule, 1 chiffre et 1 caractère spécial
+              </small>
+            </div>
           </div>
-        </div>
 
+
+        </div>
         <!-- Étape 2: Logo de l'entreprise -->
         <div *ngIf="currentStep === 2">
           <h4 class="mb-3 text-primary"><i class="bi bi-image me-2"></i>Logo de l'entreprise</h4>
@@ -211,12 +287,28 @@
             </select>
           </div>
 
-          <!-- Score Écologique -->
           <div class="form-col mb-3 widh80">
             <label for="scoreEcologique" class="form-label">Score Écologique</label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-bar-chart"></i></span>
-              <input id="scoreEcologique" [(ngModel)]="form.scoreEcologique" name="scoreEcologique" type="number" class="form-control" min="0" step="0.1" placeholder="Entrez le score écologique" required />
+              <input 
+                id="scoreEcologique" 
+                [(ngModel)]="form.scoreEcologique" 
+                name="scoreEcologique" 
+                #scoreEcologique="ngModel"
+                type="number" 
+                class="form-control" 
+                min="0" 
+                max="100"
+                step="0.1" 
+                placeholder="Score entre 0 et 100" 
+                required 
+              />
+            </div>
+            <div *ngIf="scoreEcologique.invalid && (scoreEcologique.dirty || scoreEcologique.touched)" class="text-danger mt-1">
+              <small *ngIf="scoreEcologique.errors?.['required']">Le score écologique est obligatoire</small>
+              <small *ngIf="scoreEcologique.errors?.['min']">Le score ne peut pas être inférieur à 0</small>
+              <small *ngIf="scoreEcologique.errors?.['max']">Le score ne peut pas être supérieur à 100</small>
             </div>
           </div>
         </div>
