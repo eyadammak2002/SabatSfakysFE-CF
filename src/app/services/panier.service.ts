@@ -78,62 +78,7 @@ export class PanierService {
     }
   }
 
-  // Récupérer et fusionner le panier invité après la connexion
-  fusionnerPanierInvite(): void {
-    const guestCart = localStorage.getItem(this.guestCartKey);
-    
-    if (guestCart) {
-      const guestPanier: Panier = JSON.parse(guestCart);
-      const clientId = this.getClientId();
-      
-      if (clientId) {
-        // Créer un nouveau panier avec l'ID client
-        if (!this.panier) {
-          this.panier = {
-            id: null,
-            clientId,
-            lignesPanier: [],
-            total: 0,
-            statut: 'EN_COURS',
-            adresseLivraison: guestPanier.adresseLivraison || ''
-          };
-        } else {
-          // Mettre à jour l'ID client et conserver l'adresse de livraison s'il y en a une
-          this.panier.clientId = clientId;
-          if (guestPanier.adresseLivraison && guestPanier.adresseLivraison.trim() !== '') {
-            this.panier.adresseLivraison = guestPanier.adresseLivraison;
-          }
-        }
-        
-        // Ajouter les lignes du panier invité au panier client
-        guestPanier.lignesPanier.forEach(ligne => {
-          const ligneExistante = this.panier!.lignesPanier.find(lp =>
-            lp.article.id === ligne.article.id && 
-            lp.couleur.id === ligne.couleur.id && 
-            lp.pointure.id === ligne.pointure.id
-          );
-          
-          if (ligneExistante) {
-            // Conserver la quantité la plus élevée entre les deux paniers
-            ligneExistante.quantite += ligne.quantite;
-            ligneExistante.total = ligneExistante.quantite * ligneExistante.prixUnitaire;
-          } else {
-            // Ajouter la ligne telle quelle, avec sa quantité originale
-            this.panier!.lignesPanier.push({...ligne});
-          }
-        });
-        
-        // Recalculer le total du panier
-        this.calculerTotal();
-        
-        // Sauvegarder le panier fusionné
-        this.sauvegarderPanierDansLocalStorage();
-        
-        // Supprimer le panier invité
-        localStorage.removeItem(this.guestCartKey);
-      }
-    }
-  }
+  
 
   // Calculer le total du panier
   private calculerTotal(): void {
@@ -150,7 +95,7 @@ export class PanierService {
   }
 
  // Méthode chargerPanierDepuisLocalStorage sécurisée contre les erreurs TypeScript
-public chargerPanierDepuisLocalStorage(): void {
+ public chargerPanierDepuisLocalStorage(): void {
   const clientId = this.getClientId();
   
   if (clientId) {
@@ -162,29 +107,25 @@ public chargerPanierDepuisLocalStorage(): void {
       this.panier = null;
     }
     
-    // Si l'utilisateur vient de se connecter, fusionner avec le panier invité
-    this.fusionnerPanierInvite();
+    // ❌ SUPPRIMER CETTE LIGNE (fusion maintenant dans AuthenticationService)
+    // this.fusionnerPanierInvite();
+    
   } else {
     // Si aucun utilisateur n'est connecté, essayer de charger le panier invité
     const guestCart = localStorage.getItem(this.guestCartKey);
     
     if (guestCart) {
       try {
-        // Analyser le panier invité en toute sécurité
         const panierData = JSON.parse(guestCart);
         
-        // S'assurer que les propriétés nécessaires existent
         if (panierData && typeof panierData === 'object') {
-          // Créer un nouveau panier avec l'adresse réinitialisée
           this.panier = {
             ...panierData,
-            adresseLivraison: '' // Réinitialiser l'adresse
+            adresseLivraison: ''
           };
           
-          // Sauvegarder immédiatement cette modification
           localStorage.setItem(this.guestCartKey, JSON.stringify(this.panier));
         } else {
-          // Format invalide, créer un nouveau panier
           this.panier = null;
         }
       } catch (error) {
@@ -192,7 +133,6 @@ public chargerPanierDepuisLocalStorage(): void {
         this.panier = null;
       }
     } else {
-      // Aucun panier invité trouvé
       this.panier = null;
     }
   }
@@ -205,11 +145,11 @@ public chargerPanierDepuisLocalStorage(): void {
       lignesPanier: [],
       total: 0,
       statut: 'EN_COURS',
-      adresseLivraison: ''  // S'assurer que l'adresse est vide pour un nouveau panier
+      adresseLivraison: ''
     };
   }
   
-  // Vérifier et corriger les valeurs manquantes - utilisation de l'opérateur de chaînage optionnel
+  // Vérifier et corriger les valeurs manquantes
   if (!this.panier.statut) {
     this.panier.statut = 'EN_COURS';
   }
@@ -575,7 +515,9 @@ viderPanier(): void {
       quantite: nouvelleQuantite
     };
     
-    console.log(`🔄 Appel API pour modifier quantité - Ligne: ${lignePanierId}, Nouvelle quantité: ${nouvelleQuantite}`);
+    console.log(`🔄 Appel API pour modifier quantité`);
+    console.log(`📍 URL: ${url}`);
+    console.log(`📝 Body:`, body);
     
     return this.http.put<any>(url, body).pipe(
       tap(response => {

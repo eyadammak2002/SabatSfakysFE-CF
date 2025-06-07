@@ -123,13 +123,7 @@ export class LoginComponent implements OnInit {
         this.isLoggedIn = true;
         localStorage.setItem("token", data.accessToken);
           
-        // Mettre à jour le clientId dans le panier
-        if (data.id) {
-          this.panierService.mettreAJourClientId(data.id);
-          // Fusionner le panier invité
-          this.panierService.fusionnerPanierInvite();
-        }
-          
+       
         // Rediriger vers l'URL de retour si disponible
         this.router.navigate([this.returnUrl]);
       },
@@ -163,13 +157,7 @@ export class LoginComponent implements OnInit {
         this.isLoggedIn = true;
         console.log("isLoggedIn after Google Login:", this.isLoggedIn);
         
-        // Mettre à jour le clientId dans le panier si disponible
-        if (data.id) {
-          this.panierService.mettreAJourClientId(data.id);
-          // Fusionner le panier invité
-          this.panierService.fusionnerPanierInvite();
-        }
-
+       
         // Récupérer returnUrl depuis localStorage ou utiliser la valeur par défaut
         const savedReturnUrl = localStorage.getItem('returnUrl');
         const returnUrl = savedReturnUrl || '/accueil';
