@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostListener, NgZone, OnInit } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Article, Couleur, Pointure } from '../article';
 import { ArticleService } from '../article.service';
 import { PanierService } from 'src/app/services/panier.service';
@@ -11,6 +11,7 @@ import { CategoryService } from 'src/app/category/category.service';
 import { FavorisService } from 'src/app/services/favoris.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { FournisseurService } from 'src/app/services/fournisseur.service';
+import { ChatbotService, Message } from 'src/app/services/chatbot.service';
 export interface FeaturedImage {
   url: string;
   alt?: string;
@@ -20,7 +21,7 @@ export interface FeaturedImage {
   templateUrl: './list-article.component.html',
   styleUrls: ['./list-article.component.css']
 })
-export class ListArticleComponent implements OnInit ,AfterViewInit{
+export class ListArticleComponent implements OnInit ,AfterViewInit,AfterViewChecked {
   allArticles: Article[] = []; // Liste des articles
   selectedArticle: Article | null = null;
   selectedCouleur: Couleur | null = null; 
@@ -77,7 +78,12 @@ export class ListArticleComponent implements OnInit ,AfterViewInit{
 
   // Page où afficher l'image featured
   featuredImagePage: number = 0; // Première page
-
+ // Propriétés pour le chatbot
+  userMessage = '';
+  messages: Message[] = [];
+  isLoading = true;
+  isChatbotOpen = false;
+  @ViewChild('chatContainer') private chatContainer!: ElementRef;
 
   constructor(
     private articleService: ArticleService,
@@ -89,7 +95,8 @@ export class ListArticleComponent implements OnInit ,AfterViewInit{
     private favorisService: FavorisService ,
     private tokenStorage: TokenStorageService ,// Ajoutez cette ligne
     private ngZone: NgZone , // Ajoutez cette ligne,
-    private fournisseurService: FournisseurService
+    private fournisseurService: FournisseurService,
+    private chatbotService: ChatbotService
 
 
     
@@ -109,7 +116,15 @@ prepareArticleGroups(): void {
     this.articleGroups = [[]];
   }
 }
+ngAfterViewChecked() {
+  if (this.isChatbotOpen) {
+    this.scrollToBottom();
+  }
+}
 ngOnInit(): void {
+   // Initialisation du chatbot
+   this.initializeChatbot();
+
     this.startTextAnimations();
 
     this.getArticlesWithStatut('ACCEPTE');
@@ -845,4 +860,58 @@ restartNewArticlesAnimation(): void {
   this.stopNewArticlesAnimation();
   this.startNewArticlesAnimation();
 }
+
+
+  // Méthodes pour le chatbot
+  initializeChatbot(): void {
+    // S'abonner aux messages du chatbot
+    this.chatbotService.messages$.subscribe(messages => {
+      this.messages = messages;
+    });
+        
+    // Vérifier si le modèle est chargé
+    this.chatbotService.isModelLoaded().subscribe(loaded => {
+      this.isLoading = !loaded;
+      if (loaded) {
+        // Ajouter un message de bienvenue
+        this.chatbotService.sendMessage('Bonjour');
+      }
+    });
+  }
+
+  toggleChatbot(): void {
+    this.isChatbotOpen = !this.isChatbotOpen;
+  }
+
+  scrollToBottom(): void {
+    try {
+      if (this.chatContainer) {
+        this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+      }
+    } catch(err) { 
+      console.error('Erreur lors du scroll:', err);
+    }
+  }
+
+  sendChatMessage(): void {
+    if (this.userMessage.trim() === '') return;
+        
+    this.chatbotService.sendMessage(this.userMessage);
+    this.userMessage = '';
+  }
+
+  onChatKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      this.sendChatMessage();
+    }
+  }
+  scrollToChatbot() {
+    const chatbotSection = document.getElementById('chatbot-section');
+    if (chatbotSection) {
+      chatbotSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }
 }

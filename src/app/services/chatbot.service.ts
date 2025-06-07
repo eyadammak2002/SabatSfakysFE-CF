@@ -257,7 +257,7 @@ async loadKnowledgeBase() {
   
   async findBestResponse(userQuestion: string): Promise<string> {
     if (!this.model || this.knowledgeBase.length === 0 || this.questionEmbeddings.length === 0) {
-      return "Je me prépare encore, veuillez réessayer dans un instant.";
+      return "Bienvenue chez Sabat Sfakys ! Je suis là pour répondre à toutes vos questions. N'hésitez pas à poser vos questions !";
     }
     
     try {

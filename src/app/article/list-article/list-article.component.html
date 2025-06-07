@@ -795,6 +795,38 @@
     </div>
   
 </div>
+
+<!-- Votre code existant SANS MODIFICATION - juste ajoutez un ID -->
+<div class="chatbot-container" id="chatbot-section">
+  <div class="chatbot-header">
+    <h2>Sabat Sfakys</h2>
+  </div>
+  
+  <div class="chat-messages" #chatContainer>
+    <div *ngIf="isLoading" class="loading-message">
+      <p>Chargement du modèle TensorFlow.js...</p>
+      <div class="spinner"></div>
+    </div>
+    
+    <div *ngFor="let message of messages" class="message" [ngClass]="{'user-message': message.isUser, 'bot-message': !message.isUser}">
+      <div class="message-content">
+        <p>{{ message.content }}</p>
+        <span class="timestamp">{{ message.timestamp | date:'shortTime' }}</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="chat-input">
+    <input 
+      type="text" 
+      placeholder="Posez votre question..." 
+      [(ngModel)]="userMessage" 
+      (keydown)="onChatKeydown($event)"
+      [disabled]="isLoading">
+    <button (click)="sendChatMessage()" [disabled]="isLoading">Envoyer</button>
+  </div>
+</div>
+
 <!--
 <div>
   <h2 class="elegant-title">
@@ -807,9 +839,14 @@
       height="500px" 
       frameborder="0">
 </iframe>
--->
-
-
-
+--><!-- BULLE FLOTTANTE - à ajouter quelque part dans votre template -->
+<button class="floating-chat-bubble" (click)="scrollToChatbot()" title="Ouvrir le chat">
+  <svg class="chat-icon" viewBox="0 0 24 24">
+    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+    <circle cx="8" cy="10" r="1"/>
+    <circle cx="12" cy="10" r="1"/>
+    <circle cx="16" cy="10" r="1"/>
+  </svg>
+</button>
 
 

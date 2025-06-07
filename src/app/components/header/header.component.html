@@ -73,7 +73,7 @@
 
      
             <!-- Icône de notification avec compteur de notifications non lues -->
-      <div  *ngIf="isLoading" class="notification-icon" (click)="toggleNotifications($event)">
+      <div *ngIf="isLoggedIn"  class="notification-icon" (click)="toggleNotifications($event)">
         <i class="fas fa-bell"></i>
         <span class="notification-badge" *ngIf="unreadNotifications.length > 0">
           {{ unreadNotifications.length }}
@@ -232,12 +232,16 @@
     </a>
     <div ngbDropdownMenu class="mega-menu">
       <div class="mega-menu-container">
-        <!-- Image principale à gauche -->
+        <!-- Image principale à gauche 
         <div class="mega-menu-banner">
           <img src="assets/enf1.jpg" alt="Collection Femme 1" class="banner-image">
           <img src="assets/enf2.jpg" alt="Collection Femme 2" class="banner-image">
           <img src="assets/enf3.jpg" alt="Collection Femme 3" class="banner-image">
-        </div>
+        </div>-->
+        <video autoplay muted loop class="banner-video" style="width:1000px;height: 500px;">
+          <source src="assets/cl.mp4" type="video/mp4">
+          Votre navigateur ne prend pas en charge la balise vidéo.
+        </video>
         
         
         <!-- Catégories au centre -->
@@ -249,25 +253,13 @@
             <li><a href="#" (click)="filterByCategoryAndGenre('chaussures', 'ENFANT', $event)">Chaussures Enfant</a></li>
           </ul>
              <!-- Notre sélection en bas -->
-      <div class="mega-menu-selection">
-        <h3>NOTRE SÉLECTION</h3>
-        <div class="selection-products">
-          <div class="selection-product">
-            <div class="product-image">
-              <img src="/assets/enf2.jpg" alt="Modèle Exclusif">
-            </div>
-            <span class="product-name">Escarpins Élégance</span>
-            <span class="product-price">139.990 TND</span>
-          </div>
-          <div class="selection-product">
-            <div class="product-image">
-              <img src="/assets/enf1.jpg" alt="Modèle Tendance">
-            </div>
-            <span class="product-name">Ballerines Confort</span>
-            <span class="product-price">89.990 TND</span>
-          </div>
-        </div>
-      </div>
+ 
+        <div class="mega-menu-banner" style="height: 350px;width: 450px;">
+          <img src="assets/cl2.jpg" alt="Collection Femme 1" class="banner-image">
+          <img src="assets/cl45.jpg" alt="Collection Femme 2" class="banner-image">
+          <img src="assets/cl456.jpg" alt="Collection Femme 3" class="banner-image">
+        </div>-
+     
         </div>
       </div>
       
@@ -284,9 +276,8 @@
       <div class="mega-menu-container">
         <!-- Image principale à gauche -->
         <div class="mega-menu-banner">
-          <img src="/assets/botte1.jpg" alt="Collection Bottes">
+          <img src="/assets/bot1.jpg" alt="Collection Mocassins">
         </div>
-        
         <!-- Catégories au centre -->
         <div class="mega-menu-categories">
           <h3>CATÉGORIES</h3>
@@ -301,14 +292,14 @@
         <div class="selection-products">
           <div class="selection-product">
             <div class="product-image">
-              <img src="/assets/enf3.jpg" alt="Bottes Tendance">
+              <img src="/assets/bot2.jpg" alt="Bottes Tendance">
             </div>
             <span class="product-name">Bottes Cuir Premium</span>
             <span class="product-price">249.990 TND</span>
           </div>
           <div class="selection-product">
             <div class="product-image">
-              <img src="/assets/enf3.jpg" alt="Bottines Élégantes">
+              <img src="/assets/bot5.jpg" alt="Bottines Élégantes">
             </div>
             <span class="product-name">Bottines Chelsea</span>
             <span class="product-price">179.990 TND</span>
@@ -331,7 +322,7 @@
       <div class="mega-menu-container">
         <!-- Image principale à gauche -->
         <div class="mega-menu-banner">
-          <img src="/assets/enf2.jpg" alt="Collection Mocassins">
+          <img src="/assets/macassin.jpg" alt="Collection Mocassins">
         </div>
         
         <!-- Catégories au centre -->
@@ -349,16 +340,16 @@
         <div class="selection-products">
           <div class="selection-product">
             <div class="product-image">
-              <img src="/assets/enf1.jpg" alt="Mocassins Premium">
+              <img src="/assets/enf2.jpg" alt="Mocassins Premium">
             </div>
             <span class="product-name">Mocassins Tradition</span>
             <span class="product-price">159.990 TND</span>
           </div>
           <div class="selection-product">
             <div class="product-image">
-              <img src="/assets/enf3.jpg" alt="Mocassins Élégants">
+              <img src="/assets/mo2.jpg" alt="Mocassins Élégants">
             </div>
-            <span class="product-name">Mocassins Daim</span>
+            <span class="product-name">Mocassins Daim  pour Homme</span>
             <span class="product-price">129.990 TND</span>
           </div>
         </div>

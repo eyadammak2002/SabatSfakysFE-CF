@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, throwError } from 'rxjs';
+import { catchError, Observable, tap, throwError } from 'rxjs';
 import { TokenStorageService } from './token-storage.service';
 import { Article, Couleur, Pointure } from '../article/article';
 import { StockService } from '../panier/stock.service';
@@ -68,7 +68,7 @@ export class PanierService {
     }
     
     panier.statut = "EN_COURS"; 
-    return this.http.post<any>(`${this.apiUrl2}/${userId}`, panier);
+    return this.http.post<any>(`${this.apiUrl2}/new/${userId}`, panier);
   }
 
   // Sauvegarder le panier invité
@@ -269,37 +269,107 @@ public chargerPanierDepuisLocalStorage(): void {
 
   // Ajouter un article au panier
   ajouterAuPanier(article: Article, couleur: Couleur, pointure: Pointure): void {
-    if (!this.panier) return;
-  
-    const ligneExistante = this.panier.lignesPanier.find(lp =>
-      lp.article.id === article.id && 
-      lp.couleur.id === couleur.id && 
-      lp.pointure.id === pointure.id
-    );
-  
-    if (ligneExistante) {
-      // Si l'article existe déjà, augmenter la quantité de 1
-      ligneExistante.quantite += 1;
-      ligneExistante.total = ligneExistante.quantite * ligneExistante.prixUnitaire;
-    } else {
-      // Sinon, ajouter une nouvelle ligne avec quantité initiale à 1
-      this.panier.lignesPanier.push({
-        id: 1,
-        article,
-        quantite: 1, // Initialisation à 1
-        prixUnitaire: article.prixVente,
-        total: article.prixVente, // total = quantité (1) * prixUnitaire
-        couleur,
-        pointure
-      });
-    }
-  
-    // Mettre à jour le total du panier
-    this.calculerTotal();
+    const clientId = this.getClientId();
     
-    // Sauvegarder le panier
-    this.sauvegarderPanierDansLocalStorage();
+    if (clientId) {
+      // Utilisateur connecté - sauvegarder en base de données
+      this.ajouterAuPanierConnecte(article, couleur, pointure, clientId);
+    } else {
+      // Utilisateur non connecté - sauvegarder en localStorage (code existant)
+      this.ajouterAuPanierLocalStorage(article, couleur, pointure);
+    }
   }
+  private ajouterAuPanierConnecte(article: Article, couleur: Couleur, pointure: Pointure, clientId: number): void {
+  const lignePanier = {
+    article: { id: article.id },
+    couleur: { id: couleur.id },
+    pointure: { id: pointure.id },
+    quantite: 1,
+    prixUnitaire: article.prixVente,
+    total: article.prixVente
+  };
+
+  this.ajouterLigneAuPanierEnCours(clientId, lignePanier).subscribe({
+    next: (ligneSauvegardee) => {
+      console.log('Ligne ajoutée en base de données:', ligneSauvegardee);
+      
+      // Mettre à jour le panier local pour la synchronisation
+      this.synchroniserPanierDepuisDB(clientId);
+      
+      // Optionnel : afficher un message de succès
+      // alert('Article ajouté au panier !');
+    },
+    error: (err) => {
+      console.error('Erreur lors de l\'ajout en base:', err);
+      const messageErreur = err.error?.message || err.error || "Erreur lors de l'ajout au panier.";
+      alert(messageErreur);
+    }
+  });
+}
+
+// Méthode pour ajouter au panier local (utilisateurs non connectés)
+private ajouterAuPanierLocalStorage(article: Article, couleur: Couleur, pointure: Pointure): void {
+  if (!this.panier) return;
+
+  const ligneExistante = this.panier.lignesPanier.find(lp =>
+    lp.article.id === article.id && 
+    lp.couleur.id === couleur.id && 
+    lp.pointure.id === pointure.id
+  );
+
+  if (ligneExistante) {
+    ligneExistante.quantite += 1;
+    ligneExistante.total = ligneExistante.quantite * ligneExistante.prixUnitaire;
+  } else {
+    this.panier.lignesPanier.push({
+      id: Date.now(), // ID temporaire pour le localStorage
+      article,
+      quantite: 1,
+      prixUnitaire: article.prixVente,
+      total: article.prixVente,
+      couleur,
+      pointure
+    });
+  }
+
+  this.calculerTotal();
+  this.sauvegarderPanierDansLocalStorage();
+}
+
+// Synchroniser le panier local avec la base de données
+synchroniserPanierDepuisDB(userId: number): void {
+  this.getPanierEnCoursFromDB(userId).subscribe({
+    next: (panierDB) => {
+      if (panierDB) {
+        // Mettre à jour le panier local avec les données de la DB
+        this.panier = {
+          id: panierDB.id,
+          clientId: userId,
+          lignesPanier: panierDB.lignesPanier || [],
+          total: panierDB.total,
+          statut: panierDB.statut,
+          adresseLivraison: panierDB.adresseLivraison || ''
+        };
+      } else {
+        // Aucun panier en cours en DB, garder le panier local vide
+        this.panier = {
+          id: null,
+          clientId: userId,
+          lignesPanier: [],
+          total: 0,
+          statut: 'EN_COURS',
+          adresseLivraison: ''
+        };
+      }
+      
+      // Sauvegarder aussi en localStorage pour la cohérence
+      this.sauvegarderPanierDansLocalStorage();
+    },
+    error: (err) => {
+      console.error('Erreur lors de la synchronisation:', err);
+    }
+  });
+}
 
   getQteArticle(articleId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/qte/${articleId}`);
@@ -488,4 +558,34 @@ viderPanier(): void {
   getCouleurAndPointureFromLigne(ligneId: number): Observable<any> {
     return this.http.get(`http://localhost:8080/lignePanier/bindCouleurPointureByLigne/${ligneId}`);
   }
+
+  getPanierEnCoursFromDB(userId: number): Observable<Panier | null> {
+    return this.http.get<Panier | null>(`${this.apiUrl2}/enCours/${userId}`);
+  }
+  
+  // Ajouter une ligne au panier en base de données
+  ajouterLigneAuPanierEnCours(userId: number, lignePanier: any): Observable<LignePanier> {
+    return this.http.post<LignePanier>(`${this.apiUrl2}/ajouterLigne/${userId}`, lignePanier);
+  }
+
+  modifierQuantiteLignePanier(lignePanierId: number, nouvelleQuantite: number): Observable<any> {
+    const url = `${this.apiUrl2}/ligne-panier/${lignePanierId}/quantite`;
+    
+    const body = {
+      quantite: nouvelleQuantite
+    };
+    
+    console.log(`🔄 Appel API pour modifier quantité - Ligne: ${lignePanierId}, Nouvelle quantité: ${nouvelleQuantite}`);
+    
+    return this.http.put<any>(url, body).pipe(
+      tap(response => {
+        console.log('✅ Réponse API modification quantité:', response);
+      }),
+      catchError(error => {
+        console.error('❌ Erreur API modification quantité:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+  
 }

@@ -89,6 +89,8 @@ export class CommandeComponent implements OnInit, AfterViewInit {
         });
       }
     }
+
+    
   ngAfterViewInit(): void {}
 
   // Initialisation de la configuration PayPal
