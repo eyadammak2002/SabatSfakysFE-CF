@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { catchError, forkJoin, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { TokenStorageService } from './token-storage.service';
 import { Article, Couleur, Pointure } from '../article/article';
 import { StockService } from '../panier/stock.service';
@@ -360,18 +360,29 @@ synchroniserPanierDepuisDB(userId: number): void {
     });
   }
   
-  // Supprimer un article du panier
-  supprimerDuPanier(index: number): void {
-    if (!this.panier) return;
+ // 🆕 NOUVELLES MÉTHODES pour appeler vos API endpoints
+supprimerLignePanier(panierId: number, ligneId: number): Observable<any> {
+  const url = `${this.apiUrl2}/${panierId}/lignes/${ligneId}`;
+  return this.http.delete(url);
+}
 
-    this.panier.lignesPanier.splice(index, 1);
-    
-    // Recalculer le total
-    this.calculerTotal();
-    
-    // Sauvegarder le panier
-    this.sauvegarderPanierDansLocalStorage();
-  }
+supprimerLignePanierParId(ligneId: number): Observable<any> {
+  const url = `${this.apiUrl2}/lignes/${ligneId}`;
+  return this.http.delete(url);
+}
+
+// ✅ MÉTHODE EXISTANTE - à garder pour les utilisateurs non connectés
+supprimerDuPanier(index: number): void {
+  if (!this.panier) return;
+
+  this.panier.lignesPanier.splice(index, 1);
+  
+  // Recalculer le total
+  this.calculerTotal();
+  
+  // Sauvegarder le panier
+  this.sauvegarderPanierDansLocalStorage();
+}
 
  // Ajouter une nouvelle méthode spécifique pour réinitialiser l'adresse de livraison
 resetAdresseLivraison(): void {
@@ -401,8 +412,69 @@ validerPanier(panier: Panier): Observable<Panier> {
 
 // Modifier la méthode viderPanier dans PanierService pour réinitialiser l'adresse de livraison
 
-// Méthode viderPanier modifiée
 viderPanier(): void {
+  if (!this.panier) {
+    console.log('❌ Aucun panier à vider');
+    return;
+  }
+
+  const clientId = this.getClientId();
+  
+  console.log('🔍 DEBUG viderPanier():');
+  console.log('  - clientId:', clientId);
+  console.log('  - this.panier.id:', this.panier.id);
+  console.log('  - Lignes dans le panier:', this.panier.lignesPanier?.length || 0);
+
+  if (clientId) {
+    console.log('✅ Utilisateur connecté détecté, ID:', clientId);
+    
+    // 🔥 NOUVELLE APPROCHE: Récupérer le panier en cours depuis la base
+    this.getPanierEnCoursFromDB(clientId).subscribe({
+      next: (panierDB) => {
+        console.log('📦 Panier en base récupéré:', panierDB);
+        
+        if (panierDB && panierDB.id && panierDB.lignesPanier && panierDB.lignesPanier.length > 0) {
+          // ✅ Panier trouvé en base avec des lignes - supprimer les lignes
+          console.log(`🗑️ Suppression des ${panierDB.lignesPanier.length} lignes du panier ID: ${panierDB.id}`);
+          
+          this.viderLignesPanierEnBase(panierDB.id).subscribe({
+            next: (response) => {
+              console.log('✅ Lignes du panier supprimées en base:', response);
+              this.viderPanierLocal();
+              console.log('🎉 Panier vidé avec succès en base ET localement !');
+            },
+            error: (error) => {
+              console.error('❌ Erreur lors de la suppression des lignes en base:', error);
+              this.viderPanierLocal();
+              console.warn('⚠️ Panier vidé localement malgré l\'erreur en base');
+            }
+          });
+          
+        } else if (panierDB && panierDB.id) {
+          // ✅ Panier trouvé mais vide - juste vider localement
+          console.log('📭 Panier en base trouvé mais déjà vide - Vidage local uniquement');
+          this.viderPanierLocal();
+          
+        } else {
+          // ❌ Aucun panier en base - vider seulement localement
+          console.log('📭 Aucun panier en base trouvé - Vidage local uniquement');
+          this.viderPanierLocal();
+        }
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors de la récupération du panier en base:', error);
+        console.log('🏠 Fallback - Vidage local uniquement');
+        this.viderPanierLocal();
+      }
+    });
+    
+  } else {
+    // ❌ Utilisateur non connecté
+    console.log('🏠 Utilisateur NON connecté - Vidage local uniquement');
+    this.viderPanierLocal();
+  }
+}
+private viderPanierLocal(): void {
   if (!this.panier) return;
 
   // Vider le contenu du panier
@@ -419,7 +491,48 @@ viderPanier(): void {
   if (!this.getClientId()) {
     localStorage.setItem(this.guestCartKey, JSON.stringify(this.panier));
   }
+  
+  console.log('🧹 Panier vidé localement');
 }
+
+viderLignesPanierEnBase(panierId: number): Observable<any> {
+  console.log(`🔄 Appel API pour supprimer les lignes du panier ID: ${panierId}`);
+  
+  // 🎯 OPTION 1: Utiliser votre endpoint existant
+  return this.http.delete(`${this.apiUrl2}/${panierId}/lignes`);
+  
+  // 🎯 OPTION 2: Si vous voulez créer un endpoint spécifique pour les lignes
+  // return this.http.delete(`${this.apiUrl2}/${panierId}/lignes`);
+  
+  // 🎯 OPTION 3: Via l'API lignePanier directement
+  // return this.http.delete(`${this.apiUrl3}/panier/${panierId}/toutes-lignes`);
+}
+// Si vous préférez supprimer chaque ligne individuellement :
+viderLignesUnParUne(panierId: number): Observable<any> {
+  console.log(`🔄 Suppression ligne par ligne pour panier ID: ${panierId}`);
+  
+  // D'abord récupérer toutes les lignes du panier
+  return this.getPanierById(panierId).pipe(
+    switchMap((panier) => {
+      if (!panier || !panier.lignesPanier || panier.lignesPanier.length === 0) {
+        console.log('📭 Aucune ligne à supprimer');
+        return of({ message: 'Panier déjà vide' });
+      }
+      
+      console.log(`🗑️ Suppression de ${panier.lignesPanier.length} lignes...`);
+      
+      // Créer un array de requêtes de suppression
+      const suppressionRequests = panier.lignesPanier.map(ligne => {
+        console.log(`🗑️ Suppression ligne ID: ${ligne.id}`);
+        return this.http.delete(`${this.apiUrl3}/${ligne.id}`);
+      });
+      
+      // Exécuter toutes les suppressions en parallèle
+      return forkJoin(suppressionRequests);
+    })
+  );
+}
+
   // Récupérer les commandes validées d'un utilisateur
   getCommandesByUser(userId: number): Observable<Panier[]> {
     return this.http.get<Panier[]>(`${this.apiUrl2}/commandes/user/${userId}`);

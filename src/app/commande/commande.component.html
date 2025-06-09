@@ -153,7 +153,7 @@
 
   <!-- Boutons d'action - Ne pas afficher pour les commandes livrées ou annulées -->
   <div class="action-buttons">
-    <button *ngIf="panier.statut !== 'COMMANDEE' && panier.statut !== 'LIVRER' && panier.statut !== 'ANNULER'" 
+    <button
             (click)="annulerCommande()" 
             class="btn-cancel">
       <mat-icon>cancel</mat-icon>

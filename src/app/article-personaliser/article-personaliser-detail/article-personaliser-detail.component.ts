@@ -258,13 +258,13 @@ export class ArticlePersonaliserDetailComponent implements OnInit, OnDestroy, Af
   
   
   // Retourner à la liste des articles
-  goBack(): void {
+   goBack(): void {
     // Utiliser le rôle pour déterminer où retourner
     if (this.currentUser && this.currentUser.roles) {
       if (this.currentUser.roles.includes('ROLE_FOURNISSEUR')) {
         this.router.navigate(['/fournisseur/articles-personalises']);
       } else {
-        this.router.navigate(['/articlePersonaliser']);
+        this.router.navigate(['articlePersonaliser']);
       }
     } else {
       this.router.navigate(['/']);

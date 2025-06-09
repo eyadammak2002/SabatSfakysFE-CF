@@ -134,6 +134,8 @@ export class LoginComponent implements OnInit {
     );
   }
 
+  
+
   signinGoogle(): void {
     this.tokenRequest.token = this.accessToken;
     console.log("Sending Google token:", this.tokenRequest);

@@ -929,6 +929,7 @@ animation: highlight 1.5s ease-out;
   .selection-product {
     width: calc(50% - 10px);
   }
+
 }
 
 @media (max-width: 768px) {
@@ -968,6 +969,8 @@ animation: highlight 1.5s ease-out;
     height: 40px;
     font-size: 12px;
   }
+
+  
 }
 
 

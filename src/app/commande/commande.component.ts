@@ -372,7 +372,6 @@ export class CommandeComponent implements OnInit, AfterViewInit {
   
     this.panier.statut = 'COMMANDEE'; 
   }
-
   annulerCommande(): void {
     // Vérifier si l'ID du panier est valide
     if (this.panier.id === null) {
@@ -389,7 +388,7 @@ export class CommandeComponent implements OnInit, AfterViewInit {
         return;
       }
     }
-
+  
     // Utiliser MatDialog pour confirmation
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
@@ -398,7 +397,7 @@ export class CommandeComponent implements OnInit, AfterViewInit {
         message: 'Êtes-vous sûr de vouloir annuler cette commande ?'
       }
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.panierService.annulerPanier(this.panier.id!).subscribe(
@@ -423,21 +422,33 @@ export class CommandeComponent implements OnInit, AfterViewInit {
             }, 300);
           },
           (error) => {
-            // Gérer les erreurs
+            // Gérer les erreurs avec le message exact du backend
             console.error('Erreur lors de l\'annulation de la commande', error);
+            console.log('Détails de l\'erreur:', error);
             
-            // Message d'erreur approprié
-            if (error.error?.message?.includes('déjà livré')) {
-              this.snackBar.open('Impossible d\'annuler cette commande car elle est déjà livrée.', 'Fermer', {
-                duration: 5000,
-                panelClass: ['error-snackbar']
-              });
-            } else {
-              this.snackBar.open('Une erreur est survenue lors de l\'annulation de la commande', 'Fermer', {
-                duration: 5000,
-                panelClass: ['error-snackbar']
-              });
+            // Extraire le message d'erreur du backend
+            let messageErreur = 'Une erreur est survenue lors de l\'annulation de la commande';
+            
+            if (error.error) {
+              // Si l'erreur a une propriété 'message' (votre cas)
+              if (error.error.message) {
+                messageErreur = error.error.message;
+              }
+              // Si l'erreur est directement une chaîne
+              else if (typeof error.error === 'string') {
+                messageErreur = error.error;
+              }
+              // Si l'erreur a une propriété 'description'
+              else if (error.error.description) {
+                messageErreur = error.error.description;
+              }
             }
+            
+            // Afficher le message d'erreur exact du backend
+            this.snackBar.open(messageErreur, 'Fermer', {
+              duration: 7000, // Durée plus longue pour lire le message
+              panelClass: ['error-snackbar']
+            });
           }
         );
       }

@@ -21,6 +21,9 @@ export class PanierComponent implements OnInit {
   
   stockDisponible: Map<string, number> = new Map();
   
+  // 🆕 NOUVEAU CHAMP POUR GÉRER L'ÉTAT DE CHARGEMENT
+  isLoading: boolean = false;
+  
   // ✅ INITIALISER LE PANIER AVEC UNE STRUCTURE PAR DÉFAUT
   panier: any = {
     id: null,
@@ -67,6 +70,10 @@ export class PanierComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // 🔄 DÉBUT DU CHARGEMENT
+    this.isLoading = true;
+    console.log('🔄 Début du chargement - isLoading:', this.isLoading);
+    
     // ✅ Double sécurité - vérifier l'initialisation
     if (!this.panier || !this.panier.lignesPanier) {
       this.initialiserPanierVide();
@@ -83,6 +90,9 @@ export class PanierComponent implements OnInit {
       // Utilisateur non connecté - charger depuis localStorage
       console.log('👤 Utilisateur non connecté, chargement depuis localStorage');
       this.chargerPanierClient();
+      // 🔄 FIN DU CHARGEMENT POUR LE CAS NON CONNECTÉ
+      this.isLoading = false;
+      console.log('✅ Chargement terminé - isLoading:', this.isLoading);
     }
     
     this.chargerTelephoneClient();
@@ -208,7 +218,7 @@ export class PanierComponent implements OnInit {
     console.log('🔧 === FIN DIAGNOSTIC FINAL ===');
   }
 
- // ✅ DANS PanierComponent - chargerPanierEnCoursDepuisDB() SANS fusion
+ // ✅ DANS PanierComponent - chargerPanierEnCoursDepuisDB() SANS fusion - AVEC GESTION LOADING
  private chargerPanierEnCoursDepuisDB(userId: number): void {
    console.log('🔍 Chargement du panier en cours pour l\'utilisateur:', userId);
    
@@ -233,11 +243,16 @@ export class PanierComponent implements OnInit {
            this.chargerStocksPourPanier();
            this.panierService.sauvegarderPanierDansLocalStorage();
            
-           // ❌ PAS DE FUSION ICI - c'est fait dans AuthenticationService
+           // 🔄 FIN DU CHARGEMENT - SUCCÈS
+           this.isLoading = false;
+           console.log('✅ Chargement terminé avec succès - isLoading:', this.isLoading);
            
          }).catch(error => {
            console.error('❌ Erreur lors du chargement des détails:', error);
            this.initialiserPanierVide();
+           // 🔄 FIN DU CHARGEMENT - ERREUR
+           this.isLoading = false;
+           console.log('❌ Chargement terminé avec erreur - isLoading:', this.isLoading);
          });
          
        } else {
@@ -251,12 +266,18 @@ export class PanierComponent implements OnInit {
            adresseLivraison: ''
          };
          this.panierService.sauvegarderPanierDansLocalStorage();
+         // 🔄 FIN DU CHARGEMENT - PANIER VIDE
+         this.isLoading = false;
+         console.log('✅ Chargement terminé (panier vide) - isLoading:', this.isLoading);
        }
      },
      error: (err: any) => {
        console.error('❌ Erreur lors du chargement du panier depuis la DB:', err);
        this.initialiserPanierVide();
        this.chargerPanierClient();
+       // 🔄 FIN DU CHARGEMENT - ERREUR
+       this.isLoading = false;
+       console.log('❌ Chargement terminé avec erreur DB - isLoading:', this.isLoading);
      }
    });
  }
@@ -284,10 +305,6 @@ export class PanierComponent implements OnInit {
       });
     }
   }
-
-
-
-  
 
   // Nouvelle méthode pour charger le téléphone du client
   chargerTelephoneClient(): void {
@@ -392,7 +409,7 @@ export class PanierComponent implements OnInit {
     }
   }
 
-  // Modifier la quantité d'un article - VERSION CORRIGÉE
+  // Modifier la quantité d'un article - VERSION CORRIGÉE AVEC LOADING
   modifierQuantite(index: number, changement: number, ligne: LignePanier): void {
     if (!ligne || !ligne.couleur || !ligne.pointure) {
       console.error('Ligne de panier invalide');
@@ -439,6 +456,10 @@ export class PanierComponent implements OnInit {
     const user = this.tokenStorage.getUser();
     
     if (user && user.id && this.panier.id) {
+      // 🔄 DÉBUT DU CHARGEMENT POUR MODIFICATION QUANTITÉ
+      this.isLoading = true;
+      console.log('🔄 Début modification quantité - isLoading:', this.isLoading);
+      
       // UTILISATEUR CONNECTÉ - Mettre à jour via l'API backend
       console.log(`🔄 Mise à jour quantité via API pour ligne ${ligne.id}: ${ligne.quantite} → ${nouvelleQuantite}`);
       
@@ -446,6 +467,7 @@ export class PanierComponent implements OnInit {
       if (!ligne.id) {
         console.error('❌ ID de ligne manquant pour la mise à jour en BDD');
         alert('Erreur : impossible de mettre à jour la quantité');
+        this.isLoading = false;
         return;
       }
 
@@ -465,10 +487,17 @@ export class PanierComponent implements OnInit {
           this.panierService.sauvegarderPanierDansLocalStorage();
           
           console.log(`✅ Quantité mise à jour: ${ligne.article.name} → ${nouvelleQuantite}`);
+          
+          // 🔄 FIN DU CHARGEMENT - SUCCÈS
+          this.isLoading = false;
+          console.log('✅ Modification quantité terminée - isLoading:', this.isLoading);
         },
         error: (error) => {
           console.error('❌ Erreur lors de la mise à jour de la quantité:', error);
           alert('Erreur lors de la mise à jour de la quantité. Veuillez réessayer.');
+          // 🔄 FIN DU CHARGEMENT - ERREUR
+          this.isLoading = false;
+          console.log('❌ Modification quantité terminée avec erreur - isLoading:', this.isLoading);
         }
       });
       
@@ -502,34 +531,101 @@ export class PanierComponent implements OnInit {
     console.log('💰 Total mis à jour:', this.panier.total);
   }
   
-  // 🔄 MÉTHODE MISE À JOUR - supprimerLigne avec sécurité
-  supprimerLigne(index: number): void {
-    if (!this.panier || !this.panier.lignesPanier) {
-      console.warn('⚠️ Impossible de supprimer : panier non défini');
-      return;
-    }
-    
-    this.panierService.supprimerDuPanier(index);
-    // Recharger le panier pour mettre à jour l'affichage
-    this.chargerPanierClient();
+// ==========================================
+// VERSION SIMPLE - Sans message d'erreur + rechargement automatique
+// ==========================================
+
+supprimerLigne(index: number): void {
+  if (!this.panier || !this.panier.lignesPanier) {
+    console.warn('⚠️ Impossible de supprimer : panier non défini');
+    return;
   }
 
-  // 🔄 MÉTHODE MISE À JOUR - viderPanier avec sécurité
-  viderPanier(): void {
-    this.panierService.viderPanier();
-    // Recharger le panier vide
-    this.initialiserPanierVide();
-    this.chargerPanierClient();
+  const ligne = this.panier.lignesPanier[index];
+  
+  if (!ligne) {
+    console.warn('⚠️ Ligne non trouvée à l\'index:', index);
+    return;
+  }
 
+  // Demander confirmation
+  const confirmation = confirm('🗑️ Êtes-vous sûr de vouloir supprimer cet article ?');
+  
+  if (!confirmation) {
+    return;
+  }
+
+  // Vérifier si l'utilisateur est connecté
+  const user = this.tokenStorage.getUser();
+  
+  if (user && user.id && this.panier.id && ligne.id) {
+    // 🔄 DÉBUT DU CHARGEMENT
+    this.isLoading = true;
+    console.log('🔄 Début suppression ligne via API');
+    console.log(`🗑️ Suppression ligne ${ligne.id} du panier ${this.panier.id}`);
+    
+    this.panierService.supprimerLignePanier(this.panier.id, ligne.id).subscribe({
+      next: (response) => {
+        console.log('✅ Suppression terminée - rechargement du panier');
+        this.rechargerPanier(user.id);
+      },
+      error: (error) => {
+        console.log('⚠️ Erreur API mais rechargement du panier quand même');
+        // 🚫 PAS DE MESSAGE D'ERREUR - rechargement direct
+        this.rechargerPanier(user.id);
+      }
+    });
+    
+  } else {
+    // UTILISATEUR NON CONNECTÉ - Utiliser la méthode localStorage existante
+    console.log('🏠 Suppression ligne en localStorage pour utilisateur non connecté');
+    this.panierService.supprimerDuPanier(index);
+    this.chargerPanierClient();
+    console.log(`✅ Article supprimé du localStorage`);
+  }
+}
+
+// 🆕 MÉTHODE POUR RECHARGER LE PANIER APRÈS SUPPRESSION
+private rechargerPanier(userId: number): void {
+  console.log('🔄 Rechargement du panier après suppression...');
+  
+  // Option 1: Recharger depuis la base de données (recommandé)
+  this.chargerPanierEnCoursDepuisDB(userId);
+  // Le isLoading sera mis à false automatiquement par chargerPanierEnCoursDepuisDB
+}
+
+
+  viderPanier(): void {
+    // Demander confirmation avant de vider
+    const confirmation = confirm('🗑️ Êtes-vous sûr de vouloir vider votre panier ?');
+    
+    if (!confirmation) {
+      return; // L'utilisateur a annulé
+    }
+    
+    console.log('🗑️ Début du vidage du panier...');
+    
+    // Appeler la méthode du service (qui gère localStorage et BDD)
+    this.panierService.viderPanier();
+    
+    // Réinitialiser le panier dans le composant
+    this.initialiserPanierVide();
+    
+    // Recharger le panier depuis le service
+    this.chargerPanierClient();
+  
+    // Vérifier si le panier était validé et rediriger si nécessaire
     const panier = this.panierService.getPanier();
     if (panier && panier.statut === 'VALIDER') {
       setTimeout(() => {
         this.router.navigate(['/accueil']);
       }, 2000);
     }
+    
+    console.log('✅ Panier vidé avec succès !');
   }
-
-  // 🔄 MÉTHODE MISE À JOUR - createPanier avec sécurité
+  
+  // 🔄 MÉTHODE MISE À JOUR - createPanier avec sécurité ET LOADING
   createPanier(): void {
     if (!this.panier || !this.panier.lignesPanier || this.panier.lignesPanier.length === 0) {
       alert('Ajoutez au moins un article au panier !');
@@ -563,6 +659,10 @@ export class PanierComponent implements OnInit {
       });
       return;
     }
+
+    // 🔄 DÉBUT DU CHARGEMENT POUR CRÉATION PANIER
+    this.isLoading = true;
+    console.log('🔄 Début création panier - isLoading:', this.isLoading);
 
     // Sauvegarder le téléphone si modifié avant de continuer
     if (this.telephoneModifie && this.telephoneValide) {
@@ -625,12 +725,20 @@ export class PanierComponent implements OnInit {
         // Nettoyer le localStorage
         localStorage.removeItem('adresseLivraison');
 
+        // 🔄 FIN DU CHARGEMENT - SUCCÈS
+        this.isLoading = false;
+        console.log('✅ Création panier terminée avec succès - isLoading:', this.isLoading);
+
         // Redirection vers la page de commande
         console.log("Redirection vers commande...");
         this.router.navigate(['/commande']);
       },
       error: (err) => {
         console.error("❌ Erreur lors de la création du panier:", err);
+        
+        // 🔄 FIN DU CHARGEMENT - ERREUR
+        this.isLoading = false;
+        console.log('❌ Création panier terminée avec erreur - isLoading:', this.isLoading);
         
         // Vérifier si l'erreur est due à une non-authentification (403 Forbidden)
         if (err.status === 403) {
