@@ -34,13 +34,13 @@ export class ArticleReclamationComponent implements OnInit {
   selectedPointure: Pointure | null = null;
   selectedPointures: Pointure[] = [];
   
-  // Pour les reclamation
+  // Pour les réclamations
   reclamation: any[] = [];
   isLoadingReclamation: boolean = false;
   reclamationForm: FormGroup;
   reclamationModal: any;
   
-  // Pour l'upload de photos d'reclamation
+  // Pour l'upload de photos d'réclamation
   selectedFiles?: FileList;
   currentFiles: File[] = [];
   progressInfos: { value: number, fileName: string }[] = [];
@@ -61,7 +61,6 @@ export class ArticleReclamationComponent implements OnInit {
   userPeutReclamer: boolean = false;
   verificationAchatEnCours: boolean = false;
 
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -75,21 +74,25 @@ export class ArticleReclamationComponent implements OnInit {
     private cdr: ChangeDetectorRef,  
     private tokenStorage: TokenStorageService
   ){
-    // Initialisation du formulaire d'reclamation
+    // Initialisation du formulaire de réclamation
     this.reclamationForm = this.fb.group({
-      /*note: ['', Validators.required],*/
       description: ['', [Validators.required, Validators.minLength(10)]]
     });
   }
 
+  // ✅ MODIFIÉ - ngOnInit avec reset initial comme create-article
   ngOnInit(): void {
+    // ✅ RESET INITIAL comme create-article
+    this.allPhoto = [];
+    this.newlyUploadedPhotos = [];
+    
     // Récupérer l'ID du client de manière asynchrone
     this.getCurrentClientId().then(clientId => {
       this.currentClientId = clientId;
       console.log("currentClientId récupéré:", this.currentClientId);
       
-      // Charger toutes les photos disponibles
-      this.getPhotos();
+      // ❌ NE PAS charger getPhotos() ici
+      // this.getPhotos(); // SUPPRIMÉ
       
       // Récupérer l'id depuis l'URL
       this.route.paramMap.subscribe(params => {
@@ -113,42 +116,41 @@ export class ArticleReclamationComponent implements OnInit {
       this.route.queryParamMap.subscribe(queryParams => {
         const clientIdFromUrl = queryParams.get('clientId');
         if (clientIdFromUrl && !isNaN(Number(clientIdFromUrl))) {
-          // Si présent dans l'URL, mettre à jour la valeur
           this.currentClientId = Number(clientIdFromUrl);
           console.log("ID client récupéré depuis l'URL:", this.currentClientId);
         }
       });
     });
   }
-// Ajouter la méthode verifierSiPeutReclamer
-verifierSiPeutReclamer(): void {
-  if (!this.currentClientId || !this.articleId) {
-    console.log("Impossible de vérifier: ID client ou article manquant");
-    return;
-  }
-  
-  // S'assurer que clientId est un nombre
-  const clientIdNum = Number(this.currentClientId);
-  if (isNaN(clientIdNum)) {
-    console.error("L'ID client n'est pas un nombre valide:", this.currentClientId);
-    return;
-  }
-  
-  this.verificationAchatEnCours = true;
-  this.reclamationService.verifierAchatArticle(clientIdNum, this.articleId).subscribe({
-    next: (peutReclamer) => {
-      this.userPeutReclamer = peutReclamer;
-      this.verificationAchatEnCours = false;
-      console.log(`L'utilisateur ${peutReclamer ? 'peut' : 'ne peut pas'} faire une réclamation sur cet article`);
-    },
-    error: (err) => {
-      console.error("Erreur lors de la vérification d'achat:", err);
-      this.userPeutReclamer = false;
-      this.verificationAchatEnCours = false;
+
+  // Ajouter la méthode verifierSiPeutReclamer
+  verifierSiPeutReclamer(): void {
+    if (!this.currentClientId || !this.articleId) {
+      console.log("Impossible de vérifier: ID client ou article manquant");
+      return;
     }
-  });
-}
-  
+    
+    // S'assurer que clientId est un nombre
+    const clientIdNum = Number(this.currentClientId);
+    if (isNaN(clientIdNum)) {
+      console.error("L'ID client n'est pas un nombre valide:", this.currentClientId);
+      return;
+    }
+    
+    this.verificationAchatEnCours = true;
+    this.reclamationService.verifierAchatArticle(clientIdNum, this.articleId).subscribe({
+      next: (peutReclamer) => {
+        this.userPeutReclamer = peutReclamer;
+        this.verificationAchatEnCours = false;
+        console.log(`L'utilisateur ${peutReclamer ? 'peut' : 'ne peut pas'} faire une réclamation sur cet article`);
+      },
+      error: (err) => {
+        console.error("Erreur lors de la vérification d'achat:", err);
+        this.userPeutReclamer = false;
+        this.verificationAchatEnCours = false;
+      }
+    });
+  }
   
   // Méthode pour vérifier si l'utilisateur est connecté
   isLoggedIn(): boolean {
@@ -215,7 +217,8 @@ verifierSiPeutReclamer(): void {
     return this.newlyUploadedPhotos.some(p => p.id === photoId);
   }
   
-  // Récupérer toutes les photos depuis la base de données
+  // ❌ COMMENTÉ/SUPPRIMÉ - Cette méthode cause les doublons
+  /*
   getPhotos(): void {
     this.photoService.get().subscribe({
       next: (data) => {
@@ -227,7 +230,7 @@ verifierSiPeutReclamer(): void {
           this.photosToHide = this.allPhoto.map(photo => photo.id);
           console.log('Tous les IDs des photos à masquer:', this.photosToHide);
         } else {
-          // Mettre à jour les photos dans l'reclamation avec les informations complètes
+          // Mettre à jour les photos dans la réclamation avec les informations complètes
           // On pourrait filtrer les photos complètes ici si nécessaire
           console.log('Photos sélectionnées après upload:', this.newlyUploadedPhotos);
           console.log('IDs des photos à masquer:', this.photosToHide);
@@ -238,6 +241,7 @@ verifierSiPeutReclamer(): void {
       }
     });
   }
+  */
  
   loadArticleDetails(id: number): void {
     this.isLoading = true;
@@ -261,9 +265,9 @@ verifierSiPeutReclamer(): void {
       next: (data) => {
         this.reclamation = data;
         this.isLoadingReclamation = false;
-        console.log("💬 Reclamation chargés:", this.reclamation);
+        console.log("💬 Réclamations chargées:", this.reclamation);
         
-        // Charger les informations utilisateur pour chaque reclamation si nécessaire
+        // Charger les informations utilisateur pour chaque réclamation si nécessaire
         this.reclamation.forEach(reclamation => {
           if (!reclamation.user || !reclamation.user.username) {
             this.loadUserForReclamation(reclamation.id);
@@ -271,7 +275,7 @@ verifierSiPeutReclamer(): void {
         });
       },
       error: (err) => {
-        console.error("❌ Erreur lors du chargement des reclamation:", err);
+        console.error("❌ Erreur lors du chargement des réclamations:", err);
         this.isLoadingReclamation = false;
       }
     });
@@ -334,7 +338,7 @@ verifierSiPeutReclamer(): void {
     this.router.navigate(['/articles']);
   }
   
-  // Méthodes d'upload de photos
+  // ✅ MODIFIÉ - selectFiles comme create-article
   selectFiles(event: any): void {
     this.selectedFiles = event.target.files;
     this.currentFiles = Array.from(this.selectedFiles || []);
@@ -344,56 +348,86 @@ verifierSiPeutReclamer(): void {
     this.uploadError = false;
   }
 
+  // ✅ MODIFIÉ - uploadPhotos EXACTEMENT comme create-article
   uploadPhotos(): void {
+    // Si un upload est déjà en cours, ne rien faire
+    if (this.isUploading) {
+      console.log('Upload déjà en cours, ignoré');
+      return;
+    }
+    
+    console.log('Début de l\'upload des photos pour réclamation');
+    
     this.uploadMessage = '';
     this.uploadSuccess = false;
     this.uploadError = false;
-    this.newlyUploadedPhotos = [];
-    this.isUploading = true;
     
     if (this.selectedFiles && this.selectedFiles.length > 0) {
+      this.isUploading = true;
+      
+      // ✅ MÊME logique que create-article
       const uploadObservables = Array.from(this.selectedFiles).map((file, index) => {
         return this.uploadFile(file, index);
       });
 
-      // Utiliser forkJoin pour attendre que tous les fichiers soient téléchargés
+      // ✅ MÊME forkJoin que create-article
       forkJoin(uploadObservables).subscribe({
         next: (responses) => {
           this.uploadSuccess = true;
           this.uploadMessage = 'Toutes les photos ont été téléchargées avec succès.';
           this.selectedFiles = undefined;
           this.currentFiles = [];
-          
-          // Récupérer les photos depuis la base de données comme dans CreateArticleComponent
-          this.getPhotos();
-          
           this.isUploading = false;
+          
+          console.log('Upload terminé avec succès pour réclamation');
+          
+          // ❌ NE PAS appeler getPhotos() ici
+          // this.getPhotos(); // SUPPRIMÉ
         },
         error: (err) => {
           this.uploadError = true;
           this.uploadMessage = 'Une erreur est survenue lors du téléchargement des photos.';
+          console.error('Erreur upload:', err);
           this.isUploading = false;
-          this.cdr.detectChanges();
+        },
+        complete: () => {
+          console.log('Upload observable complété');
+          this.isUploading = false;
         }
       });
-    } else {
-      this.isUploading = false;
     }
   }
 
+  // ✅ MODIFIÉ - uploadFile EXACTEMENT comme create-article
   uploadFile(file: File, index: number): any {
     return new Promise((resolve, reject) => {
+      // Skip if already uploading (même logique que create-article)
+      if (this.progressInfos[index].value > 0) {
+        console.log(`Fichier ${file.name} déjà en cours d'upload, ignoré`);
+        resolve(null);
+        return;
+      }
+
+      // ✅ MÊME logique que create-article
       this.uploadService.upload(file).subscribe({
         next: (event: any) => {
           if (event.type === HttpEventType.UploadProgress) {
             this.progressInfos[index].value = Math.round(100 * event.loaded / event.total);
           } else if (event instanceof HttpResponse) {
-            // Stocker uniquement les données essentielles pour identifier la photo plus tard
-            const newPhoto: Photo = event.body;
-            this.newlyUploadedPhotos.push({...newPhoto}); // Utiliser une copie pour éviter les références partagées
+            // ✅ Create new photo EXACTEMENT comme create-article
+            const newPhoto: Photo = {
+              id: event.body.id || 0,
+              name: event.body.fileName,
+              url: event.body.fileDownloadUri
+            };
             
-            console.log('Photo uploadée:', newPhoto);
-            resolve(event.body);
+            // ✅ MÊME logique d'ajout que create-article
+            this.allPhoto.push(newPhoto);
+            this.newlyUploadedPhotos.push(newPhoto);
+            
+            console.log('Photo uploadée pour réclamation:', newPhoto);
+            this.cdr.detectChanges();
+            resolve(newPhoto);
           }
         },
         error: (err: any) => {
@@ -405,19 +439,28 @@ verifierSiPeutReclamer(): void {
     });
   }
   
-  // Fonctions pour le système d'reclamation
+  // ✅ MODIFIÉ - ouvrirFormReclamation avec reset complet comme create-article
   ouvrirFormReclamation(): void {
     if (!this.isLoggedIn()) {
-      // Rediriger vers la page de connexion
       this.router.navigate(['/login'], { 
         queryParams: { returnUrl: `/articleReclamation/${this.articleId}` } 
       });
       return;
     }
     
-    // Réinitialiser le formulaire
+    // ✅ MÊME reset que dans ngOnInit de create-article
     this.reclamationForm.reset();
+    this.allPhoto = [];
     this.newlyUploadedPhotos = [];
+    
+    // Reset variables upload
+    this.selectedFiles = undefined;
+    this.currentFiles = [];
+    this.progressInfos = [];
+    this.uploadMessage = '';
+    this.uploadSuccess = false;
+    this.uploadError = false;
+    this.isUploading = false;
     
     // Ouvrir le modal
     const modalElement = document.getElementById('reclamationModal');
@@ -469,8 +512,6 @@ verifierSiPeutReclamer(): void {
         next: (response) => {
           console.log('Réclamation créée avec succès:', response);
           
-         
-          
           // Afficher un message de succès
           alert('Votre réclamation a été publiée avec succès !');
           this.router.navigate(['/mes-reclamations']);
@@ -486,69 +527,66 @@ verifierSiPeutReclamer(): void {
     });
   }
 
-
-  // Vérifier si l'utilisateur est l'auteur d'un reclamation
+  // Vérifier si l'utilisateur est l'auteur d'une réclamation
   isReclamationAuthor(reclamationItem: any): boolean {
     return this.isLoggedIn() && this.currentClientId === reclamationItem.client?.id;
   }
   
-  
-  // Supprimer un reclamation
+  // Supprimer une réclamation
   supprimerReclamation(reclamationId: number): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet reclamation ?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?')) {
       this.reclamationService.deleteReclamation(reclamationId).subscribe({
         next: () => {
           this.loadArticleReclamation(this.articleId!);
-          alert('Reclamation supprimé avec succès.');
+          alert('Réclamation supprimée avec succès.');
         },
         error: (err) => {
-          console.error('Erreur lors de la suppression de l\'reclamation:', err);
-          alert('Erreur lors de la suppression de l\'reclamation. Veuillez réessayer.');
+          console.error('Erreur lors de la suppression de la réclamation:', err);
+          alert('Erreur lors de la suppression de la réclamation. Veuillez réessayer.');
         }
       });
     }
   }
   
+  // ✅ MODIFIÉ - togglePhotoSelection EXACTEMENT comme create-article
   togglePhotoSelection(photo: Photo): void {
     const index = this.newlyUploadedPhotos.findIndex(p => p.id === photo.id);
     if (index > -1) {
-      // Si la photo est déjà sélectionnée, la retirer
       this.newlyUploadedPhotos.splice(index, 1);
     } else {
-      // Sinon, l'ajouter à la sélection
       this.newlyUploadedPhotos.push(photo);
     }
-    this.cdr.detectChanges(); // Forcer la mise à jour de l'affichage
-    console.log('Photos sélectionnées pour l\'reclamation:', this.newlyUploadedPhotos);
+    this.cdr.detectChanges();
+    console.log('Photos sélectionnées pour réclamation:', this.newlyUploadedPhotos);
   }
   
-  // Supprimer une photo uploadée
+  // ✅ MODIFIÉ - supprimerPhotoUploadee EXACTEMENT comme deletePhoto dans create-article
   supprimerPhotoUploadee(index: number): void {
+    console.log('Suppression de la photo de la sélection à l\'index:', index);
+    
+    // Même logique que deletePhoto dans create-article
+    const photoToRemove = this.newlyUploadedPhotos[index];
+    this.allPhoto = this.allPhoto.filter(p => p.id !== photoToRemove.id);
     this.newlyUploadedPhotos.splice(index, 1);
+    
     this.cdr.detectChanges();
   }
 
-  // Dans ArticleDetailComponent
-
-// Ajouter une méthode pour récupérer les infos utilisateur pour un reclamation spécifique
-loadUserForReclamation(reclamationId: number): void {
-  this.reclamationService.getUserFromReclamation(reclamationId).subscribe({
-    next: (userData) => {
-      // Trouver l'reclamation dans le tableau et mettre à jour les informations utilisateur
-      const reclamationIndex = this.reclamation.findIndex(a => a.id === reclamationId);
-      if (reclamationIndex !== -1) {
-        this.reclamation[reclamationIndex].user = userData;
-        this.cdr.detectChanges();
+  // Ajouter une méthode pour récupérer les infos utilisateur pour une réclamation spécifique
+  loadUserForReclamation(reclamationId: number): void {
+    this.reclamationService.getUserFromReclamation(reclamationId).subscribe({
+      next: (userData) => {
+        // Trouver la réclamation dans le tableau et mettre à jour les informations utilisateur
+        const reclamationIndex = this.reclamation.findIndex(a => a.id === reclamationId);
+        if (reclamationIndex !== -1) {
+          this.reclamation[reclamationIndex].user = userData;
+          this.cdr.detectChanges();
+        }
+        console.log(`Informations utilisateur chargées pour la réclamation ${reclamationId}:`, userData);
+      },
+      error: (err) => {
+        console.error(`Erreur lors du chargement des informations utilisateur pour la réclamation ${reclamationId}:`, err);
       }
-      console.log(`Informations utilisateur chargées pour l'reclamation ${reclamationId}:`, userData);
-    },
-    error: (err) => {
-      console.error(`Erreur lors du chargement des informations utilisateur pour l'reclamation ${reclamationId}:`, err);
-    }
-  });
-}
-
-
-
-
+    });
+  }
 }

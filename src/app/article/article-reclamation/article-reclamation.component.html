@@ -39,120 +39,111 @@
           </div>
           
           <!-- Section Upload de photos -->
-          <div class="mb-3">
-            <label class="form-label fw-bold" style="color: #3c2313;">
-              <i class="fas fa-camera me-2"></i> Ajouter des photos (optionnel)
-            </label>
-            <div class="upload-zone p-3 border rounded" style="background-color: #f9f9f9; border-color: #ddd;">
-              <!-- Zone de sélection de fichiers -->
-              <div class="mb-3">
-                <label class="btn w-100" style="background-color: #f8f9fa; border: 2px dashed #ddd; cursor: pointer; padding: 15px; transition: all 0.3s;">
-                  <input type="file" (change)="selectFiles($event)" multiple style="display: none;" accept="image/*" [disabled]="isUploading"/>
-                  <i class="fas fa-file-image fa-2x mb-2" style="color: #ff0000;"></i>
-                  <div>Sélectionner des photos</div>
-                  <small class="text-muted">Cliquez pour parcourir vos fichiers</small>
-                </label>
-              </div>
-              
-              <!-- Liste des fichiers sélectionnés -->
-              <div *ngIf="currentFiles.length > 0" class="mb-3">
-                <h6 style="color: #3c2313;">Fichiers sélectionnés :</h6>
-                <ul class="list-group">
-                  <li *ngFor="let file of currentFiles; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
-                    <div class="ms-2 me-auto">
-                      {{ file.name }}
-                    </div>
-                    <div *ngIf="progressInfos[i].value > 0 && progressInfos[i].value < 100" class="progress" style="width: 40%;">
-                      <div class="progress-bar" role="progressbar" [style.width.%]="progressInfos[i].value" 
-                           [attr.aria-valuenow]="progressInfos[i].value" aria-valuemin="0" aria-valuemax="100"
-                           style="background-color: #ff0000;">
-                        {{ progressInfos[i].value }}%
-                      </div>
-                    </div>
-                    <span *ngIf="progressInfos[i]?.value === 100" class="badge bg-success rounded-pill">
-                      <i class="fas fa-check"></i>
-                    </span>
-                  </li>
-                </ul>
-                
-                <div class="mt-2">
-                  <button class="btn" (click)="uploadPhotos()" [disabled]="isUploading"
-                          style="background-color: #ff0000; color: white; transition: all 0.3s;">
-                    <span *ngIf="isUploading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                    <i class="fas fa-upload me-2"></i> Télécharger les photos
-                  </button>
-                </div>
-              </div>
-              
-              <!-- Messages d'information -->
-              <div *ngIf="uploadMessage" class="alert mt-2" [class.alert-success]="uploadSuccess" [class.alert-danger]="uploadError">
-                <i class="fas" [class.fa-check-circle]="uploadSuccess" [class.fa-exclamation-triangle]="uploadError"></i>
-                {{ uploadMessage }}
-              </div>
-              
-              <!-- Photos disponibles -->
-              <div class="photo-gallery-container mt-4">
-                <h6 class="photo-gallery-title"><i class="fas fa-images me-2"></i> Photos disponibles</h6>
-                <p class="photo-gallery-description">Sélectionnez parmi les photos disponibles pour votre réclamation.</p>
-                <div class="photo-grid">
-                  <div class="row">
-                    <div *ngFor="let photo of allPhoto" class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
-                      <!-- Use ngIf in a wrapper div -->
-                      <div *ngIf="!photosToHide.includes(photo.id)">
-                        <div class="photo-card" [ngClass]="{'border-success': isPhotoSelected(photo.id)}">
-                          <img [src]="'http://localhost:8080/uploads/' + photo.name" class="photo-img" alt="{{ photo.name }}"
-                               style="width: 100%; height: 150px; object-fit: cover;">
-                          <div class="photo-card-body">
-                            <button 
-                              type="button" 
-                              class="photo-btn-small w-100"
-                              [ngClass]="{
-                                'select-btn': !isPhotoSelected(photo.id), 
-                                'remove-btn': isPhotoSelected(photo.id)
-                              }"
-                              style="
-                                border-radius: 20px;
-                                font-size: 0.85rem;
-                                transition: all 0.3s;
-                                padding: 6px 12px;
-                                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                                border: none;
-                                background-color: #ff0000;
-                                color: white;
-                              "
-                              (click)="togglePhotoSelection(photo)">
-                              <span *ngIf="!isPhotoSelected(photo.id)" style="display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-plus me-1"></i> Sélectionner
-                              </span>
-                              <span *ngIf="isPhotoSelected(photo.id)" style="display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-times me-1"></i> Retirer
-                              </span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Photos sélectionnées -->
-              <div *ngIf="newlyUploadedPhotos.length > 0" class="mt-3">
-                <h6 style="color: #3c2313;">Photos sélectionnées pour votre réclamation :</h6>
-                <div class="row">
-                  <div *ngFor="let photo of newlyUploadedPhotos; let i = index" class="col-4 position-relative mb-3">
-                    <img [src]="'http://localhost:8080/uploads/' + photo.name" class="img-thumbnail" alt="Photo sélectionnée"
-                        style="width: 100%; height: 150px; object-fit: cover; border: 2px solid #ff0000;">
-                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
-                            style="border-radius: 50%; width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
-                            (click)="supprimerPhotoUploadee(i)">
-                      <i class="fas fa-times"></i>
-                    </button>
-                  </div>
-                </div>
+         <!-- 🎯 REMPLACER la section photos dans les réclamations -->
+<!-- Section Upload de photos -->
+<div class="mb-3">
+  <label class="form-label fw-bold" style="color: #3c2313;">
+    <i class="fas fa-camera me-2"></i> Ajouter des photos (optionnel)
+  </label>
+  <div class="upload-zone p-3 border rounded" style="background-color: #f9f9f9; border-color: #ddd;">
+    
+    <!-- Zone de sélection de fichiers -->
+    <div class="mb-3">
+      <label class="btn w-100" style="background-color: #f8f9fa; border: 2px dashed #ddd; cursor: pointer; padding: 15px; transition: all 0.3s;">
+        <input type="file" (change)="selectFiles($event)" multiple style="display: none;" accept="image/*" [disabled]="isUploading"/>
+        <i class="fas fa-file-image fa-2x mb-2" style="color: #ff0000;"></i>
+        <div>Sélectionner des photos</div>
+        <small class="text-muted">Cliquez pour parcourir vos fichiers</small>
+      </label>
+    </div>
+    
+    <!-- Liste des fichiers sélectionnés -->
+    <div *ngIf="currentFiles.length > 0" class="mb-3">
+      <h6 style="color: #3c2313;">Fichiers sélectionnés :</h6>
+      <ul class="list-group">
+        <li *ngFor="let file of currentFiles; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+          <div class="ms-2 me-auto">
+            {{ file.name }}
+          </div>
+          <div *ngIf="progressInfos[i].value > 0 && progressInfos[i].value < 100" class="progress" style="width: 40%;">
+            <div class="progress-bar" role="progressbar" [style.width.%]="progressInfos[i].value" 
+                 [attr.aria-valuenow]="progressInfos[i].value" aria-valuemin="0" aria-valuemax="100"
+                 style="background-color: #ff0000;">
+              {{ progressInfos[i].value }}%
+            </div>
+          </div>
+          <span *ngIf="progressInfos[i]?.value === 100" class="badge bg-success rounded-pill">
+            <i class="fas fa-check"></i>
+          </span>
+        </li>
+      </ul>
+      
+      <div class="mt-2">
+        <button class="btn" (click)="uploadPhotos()" [disabled]="isUploading"
+                style="background-color: #ff0000; color: white; transition: all 0.3s;">
+          <span *ngIf="isUploading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+          <i class="fas fa-upload me-2"></i> Télécharger les photos
+        </button>
+      </div>
+    </div>
+    
+    <!-- Messages d'information -->
+    <div *ngIf="uploadMessage" class="alert mt-2" [class.alert-success]="uploadSuccess" [class.alert-danger]="uploadError">
+      <i class="fas" [class.fa-check-circle]="uploadSuccess" [class.fa-exclamation-triangle]="uploadError"></i>
+      {{ uploadMessage }}
+    </div>
+    
+    <!-- ✅ PHOTOS UPLOADÉES POUR CETTE RÉCLAMATION (comme create-article) -->
+    <div class="mt-4" *ngIf="newlyUploadedPhotos && newlyUploadedPhotos.length > 0">
+      <h6 style="color: #3c2313;"><i class="fas fa-images me-2"></i> Photos uploadées</h6>
+      <p class="text-muted small">
+        Photos que vous venez d'uploader pour cette réclamation.
+      </p>
+      
+      <div class="row">
+        <div *ngFor="let photo of newlyUploadedPhotos; let i = index" class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
+          <div class="card shadow-sm border-danger" style="border-radius: 12px; overflow: hidden; transition: all 0.3s;">
+            <div style="height: 150px; overflow: hidden;">
+              <img [src]="'http://localhost:8080/uploads/' + photo.name" class="card-img-top" alt="{{ photo.name }}" 
+                   style="height: 100%; width: 100%; object-fit: cover;">
+            </div>
+            <div class="card-body p-2">
+              <p class="card-title mb-2 text-truncate" style="font-size: 0.85rem;">{{ photo.name }}</p>
+              <div class="d-flex justify-content-center">
+                <button 
+                  type="button" 
+                  class="btn btn-danger btn-sm w-100"
+                  style="
+                    border-radius: 20px;
+                    font-size: 0.85rem;
+                    transition: all 0.3s;
+                    padding: 6px 12px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    border: none;
+                  "
+                  (click)="supprimerPhotoUploadee(i)">
+                  <i class="fas fa-times me-1"></i> Supprimer
+                </button>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- ❌ SUPPRIMER CETTE SECTION "Photos disponibles" qui affiche toutes les photos DB -->
+    <!-- 
+    <div class="photo-gallery-container mt-4">... SECTION SUPPRIMÉE ...</div>
+    -->
+    
+    <!-- Message si aucune photo n'est uploadée -->
+    <div *ngIf="newlyUploadedPhotos.length === 0" class="alert mt-3" 
+         style="background-color: rgba(255, 0, 0, 0.1); border-left: 4px solid #ff0000; color: #333;">
+      <i class="fas fa-info-circle me-2"></i>
+      Aucune photo sélectionnée. Vous pouvez ajouter des photos pour illustrer votre réclamation.
+    </div>
+  </div>
+</div>
 
           <div class="d-flex justify-content-end mt-4">
             <button type="button" class="btn me-2" 

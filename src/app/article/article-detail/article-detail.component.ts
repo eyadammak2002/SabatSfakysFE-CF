@@ -487,66 +487,93 @@ getCurrentClientId(): Promise<number | null> {
     this.uploadError = false;
   }
 
-  uploadPhotos(): void {
-    this.uploadMessage = '';
-    this.uploadSuccess = false;
-    this.uploadError = false;
-    this.newlyUploadedPhotos = [];
+ // 🔧 Modifier aussi la méthode uploadPhotos pour éviter les conflits
+ uploadPhotos(): void {
+  // Si un upload est déjà en cours, ne rien faire
+  if (this.isUploading) {
+    console.log('Upload déjà en cours, ignoré');
+    return;
+  }
+  
+  console.log('Début de l\'upload des photos');
+  
+  this.uploadMessage = '';
+  this.uploadSuccess = false;
+  this.uploadError = false;
+  
+  if (this.selectedFiles && this.selectedFiles.length > 0) {
     this.isUploading = true;
     
-    if (this.selectedFiles && this.selectedFiles.length > 0) {
-      const uploadObservables = Array.from(this.selectedFiles).map((file, index) => {
-        return this.uploadFile(file, index);
-      });
+    // ✅ MÊME logique que create-article (sans article temporaire)
+    const uploadObservables = Array.from(this.selectedFiles).map((file, index) => {
+      return this.uploadFile(file, index);
+    });
 
-      // Utiliser forkJoin pour attendre que tous les fichiers soient téléchargés
-      forkJoin(uploadObservables).subscribe({
-        next: (responses) => {
-          this.uploadSuccess = true;
-          this.uploadMessage = 'Toutes les photos ont été téléchargées avec succès.';
-          this.selectedFiles = undefined;
-          this.currentFiles = [];
-          
-          // Récupérer les photos depuis la base de données comme dans CreateArticleComponent
-          this.getPhotos();
-          
-          this.isUploading = false;
-        },
-        error: (err) => {
-          this.uploadError = true;
-          this.uploadMessage = 'Une erreur est survenue lors du téléchargement des photos.';
-          this.isUploading = false;
-          this.cdr.detectChanges();
-        }
-      });
-    } else {
-      this.isUploading = false;
-    }
-  }
-
-  uploadFile(file: File, index: number): any {
-    return new Promise((resolve, reject) => {
-      this.uploadService.upload(file).subscribe({
-        next: (event: any) => {
-          if (event.type === HttpEventType.UploadProgress) {
-            this.progressInfos[index].value = Math.round(100 * event.loaded / event.total);
-          } else if (event instanceof HttpResponse) {
-            // Stocker uniquement les données essentielles pour identifier la photo plus tard
-            const newPhoto: Photo = event.body;
-            this.newlyUploadedPhotos.push({...newPhoto}); // Utiliser une copie pour éviter les références partagées
-            
-            console.log('Photo uploadée:', newPhoto);
-            resolve(event.body);
-          }
-        },
-        error: (err: any) => {
-          this.progressInfos[index].value = 0;
-          this.uploadError = true;
-          reject(err);
-        }
-      });
+    // ✅ MÊME forkJoin que create-article
+    forkJoin(uploadObservables).subscribe({
+      next: (responses) => {
+        this.uploadSuccess = true;
+        this.uploadMessage = 'Toutes les photos ont été téléchargées avec succès.';
+        this.selectedFiles = undefined;
+        this.currentFiles = [];
+        this.isUploading = false;
+        
+        console.log('Upload terminé avec succès pour avis');
+      },
+      error: (err) => {
+        this.uploadError = true;
+        this.uploadMessage = 'Une erreur est survenue lors du téléchargement de certaines photos.';
+        console.error('Erreur upload:', err);
+        this.isUploading = false;
+      },
+      complete: () => {
+        console.log('Upload observable complété');
+        this.isUploading = false;
+      }
     });
   }
+}
+
+
+uploadFile(file: File, index: number): any {
+  return new Promise((resolve, reject) => {
+    // Skip if already uploading (même logique que create-article)
+    if (this.progressInfos[index].value > 0) {
+      console.log(`Fichier ${file.name} déjà en cours d'upload, ignoré`);
+      resolve(null);
+      return;
+    }
+
+    // ✅ MÊME logique que create-article
+    this.uploadService.upload(file).subscribe({
+      next: (event: any) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          this.progressInfos[index].value = Math.round(100 * event.loaded / event.total);
+        } else if (event instanceof HttpResponse) {
+          // ✅ Create new photo EXACTEMENT comme create-article
+          const newPhoto: Photo = {
+            id: event.body.id || 0,
+            name: event.body.fileName,
+            url: event.body.fileDownloadUri
+          };
+          
+          // ✅ MÊME logique d'ajout que create-article
+          this.allPhoto.push(newPhoto);
+          this.newlyUploadedPhotos.push(newPhoto);
+          
+          this.cdr.detectChanges();
+          resolve(newPhoto);
+        }
+      },
+      error: (err: any) => {
+        this.progressInfos[index].value = 0;
+        this.uploadError = true;
+        reject(err);
+      }
+    });
+  });
+}
+
   
   gererClicAvis(): void {
     // Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
@@ -605,11 +632,23 @@ getCurrentClientId(): Promise<number | null> {
   }
 
 
-  // Méthode pour ouvrir le modal d'avis
+  // 🔧 Ajouter une méthode pour réinitialiser les photos lors de l'ouverture du modal
   ouvrirModalAvis(): void {
     // Réinitialiser le formulaire
     this.avisForm.reset();
+    
+    // ✅ MÊME reset que dans ngOnInit de create-article
+    this.allPhoto = [];
     this.newlyUploadedPhotos = [];
+    
+    // Reset variables upload
+    this.selectedFiles = undefined;
+    this.currentFiles = [];
+    this.progressInfos = [];
+    this.uploadMessage = '';
+    this.uploadSuccess = false;
+    this.uploadError = false;
+    this.isUploading = false;
     
     // Ouvrir le modal
     const modalElement = document.getElementById('avisModal');
@@ -619,6 +658,8 @@ getCurrentClientId(): Promise<number | null> {
     }
   }
   
+
+    
   // Conserver la méthode originale pour la compatibilité
   ouvrirFormAvis(): void {
     this.gererClicAvis();
@@ -729,22 +770,25 @@ soumettreAvis(): void {
   togglePhotoSelection(photo: Photo): void {
     const index = this.newlyUploadedPhotos.findIndex(p => p.id === photo.id);
     if (index > -1) {
-      // Si la photo est déjà sélectionnée, la retirer
       this.newlyUploadedPhotos.splice(index, 1);
     } else {
-      // Sinon, l'ajouter à la sélection
       this.newlyUploadedPhotos.push(photo);
     }
-    this.cdr.detectChanges(); // Forcer la mise à jour de l'affichage
-    console.log('Photos sélectionnées pour l\'avis:', this.newlyUploadedPhotos);
+    this.cdr.detectChanges();
+    console.log('Photos sélectionnées pour avis:', this.newlyUploadedPhotos);
   }
   
-  // Supprimer une photo uploadée
-  supprimerPhotoUploadee(index: number): void {
-    this.newlyUploadedPhotos.splice(index, 1);
-    this.cdr.detectChanges();
-  }
-
+// 7. ✅ Ajouter deletePhoto comme dans create-article si nécessaire
+supprimerPhotoUploadee(index: number): void {
+  console.log('Suppression de la photo de la sélection à l\'index:', index);
+  
+  // Même logique que deletePhoto dans create-article
+  const photoToRemove = this.newlyUploadedPhotos[index];
+  this.allPhoto = this.allPhoto.filter(p => p.id !== photoToRemove.id);
+  this.newlyUploadedPhotos.splice(index, 1);
+  
+  this.cdr.detectChanges();
+}
   // Ajouter une méthode pour récupérer les infos utilisateur pour un avis spécifique
   loadUserForAvis(avisId: number): void {
     this.avisService.getUserFromAvis(avisId).subscribe({
