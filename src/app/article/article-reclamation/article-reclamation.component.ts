@@ -589,4 +589,5 @@ export class ArticleReclamationComponent implements OnInit {
       }
     });
   }
+  
 }

@@ -99,8 +99,14 @@
             <span class="article-tag reference" *ngIf="article.pointure">
               Pointure : {{ article.pointure }}
             </span>
-            <span class="article-tag reference" *ngIf="article.couleur">
-              Couleur : {{ article.couleur }}
+            <span class="badge d-flex align-items-center gap-2">
+              <span style="color: black;">Couleur :</span>
+              <div 
+                class="rounded-circle border"
+                [style.background-color]="article.couleur"
+                [title]="article.couleur"
+                style="width: 16px; height: 16px; min-width: 16px;">
+              </div>
             </span>
             <span class="article-tag reference" *ngIf="article.typePied">
               Type De Pied : {{ article.typePied }}
@@ -109,7 +115,7 @@
               Forme De Pied : {{ article.formePied }}
             </span>
             <span class="article-tag reference" *ngIf="article.typeSemelle">
-              Type De Semelle {{ article.typeSemelle }}
+              Type De Semelle: {{ article.typeSemelle }}
             </span>
             
           </div>

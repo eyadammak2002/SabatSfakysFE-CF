@@ -41,14 +41,7 @@
             <div class="list-group list-group-flush">
               <div *ngFor="let reclamation of reclamations" class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 justify-content-between align-items-center mb-2">
-                  <h5 class="mb-1">
-                    <span *ngIf="reclamation.article" class="text-primary">
-                      {{ reclamation.article.name }}
-                    </span>
-                    <span *ngIf="!reclamation.article" class="text-muted">
-                      Article inconnu
-                    </span>
-                  </h5>
+                 
                   <small class="text-muted">{{ formatDate(reclamation.dateAjout) }}</small>
                 </div>
                 

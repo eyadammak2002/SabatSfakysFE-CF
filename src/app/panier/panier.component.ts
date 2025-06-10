@@ -603,11 +603,9 @@ private rechargerPanier(userId: number): void {
       return; // L'utilisateur a annulé
     }
     
-    console.log('🗑️ Début du vidage du panier...');
-    
+    console.log('🗑️ Début du vidage du panier...');    
     // Appeler la méthode du service (qui gère localStorage et BDD)
-    this.panierService.viderPanier();
-    
+    this.panierService.viderPanier();   
     // Réinitialiser le panier dans le composant
     this.initialiserPanierVide();
     

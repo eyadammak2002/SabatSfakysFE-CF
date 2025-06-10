@@ -402,8 +402,11 @@ checkUserRole(): void {
        // Réinitialiser l'adresse de livraison dans le panier actif
     this.panierService.resetAdresseLivraison();
     
-    // Vider le panier courant
-    this.panierService.viderPanier();
+    const user = this.tokenStorageService.getUser();
+    if (!user || !user.id) {
+        // Seulement vider pour invités
+        this.panierService.viderPanier();
+    }
     
     // Supprimer l'entrée spécifique du panier invité dans localStorage
     localStorage.removeItem('guest_cart');

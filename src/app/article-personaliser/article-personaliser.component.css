@@ -601,9 +601,9 @@
   }
   
   .action-btn {
-    background: linear-gradient(135deg, #63a50a 0%, #63a50a 100%);
-    color: white;
-    border: none;
+    border:none ;
+    color: #63a50a;
+    background-color: white;
     padding: 10px 15px;
     border-radius: 8px;
     font-size: 12px;
